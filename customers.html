@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Customers — Business OS</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.customer-page{padding:38px 5.5%;background:#f4f6f9;min-height:calc(100vh - 72px)}
+.customer-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:22px}
+.customer-head h1{font-size:42px;letter-spacing:-2px;margin:5px 0 6px}
+.customer-head p{margin:0;color:#748094;font-size:14px}
+.customer-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+.searchbox,.filter{height:43px;border:1px solid #dfe4eb;background:#fff;border-radius:11px;padding:0 14px;color:#687386;outline:none}
+.searchbox{min-width:280px}.filter{cursor:pointer}
+.customer-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}.customer-tabs button{border:1px solid #dfe4eb;background:#fff;padding:9px 13px;border-radius:9px;font-size:11px;font-weight:700;color:#697386;cursor:pointer}.customer-tabs button.active{background:#111827;color:#fff;border-color:#111827}
+.customer-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:15px;align-items:start}
+.customer-list,.profile{background:#fff;border:1px solid #e2e6ec;border-radius:16px;overflow:hidden;box-shadow:0 8px 30px #10152208}
+.list-head{padding:17px 18px;border-bottom:1px solid #edf0f3;display:flex;justify-content:space-between;font-size:12px;font-weight:800}.list-head span{color:#8a93a2;font-weight:500}
+.customer-row{padding:16px 18px;border-bottom:1px solid #edf0f3;display:flex;gap:12px;align-items:center;cursor:pointer;transition:.15s}.customer-row:hover,.customer-row.selected{background:#faf9ff}.customer-row:last-child{border-bottom:0}
+.c-avatar{width:40px;height:40px;border-radius:12px;background:#ece9ff;color:#654ce0;display:grid;place-items:center;font-size:11px;font-weight:900;flex:none}.c-info{min-width:0;flex:1}.c-info b{font-size:13px}.c-info small{display:block;color:#7b8494;font-size:10px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.c-meta{text-align:right}.c-meta strong{display:block;font-size:12px}.c-meta small{display:block;color:#7d8798;font-size:9px;margin-top:4px}.status{display:inline-block;padding:4px 7px;border-radius:6px;font-size:8px;font-weight:900;margin-top:5px}.status.interested{background:#fff1cf;color:#986900}.status.follow{background:#e8f1ff;color:#3567a7}.status.visit{background:#eee9ff;color:#6849cf}.status.won{background:#e4f8ed;color:#18804f}.status.lost{background:#ffe9e8;color:#c43d35}
+.profile{position:sticky;top:90px}.profile-top{padding:22px;border-bottom:1px solid #edf0f3}.profile-person{display:flex;gap:13px;align-items:center}.profile-person .c-avatar{width:52px;height:52px;border-radius:15px}.profile-person h2{font-size:22px;margin:0}.profile-person p{margin:4px 0 0;color:#7a8495;font-size:11px}.profile-actions{display:flex;gap:7px;margin-top:15px}.profile-actions button,.activity-add{border:1px solid #dfe4eb;background:#fff;border-radius:8px;padding:8px 10px;font-size:10px;font-weight:800;cursor:pointer}.profile-actions .wa{background:#e7f7ee;color:#147c4b;border-color:#c9ead8}.profile-section{padding:18px 22px;border-bottom:1px solid #edf0f3}.profile-section h3{font-size:11px;margin:0 0 12px;letter-spacing:.04em}.facts{display:grid;grid-template-columns:1fr 1fr;gap:11px}.fact small{display:block;color:#8992a1;font-size:9px}.fact b{display:block;font-size:11px;margin-top:3px}.next-action{background:#fff8df;border:1px solid #f0dda1;border-radius:11px;padding:12px}.next-action strong{display:block;font-size:12px}.next-action small{color:#8a6b16;font-size:9px}.timeline{position:relative}.timeline:before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:1px;background:#e2e5ea}.event{position:relative;padding:0 0 17px 27px}.event:last-child{padding-bottom:0}.dot{position:absolute;left:3px;top:2px;width:11px;height:11px;border-radius:50%;background:#7457ff;border:3px solid #ece9ff}.event time{font-size:9px;color:#929aaa}.event b{display:block;font-size:11px;margin-top:3px}.event p{font-size:10px;line-height:1.5;color:#707a8c;margin:4px 0 0}.activity-add{width:100%;margin-top:14px;background:#111827;color:#fff;border-color:#111827}.empty{padding:45px 20px;text-align:center;color:#8791a1;font-size:12px}
+.activity-modal{position:fixed;inset:0;background:#0b1020aa;backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}.activity-modal.show{display:flex}.activity-box{width:min(520px,100%);background:#fff;border-radius:18px;padding:25px;box-shadow:0 30px 90px #0004}.activity-box h2{font-size:25px;margin:0 0 6px}.activity-box p{font-size:11px;color:#788294}.activity-types{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:15px 0}.activity-types button{border:1px solid #dfe4eb;background:#fff;border-radius:9px;padding:9px 5px;font-size:9px;cursor:pointer}.activity-types button.active{background:#eeeaff;border-color:#9d8cf0;color:#5b43cf;font-weight:800}.activity-box input,.activity-box textarea{width:100%;border:1px solid #dfe4eb;border-radius:9px;padding:10px;margin:6px 0 12px;outline:none}.modal-actions{display:flex;justify-content:flex-end;gap:8px}.modal-actions button{border:0;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:800}.modal-actions .save{background:#111827;color:#fff}
+@media(max-width:1000px){.customer-layout{grid-template-columns:1fr}.profile{position:relative;top:0}}
+@media(max-width:650px){.customer-head{display:block}.customer-head .btn{margin-top:15px}.searchbox{min-width:100%;}.customer-row{padding:14px}.c-meta{display:none}.facts{grid-template-columns:1fr 1fr}.activity-types{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header class="nav">
+<a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a>
+<nav><a href="how-it-works.html">कैसे काम करता है</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a></nav>
+<a class="btn" href="demo.html">Live Demo देखें</a>
+</header>
+
+<main class="customer-page">
+<div class="customer-head">
+<div><div class="eyebrow">CUSTOMER MANAGEMENT · LIVE DEMO</div><h1>अपने Customers को <em>Track करो।</em></h1><p>किससे बात हुई, क्या बात हुई और अगला कदम क्या है — सब एक जगह।</p></div>
+<button class="btn" onclick="openNewCustomer()">+ Add Customer</button>
+</div>
+
+<div class="customer-tools"><input id="search" class="searchbox" placeholder="🔎 Search customer, area, requirement..." oninput="renderList()"><button class="filter" onclick="setFilter('All')">All Customers</button><button class="filter" onclick="setFilter('Hot')">🔥 Hot</button><button class="filter" onclick="setFilter('Today')">📅 Today</button><button class="filter" onclick="setFilter('Overdue')">🔴 Overdue</button></div>
+<div class="customer-tabs"><button class="active" data-tab="All" onclick="setFilter('All')">All</button><button data-tab="Interested" onclick="setFilter('Interested')">Interested</button><button data-tab="Follow-up" onclick="setFilter('Follow-up')">Follow-up</button><button data-tab="Site Visit" onclick="setFilter('Site Visit')">Site Visit</button><button data-tab="Won" onclick="setFilter('Won')">Won</button></div>
+
+<div class="customer-layout">
+<section class="customer-list"><div class="list-head"><span>Customers & Enquiries</span><span id="resultCount">6 customers</span></div><div id="customerRows"></div></section>
+<aside class="profile" id="profile"></aside>
+</div>
+</main>
+
+<div class="activity-modal" id="activityModal"><div class="activity-box">
+<h2 id="modalTitle">Add activity</h2><p>Customer history mein ek नया event जोड़ें.</p>
+<div class="activity-types"><button data-type="Call" onclick="pickType(this)">📞 Call</button><button data-type="WhatsApp" onclick="pickType(this)">💬 WhatsApp</button><button data-type="Email" onclick="pickType(this)">✉️ Email</button><button data-type="Meeting" onclick="pickType(this)">🤝 Meeting</button><button data-type="Site Visit" onclick="pickType(this)">🏠 Site Visit</button><button data-type="Note" onclick="pickType(this)">📝 Note</button><button data-type="Follow-up" onclick="pickType(this)">📅 Follow-up</button><button data-type="Deal Won" onclick="pickType(this)">✅ Deal Won</button></div>
+<label>Date<input id="activityDate" type="date"></label><label>Time<input id="activityTime" type="time"></label><label>Notes<textarea id="activityNote" rows="3" placeholder="What happened?"></textarea></label>
+<div class="modal-actions"><button onclick="closeActivity()">Cancel</button><button class="save" onclick="saveActivity()">Save activity</button></div>
+</div></div>
+
+<script>
+const seed=[
+{name:"Rahul Sharma",phone:"98XXXXXX21",area:"Jhotwara, Jaipur",req:"Residential Plot",budget:"₹30–35 Lakh",source:"WhatsApp",status:"Interested",follow:"Today · 3:30 PM",created:"05 Oct 2026",events:[
+["05 Oct · 10:42 AM","Enquiry Created","Customer came through WhatsApp."],["05 Oct · 11:15 AM","Call","Interested in Jhotwara plots. Asked for road-facing options."],["05 Oct · 12:05 PM","WhatsApp","3 matching properties shared."]]},
+{name:"Neha Gupta",phone:"97XXXXXX48",area:"Mansarovar, Jaipur",req:"2BHK Apartment",budget:"₹45–50 Lakh",source:"Facebook",status:"Follow-up",follow:"Today · 5:00 PM",created:"04 Oct 2026",events:[
+["04 Oct · 2:10 PM","Enquiry Created","Looking for ready-to-move 2BHK."],["04 Oct · 4:30 PM","WhatsApp","Sent 2 matching options."],["05 Oct · 9:00 AM","Follow-up","Asked to call after 5 PM."]]},
+{name:"Amit Verma",phone:"96XXXXXX62",area:"Vaishali Nagar, Jaipur",req:"Independent House",budget:"₹55–65 Lakh",source:"Referral",status:"Site Visit",follow:"08 Oct · 5:00 PM",created:"03 Oct 2026",events:[
+["03 Oct · 11:00 AM","Enquiry Created","Referral from existing customer."],["04 Oct · 1:20 PM","Call","Customer shortlisted two houses."],["05 Oct · 10:00 AM","Site Visit","Visit scheduled for 08 Oct."]]},
+{name:"Priya Mehta",phone:"95XXXXXX31",area:"Malviya Nagar, Jaipur",req:"Office Space",budget:"₹25–30 Lakh",source:"Website",status:"Won",follow:"Completed",created:"25 Sep 2026",events:[
+["25 Sep · 12:00 PM","Enquiry Created","Commercial requirement received."],["29 Sep · 4:00 PM","Meeting","Final terms discussed."],["02 Oct · 6:00 PM","Deal Won","Customer confirmed the property."]]},
+{name:"Dinesh Agarwal",phone:"94XXXXXX17",area:"Murlipura, Jaipur",req:"House",budget:"₹30–35 Lakh",source:"WhatsApp",status:"Follow-up",follow:"Overdue · 02 Oct",created:"28 Sep 2026",events:[
+["28 Sep · 11:30 AM","Enquiry Created","Family looking for a house."],["30 Sep · 3:00 PM","Call","Requested more options."],["02 Oct · 5:00 PM","Follow-up","No response yet."]]},
+{name:"Hasin Warsi",phone:"93XXXXXX09",area:"Jhotwara, Jaipur",req:"House",budget:"₹40–50 Lakh",source:"Facebook",status:"Interested",follow:"Tomorrow · 11:00 AM",created:"01 Oct 2026",events:[
+["01 Oct · 2:00 PM","Enquiry Created","Interested in Jhotwara area."],["03 Oct · 12:30 PM","WhatsApp","Shared property photos."],["04 Oct · 6:00 PM","Call","Customer asked for final price."]]}
+];
+let customers=JSON.parse(localStorage.getItem("bosCustomers")||"null")||seed.map(x=>({...x,events:x.events.map(e=>[...e])}));
+let selected=0, filter="All", activityType="Call";
+function initials(n){return n.split(" ").map(x=>x[0]).join("").slice(0,2).toUpperCase()}
+function setFilter(f){filter=f;document.querySelectorAll(".customer-tabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===f));renderList()}
+function renderList(){
+ const q=document.getElementById("search").value.toLowerCase();
+ const filtered=customers.map((c,i)=>({c,i})).filter(({c})=>{
+   const match=[c.name,c.area,c.req,c.status,c.budget].join(" ").toLowerCase().includes(q);
+   if(!match)return false;
+   if(filter==="All")return true;
+   if(filter==="Hot")return ["Interested","Site Visit"].includes(c.status);
+   if(filter==="Today")return c.follow.toLowerCase().includes("today");
+   if(filter==="Overdue")return c.follow.toLowerCase().includes("overdue");
+   return c.status===filter;
+ });
+ document.getElementById("resultCount").textContent=filtered.length+" customers";
+ document.getElementById("customerRows").innerHTML=filtered.length?filtered.map(({c,i})=>`<div class="customer-row ${i===selected?'selected':''}" onclick="selectCustomer(${i})"><div class="c-avatar">${initials(c.name)}</div><div class="c-info"><b>${c.name}</b><small>${c.area} · ${c.req}</small><span class="status ${c.status.toLowerCase().replace(' ','-')}">${c.status}</span></div><div class="c-meta"><strong>${c.budget}</strong><small>${c.follow}</small></div></div>`).join(""):'<div class="empty">No customers match this filter.</div>';
+ renderProfile();
+}
+function selectCustomer(i){selected=i;renderList();document.getElementById("profile").scrollIntoView({behavior:"smooth",block:"start"})}
+function renderProfile(){
+ const c=customers[selected]; if(!c)return;
+ document.getElementById("profile").innerHTML=`<div class="profile-top"><div class="profile-person"><div class="c-avatar">${initials(c.name)}</div><div><h2>${c.name}</h2><p>${c.area} · <span class="status ${c.status.toLowerCase().replace(' ','-')}">${c.status}</span></p></div></div><div class="profile-actions"><button onclick="callCustomer()">📞 Call</button><button class="wa" onclick="whatsappCustomer()">💬 WhatsApp</button><button onclick="emailCustomer()">✉️ Email</button></div></div>
+ <div class="profile-section"><h3>CUSTOMER INFORMATION</h3><div class="facts"><div class="fact"><small>Mobile</small><b>${c.phone}</b></div><div class="fact"><small>Source</small><b>${c.source}</b></div><div class="fact"><small>Requirement</small><b>${c.req}</b></div><div class="fact"><small>Budget / Value</small><b>${c.budget}</b></div><div class="fact"><small>Location</small><b>${c.area}</b></div><div class="fact"><small>Created</small><b>${c.created}</b></div></div></div>
+ <div class="profile-section"><h3>NEXT ACTION</h3><div class="next-action"><strong>${c.follow.includes("Overdue")?"🔴 ":"🟡 "} ${c.follow}</strong><small>Next customer action · ${c.req}</small></div><button class="activity-add" onclick="openActivity()">+ Add Activity</button></div>
+ <div class="profile-section"><h3>CUSTOMER JOURNEY</h3><div class="timeline">${c.events.slice().reverse().map(e=>`<div class="event"><i class="dot"></i><time>${e[0]}</time><b>${e[1]}</b><p>${e[2]}</p></div>`).join("")}</div></div>`;
+}
+function openActivity(){document.getElementById("activityModal").classList.add("show");document.getElementById("activityDate").value=new Date().toISOString().slice(0,10);document.getElementById("activityTime").value="15:30";document.getElementById("activityNote").value="";pickType(document.querySelector('.activity-types button[data-type="Call"]'))}
+function closeActivity(){document.getElementById("activityModal").classList.remove("show")}
+function pickType(el){activityType=el.dataset.type;document.querySelectorAll(".activity-types button").forEach(b=>b.classList.toggle("active",b===el))}
+function saveActivity(){const c=customers[selected],d=document.getElementById("activityDate").value,t=document.getElementById("activityTime").value,n=document.getElementById("activityNote").value.trim()||"Activity added from demo.";const date=d?new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"Today";c.events.push([date+" · "+(t||"15:30"),activityType,n]);if(activityType==="Deal Won")c.status="Won";else if(activityType==="Site Visit")c.status="Site Visit";else if(activityType==="Follow-up")c.status="Follow-up";localStorage.setItem("bosCustomers",JSON.stringify(customers));closeActivity();renderList()}
+function openNewCustomer(){const name=prompt("Customer name?","New Customer");if(!name)return;customers.unshift({name,phone:"Not added",area:"Jaipur",req:"New enquiry",budget:"Not specified",source:"Manual",status:"New",follow:"Set follow-up",created:"05 Oct 2026",events:[["05 Oct 2026","Enquiry Created","Customer added from the interactive demo."]]});selected=0;localStorage.setItem("bosCustomers",JSON.stringify(customers));renderList()}
+function callCustomer(){alert("Demo: call action ready for integration.")}
+function whatsappCustomer(){const c=customers[selected];window.open("https://wa.me/?text="+encodeURIComponent("Hi "+c.name+", following up regarding your "+c.req+" requirement."),"_blank")}
+function emailCustomer(){alert("Demo: email action ready for integration.")}
+renderList();
+</script>
+</body></html>
