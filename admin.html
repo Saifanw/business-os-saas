@@ -21,6 +21,48 @@ main{padding:35px 38px 65px;min-width:0;max-width:1550px;width:100%}.hero{displa
 @media(max-width:1050px){.app{grid-template-columns:75px 1fr}.side a span,.side-title,.side .bottom{display:none}.side a{justify-content:center}.stats{grid-template-columns:repeat(3,1fr)}.grid2{grid-template-columns:1fr}}@media(max-width:700px){.top{padding:0 15px}.app{grid-template-columns:1fr}.side{display:none}main{padding:25px 14px}.hero{display:block}.hero-actions{margin-top:15px}.stats{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}}
 </style>
   <link rel="stylesheet" href="assets/luxury.css">
+<style>
+/* =========================================================
+   BUSINESS OS — ADMIN FULL-WIDTH V5
+   Remove the large navigation rail so the data workspace
+   uses the entire screen. Admin remains premium and usable.
+   ========================================================= */
+body{
+  overflow-x:hidden!important;
+}
+.app{
+  grid-template-columns:1fr!important;
+  width:100%!important;
+}
+.app > .side,
+.app > aside.side,
+.app .side{
+  display:none!important;
+}
+main{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding-left:18px!important;
+  padding-right:18px!important;
+}
+.top{
+  padding-left:24px!important;
+  padding-right:24px!important;
+}
+.hero,.stats,.grid2,.filter-card{
+  width:100%!important;
+  max-width:none!important;
+}
+.filter-card{
+  margin-left:0!important;
+  margin-right:0!important;
+}
+@media(max-width:800px){
+  main{padding-left:10px!important;padding-right:10px!important}
+  .top{padding-left:14px!important;padding-right:14px!important}
+}
+</style>
 </head>
 <body>
 <header class="top"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><div class="userbox hidden" id="userbox"><div><b id="userName">Admin</b><small id="userEmail"></small></div><button id="logoutBtn">Sign out</button></div></header>

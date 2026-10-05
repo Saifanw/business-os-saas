@@ -15,3 +15,11 @@ Customer workspace typography, contrast, density, shadows and modal hierarchy ar
 
 ## Customer Workspace Luxury V3
 Stronger contrast, larger typography, deeper shadows, denser customer rows and a more executive premium workspace. Admin remains unchanged.
+
+
+## Full-Screen CRM Table V4
+Customer list is presented as a full-width executive data table with compact rows, stronger contrast and premium depth. Existing data and JavaScript model are preserved.
+
+
+## Admin Full-Width V5
+The large dark navigation rail is hidden on the Admin Control Center so the dashboard and contact table use the full browser width.
