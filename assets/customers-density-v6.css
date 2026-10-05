@@ -1,0 +1,54 @@
+/* BUSINESS OS — CUSTOMER DENSITY V6
+   Goal: reference-style professional CRM density.
+   More useful information per screen, less empty space. */
+
+body{background:#eef2f7!important;color:#101827!important}
+.os{display:block!important;min-height:calc(100vh - 73px)!important;background:#eef2f7!important}
+.sidebar{display:none!important}
+.main{width:100%!important;max-width:none!important;padding:14px 10px 30px!important}
+
+.page-head{margin:0 4px 9px!important;padding:0 5px!important;align-items:center!important;gap:12px!important}
+.page-head .eyebrow{font-size:8px!important;letter-spacing:.16em!important}
+.page-head h1{font-size:25px!important;line-height:1!important;letter-spacing:-1px!important;margin:2px 0 3px!important;font-weight:950!important}
+.page-head p{font-size:10px!important;color:#748095!important}
+.top-actions{gap:6px!important}
+.top-actions button{height:34px!important;padding:0 11px!important;border-radius:8px!important;font-size:9px!important;box-shadow:none!important}
+.top-actions .primary{box-shadow:0 5px 13px rgba(8,126,81,.15)!important}
+
+.kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;margin:0 4px 9px!important}
+.kpi{min-height:62px!important;padding:8px 12px!important;border-radius:11px!important;border:1px solid #dce3ec!important;box-shadow:0 5px 16px rgba(15,23,42,.045)!important}
+.kpi .label{font-size:7px!important;letter-spacing:.05em!important;text-transform:uppercase!important}
+.kpi strong{font-size:21px!important;line-height:1!important;margin:3px 0 1px!important}
+.kpi small{font-size:7px!important}
+
+.list-card{border-radius:12px!important;border:1px solid #d5dde7!important;box-shadow:0 13px 35px rgba(15,23,42,.075)!important}
+.list-head{min-height:47px!important;padding:9px 13px 5px!important}
+.list-head b{font-size:16px!important;letter-spacing:-.3px!important}
+.list-head span{font-size:8px!important}
+.filters{padding:0 13px 9px!important;gap:6px!important;display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;scrollbar-width:none!important}
+.filters::-webkit-scrollbar{display:none}
+.filters input,.filters select{height:34px!important;border-radius:8px!important;padding:0 9px!important;font-size:9px!important;flex:0 0 auto!important;background:#fff!important}
+.filters input#search{width:270px!important;flex:1 1 270px!important;min-width:220px!important}
+.filters select{width:135px!important}
+.filters .budget-filter{width:105px!important}
+.reset-filter{height:34px!important;border:1px solid #d6dee8!important;background:#fff!important;color:#4f5d72!important;border-radius:8px!important;padding:0 10px!important;font-size:9px!important;font-weight:900!important;white-space:nowrap!important;cursor:pointer!important}
+
+.table-scroll{width:100%!important;overflow-x:auto!important;overflow-y:visible!important}
+.table-head,.row{display:grid!important;width:100%!important;min-width:1280px!important;grid-template-columns:28px 78px 155px 112px 132px 145px 105px 170px 95px 135px 95px 205px!important;gap:7px!important;align-items:center!important}
+.table-head{min-height:34px!important;padding:7px 13px!important;background:#f4f7fa!important;border-top:1px solid #e3e8ef!important;border-bottom:1px solid #d9e1ea!important;font-size:7px!important;letter-spacing:.055em!important;color:#65748a!important;font-weight:950!important;text-transform:uppercase!important;position:sticky;top:0;z-index:2}
+.row{min-height:58px!important;padding:7px 13px!important;border-bottom:1px solid #e8edf2!important;background:#fff!important;cursor:pointer!important}
+.row:hover,.row.selected{background:#f8faff!important;box-shadow:inset 3px 0 0 #4f7ff0!important}
+.row:last-child{border-bottom:0!important}
+
+.check input{width:13px;height:13px;accent-color:#4057d6;cursor:pointer}
+.type-pill{display:inline-flex;align-items:center;justify-content:center;min-width:57px;padding:4px 7px;border-radius:999px;background:#edf4ff;color:#2765b0;font-size:7px;font-weight:950;white-space:nowrap}
+.type-pill.seller{background:#eaf9f2;color:#168052}.type-pill.broker{background:#fff4df;color:#9a6900}.type-pill.prospect{background:#f1edff;color:#6748c7}
+.compact-person{gap:7px!important}.compact-person .avatar{width:28px!important;height:28px!important;border-radius:8px!important;font-size:8px!important}.compact-person b{font-size:10px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}.person small{display:none!important}
+.cell{font-size:8px!important;color:#344155!important;line-height:1.25!important;min-width:0!important}.cell small{font-size:7px!important;margin-top:2px!important;color:#8b96a6!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}.phone-cell{font-size:8px!important;color:#536176!important}.budget-cell{font-weight:850!important;white-space:nowrap!important}.requirement-cell{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}.follow-cell{font-weight:750!important}.added-cell{font-size:7px!important;color:#7c8798!important;white-space:nowrap!important}
+.status{padding:4px 6px!important;border-radius:6px!important;font-size:7px!important;white-space:nowrap!important}.status.contacted{background:#eaf2ff;color:#3469ad}.status.negotiation{background:#eee9ff;color:#6748c7}
+.compact-actions{gap:4px!important;white-space:nowrap!important}.compact-actions button{height:27px!important;width:auto!important;padding:0 7px!important;border:1px solid #dce3ea!important;background:#fff!important;border-radius:7px!important;font-size:7px!important;font-weight:900!important;color:#4b586c!important;cursor:pointer!important}.compact-actions .wa{background:#e8f8f0!important;border-color:#c9eadb!important;color:#07804f!important}.compact-actions .danger{background:#fff2f1!important;border-color:#ffd4d0!important;color:#c43c34!important}
+
+.empty-state{padding:35px 15px!important;font-size:9px!important}
+
+@media(max-width:1100px){.table-head,.row{min-width:1280px!important}.kpis{grid-template-columns:repeat(4,minmax(150px,1fr))!important;overflow-x:auto!important}.kpi{min-width:150px!important}.page-head h1{font-size:23px!important}}
+@media(max-width:700px){.main{padding:10px 7px 25px!important}.page-head{display:block!important}.top-actions{margin-top:7px!important}.kpis{display:flex!important;overflow-x:auto!important}.kpi{min-width:160px!important}.filters{padding-left:8px!important;padding-right:8px!important}.list-head{padding-left:9px!important;padding-right:9px!important}}
