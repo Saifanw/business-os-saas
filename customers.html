@@ -4,8 +4,90 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Customers — Business OS</title>
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/customer-premium-v8.css">
-<style>/* Base page compatibility; premium-v8 owns the CRM presentation. */</style>
+<link rel="stylesheet" href="assets/customers-density-v6.css">
+<style>
+:root{--ink:#121a2a;--muted:#707b8f;--line:#e5e9ef;--purple:#5c45f5;--green:#0b9b63;--bg:#f6f7f9}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--ink)}
+.os{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 73px)}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:28px 15px;position:sticky;top:73px;height:calc(100vh - 73px)}
+.sidebar .mini{font-size:10px;letter-spacing:.12em;color:#9099a8;padding:0 13px 14px;font-weight:800}
+.side-link{display:flex;gap:12px;align-items:center;padding:12px 13px;border-radius:10px;color:#566174;font-size:13px;font-weight:700;margin:4px 0;text-decoration:none}.side-link.active{background:#eeeaff;color:var(--purple)}.side-link .ico{width:21px;text-align:center;font-size:15px}.sidebar hr{border:0;border-top:1px solid var(--line);margin:21px 6px}.demo-note{position:absolute;bottom:18px;left:15px;right:15px;border:1px solid var(--line);border-radius:14px;padding:14px;background:#fbfcfd;font-size:10px;color:#6d788b;line-height:1.55}.demo-note b{display:block;color:#151e30;font-size:11px;margin-bottom:5px}
+.main{padding:44px 46px 70px;min-width:0;max-width:1550px}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:25px;margin-bottom:27px}.eyebrow{font-size:10px;letter-spacing:.15em;font-weight:900;color:#68748a}.page-head h1{font-size:48px;line-height:1;margin:8px 0 10px;letter-spacing:-2px}.page-head p{margin:0;color:var(--muted);font-size:15px}.top-actions{display:flex;gap:9px;align-items:center}.top-actions button{height:44px;border:1px solid #dfe4eb;background:#fff;border-radius:10px;padding:0 15px;font-size:11px;font-weight:800;color:#3d485b;cursor:pointer}.top-actions .primary{background:var(--green);color:#fff;border-color:var(--green);padding:0 18px;box-shadow:0 8px 20px #0b9b6326}.top-actions .primary:hover{background:#087e51}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:18px}.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 21px;min-height:108px}.kpi .label{font-size:11px;color:#778296;font-weight:700}.kpi strong{display:block;font-size:32px;letter-spacing:-1px;margin:7px 0 2px}.kpi small{font-size:10px;color:#8a94a4}.kpi.today{background:#fffaf0}.kpi.hot{background:#fff7f6}.kpi.good{background:#f3fbf7}
+.workspace{display:block}
+.list-card,.profile-card{background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:0 10px 32px rgba(18,26,42,.035)}
+.list-head{padding:23px 24px 17px;display:flex;justify-content:space-between;align-items:center}.list-head b{font-size:17px}.list-head span{font-size:11px;color:#8993a3}
+.filters{padding:0 24px 20px;display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{height:40px;border:1px solid #dfe4eb;border-radius:9px;padding:0 12px;background:#fff;color:#667186;font-size:10px;outline:none}.filters input{min-width:260px;flex:1}.chip{height:38px;border:1px solid #dfe4eb;background:#fff;color:#5d687b;padding:0 12px;border-radius:9px;font-size:10px;font-weight:800;cursor:pointer}.chip.active{background:#121a2a;color:#fff;border-color:#121a2a}
+.table-head,.row{display:grid;grid-template-columns:2fr 1.55fr 1.2fr 1.15fr 1.25fr 130px;gap:20px;align-items:center}.table-head{padding:12px 24px;background:#fafbfc;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#8a94a4;font-weight:900}.row{padding:19px 24px;border-bottom:1px solid #edf0f4;cursor:pointer;min-height:76px}.row:hover,.row.selected{background:#fbfaff}.row:last-child{border-bottom:0}
+.person{display:flex;gap:12px;align-items:center}.avatar{width:40px;height:40px;border-radius:12px;background:#eeeaff;color:#5d46dc;display:grid;place-items:center;font-size:10px;font-weight:900;flex:none}.person b{display:block;font-size:12px}.person small,.cell small{display:block;color:#8a94a4;font-size:9px;margin-top:4px}.cell{font-size:10px;color:#394558}.status{display:inline-block;padding:5px 8px;border-radius:7px;font-size:8px;font-weight:900;background:#eef1f5;color:#5d687b}.status.interested{background:#fff0cd;color:#956800}.status.follow-up{background:#e8f1ff;color:#3567a7}.status.site-visit{background:#eeeaff;color:#6548cf}.status.won{background:#e3f7ec;color:#168052}.status.overdue{background:#ffe8e7;color:#c63b34}.status.new{background:#edf1f6;color:#5f6b7e}
+.actions{display:flex;gap:6px}.actions button{width:30px;height:30px;border:1px solid #dce2e9;background:#fff;border-radius:8px;cursor:pointer}.actions .wa{color:#0b8d56;background:#f2fbf6}
+.profile-card{display:none}.profile-top{padding:23px 23px 19px;border-bottom:1px solid var(--line)}.profile-person{display:flex;gap:13px;align-items:center}.profile-person .avatar{width:52px;height:52px;border-radius:15px;font-size:12px}.profile-person h2{font-size:24px;letter-spacing:-.6px;margin:0}.profile-person p{font-size:10px;color:#7d8798;margin:6px 0}.profile-actions{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:7px;margin-top:17px}.profile-actions button{height:39px;border:1px solid #dfe4eb;background:#fff;border-radius:9px;font-size:10px;font-weight:800;cursor:pointer}.profile-actions .wa{background:#e8f7f0;color:#087d50;border-color:#c9eadb}
+.profile-section{padding:19px 23px;border-bottom:1px solid var(--line)}.profile-section h3{font-size:9px;letter-spacing:.12em;color:#6f7a8e;margin:0 0 13px}.facts{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}.fact small{display:block;color:#919aaa;font-size:9px}.fact b{display:block;font-size:11px;margin-top:4px;line-height:1.35}.next{background:#fff8df;border:1px solid #f0dda3;border-radius:11px;padding:13px}.next b{font-size:12px}.next small{display:block;color:#8c6d1a;font-size:9px;margin-top:5px}.next-actions{display:flex;gap:7px;margin-top:9px}.next-actions button{border:1px solid #dfe4eb;background:#fff;border-radius:8px;padding:7px 9px;font-size:9px;font-weight:800}.next-actions .done{background:#121a2a;color:#fff;border-color:#121a2a}.timeline{position:relative}.timeline:before{content:"";position:absolute;left:6px;top:6px;bottom:5px;width:1px;background:#dfe4eb}.event{position:relative;padding:0 0 17px 24px}.event:last-child{padding-bottom:0}.dot{position:absolute;left:2px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--purple);border:2px solid #eeeaff}.event time{font-size:9px;color:#929aaa}.event b{display:block;font-size:10px;margin-top:3px}.event p{font-size:9px;line-height:1.5;color:#788294;margin:4px 0 0}.add-activity{width:100%;margin-top:13px;border:0;border-radius:9px;padding:11px;background:#121a2a;color:#fff;font-size:10px;font-weight:900;cursor:pointer}
+.empty-state{text-align:center;padding:55px 20px;color:#8b94a4;font-size:11px}.empty-state b{display:block;color:#2c374a;font-size:13px;margin-bottom:5px}
+.file-hidden{display:none!important}.modal{display:none;position:fixed;inset:0;background:#111827aa;backdrop-filter:blur(6px);align-items:center;justify-content:center;z-index:20}.modal.show{display:flex}.customer-modal-box,.modal-box{background:#fff;width:min(560px,94%);border-radius:18px;padding:24px;box-shadow:0 30px 90px #0004}.customer-modal-box h2,.modal-box h2{margin:0;font-size:22px}.customer-modal-box>p,.modal-box>p{font-size:10px;color:#7b8596}.customer-form{display:grid;grid-template-columns:1fr 1fr;gap:9px}.customer-form label{font-size:9px;color:#687386;font-weight:700}.customer-form label.full{grid-column:1/-1}.customer-form input,.customer-form select,.customer-form textarea,.modal-box input,.modal-box textarea{width:100%;border:1px solid #dfe4eb;border-radius:9px;background:#fff;padding:10px;font-size:10px;margin-top:5px;outline:none}.customer-form textarea{min-height:70px;resize:vertical}.modal-foot{display:flex;justify-content:flex-end;gap:7px;margin-top:10px}.modal-foot button{border:0;border-radius:8px;padding:10px 14px;font-weight:800}.modal-foot .save{background:#0b9b63;color:#fff}
+.types{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:13px 0}.types button{border:1px solid #dde2e9;border-radius:8px;background:#fff;padding:9px 5px;font-size:9px}.types button.active{background:#eeeaff;border-color:#9e8df0;color:#5b45f5;font-weight:800}
+@media(max-width:1180px){.table-head,.row{grid-template-columns:1.7fr 1.3fr 1fr 1fr 1.1fr 110px}}
+@media(max-width:850px){.os{grid-template-columns:1fr}.sidebar{display:none}.main{padding:28px 15px}.kpis{grid-template-columns:1fr}.page-head{display:block}.top-actions{margin-top:16px}.table-head{display:none}.row{grid-template-columns:1fr 90px;gap:8px}.row .cell:nth-child(n+2){display:none}}
+@media(max-width:600px){.page-head h1{font-size:38px}.top-actions{flex-wrap:wrap}.filters input{min-width:100%}.customer-form{grid-template-columns:1fr}.customer-form label.full{grid-column:auto}.facts{grid-template-columns:1fr}.profile-actions{grid-template-columns:1fr 1.15fr 1fr}}
+
+.customer-overlay{display:none;position:fixed;inset:0;background:rgba(10,17,30,.42);backdrop-filter:blur(4px);z-index:30;align-items:center;justify-content:center;padding:24px}.customer-overlay.show{display:flex}.customer-modal-card{background:#fff;width:min(520px,94vw);max-height:88vh;overflow:auto;border-radius:18px;box-shadow:0 30px 90px rgba(0,0,0,.22)}.customer-modal-card .profile-card{display:block;position:static;box-shadow:none;border:0;border-radius:18px}.customer-modal-card .profile-person h2{font-size:20px}.customer-modal-card .profile-person .avatar{width:44px;height:44px}.customer-modal-card .profile-actions{margin-top:13px}.customer-modal-card .profile-actions button{height:36px}.customer-modal-card .profile-section h3{margin-bottom:10px}.customer-modal-card .facts{gap:11px 18px}.customer-modal-card .fact b{font-size:10px}.customer-modal-card .profile-top{padding:20px 22px 17px}.customer-modal-card .profile-section{padding:16px 22px}.close-profile{position:absolute;right:20px;top:18px;width:34px;height:34px;border:1px solid #e0e5ec;background:#fff;border-radius:9px;font-size:18px;cursor:pointer}.profile-modal-head{position:relative}.profile-actions button{height:42px}.journey-wide{max-height:290px;overflow:auto}
+</style>
+  <link rel="stylesheet" href="assets/luxury.css">
+  <link rel="stylesheet" href="assets/customer-luxury-v2.css">
+  <link rel="stylesheet" href="assets/customer-luxury-v3.css">
+  <link rel="stylesheet" href="assets/fullscreen-table-v4.css">
+  <link rel="stylesheet" href="assets/customer-professional-v7.css">
+
+<style id="business-os-customer-premium-final">
+/* Business OS — Customers workspace final premium layout */
+:root{--bo-ink:#101a2d;--bo-muted:#6f7c91;--bo-line:#e5eaf1;--bo-bg:#f5f7fb;--bo-blue:#3e5ff4;--bo-green:#079a68}
+html{background:var(--bo-bg)}
+body{background:linear-gradient(180deg,#f7f9fc 0%,#f3f6fb 100%);color:var(--bo-ink)}
+.os{display:block;min-height:calc(100vh - 73px)}
+.sidebar{display:none}
+.main{width:100%;max-width:none;margin:0;padding:27px 18px 55px;min-width:0}
+.page-head{max-width:1550px;margin:0 auto 10px;align-items:center;padding:0 2px}
+.page-head h1{font-size:31px;letter-spacing:-1.25px;margin:3px 0 3px;line-height:1.05}
+.page-head p{font-size:11px;color:#7c8799}
+.eyebrow{font-size:8px;letter-spacing:.17em;color:#77849a}
+.top-actions{gap:7px}
+.top-actions button{height:36px;border-radius:9px;padding:0 12px;font-size:10px;background:#fff;box-shadow:0 2px 8px rgba(16,26,45,.035)}
+.top-actions .primary{background:var(--bo-blue);border-color:var(--bo-blue);box-shadow:0 7px 18px rgba(62,95,244,.22)}
+.smart-summary{max-width:1550px;margin:0 auto 12px;height:38px;display:flex;align-items:center;gap:13px;padding:0 13px;background:rgba(255,255,255,.82);border:1px solid var(--bo-line);border-radius:10px;box-shadow:0 4px 14px rgba(16,26,45,.025);font-size:9px;color:#7b8798}
+.smart-summary b{font-size:12px;color:var(--bo-ink);margin-right:3px}
+.smart-summary i{width:1px;height:14px;background:#dfe5ed}
+.workspace{max-width:1550px;margin:0 auto;display:block}
+.list-card{border:1px solid var(--bo-line);border-radius:13px;background:#fff;box-shadow:0 8px 28px rgba(16,26,45,.055);overflow:hidden}
+.list-head{padding:14px 18px 11px;min-height:54px}
+.list-head b{font-size:17px;letter-spacing:-.45px}
+.list-head small{display:block;color:#8a94a5;font-size:9px;margin-top:2px}
+.list-head>span{font-size:9px;color:#8a94a5;font-weight:700}
+.filters{padding:0 18px 12px;display:grid;grid-template-columns:minmax(300px,1.9fr) 1fr 1fr 1fr 105px 105px 1fr auto;gap:7px;flex-wrap:nowrap}
+.filters input,.filters select{height:35px;min-width:0!important;width:100%;border:1px solid #dfe5ed;border-radius:8px;padding:0 10px;background:#fff;color:#58667b;font-size:9px;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+.filters input:focus,.filters select:focus{border-color:#9eafff;box-shadow:0 0 0 3px rgba(62,95,244,.08)}
+.reset-filter{height:35px;border:1px solid #dfe5ed!important;background:#fff!important;color:#27344a!important;border-radius:8px!important;padding:0 11px!important;font-size:9px!important;font-weight:800;white-space:nowrap}
+.table-scroll{width:100%;overflow-x:auto;border-top:1px solid var(--bo-line)}
+.table-head,.row{display:grid;grid-template-columns:38px 82px minmax(150px,1.35fr) 112px 135px 130px 120px minmax(150px,1.35fr) 104px 142px 96px 205px;gap:0;align-items:center;min-width:1400px}
+.table-head{padding:0 18px;height:36px;background:#fafbfd;border:0;border-bottom:1px solid var(--bo-line);font-size:8px;text-transform:uppercase;letter-spacing:.075em;color:#8792a4;font-weight:900;position:sticky;top:0;z-index:4}
+.row{padding:0 18px;min-height:68px;border-bottom:1px solid #edf1f5;cursor:pointer;background:#fff;transition:background .16s ease,box-shadow .16s ease}
+.row:hover,.row.selected{background:#fbfcff;box-shadow:inset 3px 0 0 var(--bo-blue)}
+.row:last-child{border-bottom:0}
+.row>.check{display:flex;align-items:center}
+.row input[type=checkbox]{width:14px;height:14px;accent-color:var(--bo-blue)}
+.person{gap:9px}.avatar{width:34px;height:34px;border-radius:10px;background:#edf2ff;color:#3658d8;font-size:9px}
+.person b{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.person small,.cell small{font-size:8px;margin-top:3px;color:#8d98a8}
+.cell{font-size:9px;color:#344258;line-height:1.25;padding-right:10px}.phone-cell{font-variant-numeric:tabular-nums;color:#46546a}.budget-cell{font-weight:800;color:#26334a}.requirement-cell{font-weight:600;color:#2f3c50}
+.type-pill{display:inline-flex;align-items:center;justify-content:center;padding:4px 8px;border-radius:999px;font-size:7px;font-weight:900;background:#eef4ff;color:#3463cf;border:1px solid #d9e5ff}
+.type-pill.broker{background:#eaf9f2;color:#15845d;border-color:#d2f0e2}.type-pill.seller{background:#fff4df;color:#a66c00;border-color:#f4e0ae}.type-pill.prospect{background:#f0edff;color:#6648d7;border-color:#dfd8ff}
+.status{display:inline-flex;align-items:center;padding:5px 8px;border-radius:7px;font-size:7px;font-weight:900;white-space:nowrap;border:1px solid transparent}
+.status.new{background:#edf3fb;color:#41638e;border-color:#dce8f7}.status.interested{background:#fff5d9;color:#9a6d00;border-color:#f5e7b8}.status.follow-up{background:#eaf2ff;color:#3b68a6;border-color:#d9e6fb}.status.site-visit{background:#f0ebff;color:#6648cc;border-color:#e0d7ff}.status.won{background:#e7f8ef;color:#137c50;border-color:#d0efdf}.status.overdue{background:#ffebea;color:#c43c35;border-color:#ffd7d4}.status.contacted{background:#edf5ff;color:#3371b9;border-color:#dceaff}.status.negotiation{background:#fff0e6;color:#a65316;border-color:#f8ddc9}
+.follow-cell{font-weight:800}.follow-cell:has(.overdue){color:#c43c35}.actions{display:flex;gap:5px;align-items:center}.actions button{height:30px;width:auto;min-width:30px;padding:0 9px;border:1px solid #dfe5ed;background:#fff;border-radius:8px;cursor:pointer;font-size:8px;font-weight:800;color:#405069}.actions .wa{color:#087e52;background:#edfbf5;border-color:#cfeee0}.actions .danger{color:#c63d36;background:#fff4f3;border-color:#ffd9d5}.actions button:hover{transform:translateY(-1px)}
+.empty-state{padding:65px 20px}
+@media(max-width:1250px){.filters{grid-template-columns:minmax(240px,1.6fr) repeat(3,1fr) 95px 95px 1fr auto}.main{padding-left:12px;padding-right:12px}}
+@media(max-width:900px){.page-head{display:flex}.filters{grid-template-columns:1fr 1fr 1fr;}.filters input:first-child{grid-column:1/-1}.smart-summary{overflow:auto;white-space:nowrap}.table-head,.row{min-width:1320px}}
+@media(max-width:620px){.main{padding:18px 8px 35px}.page-head{display:block}.top-actions{margin-top:12px}.filters{grid-template-columns:1fr 1fr}.filters input:first-child{grid-column:1/-1}.top-actions button{flex:1}.smart-summary{gap:9px}.list-head{padding-left:12px;padding-right:12px}.filters{padding-left:12px;padding-right:12px}.table-head,.row{padding-left:12px;padding-right:12px}}
+</style>
 </head>
 <body>
 <header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="customers.html">Live Demo</a></header>
@@ -26,21 +108,21 @@
 </aside>
 
 <main class="main">
-<div class="page-head"><div><div class="eyebrow">CUSTOMER WORKSPACE · JAIPUR</div><h1>Customers</h1><p>हर enquiry, requirement और next action — एक clear workspace में.</p></div>
+<div class="page-head"><div><div class="eyebrow">CUSTOMER WORKSPACE · JAIPUR</div><h1>Customers</h1><p>अपने customers की पूरी journey एक जगह track करें.</p></div>
 <div class="top-actions"><button onclick="document.getElementById('csvFile').click()">↑ Import</button><button onclick="exportCSV()">↓ Export</button><button class="primary" onclick="openCustomerModal()">＋ Add Customer</button><input id="csvFile" class="file-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="importCSV(event)"></div></div>
 
-<div class="kpis">
-<div class="kpi"><span class="label">Total Customers / Leads</span><strong id="total">7</strong><small>Everything in one place</small></div>
-<div class="kpi today"><span class="label">Today's Follow-ups</span><strong id="today">2</strong><small>Calls, WhatsApp & meetings</small></div>
-<div class="kpi hot"><span class="label">Interested / Hot</span><strong id="hot">3</strong><small>Leads close to the next step</small></div>
-<div class="kpi good"><span class="label">Overdue</span><strong id="overdue">1</strong><small>Follow-ups that need attention</small></div>
+<div class="smart-summary" aria-label="CRM summary">
+  <span><b id="total">7</b> contacts</span><i></i>
+  <span><b id="today">2</b> follow-ups today</span><i></i>
+  <span><b id="hot">3</b> hot leads</span><i></i>
+  <span><b id="overdue">1</b> overdue</span>
 </div>
 
 <div class="workspace">
 <section class="list-card">
-<div class="list-head"><b>Customer workspace</b><span id="count">7 records</span></div>
+<div class="list-head"><div><b>All Customers / Leads</b><small>Manage your customers, requirements and follow-ups.</small></div><span id="count">7 records</span></div>
 <div class="filters"><input id="search" placeholder="Search name, number, area, requirement, notes..." oninput="render()"><select id="area" onchange="render()"><option value="">All Areas / Locations</option><option>Jhotwara</option><option>Mansarovar</option><option>Vaishali Nagar</option><option>Malviya Nagar</option><option>Murlipura</option><option>Sirsi Road</option></select><select id="type" onchange="render()"><option value="">All Types</option><option>Customer</option><option>Seller</option><option>Broker</option><option>Prospect</option></select><select id="statusFilter" onchange="render()"><option value="">All Statuses</option><option>New</option><option>Contacted</option><option>Interested</option><option>Follow-up</option><option>Site Visit</option><option>Negotiation</option><option>Won</option><option>Overdue</option></select><select id="productFilter" onchange="render()"><option value="">All Products / Services</option><option>House</option><option>Plot</option><option>Flat</option><option>Office Space</option><option>Commercial Space</option><option>Coaching</option></select><input id="minBudget" class="budget-filter" placeholder="Min Budget" oninput="render()"><input id="maxBudget" class="budget-filter" placeholder="Max Budget" oninput="render()"><select id="followFilter" onchange="render()"><option value="">Follow-up Date</option><option value="today">Today</option><option value="overdue">Overdue</option><option value="upcoming">Upcoming</option></select><button class="reset-filter" onclick="resetFilters()">↻ Reset Filters</button></div>
-<div class="table-scroll"><div class="table-head"><div>☐</div><div>Lead</div><div>Requirement</div><div>Location</div><div>Value</div><div>Status</div><div>Next Action</div><div>Actions</div></div><div id="rows"></div></div>
+<div class="table-scroll"><div class="table-head"><div>☐</div><div>Type</div><div>Name</div><div>Mobile</div><div>Area / Location</div><div>Product / Service</div><div>Budget</div><div>Requirement</div><div>Status</div><div>Next Follow-up</div><div>Added On</div><div>Actions</div></div><div id="rows"></div></div>
 </section>
 <div class="profile-card" id="profile"></div>
 </div>
@@ -92,7 +174,7 @@ function render(){
  document.getElementById("today").textContent=customers.filter(c=>c.next.toLowerCase().includes("today")).length;
  document.getElementById("hot").textContent=customers.filter(c=>["Interested","Site Visit","Negotiation"].includes(c.status)).length;
  document.getElementById("overdue").textContent=customers.filter(c=>c.status==="Overdue").length;
- document.getElementById("rows").innerHTML=arr.length?arr.map(({c,i})=>`<div class="row ${i===selected?"selected":""}" onclick="select(${i})"><div class="check"><input type="checkbox" onclick="event.stopPropagation()"></div><div class="person compact-person"><div class="avatar">${ini(c.name)}</div><div><span class="type-pill ${String(c.type||"Customer").toLowerCase().replace(/\s+/g,"-")}">${c.type||"Customer"}</span><b>${c.name}</b><small>${c.phone||"Mobile not added"}</small></div></div><div class="cell requirement-cell">${c.req||"New enquiry"}<small>${c.detail||"Requirement details"}</small></div><div class="cell">${c.area||"—"}<small>${c.city||"Jaipur"}</small></div><div class="cell budget-cell">${c.budget||"—"}<small>${c.last||"Added recently"}</small></div><div class="cell"><span class="status ${c.status.toLowerCase().replace(/\s+/g,"-")}">${c.status}</span></div><div class="cell follow-cell">${c.next||"—"}<small>Next action</small></div><div class="actions compact-actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa(${i})">WA</button><button title="Edit" onclick="event.stopPropagation();editCustomerAt(${i})">Edit</button><button class="danger" title="Delete" onclick="event.stopPropagation();deleteCustomerAt(${i})">Delete</button></div></div>`).join(""):'<div class="empty-state"><b>No customers found</b>Try another search or filter.</div>';
+ document.getElementById("rows").innerHTML=arr.length?arr.map(({c,i})=>`<div class="row ${i===selected?"selected":""}" onclick="select(${i})"><div class="check"><input type="checkbox" onclick="event.stopPropagation()"></div><div><span class="type-pill ${String(c.type||"Customer").toLowerCase().replace(/\s+/g,"-")}">${c.type||"Customer"}</span></div><div class="person compact-person"><div class="avatar">${ini(c.name)}</div><div><b>${c.name}</b></div></div><div class="cell phone-cell">${c.phone||"—"}</div><div class="cell">${c.area||"—"}<small>${c.city||"Jaipur"}</small></div><div class="cell">${c.detail||c.req||"—"}</div><div class="cell budget-cell">${c.budget||"—"}</div><div class="cell requirement-cell">${c.req||"—"}</div><div class="cell"><span class="status ${c.status.toLowerCase().replace(/\s+/g,"-")}">${c.status}</span></div><div class="cell follow-cell">${c.next||"—"}</div><div class="cell added-cell">${c.last||"—"}</div><div class="actions compact-actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa(${i})">WA</button><button title="Edit" onclick="event.stopPropagation();editCustomerAt(${i})">Edit</button><button class="danger" title="Delete" onclick="event.stopPropagation();deleteCustomerAt(${i})">Delete</button></div></div>`).join(""):'<div class="empty-state"><b>No customers found</b>Try another search or filter.</div>';
  renderProfile();
 }
 function select(i){selected=i;render();openProfile()}
