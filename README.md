@@ -11,3 +11,7 @@ Existing pages and JavaScript functionality are preserved.
 
 ## Customer Workspace Luxury V2
 Customer workspace typography, contrast, density, shadows and modal hierarchy are upgraded while the Admin Control Center remains intentionally unchanged.
+
+
+## Customer Workspace Luxury V3
+Stronger contrast, larger typography, deeper shadows, denser customer rows and a more executive premium workspace. Admin remains unchanged.
