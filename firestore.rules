@@ -1,0 +1,48 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "saif.anwar1618@gmail.com";
+    }
+
+    match /crmContacts/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /publicRequirements/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /publicSubmissions/{docId} {
+      allow create: if request.resource.data.status == "pending"
+        && request.resource.data.source == "Public Website"
+        && request.resource.data.name is string
+        && request.resource.data.mobile is string
+        && request.resource.data.area is string
+        && request.resource.data.propertyType is string
+        && request.resource.data.details is string;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /publicReviews/{docId} {
+      allow read: if resource.data.status == "approved";
+      allow create: if request.resource.data.status == "pending"
+        && request.resource.data.source == "Public Website"
+        && request.resource.data.name is string
+        && request.resource.data.comment is string;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /crmMatches/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
