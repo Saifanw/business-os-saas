@@ -40,7 +40,7 @@
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,getDocs,query,orderBy,onSnapshot,serverTimestamp,writeBatch,setDoc}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,getDocs,query,orderBy,onSnapshot,serverTimestamp,writeBatch,setDoc,getDoc}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const cfg={apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80",measurementId:"G-85D45ENBLK"};
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
 let customers=[],selectedId=null,atype="Call",unsub=null,currentUser=null,businessId=null;
@@ -78,10 +78,61 @@ function exportCSV(){const headers=["Name","Mobile","Business Type","Contact Typ
 async function importCSV(e){const file=e.target.files[0];if(!file)return;try{let rows=[];if(/\.xlsx?$/i.test(file.name)){const data=await file.arrayBuffer(),wb=XLSX.read(data,{type:"array"}),ws=wb.Sheets[wb.SheetNames[0]];rows=XLSX.utils.sheet_to_json(ws,{defval:""})}else{const text=await file.text();rows=parseCSV(text)}if(!rows.length){toast("No customer rows found",true);return}const batch=writeBatch(db),existing=new Set(customers.map(c=>normalizePhone(c.phone)).filter(Boolean));let added=0,dupes=0;for(const r of rows){const name=String(r.Name||r.name||"").trim();if(!name)continue;const phone=String(r.Mobile||r.mobile||"").trim(),norm=normalizePhone(phone);if(norm&&existing.has(norm)){dupes++;continue}const ref=doc(collection(db,"businesses",businessId,"contacts"));batch.set(ref,{name,phone,phoneNormalized:norm,businessName:String(r.Business||r.businessName||""),businessType:String(r["Business Type"]||r.businessType||"Other"),type:String(r.Type||r["Contact Type"]||"Customer"),city:String(r.City||"Jaipur"),area:String(r.Area||""),req:String(r.Requirement||r.requirement||"New enquiry"),requirement:String(r.Requirement||r.requirement||"New enquiry"),detail:String(r.Detail||""),budget:String(r.Budget||""),status:String(r.Status||"New"),source:String(r.Source||"Excel Import"),next:String(r["Next Follow-up"]||r.Followup||"Not set"),last:String(r["Last Contact"]||"Imported"),note:"Imported customer. Add an important note after the first contact.",events:[["Imported","Customer Imported","Imported from CSV/Excel."]],createdAt:serverTimestamp(),updatedAt:serverTimestamp()});if(norm)existing.add(norm);added++}if(added)await batch.commit();toast(added+" imported · "+dupes+" duplicates skipped")}catch(e){toast(e.message||"Import failed",true)}finally{e.target.value=""}}
 function parseCSV(text){const lines=text.replace(/^\ufeff/,"").split(/\r?\n/).filter(Boolean);if(lines.length<2)return[];const parse=line=>{const out=[];let cur="",q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'&&line[i+1]==='"'){cur+='"';i++;continue}if(ch==='"'){q=!q;continue}if(ch===','&&!q){out.push(cur);cur="";continue}cur+=ch}out.push(cur);return out};const h=parse(lines[0]);return lines.slice(1).map(line=>{const v=parse(line),o={};h.forEach((k,i)=>o[k.trim()]=v[i]||"");return o})}
 async function logout(){await signOut(auth)}
-async function ensureWorkspace(u){businessId=u.uid;await setDoc(doc(db,"users",u.uid),{uid:u.uid,email:u.email||"",displayName:u.displayName||"",businessId:u.uid,updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,"businesses",u.uid),{ownerUid:u.uid,ownerEmail:u.email||"",name:"",updatedAt:serverTimestamp()},{merge:true})}
+async function ensureWorkspace(u){
+  businessId=u.uid;
+  const userRef=doc(db,"users",u.uid);
+  const businessRef=doc(db,"businesses",u.uid);
+  const existingUser=await getDoc(userRef);
+  const existingBusiness=await getDoc(businessRef);
+  if(!existingUser?.exists()){
+    await setDoc(userRef,{uid:u.uid,email:u.email||"",displayName:u.displayName||"",businessId:u.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
+  }
+  if(!existingBusiness?.exists() || !existingBusiness.data()?.name){
+    $("obOwner").value=u.displayName||"";
+    $("obBusiness").value="";
+    $("onboardingModal").style.display="grid";
+    await new Promise(resolve=>{
+      $("obSave").onclick=async()=>{
+        const name=$("obBusiness").value.trim();
+        if(!name){$("obMsg").textContent="Business name is required.";$("obMsg").style.display="block";return}
+        const phone=$("obPhone").value.trim();
+        if(phone && !/^[+0-9()\\s-]{7,20}$/.test(phone)){$("obMsg").textContent="Please enter a valid phone number.";$("obMsg").style.display="block";return}
+        $("obSave").disabled=true;$("obSave").textContent="Creating...";
+        try{
+          const profile={ownerUid:u.uid,ownerEmail:u.email||"",ownerName:$("obOwner").value.trim()||u.displayName||"",name,businessType:$("obType").value,phone,whatsapp:phone,city:$("obCity").value.trim(),area:$("obArea").value.trim(),website:$("obWebsite").value.trim(),description:$("obDescription").value.trim(),plan:"trial",trialStatus:"active",createdAt:serverTimestamp(),updatedAt:serverTimestamp()};
+          await setDoc(businessRef,profile,{merge:true});
+          await setDoc(userRef,{uid:u.uid,email:u.email||"",displayName:u.displayName||"",businessId:u.uid,businessName:name,role:"owner",updatedAt:serverTimestamp()},{merge:true});
+          $("onboardingModal").style.display="none";resolve();
+        }catch(e){$("obMsg").textContent=e.message||"Workspace setup failed.";$("obMsg").style.display="block";$("obSave").disabled=false;$("obSave").textContent="Create My Workspace"}
+      };
+    });
+  }
+}
 function subscribe(){if(unsub)unsub();const q=query(collection(db,"businesses",businessId,"contacts"),orderBy("createdAt","desc"));unsub=onSnapshot(q,snap=>{customers=snap.docs.map(d=>({id:d.id,...d.data()}));render()},err=>toast(err.message||"Could not load CRM data",true))}
 $("googleBtn").onclick=async()=>{try{$("authMsg").textContent="Signing in...";await signInWithPopup(auth,provider)}catch(e){$("authMsg").textContent=e.message||"Google sign-in failed."}};
 onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();return}try{$("authMsg").textContent="";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userEmail").textContent=u.email||"";subscribe()}catch(e){$("authMsg").textContent=e.message||"Workspace setup failed."}});
 window.logout=logout;window.openCustomerModal=openCustomerModal;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;
 </script>
+
+<div class="modal" id="onboardingModal" style="display:none;position:fixed;inset:0;background:rgba(9,16,29,.72);backdrop-filter:blur(8px);z-index:9999;place-items:center;padding:18px">
+  <div style="width:min(620px,96vw);max-height:92vh;overflow:auto;background:#fff;border-radius:20px;border:1px solid #e4e9f1;box-shadow:0 35px 100px rgba(0,0,0,.28);padding:26px">
+    <div style="font-size:10px;font-weight:900;letter-spacing:.14em;color:#65748a">BUSINESS OS · FIRST-TIME SETUP</div>
+    <h2 style="margin:7px 0 5px;font-size:25px;letter-spacing:-.6px">Set up your business workspace</h2>
+    <p style="margin:0 0 18px;color:#758196;font-size:11px;line-height:1.55">Aapka private CRM workspace create hoga. Aapke customers aur leads sirf aapke business account ke andar rahenge.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <label style="font-size:9px;font-weight:850;color:#68758a">Business Name*<input id="obBusiness" required style="display:block;width:100%;height:40px;margin-top:5px;border:1px solid #dce3ed;border-radius:9px;padding:0 10px"></label>
+      <label style="font-size:9px;font-weight:850;color:#68758a">Owner / Contact Name<input id="obOwner" style="display:block;width:100%;height:40px;margin-top:5px;border:1px solid #dce3ed;border-radius:9px;padding:0 10px"></label>
+      <label style="font-size:9px;font-weight:850;color:#68758a">Business Type<select id="obType" style="display:block;width:100%;height:40px;margin-top:5px;border:1px solid #dce3ed;border-radius:9px;padding:0 10px"><option>Real Estate</option><option>Education</option><option>Coaching</option><option>Consultancy</option><option>Agency</option><option>Automobile</option><option>Solar</option><option>Healthcare</option><option>Finance</option><option>Insurance</option><option>Retail</option><option>IT / Software</option><option>Services</option><option>Other</option></select></label>
+      <label style="font-size:9px;font-weight:850;color:#68758a">Phone / WhatsApp<input id="obPhone" inputmode="tel" style="display:block;width:100%;height:40px;margin-top:5px;border:1px solid #dce3ed;border-radius:9px;padding:0 10px"></label>
+      <label style="font-size:9px;font-weight:850;color:#68758a">City<input id="obCity" value="Jaipur" style="display:block;width:100%;height:40px;margin-top:5px;border:1px solid #dce3ed;border-radius:9px;padding:0 10px"></label>
+      <label style="font-size:9px;font-weight:850;color:#68758a">Area<input id="obArea" style="display:block;width:100%;height:40px;margin-top:5px;border:1px solid #dce3ed;border-radius:9px;padding:0 10px"></label>
+      <label style="font-size:9px;font-weight:850;color:#68758a;grid-column:1/-1">Website<input id="obWebsite" placeholder="https://" style="display:block;width:100%;height:40px;margin-top:5px;border:1px solid #dce3ed;border-radius:9px;padding:0 10px"></label>
+      <label style="font-size:9px;font-weight:850;color:#68758a;grid-column:1/-1">Business Description<textarea id="obDescription" rows="3" style="display:block;width:100%;margin-top:5px;border:1px solid #dce3ed;border-radius:9px;padding:10px;resize:vertical"></textarea></label>
+    </div>
+    <div id="obMsg" style="display:none;margin-top:10px;color:#c53f38;font-size:10px;font-weight:800"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+      <button id="obSave" style="height:40px;padding:0 18px;border:0;border-radius:10px;background:#101b31;color:#fff;font-weight:850;cursor:pointer">Create My Workspace</button>
+    </div>
+  </div>
+</div>
 </body></html>

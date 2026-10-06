@@ -1,31 +1,55 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn() { return request.auth != null; }
-    function ownsBusiness(businessId) { return signedIn() && request.auth.uid == businessId; }
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownsBusiness(businessId) {
+      return signedIn() && request.auth.uid == businessId;
+    }
+
+    // Super-admin access is granted by a document created manually in
+    // businesses-os-saas-traking Firestore:
+    // /admins/<ADMIN_UID>
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      // Never allow a client to create its own admin record.
+      allow write: if false;
+    }
 
     match /users/{uid} {
-      allow read, write: if signedIn() && request.auth.uid == uid;
+      allow read, write: if signedIn() && request.auth.uid == uid || isAdmin();
     }
 
     match /businesses/{businessId} {
-      allow read, write: if ownsBusiness(businessId);
+      allow read: if ownsBusiness(businessId) || isAdmin();
+      allow create, update, delete: if ownsBusiness(businessId) || isAdmin();
 
       match /contacts/{contactId} {
-        allow read, create, update, delete: if ownsBusiness(businessId);
+        allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
+
         match /followups/{followupId} {
-          allow read, create, update, delete: if ownsBusiness(businessId);
+          allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
         }
       }
 
       match /deals/{dealId} {
-        allow read, create, update, delete: if ownsBusiness(businessId);
+        allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
       }
+
       match /prospects/{prospectId} {
-        allow read, create, update, delete: if ownsBusiness(businessId);
+        allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
       }
+
       match /settings/{settingId} {
-        allow read, create, update, delete: if ownsBusiness(businessId);
+        allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
       }
     }
   }
