@@ -23,3 +23,19 @@ Customer list is presented as a full-width executive data table with compact row
 
 ## Admin Full-Width V5
 The large dark navigation rail is hidden on the Admin Control Center so the dashboard and contact table use the full browser width.
+
+
+## Product V1 — Ready-to-Sell Architecture
+
+Business OS is now structured as a reusable SaaS product rather than a separate website per customer. Admin can provision a business, assign an owner email and template, and the owner claims the workspace by signing in with that email.
+
+### Templates
+- Property — enquiry to site visit to negotiation to won
+- Coaching — enquiry to counselling to demo class to admission
+- General — lead to follow-up to visit/demo to won
+
+### Customer flow
+Public site → Live Demo → customer agrees → Admin creates Business → owner signs in → assigned workspace opens.
+
+### Important
+Deploy `firestore.rules` to the Firebase project before using the new provisioning flow. Test with two separate Google accounts before onboarding real customers.

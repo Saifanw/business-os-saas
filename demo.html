@@ -121,7 +121,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-se
   .detail-header{padding:18px}
 }
 </style>
-</head>
+<style>.template-btn{height:36px;padding:0 12px;border:1px solid #dce3ed;background:#fff;border-radius:9px;font-size:9px;font-weight:900;color:#334155;cursor:pointer}.template-btn.active{background:#142039;color:#fff;border-color:#142039}</style></head>
 <body>
 <header class="nav">
 <a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a>
@@ -130,6 +130,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-se
 </header>
 
 <main class="demo-shell">
+<section style="background:#fff;border:1px solid #e1e7ef;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(20,32,57,.05)"><div style="display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap"><div><div class="eyebrow">CHOOSE A BUSINESS</div><h2 style="margin:5px 0 3px;font-size:18px">See the same Business OS adapted to your business.</h2><p style="margin:0;color:#71809a;font-size:10px">This is sample data only — nothing here touches a real customer account.</p></div><div style="display:flex;gap:7px;flex-wrap:wrap"><button class="template-btn active" data-template="property" onclick="selectTemplate('property')">🏠 Property</button><button class="template-btn" data-template="coaching" onclick="selectTemplate('coaching')">🎓 Coaching</button><button class="template-btn" data-template="general" onclick="selectTemplate('general')">🏪 General</button></div></div></section>
 <section class="demo-top">
 <div><div class="eyebrow">BUSINESS OS · INTERACTIVE PRODUCT DEMO</div><h1>Ek customer. Puri story. Ek workspace.</h1><p>WhatsApp, Call, Email, enquiry, follow-up, notes aur deal — sab ek jagah. <b>Try the interface.</b></p></div>
 <div class="demo-actions"><button onclick="showToast('Demo data reset ho gaya')">↻ Reset</button><button class="primary" onclick="openModal()">+ Add Demo Lead</button></div>
@@ -250,6 +251,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-se
 
 <div class="modal" id="modal"><div class="modalbox"><h2>Add a demo lead</h2><p>Ye sirf interactive demo data hai. Real customer database mein kuch save nahi hoga.</p><div class="formgrid"><input id="newName" placeholder="Customer name"><input id="newMobile" placeholder="Mobile"><input id="newLocation" placeholder="Area / City"><input id="newBudget" placeholder="Budget"><input class="wide" id="newRequirement" placeholder="Requirement"><select class="wide" id="newStatus"><option>New</option><option>Interested</option><option>Site Visit</option></select></div><div class="modal-actions"><button onclick="closeModal()">Cancel</button><button class="primary" onclick="addLead()">Add to demo</button></div></div></div>
 <div class="toast" id="toast"></div>
+<script src="templates.js"></script>
 <script>
 const base=[
 {name:'Rahul Sharma',mobile:'9876543210',location:'Jhotwara, Jaipur',req:'Residential Plot',budget:'₹30–35 Lakh',status:'Interested',source:'Website',next:'Today · 10:30 AM',initials:'RS',createdAt:'2026-10-06T10:02:00',note:'Customer wants Jhotwara / nearby areas. Budget confirmed.',activity:'WhatsApp sent · Asked for 2 matching options.'},
@@ -262,6 +264,20 @@ const base=[
 
 let leads=[...base];
 let selected=0;
+let currentTemplate='property';
+function selectTemplate(id){
+  currentTemplate=id;
+  document.querySelectorAll('.template-btn').forEach(b=>b.classList.toggle('active',b.dataset.template===id));
+  const t=getBusinessTemplate(id);
+  const title=document.querySelector('.demo-top h1');
+  const copy=document.querySelector('.demo-top p');
+  if(title) title.textContent=id==='property'?'Har property enquiry ki puri story. Ek workspace.':id==='coaching'?'Har student enquiry se admission tak. Ek workspace.':'Har business lead se sale tak. Ek workspace.';
+  if(copy) copy.innerHTML=`${t.icon} <b>${esc(t.name)}</b> — enquiries, follow-ups, customers aur ${esc(t.labels.deal.toLowerCase())} ek jagah.`;
+  const k=document.querySelectorAll('.kpi');
+  const vals=id==='property'?['128','12','7','₹24.8L','21%']:id==='coaching'?['86','18','14','₹6.4L','27%']:['64','9','11','₹8.2L','24%'];
+  k.forEach((el,i)=>{const strong=el.querySelector('strong');if(strong)strong.textContent=vals[i]||strong.textContent;});
+  showToast(t.name+' demo loaded');
+}
 
 function render(){
   const q=document.getElementById('search').value.toLowerCase().trim();
@@ -400,6 +416,7 @@ document.addEventListener('keydown',e=>{
   }
 });
 
+selectTemplate('property');
 render();
 </script>
 </body></html>

@@ -37,13 +37,14 @@
 <div class="modal" id="modal"><div class="modal-box"><h2>Add activity</h2><p>Customer ki journey mein naya event add karein.</p><div class="types"><button data-type="Call" onclick="typePick(this)">📞 Call</button><button data-type="WhatsApp" onclick="typePick(this)">💬 WhatsApp</button><button data-type="Email" onclick="typePick(this)">✉️ Email</button><button data-type="Meeting" onclick="typePick(this)">🤝 Meeting</button><button data-type="Site Visit" onclick="typePick(this)">🏠 Visit</button><button data-type="Note" onclick="typePick(this)">📝 Note</button><button data-type="Follow-up" onclick="typePick(this)">📅 Follow-up</button><button data-type="Deal Won" onclick="typePick(this)">🏆 Won</button></div><label>Date<input id="adate" type="date"></label><label>Time<input id="atime" type="time"></label><label>Notes<textarea id="anote" rows="3" placeholder="What happened?"></textarea></label><div class="modal-foot"><button onclick="closeModal()">Cancel</button><button class="save" onclick="saveActivity()">Save activity</button></div></div></div>
 <div id="toast" class="save-state hidden"></div>
 
+<script src="templates.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,getDocs,query,orderBy,onSnapshot,serverTimestamp,writeBatch,setDoc,getDoc}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,getDocs,query,orderBy,onSnapshot,serverTimestamp,writeBatch,setDoc,getDoc,where}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const cfg={apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80",measurementId:"G-85D45ENBLK"};
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
-let customers=[],selectedId=null,atype="Call",unsub=null,currentUser=null,businessId=null;
+let customers=[],selectedId=null,atype="Call",unsub=null,currentUser=null,businessId=null,businessProfile=null;
 const $=id=>document.getElementById(id), ini=n=>String(n||"?").trim().split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase(), esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
 function toast(msg,error=false){$("toast").textContent=msg;$("toast").classList.remove("hidden","toast-error");if(error)$("toast").classList.add("toast-error");setTimeout(()=>$("toast").classList.add("hidden"),2400)}
 function todayISO(){return new Date().toISOString().slice(0,10)}
@@ -79,35 +80,44 @@ async function importCSV(e){const file=e.target.files[0];if(!file)return;try{let
 function parseCSV(text){const lines=text.replace(/^\ufeff/,"").split(/\r?\n/).filter(Boolean);if(lines.length<2)return[];const parse=line=>{const out=[];let cur="",q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'&&line[i+1]==='"'){cur+='"';i++;continue}if(ch==='"'){q=!q;continue}if(ch===','&&!q){out.push(cur);cur="";continue}cur+=ch}out.push(cur);return out};const h=parse(lines[0]);return lines.slice(1).map(line=>{const v=parse(line),o={};h.forEach((k,i)=>o[k.trim()]=v[i]||"");return o})}
 async function logout(){await signOut(auth)}
 async function ensureWorkspace(u){
-  businessId=u.uid;
-  const userRef=doc(db,"users",u.uid);
-  const businessRef=doc(db,"businesses",u.uid);
+  const userRef=doc(db,'users',u.uid);
   const existingUser=await getDoc(userRef);
-  const existingBusiness=await getDoc(businessRef);
-  if(!existingUser?.exists()){
-    await setDoc(userRef,{uid:u.uid,email:u.email||"",displayName:u.displayName||"",businessId:u.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
+  let assignedId=existingUser.exists()?existingUser.data()?.businessId:null;
+
+  // New SaaS onboarding: an Admin can pre-create a business using the owner's email.
+  if(!assignedId){
+    const pending=await getDocs(query(collection(db,'businesses'),where('ownerEmail','==',(u.email||'').toLowerCase())));
+    const candidate=pending.docs.find(d=>!d.data()?.ownerUid || d.data()?.ownerUid===u.uid);
+    if(candidate){
+      assignedId=candidate.id;
+      await updateDoc(doc(db,'businesses',assignedId),{ownerUid:u.uid,status:'active',onboardingStatus:'active',updatedAt:serverTimestamp()});
+      await setDoc(userRef,{uid:u.uid,email:u.email||'',displayName:u.displayName||'',businessId:assignedId,businessName:candidate.data()?.name||'',role:'owner',templateId:candidate.data()?.templateId||'general',updatedAt:serverTimestamp()},{merge:true});
+    }
   }
-  if(!existingBusiness?.exists() || !existingBusiness.data()?.name){
-    $("obOwner").value=u.displayName||"";
-    $("obBusiness").value="";
-    $("onboardingModal").style.display="grid";
-    await new Promise(resolve=>{
-      $("obSave").onclick=async()=>{
-        const name=$("obBusiness").value.trim();
-        if(!name){$("obMsg").textContent="Business name is required.";$("obMsg").style.display="block";return}
-        const phone=$("obPhone").value.trim();
-        if(phone && !/^[+0-9()\\s-]{7,20}$/.test(phone)){$("obMsg").textContent="Please enter a valid phone number.";$("obMsg").style.display="block";return}
-        $("obSave").disabled=true;$("obSave").textContent="Creating...";
-        try{
-          const profile={ownerUid:u.uid,ownerEmail:u.email||"",ownerName:$("obOwner").value.trim()||u.displayName||"",name,businessType:$("obType").value,phone,whatsapp:phone,city:$("obCity").value.trim(),area:$("obArea").value.trim(),website:$("obWebsite").value.trim(),description:$("obDescription").value.trim(),plan:"trial",trialStatus:"active",createdAt:serverTimestamp(),updatedAt:serverTimestamp()};
-          await setDoc(businessRef,profile,{merge:true});
-          await setDoc(userRef,{uid:u.uid,email:u.email||"",displayName:u.displayName||"",businessId:u.uid,businessName:name,role:"owner",updatedAt:serverTimestamp()},{merge:true});
-          $("onboardingModal").style.display="none";resolve();
-        }catch(e){$("obMsg").textContent=e.message||"Workspace setup failed.";$("obMsg").style.display="block";$("obSave").disabled=false;$("obSave").textContent="Create My Workspace"}
-      };
-    });
+
+  // Backward-compatible self-serve workspace for users who are not provisioned by Admin.
+  if(!assignedId){
+    assignedId=u.uid;
+    const businessRef=doc(db,'businesses',assignedId);
+    const existingBusiness=await getDoc(businessRef);
+    if(!existingUser.exists()) await setDoc(userRef,{uid:u.uid,email:u.email||'',displayName:u.displayName||'',businessId:assignedId,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
+    if(!existingBusiness.exists() || !existingBusiness.data()?.name){
+      $('obOwner').value=u.displayName||'';$('obBusiness').value='';$('onboardingModal').style.display='grid';
+      await new Promise(resolve=>{$('obSave').onclick=async()=>{const name=$('obBusiness').value.trim();if(!name){$('obMsg').textContent='Business name is required.';$('obMsg').style.display='block';return}const phone=$('obPhone').value.trim();$('obSave').disabled=true;$('obSave').textContent='Creating...';try{const type=$('obType').value;const template=/real estate|property/i.test(type)?'property':/education|coaching/i.test(type)?'coaching':'general';const profile={ownerUid:u.uid,ownerEmail:(u.email||'').toLowerCase(),ownerName:$('obOwner').value.trim()||u.displayName||'',name,businessType:type,templateId:template,phone,whatsapp:phone,city:$('obCity').value.trim(),area:$('obArea').value.trim(),website:$('obWebsite').value.trim(),description:$('obDescription').value.trim(),plan:'trial',status:'active',onboardingStatus:'active',createdAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(businessRef,profile,{merge:true});await setDoc(userRef,{uid:u.uid,email:u.email||'',displayName:u.displayName||'',businessId:assignedId,businessName:name,role:'owner',templateId:template,updatedAt:serverTimestamp()},{merge:true});$('onboardingModal').style.display='none';resolve()}catch(e){$('obMsg').textContent=e.message||'Workspace setup failed.';$('obMsg').style.display='block';$('obSave').disabled=false;$('obSave').textContent='Create My Workspace'}}});
+    }
   }
+
+  businessId=assignedId;
+  const businessSnap=await getDoc(doc(db,'businesses',businessId));
+  businessProfile=businessSnap.exists()?businessSnap.data():{};
+  const template=getBusinessTemplate(businessProfile.templateId);
+  const name=businessProfile.name||'Your Business';
+  document.title=name+' — Business OS';
+  const head=document.querySelector('.page-head h1'); if(head) head.textContent=name;
+  const desc=document.querySelector('.page-head p'); if(desc) desc.textContent=`${template.icon} ${template.name} · Customers, enquiries and follow-ups in one workspace.`;
+  await setDoc(userRef,{uid:u.uid,email:u.email||'',displayName:u.displayName||'',businessId,businessName:name,role:'owner',templateId:businessProfile.templateId||'general',updatedAt:serverTimestamp()},{merge:true});
 }
+
 function subscribe(){if(unsub)unsub();const q=query(collection(db,"businesses",businessId,"contacts"),orderBy("createdAt","desc"));unsub=onSnapshot(q,snap=>{customers=snap.docs.map(d=>({id:d.id,...d.data()}));render()},err=>toast(err.message||"Could not load CRM data",true))}
 $("googleBtn").onclick=async()=>{try{$("authMsg").textContent="Signing in...";await signInWithPopup(auth,provider)}catch(e){$("authMsg").textContent=e.message||"Google sign-in failed."}};
 onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();return}try{$("authMsg").textContent="";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userEmail").textContent=u.email||"";subscribe()}catch(e){$("authMsg").textContent=e.message||"Workspace setup failed."}});
