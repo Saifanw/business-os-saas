@@ -335,7 +335,10 @@ async function changeStage(){
     });
 
     // Won/Paid contacts become a deal/admission record.
+    // Keep the deal tied to the same contact ID so repeated stage updates
+    // never create duplicate deals.
     if(["Won","Paid"].includes(nextStage)){
+      const amount = parseAmount(c.budget||c.value||0);
       await setDoc(
         doc(db,"businesses",businessId,"deals",c.id),
         {
@@ -344,14 +347,37 @@ async function changeStage(){
           customerName:c.name||"",
           businessType:c.businessType||"",
           type:c.type||"Customer",
-          value:c.budget||"",
-          stage:nextStage,
+          dealName:c.req||c.requirement||"Deal",
+          amount,
+          value:amount?amount:(c.budget||""),
+          paymentStatus:"Pending",
+          received:0,
+          closedAtISO:new Date().toISOString().slice(0,10),
+          closedAt:new Date().toISOString().slice(0,10),
+          stage:"Won",
           status:"won",
           source:c.source||"",
           location:(c.area?c.area+", ":"")+ (c.city||""),
+          notes:c.note||c.notes||"",
           updatedAt:serverTimestamp(),
           createdAt:c.createdAt||serverTimestamp()
         },
+        {merge:true}
+      );
+    } else if(["Lost"].includes(nextStage) && ["Won","Paid"].includes(previousStage)){
+      // If a previously won contact is moved to Lost, keep history but
+      // remove it from active revenue totals until it is won again.
+      await setDoc(
+        doc(db,"businesses",businessId,"deals",c.id),
+        {status:"lost",stage:"Lost",updatedAt:serverTimestamp()},
+        {merge:true}
+      );
+    } else if(!["Won","Paid"].includes(nextStage) && ["Won","Paid"].includes(previousStage)){
+      // Re-opened opportunity: retain the deal history without counting it
+      // as a closed-won deal. It will automatically become Won again later.
+      await setDoc(
+        doc(db,"businesses",businessId,"deals",c.id),
+        {status:"reopened",stage:nextStage,updatedAt:serverTimestamp()},
         {merge:true}
       );
     }
