@@ -19,7 +19,7 @@
 <body>
 <header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
 
-<section id="authScreen" class="auth-screen"><div class="auth-card"><div class="auth-mark">B</div><h1>Customer Login</h1><p>Apne Business OS workspace mein enter karne ke liye Google se sign in karein. Aapke customers, leads aur follow-ups private rahenge.</p><button id="googleBtn" class="google-btn">🔐 Continue with Google</button><div id="authMsg" class="auth-msg"></div></div></section>
+<section id="authScreen" class="auth-screen"><div class="auth-card"><div class="auth-mark">B</div><h1>Customer Login</h1><p>Apne Business OS workspace mein enter karne ke liye Google se sign in karein. Aapke customers, leads aur follow-ups private rahenge.</p><button type="button" id="googleBtn" class="google-btn">🔐 Continue with Google</button><div id="authMsg" class="auth-msg"></div></div></section>
 
 <main id="app" class="customers-shell hidden">
 <div class="customers-page">
@@ -40,7 +40,7 @@
 <script src="templates.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import{getAuth,GoogleAuthProvider,signInWithRedirect,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,getDocs,query,orderBy,onSnapshot,serverTimestamp,writeBatch,setDoc,getDoc,where}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const cfg={apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80",measurementId:"G-85D45ENBLK"};
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
@@ -119,7 +119,7 @@ async function ensureWorkspace(u){
 }
 
 function subscribe(){if(unsub)unsub();const q=query(collection(db,"businesses",businessId,"contacts"),orderBy("createdAt","desc"));unsub=onSnapshot(q,snap=>{customers=snap.docs.map(d=>({id:d.id,...d.data()}));render()},err=>toast(err.message||"Could not load CRM data",true))}
-$("googleBtn").onclick=async()=>{try{$("authMsg").textContent="Signing in...";await signInWithPopup(auth,provider)}catch(e){$("authMsg").textContent=e.message||"Google sign-in failed."}};
+$("googleBtn").onclick=async()=>{try{$("authMsg").textContent="Signing in...";await signInWithRedirect(auth,provider)}catch(e){$("authMsg").textContent=e.message||"Google sign-in failed."}};
 onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();return}try{$("authMsg").textContent="";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userEmail").textContent=u.email||"";subscribe()}catch(e){$("authMsg").textContent=e.message||"Workspace setup failed."}});
 window.logout=logout;window.openCustomerModal=openCustomerModal;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;
 </script>
