@@ -36,6 +36,11 @@
 .email-compose{display:none;position:fixed;inset:0;background:#0b1224a8;backdrop-filter:blur(5px);z-index:250;align-items:center;justify-content:center;padding:20px}.email-compose.show{display:flex}.email-compose-card{width:min(680px,94vw);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 30px 90px #00000045}.email-compose-head{padding:20px 22px 14px;border-bottom:1px solid #e8edf3;display:flex;justify-content:space-between;align-items:flex-start}.email-compose-head h2{margin:0;font-size:19px}.email-compose-head p{margin:5px 0 0;color:#7b8798;font-size:10px}.email-compose-close{border:1px solid #dce3eb;background:#fff;border-radius:8px;width:32px;height:32px;cursor:pointer}.email-compose-body{padding:18px 22px}.email-compose-meta{display:flex;gap:10px;align-items:center;background:#f6f8fb;border:1px solid #e5eaf0;border-radius:11px;padding:11px 12px;margin-bottom:14px}.email-compose-avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#eef2ff;color:#315df6;font-weight:900;font-size:11px}.email-compose-meta b{display:block;font-size:12px}.email-compose-meta small{display:block;color:#7d8798;font-size:10px;margin-top:2px}.email-compose-field{margin-top:13px}.email-compose-field label{display:block;font-size:10px;font-weight:850;color:#526077;margin-bottom:6px}.email-compose-field select,.email-compose-field input,.email-compose-field textarea{width:100%;border:1px solid #dce3eb;border-radius:10px;padding:11px;font-size:12px;outline:none;background:#fff}.email-compose-field textarea{min-height:190px;resize:vertical;line-height:1.5}.email-compose-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 22px 20px}.email-compose-foot button{height:40px;border:1px solid #dce3eb;background:#fff;border-radius:9px;padding:0 14px;font-size:10px;font-weight:850;cursor:pointer}.email-compose-foot .email-send{background:#315df6;color:#fff;border-color:#315df6}.email-char{font-size:9px;color:#8a94a4;text-align:right;margin-top:4px}.email-missing{padding:12px;background:#fff5f3;border:1px solid #f2d2cd;border-radius:9px;color:#8f2923;font-size:10px;margin-top:12px}
 
 </style>
+
+<style>
+.finder-shell{display:grid;gap:14px}.finder-hero{background:linear-gradient(135deg,#101b31,#1d3158);color:#fff;border-radius:18px;padding:22px;box-shadow:0 16px 40px rgba(16,27,49,.16)}.finder-hero h2{margin:3px 0 6px;font-size:24px;letter-spacing:-.5px}.finder-hero p{margin:0;color:#c8d2e3;font-size:11px;line-height:1.55}.finder-search{margin-top:18px;background:#fff;border:1px solid #e1e7ef;border-radius:16px;padding:16px;box-shadow:0 10px 28px rgba(22,34,56,.06)}.finder-grid{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr;gap:10px}.finder-field label{display:block;font-size:9px;font-weight:850;color:#65748a;margin-bottom:5px}.finder-field input,.finder-field select{width:100%;height:40px;border:1px solid #dce3ed;border-radius:9px;padding:0 10px;background:#fff;color:#172033;font-size:11px;outline:none}.finder-field input:focus,.finder-field select:focus{border-color:#315df6;box-shadow:0 0 0 3px #315df615}.finder-actions{display:flex;gap:8px;align-items:center;margin-top:11px;flex-wrap:wrap}.finder-primary{height:40px;padding:0 16px;border:0;border-radius:9px;background:#315df6;color:#fff;font-weight:850;cursor:pointer}.finder-secondary{height:40px;padding:0 14px;border:1px solid #dce3ed;border-radius:9px;background:#fff;color:#1b2940;font-weight:800;cursor:pointer}.finder-note{font-size:9px;color:#7b8799}.finder-panels{display:grid;grid-template-columns:1fr 1fr;gap:14px}.finder-panel{background:#fff;border:1px solid #e1e7ef;border-radius:16px;overflow:hidden}.finder-panel-head{padding:14px 16px;border-bottom:1px solid #edf0f4;display:flex;justify-content:space-between;align-items:center}.finder-panel-head h3{margin:0;font-size:13px}.finder-panel-head p{margin:3px 0 0;color:#7a8799;font-size:9px}.finder-count{font-size:9px;font-weight:900;background:#eef3ff;color:#315df6;padding:5px 8px;border-radius:999px}.finder-results{padding:8px}.finder-result{display:flex;justify-content:space-between;gap:10px;padding:12px;border-bottom:1px solid #eef1f5}.finder-result:last-child{border-bottom:0}.finder-result b{font-size:11px}.finder-result small{display:block;color:#7a8799;font-size:9px;margin-top:3px}.finder-result-actions{display:flex;gap:5px;align-items:center}.finder-result-actions button{height:30px;padding:0 9px;border:1px solid #dce3ed;border-radius:8px;background:#fff;font-size:9px;font-weight:850;cursor:pointer}.finder-result-actions .map{background:#edf3ff;color:#315df6;border-color:#d9e3ff}.finder-result-actions .add{background:#0b9460;color:#fff;border-color:#0b9460}.finder-empty{padding:28px 15px;text-align:center;color:#8792a2;font-size:10px}.finder-add{margin-top:14px;background:#fff;border:1px solid #e1e7ef;border-radius:16px;padding:16px}.finder-add h3{margin:0 0 10px;font-size:13px}.finder-add-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}.finder-add-grid label{font-size:9px;font-weight:850;color:#65748a}.finder-add-grid input,.finder-add-grid textarea{display:block;width:100%;margin-top:5px;border:1px solid #dce3ed;border-radius:9px;padding:9px 10px;font-size:10px}.finder-add-grid input{height:38px}.finder-add-grid textarea{min-height:65px;resize:vertical}.finder-add-grid .full{grid-column:1/-1}.finder-disclaimer{margin-top:10px;padding:9px 11px;border-radius:9px;background:#f7f9fc;color:#7a8799;font-size:9px;line-height:1.5}
+@media(max-width:900px){.finder-grid{grid-template-columns:1fr 1fr}.finder-panels{grid-template-columns:1fr}.finder-add-grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.finder-grid,.finder-add-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
@@ -53,6 +58,7 @@
   <a class="os-side-link" href="deals.html"><span>✓</span><b>Deals</b><em id="sideDealCount">0</em></a>
   <a class="os-side-link" href="#websiteLeads" onclick="osNav(this,'website')"><span>↗</span><b>Website Leads</b><em id="sideWebLeadCount">0</em></a>
   <a class="os-side-link" href="#whatsappCenter" onclick="osNav(this,'whatsapp')"><span>💬</span><b>WhatsApp</b><em id="sideWaCount">0</em></a>
+  <a class="os-side-link" href="#businessFinder" onclick="osNav(this,'finder')"><span>⌕</span><b>Business Finder</b><em id="sideFinderCount">0</em></a>
   <div class="os-side-divider"></div>
   <div class="os-side-title">MANAGE</div>
   <a class="os-side-link" href="reports.html"><span>▥</span><b>Reports</b></a>
@@ -85,6 +91,31 @@
   <div class="website-lead-center-head"><div><div class="dash-kicker">WEBSITE LEADS</div><h2>Website Enquiries</h2><p>Leads submitted through your public enquiry form. Convert genuine enquiries into private CRM leads.</p></div><div class="website-lead-stats"><span class="website-lead-stat"><b id="webLeadTotal">0</b>Total</span><span class="website-lead-stat"><b id="webLeadNew">0</b>New</span><span class="website-lead-stat"><b id="webLeadConverted">0</b>Converted</span></div></div>
   <div class="website-lead-center-toolbar"><div class="website-lead-tabs"><button id="webLeadTabNew" class="website-lead-tab active" onclick="setWebsiteLeadTab('new')">New</button><button id="webLeadTabConverted" class="website-lead-tab" onclick="setWebsiteLeadTab('converted')">Converted</button><button id="webLeadTabAll" class="website-lead-tab" onclick="setWebsiteLeadTab('all')">All</button></div><div class="lead-copy-box"><input id="leadFormShareUrl" readonly><button onclick="copyLeadFormLink()">Copy Link</button><a id="leadFormCenterLink" class="primary" target="_blank" rel="noopener">Open Form</a></div></div>
   <div id="webLeadsCenterList" class="website-lead-center-list"></div>
+</section>
+<section id="businessFinder" class="view-hidden">
+  <div class="finder-shell">
+    <div class="finder-hero"><div class="dash-kicker" style="color:#a9b9d3">PROSPECTING CENTER</div><h2>Find businesses. Build your pipeline.</h2><p>Search a business category and location on Google Maps, then add genuine prospects to your private CRM. BusinessOS does not scrape or copy private contact data.</p></div>
+    <div class="finder-search">
+      <div class="finder-grid">
+        <div class="finder-field"><label>Business / Keyword</label><input id="finderKeyword" placeholder="e.g. coaching institute"></div>
+        <div class="finder-field"><label>Business Type</label><select id="finderType"><option value="">Any type</option><option>Real Estate</option><option>Coaching</option><option>Education</option><option>Consultancy</option><option>Agency</option><option>Automobile</option><option>Solar</option><option>Healthcare</option><option>Finance</option><option>Insurance</option><option>Retail</option><option>IT / Software</option><option>Services</option></select></div>
+        <div class="finder-field"><label>City</label><input id="finderCity" value="Jaipur"></div>
+        <div class="finder-field"><label>Area / Locality</label><input id="finderArea" placeholder="e.g. Jhotwara"></div>
+      </div>
+      <div class="finder-actions"><button class="finder-primary" onclick="searchBusinessFinder()">⌕ Search on Google Maps</button><button class="finder-secondary" onclick="copyFinderSearch()">Copy Search</button><span class="finder-note">Opens Google Maps in a new tab — you choose which businesses to contact.</span></div>
+      <div class="finder-disclaimer">For a fully automatic in-app business directory, the next upgrade would use an official Places/Business API with its own API key, quota and billing. This version avoids scraping and keeps the workflow safe.</div>
+    </div>
+    <div class="finder-panels">
+      <div class="finder-panel"><div class="finder-panel-head"><div><h3>My Finder Prospects</h3><p>Contacts already added through Business Finder.</p></div><span class="finder-count" id="finderProspectCount">0</span></div><div id="finderProspects" class="finder-results"></div></div>
+      <div class="finder-panel"><div class="finder-panel-head"><div><h3>Quick Search Ideas</h3><p>Useful prospecting searches for local sales.</p></div></div><div class="finder-results" id="finderIdeas"></div></div>
+    </div>
+    <div class="finder-add"><h3>＋ Add a Prospect to CRM</h3><div class="finder-add-grid">
+      <label>Business / Person Name<input id="finderName" placeholder="ABC Coaching Institute"></label><label>Mobile<input id="finderPhone" inputmode="tel" placeholder="9876543210"></label><label>Email<input id="finderEmail" type="email" placeholder="optional@example.com"></label>
+      <label>Business Type<input id="finderBusinessType" placeholder="Coaching / Real Estate..."></label><label>City<input id="finderProspectCity" value="Jaipur"></label><label>Area<input id="finderProspectArea" placeholder="Jhotwara"></label>
+      <label class="full">Website / Google Maps link<input id="finderWebsite" placeholder="https://maps.google.com/... or website"></label>
+      <label class="full">Notes<textarea id="finderNotes" placeholder="What did you notice? Decision maker, requirement, next action..."></textarea></label>
+    </div><div class="finder-actions"><button class="finder-primary" onclick="saveFinderProspect()">＋ Add to CRM</button><span class="finder-note">Saved with Source = Business Finder and Status = New.</span></div></div>
+  </div>
 </section>
 <div id="summary" class="smart-summary"><span><b id="total">0</b> contacts</span><i></i><span><b id="today">0</b> follow-ups today</span><i></i><span><b id="hot">0</b> hot leads</span><i></i><span><b id="overdue">0</b> overdue</span></div><div id="templatePipeline" class="template-pipeline"></div>
 <div class="workspace"><section class="list-card" id="customerList">
@@ -149,14 +180,18 @@ function navView(section){
   const wa=document.getElementById('whatsappCenter');
   const fu=document.getElementById('followupCenter');
   const web=document.getElementById('websiteLeadCenter');
+  const finder=document.getElementById('businessFinder');
   const showDash=section==='overview';
   const showFollow=section==='followups';
   const showWebsite=section==='website';
+  const showFinder=section==='finder';
   if(wa)wa.classList.toggle('view-hidden',section!=='whatsapp');
   if(fu)fu.classList.toggle('view-hidden',!showFollow);
   if(web)web.classList.toggle('view-hidden',!showWebsite);
+  if(finder)finder.classList.toggle('view-hidden',!showFinder);
   if(dash)dash.classList.toggle('view-hidden',showDash);
-  [summary,pipeline,list].forEach(el=>{if(el)el.classList.toggle('view-hidden',showDash||showFollow||showWebsite)});
+  [summary,pipeline,list].forEach(el=>{if(el)el.classList.toggle('view-hidden',showDash||showFollow||showWebsite||showFinder)});
+  if(showFinder)renderBusinessFinder();
   if(showFollow)renderFollowupCenter();
   if(showWebsite)renderWebsiteLeadCenter();
 }
@@ -170,6 +205,7 @@ function osNav(el,section){
   if(section==='deals'){window.location.href='deals.html';return false}
   if(section==='website'){navView('website');window.scrollTo({top:0,behavior:'smooth'});return false}
   if(section==='whatsapp'){navView('whatsapp');document.getElementById('whatsappCenter')?.scrollIntoView({behavior:'smooth',block:'start'});renderWhatsAppCenter();return false}
+  if(section==='finder'){navView('finder');window.scrollTo({top:0,behavior:'smooth'});renderBusinessFinder();return false}
   return false;
 }
 function parseNextDate(value){
@@ -294,6 +330,46 @@ function subscribePublicLeads(){
   if(unsubPublicLeads)unsubPublicLeads();
   const q=query(collection(db,'publicLeads'),where('businessId','==',businessId));
   unsubPublicLeads=onSnapshot(q,snap=>{publicLeads=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>((b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)));renderWebsiteLeads();renderWebsiteLeadCenter()},err=>{console.error('Website leads error',err);renderWebsiteLeads();renderWebsiteLeadCenter();});
+}
+
+
+function finderQuery(){
+  const keyword=String($('finderKeyword')?.value||'').trim();
+  const type=String($('finderType')?.value||'').trim();
+  const city=String($('finderCity')?.value||'').trim();
+  const area=String($('finderArea')?.value||'').trim();
+  return [keyword,type,area,city].filter(Boolean).join(' ');
+}
+function searchBusinessFinder(){
+  const q=finderQuery();
+  if(!q){toast('Enter a business keyword or type first',true);return;}
+  const url='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
+  window.open(url,'_blank','noopener');
+  toast('Google Maps search opened');
+}
+async function copyFinderSearch(){
+  const q=finderQuery(); if(!q){toast('Enter a search first',true);return;}
+  try{await navigator.clipboard.writeText(q);toast('Search copied')}catch(e){toast('Copy failed',true)}
+}
+function renderBusinessFinder(){
+  const list=$('finderProspects'),count=$('finderProspectCount'),side=$('sideFinderCount');
+  const arr=customers.filter(c=>String(c.source||'')==='Business Finder').sort((a,b)=>String(b.createdAt?.seconds||0)-String(a.createdAt?.seconds||0));
+  if(count)count.textContent=arr.length; if(side)side.textContent=arr.length;
+  if(list)list.innerHTML=arr.length?arr.slice(0,12).map(c=>`<div class="finder-result"><div><b>${esc(c.name)}</b><small>${esc(c.businessType||'Business')} · ${esc(c.area||c.city||'')} · ${esc(c.phone||'No mobile')}</small></div><div class="finder-result-actions"><button onclick="selectCustomer('${c.id}')">View</button>${c.website?`<button class="map" onclick="window.open('${String(c.website).replace(/'/g,'%27')}','_blank','noopener')">Open</button>`:''}</div></div>`).join(''):'<div class="finder-empty">No Finder prospects yet.<br>Search Google Maps, identify a genuine prospect, then add it below.</div>';
+  const ideas=[
+    ['Coaching institutes','coaching institute','Jaipur'],['Property dealers','property dealer','Jaipur'],['Real estate consultants','real estate consultant','Jaipur'],['Digital marketing agencies','digital marketing agency','Jaipur'],['Solar companies','solar company','Jaipur'],['Manufacturing companies','manufacturer','Jaipur'],['Computer institutes','computer institute','Jaipur'],['Interior designers','interior designer','Jaipur']
+  ];
+  const box=$('finderIdeas'); if(box)box.innerHTML=ideas.map((x,i)=>`<div class="finder-result"><div><b>${x[0]}</b><small>${x[1]} ${x[2]}</small></div><div class="finder-result-actions"><button class="map" onclick="useFinderIdea('${x[1]}','${x[2]}')">Search</button></div></div>`).join('');
+}
+function useFinderIdea(keyword,city){$('finderKeyword').value=keyword;$('finderType').value='';$('finderCity').value=city;$('finderArea').value='';searchBusinessFinder()}
+async function saveFinderProspect(){
+  const name=String($('finderName')?.value||'').trim(); if(!name){toast('Business / Person name is required',true);return;}
+  const phone=String($('finderPhone')?.value||'').trim(),norm=normalizePhone(phone),email=String($('finderEmail')?.value||'').trim();
+  const city=String($('finderProspectCity')?.value||'').trim()||'Jaipur',area=String($('finderProspectArea')?.value||'').trim();
+  const businessType=String($('finderBusinessType')?.value||'').trim()||'Prospect';
+  const website=String($('finderWebsite')?.value||'').trim(),notes=String($('finderNotes')?.value||'').trim();
+  const data={name,phone,phoneNormalized:norm,email,businessName:name,businessType,type:'Prospect',city,area,req:'New prospect',requirement:'New prospect',detail:'',budget:'',status:'New',source:'Business Finder',website,notes,note:notes||'Prospect added from Business Finder.',next:'Not set',last:'Finder added',events:[{date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · Now',type:'Prospect Added',note:'Added through Business Finder.'}],createdAt:serverTimestamp(),updatedAt:serverTimestamp()};
+  try{await addDoc(collection(db,'businesses',businessId,'contacts'),data);['finderName','finderPhone','finderEmail','finderBusinessType','finderArea','finderWebsite','finderNotes'].forEach(id=>{if($(id))$(id).value=''});toast('Prospect added to CRM');renderBusinessFinder();render()}catch(e){toast(e.message||'Could not add prospect',true)}
 }
 
 function renderDashboard(){
@@ -663,7 +739,7 @@ await finishRedirect();
 
 onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();if(unsubPublicLeads)unsubPublicLeads();$("googleBtn").disabled=false;return}try{$("authMsg").textContent="Opening your workspace...";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userEmail").textContent=u.email||"";subscribe();subscribePublicLeads()}catch(e){console.error("Workspace setup error",e);$("authMsg").textContent=e.message||"Workspace setup failed.";$("googleBtn").disabled=false;}});
 navView('overview');
-window.setFollowCenterTab=setFollowCenterTab;window.markDoneFor=markDoneFor;window.logout=logout;window.openCustomerModal=openCustomerModal;window.openWaComposer=openWaComposer;window.closeWaComposer=closeWaComposer;window.applyWaTemplate=applyWaTemplate;window.updateWaChar=updateWaChar;window.sendWaComposer=sendWaComposer;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.openEmailComposer=openEmailComposer;window.closeEmailComposer=closeEmailComposer;window.applyEmailTemplate=applyEmailTemplate;window.updateEmailChar=updateEmailChar;window.sendEmailComposer=sendEmailComposer;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;window.stagePick=stagePick;window.updatePipeline=updatePipeline;window.changeStage=changeStage;window.clearDashFilter=clearDashFilter;window.setStageFilter=setStageFilter;window.setFollowFilter=setFollowFilter;window.osNav=osNav;window.copyLeadFormLink=copyLeadFormLink;window.convertPublicLead=convertPublicLead;window.leadCall=leadCall;
+window.setFollowCenterTab=setFollowCenterTab;window.markDoneFor=markDoneFor;window.logout=logout;window.openCustomerModal=openCustomerModal;window.openWaComposer=openWaComposer;window.closeWaComposer=closeWaComposer;window.applyWaTemplate=applyWaTemplate;window.updateWaChar=updateWaChar;window.sendWaComposer=sendWaComposer;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.openEmailComposer=openEmailComposer;window.closeEmailComposer=closeEmailComposer;window.applyEmailTemplate=applyEmailTemplate;window.updateEmailChar=updateEmailChar;window.sendEmailComposer=sendEmailComposer;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;window.stagePick=stagePick;window.updatePipeline=updatePipeline;window.changeStage=changeStage;window.clearDashFilter=clearDashFilter;window.setStageFilter=setStageFilter;window.setFollowFilter=setFollowFilter;window.osNav=osNav;window.copyLeadFormLink=copyLeadFormLink;window.convertPublicLead=convertPublicLead;window.leadCall=leadCall;window.searchBusinessFinder=searchBusinessFinder;window.copyFinderSearch=copyFinderSearch;window.useFinderIdea=useFinderIdea;window.saveFinderProspect=saveFinderProspect;window.renderBusinessFinder=renderBusinessFinder;
 </script>
 
 <div class="modal" id="onboardingModal" style="display:none;position:fixed;inset:0;background:rgba(9,16,29,.72);backdrop-filter:blur(8px);z-index:9999;place-items:center;padding:18px">
