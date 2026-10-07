@@ -40,7 +40,7 @@
 <script src="templates.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import{getAuth,GoogleAuthProvider,signInWithRedirect,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,getDocs,query,orderBy,onSnapshot,serverTimestamp,writeBatch,setDoc,getDoc,where}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const cfg={apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80",measurementId:"G-85D45ENBLK"};
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
@@ -119,8 +119,43 @@ async function ensureWorkspace(u){
 }
 
 function subscribe(){if(unsub)unsub();const q=query(collection(db,"businesses",businessId,"contacts"),orderBy("createdAt","desc"));unsub=onSnapshot(q,snap=>{customers=snap.docs.map(d=>({id:d.id,...d.data()}));render()},err=>toast(err.message||"Could not load CRM data",true))}
-$("googleBtn").onclick=async()=>{try{$("authMsg").textContent="Signing in...";await signInWithRedirect(auth,provider)}catch(e){$("authMsg").textContent=e.message||"Google sign-in failed."}};
-onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();return}try{$("authMsg").textContent="";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userEmail").textContent=u.email||"";subscribe()}catch(e){$("authMsg").textContent=e.message||"Workspace setup failed."}});
+async function finishRedirect(){
+  try{
+    const result=await getRedirectResult(auth);
+    if(result&&result.user){
+      $("authMsg").textContent="Signed in. Opening your workspace...";
+    }
+  }catch(e){
+    console.error("Google redirect result error",e);
+    $("authMsg").textContent=e.code?((e.message||"Google sign-in failed.")+" ["+e.code+"]"):(e.message||"Google sign-in failed.");
+  }
+}
+
+$("googleBtn").onclick=async()=>{
+  try{
+    $("googleBtn").disabled=true;
+    $("authMsg").textContent="Opening Google sign-in...";
+    try{
+      await signInWithPopup(auth,provider);
+    }catch(popupError){
+      console.warn("Popup sign-in failed, trying redirect",popupError);
+      if(popupError&&["auth/popup-blocked","auth/popup-closed-by-user","auth/cancelled-popup-request","auth/operation-not-supported-in-this-environment"].includes(popupError.code)){
+        $("authMsg").textContent="Redirecting to Google...";
+        await signInWithRedirect(auth,provider);
+      }else{
+        throw popupError;
+      }
+    }
+  }catch(e){
+    console.error("Google sign-in error",e);
+    $("authMsg").textContent=e.code?((e.message||"Google sign-in failed.")+" ["+e.code+"]"):(e.message||"Google sign-in failed.");
+    $("googleBtn").disabled=false;
+  }
+};
+
+await finishRedirect();
+
+onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();$("googleBtn").disabled=false;return}try{$("authMsg").textContent="Opening your workspace...";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userEmail").textContent=u.email||"";subscribe()}catch(e){console.error("Workspace setup error",e);$("authMsg").textContent=e.message||"Workspace setup failed.";$("googleBtn").disabled=false;}});
 window.logout=logout;window.openCustomerModal=openCustomerModal;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;
 </script>
 
