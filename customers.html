@@ -167,7 +167,11 @@ function updatePipeline(t=currentTemplate()){
   const pipe=$('templatePipeline');
   if(!pipe)return;
   const selected=$('statusFilter')?.value||'';
-  pipe.innerHTML=t.stages.map((stage,i)=>{const n=customers.filter(c=>String(c.status||'')===stage).length;return `<button type="button" class="stage ${selected===stage?'active':''}" onclick="stagePick('${esc(stage)}')"><b>${i+1}</b>${esc(stage)}<em>${n}</em></button>`}).join('');
+  pipe.innerHTML=t.stages.map((stage,i)=>{
+    const n=customers.filter(c=>String(c.status||'')===stage).length;
+    const action=String(stage)==='Won'?"window.location.href='deals.html'":`stagePick('${esc(stage)}')`;
+    return `<button type="button" class="stage ${selected===stage?'active':''}" onclick="${action}" title="${String(stage)==='Won'?'Open Deals':''}"><b>${i+1}</b>${esc(stage)}<em>${n}</em></button>`
+  }).join('');
 }
 function stagePick(stage){
   const filter=$('statusFilter');

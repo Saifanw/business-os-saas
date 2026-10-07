@@ -29,7 +29,34 @@ function editDeal(id){const d=deals.find(x=>x.id===id);if(!d)return;editId=id;po
 function closeModal(){$('modal').classList.remove('show')}
 async function saveDeal(){const cid=$('dCustomer').value,c=contacts.find(x=>x.id===cid);if(!cid||!c){toast('Select a customer',true);return}const amount=Math.max(0,Number($('dAmount').value)||0),received=Math.min(amount,Math.max(0,Number($('dReceived').value)||0));const data={contactId:cid,customerId:cid,customerName:c.name||'',businessType:c.businessType||'',type:c.type||'Customer',dealName:$('dName').value.trim()||c.req||c.requirement||'Deal',amount,value:amount?money(amount):c.budget||'',paymentStatus:$('dPayment').value,received,closedAtISO:$('dDate').value||todayISO(),closedAt:$('dDate').value||todayISO(),notes:$('dNotes').value.trim(),stage:'Won',status:'won',source:c.source||'',location:(c.area?c.area+', ':'')+(c.city||''),updatedAt:serverTimestamp()};try{await setDoc(doc(db,'businesses',businessId,'deals',editId||cid),{...data,...(!editId?{createdAt:serverTimestamp()}: {})},{merge:true});if(c.status!=='Won'&&c.status!=='Paid')await updateDoc(doc(db,'businesses',businessId,'contacts',cid),{status:'Won',updatedAt:serverTimestamp()});closeModal();toast(editId?'Deal updated':'Deal created');}catch(e){console.error(e);toast(e.message||'Could not save deal',true)}}
 async function loadWorkspace(u){const userRef=doc(db,'users',u.uid);const us=await getDoc(userRef);let id=us.exists()?us.data()?.businessId:null,b=null;if(id){b=await getDoc(doc(db,'businesses',id));if(!b.exists())id=null}if(!id){const q=await getDocs(query(collection(db,'businesses'),where('ownerUid','==',u.uid)));const docs=q.docs.filter(x=>x.data()?.name);if(docs.length){b=docs.find(x=>String(x.data()?.status||'').toLowerCase()==='active')||docs[0];id=b.id;await setDoc(userRef,{uid:u.uid,email:u.email||'',displayName:u.displayName||'',businessId:id,businessName:b.data().name||'',role:'owner',templateId:b.data().templateId||'general',updatedAt:serverTimestamp()},{merge:true})}}if(!id)throw new Error('No Business OS workspace is linked to this Google account. Open Customers first.');businessId=id;businessProfile=b?.data()||(await getDoc(doc(db,'businesses',id))).data()||{};$('businessName').textContent=(businessProfile.name||'Business')+' — Deals';subscribe()}
-function subscribe(){if(unsubC)unsubC();if(unsubD)unsubD();unsubC=onSnapshot(collection(db,'businesses',businessId,'contacts'),s=>{contacts=s.docs.map(d=>({id:d.id,...d.data()}));populateCustomers();render()},e=>toast(e.message||'Could not load customers',true));unsubD=onSnapshot(collection(db,'businesses',businessId,'deals'),s=>{deals=s.docs.map(d=>({id:d.id,...d.data()}));render()},e=>toast(e.message||'Could not load deals',true))}
+async function syncMissingWonDeals(){
+  try{
+    const ds=await getDocs(collection(db,'businesses',businessId,'deals'));
+    const existing=new Set(ds.docs.map(d=>d.id));
+    const wonContacts=contacts.filter(c=>['Won','Paid'].includes(String(c.status||'')));
+    const missing=wonContacts.filter(c=>!existing.has(c.id));
+    if(!missing.length)return;
+    await Promise.all(missing.map(c=>{
+      const amount=parseAmount(c.budget||c.value||0);
+      return setDoc(doc(db,'businesses',businessId,'deals',c.id),{
+        contactId:c.id,customerId:c.id,customerName:c.name||'',businessType:c.businessType||'',type:c.type||'Customer',
+        dealName:c.req||c.requirement||'Deal',amount,value:amount?money(amount):(c.budget||''),paymentStatus:'Pending',received:0,
+        closedAtISO:todayISO(),closedAt:todayISO(),stage:'Won',status:'won',source:c.source||'',
+        location:(c.area?c.area+', ':'')+(c.city||''),notes:c.note||c.notes||'',updatedAt:serverTimestamp(),createdAt:c.createdAt||serverTimestamp()
+      },{merge:true});
+    }));
+    toast(missing.length+' missing Won deal'+(missing.length===1?'':'s')+' synced');
+  }catch(e){console.error('Won deal sync failed',e);}
+}
+function subscribe(){
+  if(unsubC)unsubC();if(unsubD)unsubD();
+  unsubC=onSnapshot(collection(db,'businesses',businessId,'contacts'),async s=>{
+    contacts=s.docs.map(d=>({id:d.id,...d.data()}));
+    populateCustomers();render();
+    await syncMissingWonDeals();
+  },e=>toast(e.message||'Could not load customers',true));
+  unsubD=onSnapshot(collection(db,'businesses',businessId,'deals'),s=>{deals=s.docs.map(d=>({id:d.id,...d.data()}));render()},e=>toast(e.message||'Could not load deals',true));
+}
 $('googleBtn').onclick=async()=>{try{$('googleBtn').disabled=true;msg('Opening Google sign-in...');try{await signInWithPopup(auth,provider)}catch(e){if(['auth/popup-blocked','auth/popup-closed-by-user','auth/cancelled-popup-request','auth/operation-not-supported-in-this-environment'].includes(e.code)){await signInWithRedirect(auth,provider)}else throw e}}catch(e){msg(e.message||'Google sign-in failed');$('googleBtn').disabled=false}};
 try{await getRedirectResult(auth)}catch(e){msg(e.message||'Google sign-in failed')}
 onAuthStateChanged(auth,async u=>{if(!u){$('auth').classList.remove('hidden');$('app').classList.add('hidden');return}try{await loadWorkspace(u);$('auth').classList.add('hidden');$('app').classList.remove('hidden')}catch(e){console.error(e);msg(e.message||'Could not load deals');$('auth').classList.remove('hidden');$('app').classList.add('hidden')}});
