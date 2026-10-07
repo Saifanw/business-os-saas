@@ -43,7 +43,7 @@
   <a class="os-side-link active" href="#dashboardV2" onclick="osNav(this,'overview')"><span>⌂</span><b>Overview</b></a>
   <a class="os-side-link" href="#customerList" onclick="osNav(this,'customers')"><span>👥</span><b>Customers</b></a>
   <a class="os-side-link" href="#customerList" onclick="osNav(this,'followups')"><span>◷</span><b>Follow-ups</b><em id="sideFollowCount">0</em></a>
-  <a class="os-side-link" href="#customerList" onclick="osNav(this,'deals')"><span>✓</span><b>Deals</b><em id="sideDealCount">0</em></a>
+  <a class="os-side-link" href="deals.html"><span>✓</span><b>Deals</b><em id="sideDealCount">0</em></a>
   <a class="os-side-link" href="#websiteLeads" onclick="osNav(this,'website')"><span>↗</span><b>Website Leads</b><em id="sideWebLeadCount">0</em></a>
   <a class="os-side-link" href="#whatsappCenter" onclick="osNav(this,'whatsapp')"><span>💬</span><b>WhatsApp</b><em id="sideWaCount">0</em></a>
   <div class="os-side-divider"></div>
@@ -119,7 +119,7 @@ function osNav(el,section){
   if(section==='overview'){window.scrollTo({top:0,behavior:'smooth'});return false}
   if(section==='customers'){clearDashFilter();window.scrollTo({top:0,behavior:'smooth'});return false}
   if(section==='followups'){setFollowFilter('today');window.scrollTo({top:0,behavior:'smooth'});return false}
-  if(section==='deals'){setStageFilter('Won');window.scrollTo({top:0,behavior:'smooth'});return false}
+  if(section==='deals'){window.location.href='deals.html';return false}
   if(section==='website'){navView('overview');document.getElementById('websiteLeads')?.scrollIntoView({behavior:'smooth',block:'center'});return false}
   if(section==='whatsapp'){navView('whatsapp');document.getElementById('whatsappCenter')?.scrollIntoView({behavior:'smooth',block:'start'});renderWhatsAppCenter();return false}
   return false;
