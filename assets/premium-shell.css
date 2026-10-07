@@ -93,3 +93,80 @@ body.app-page .os-content,body.app-page .ie-content,body.app-page .app-main,body
   body.app-page .premium-sidebar .side-title,body.app-page .premium-sidebar .side-divider{display:none}
   body.app-page .premium-sidebar a{min-width:max-content;padding:0 12px}
 }
+
+/* V22.1 — restore/strengthen BusinessOS workspace navigation layout */
+body.app-page .os-layout{
+  display:grid!important;
+  grid-template-columns:236px minmax(0,1fr)!important;
+  gap:18px!important;
+  align-items:start!important;
+}
+body.app-page .os-sidebar{
+  position:sticky!important;
+  top:90px!important;
+  width:236px!important;
+  min-width:236px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:2px!important;
+  align-self:start!important;
+  overflow:hidden!important;
+}
+body.app-page .os-side-link{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  width:100%!important;
+  min-height:42px!important;
+  padding:0 10px!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+  flex:none!important;
+}
+body.app-page .os-side-link span{
+  width:22px!important;
+  min-width:22px!important;
+  text-align:center!important;
+  font-size:14px!important;
+  line-height:1!important;
+}
+body.app-page .os-side-link b{
+  font-size:11px!important;
+  font-weight:800!important;
+  line-height:1!important;
+}
+body.app-page .os-side-link em{
+  margin-left:auto!important;
+  min-width:20px!important;
+  height:20px!important;
+  padding:0 6px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:999px!important;
+  font-style:normal!important;
+  font-size:9px!important;
+  font-weight:900!important;
+}
+body.app-page .os-side-title{display:block!important;flex:none!important}
+body.app-page .os-side-divider{width:100%!important;flex:none!important;margin:9px 0!important}
+body.app-page .os-content{min-width:0!important;width:100%!important}
+
+@media(max-width:980px){
+  body.app-page .os-layout{grid-template-columns:1fr!important;gap:12px!important}
+  body.app-page .os-sidebar{
+    position:sticky!important;
+    top:74px!important;
+    width:100%!important;
+    min-width:0!important;
+    flex-direction:row!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    padding:7px!important;
+    gap:4px!important;
+  }
+  body.app-page .os-side-title,body.app-page .os-side-divider{display:none!important}
+  body.app-page .os-side-link{width:auto!important;min-width:max-content!important;padding:0 12px!important}
+}
