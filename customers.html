@@ -94,19 +94,57 @@ function render(){
  $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><b>${esc(c.name)}</b><small>${esc(c.name)} · ${esc(c.phone||"No mobile")}</small></div></div><div><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="source-cell">${esc(source)}</div><div><span class="status ${safeStatus(c.status)}">${esc(c.status||"New")}</span></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">◉</button><button title="Email" onclick="event.stopPropagation();email('${c.id}')">✉</button><button title="More" onclick="event.stopPropagation();selectCustomer('${c.id}')">•••</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
 }
 async function selectCustomer(id){selectedId=id;const c=customers.find(x=>x.id===id);if(!c)return;renderProfile(c);$("profileOverlay").classList.add("show")}
-function renderProfile(c){const events=Array.isArray(c.events)?c.events:[];$("profileModalContent").innerHTML=`<div class="profile-card"><div class="profile-top"><button class="close-profile" onclick="closeProfile()">×</button><div class="profile-person"><div class="avatar">${ini(c.name)}</div><div><h2>${esc(c.name)}</h2><p>${esc(c.area||"")}, ${esc(c.city||"")} · <span class="status ${safeStatus(c.status)}">${esc(c.status||"New")}</span></p></div></div><div class="profile-actions"><button onclick="call('${c.id}')">☎ Call</button><button class="wa" onclick="wa('${c.id}')">◉ WhatsApp</button><button onclick="email('${c.id}')">✉ Email</button></div></div><div class="profile-section"><h3>CUSTOMER DETAILS</h3><div class="facts"><div class="fact"><small>Mobile</small><b>${esc(c.phone||"Not added")}</b></div><div class="fact"><small>Requirement</small><b>${esc(c.req||"Not specified")}</b></div><div class="fact"><small>Budget / Value</small><b>${esc(c.budget||"Not specified")}</b></div><div class="fact"><small>Location</small><b>${esc(c.area||"—")}, ${esc(c.city||"—")}</b></div><div class="fact"><small>Source</small><b>${esc(c.source||"Other")}</b></div><div class="fact"><small>Last Contact</small><b>${esc(c.last||"—")}</b></div></div></div><div class="profile-section"><h3>PIPELINE</h3><div class="pipeline-control"><select id="profileStageSelect">${getBusinessTemplate(businessProfile?.templateId).stages.map(stage=>`<option ${stage===(c.status||"")?"selected":""}>${esc(stage)}</option>`).join("")}</select><button onclick="changeStage()">Update Stage</button></div>${["Won","Paid"].includes(c.status)?"<span class="deal-badge">✓ Converted to Deal / Admission</span>":""}</div><div class="profile-section"><h3>NEXT ACTION</h3><div class="next"><b>${c.status==="Overdue"?"🔴":"📅"} ${esc(c.next||"Not set")}</b><small>Next step for this customer</small><div class="next-actions"><button onclick="wa('${c.id}')">WhatsApp</button><button class="done" onclick="markDone()">✓ Mark done</button></div></div><button class="add-activity" onclick="openActivityModal()">＋ Add Activity</button></div><div class="profile-section"><h3>RECENT CONTACT</h3><div class="next"><b>🕒 ${esc(c.last||"No contact")}</b><small>${events.length?esc((events[events.length-1]?.type||"Activity")+": "+(events[events.length-1]?.note||"")):"No activity recorded yet."}</small><div class="next-actions"><button onclick="openActivityModal()">＋ Add note</button><button onclick="openActivityModal()">＋ Activity</button></div></div></div><div class="profile-section"><h3>IMPORTANT NOTE</h3><div class="next" style="background:#f8f7ff;border-color:#ded8ff"><b>📝 Keep for next follow-up</b><small>${esc(c.note||"No important note added yet.")}</small></div></div><div class="profile-section" style="display:flex;justify-content:flex-end;gap:8px"><button onclick="editCustomer()" style="border:1px solid #dfe4eb;background:#fff;border-radius:8px;padding:9px 13px;font-size:9px;font-weight:800">✎ Edit</button><button onclick="deleteCustomer()" style="border:1px solid #ffd1cf;background:#fff4f3;color:#c33b34;border-radius:8px;padding:9px 13px;font-size:9px;font-weight:800">Delete Customer</button></div></div>`}
-async function changeStage(){
-  const c=customers.find(x=>x.id===selectedId); const sel=$('profileStageSelect');
-  if(!c||!sel)return;
-  const stage=sel.value;
-  try{
-    await updateDoc(doc(db,'businesses',businessId,'contacts',c.id),{status:stage,updatedAt:serverTimestamp()});
-    if(stage==='Won' || stage==='Paid'){
-      await setDoc(doc(db,'businesses',businessId,'deals',c.id),{contactId:c.id,customerName:c.name||'',stage:'Won',value:c.budget||'',source:c.source||'',templateId:businessProfile?.templateId||'general',createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
-    }
-    toast('Stage updated to '+stage);
-    closeProfile();
-  }catch(e){toast(e.message||'Could not update stage',true)}
+function renderProfile(c){
+  const events=Array.isArray(c.events)?c.events:[];
+  const stages=currentTemplate().stages||[];
+  const stageOptions=stages.map(stage=>'<option '+(stage===(c.status||'')?'selected':'')+'>'+esc(stage)+'</option>').join('');
+  const dealBadge=['Won','Paid'].includes(c.status)?'<span class="deal-badge">✓ Converted to Deal / Admission</span>':'';
+  const lastEvent=events.length?(events[events.length-1]?.type||'Activity')+': '+(events[events.length-1]?.note||''):'No activity recorded yet.';
+  $("profileModalContent").innerHTML=`
+    <div class="profile-card">
+      <div class="profile-top">
+        <button class="close-profile" onclick="closeProfile()">×</button>
+        <div class="profile-person">
+          <div class="avatar">${ini(c.name)}</div>
+          <div><h2>${esc(c.name)}</h2><p>${esc(c.area||'')}, ${esc(c.city||'')} · <span class="status ${safeStatus(c.status)}">${esc(c.status||'New')}</span></p></div>
+        </div>
+        <div class="profile-actions">
+          <button onclick="call('${c.id}')">☎ Call</button>
+          <button class="wa" onclick="wa('${c.id}')">◉ WhatsApp</button>
+          <button onclick="email('${c.id}')">✉ Email</button>
+        </div>
+      </div>
+      <div class="profile-section"><h3>CUSTOMER DETAILS</h3><div class="facts">
+        <div class="fact"><small>Mobile</small><b>${esc(c.phone||'Not added')}</b></div>
+        <div class="fact"><small>Requirement</small><b>${esc(c.req||'Not specified')}</b></div>
+        <div class="fact"><small>Budget / Value</small><b>${esc(c.budget||'Not specified')}</b></div>
+        <div class="fact"><small>Location</small><b>${esc(c.area||'—')}, ${esc(c.city||'—')}</b></div>
+        <div class="fact"><small>Source</small><b>${esc(c.source||'Other')}</b></div>
+        <div class="fact"><small>Last Contact</small><b>${esc(c.last||'—')}</b></div>
+      </div></div>
+      <div class="profile-section"><h3>PIPELINE</h3>
+        <div class="pipeline-control"><select id="profileStageSelect">${stageOptions}</select><button onclick="changeStage()">Update Stage</button></div>
+        ${dealBadge}
+      </div>
+      <div class="profile-section"><h3>NEXT ACTION</h3>
+        <div class="next"><b>${c.status==='Overdue'?'🔴':'📅'} ${esc(c.next||'Not set')}</b><small>Next step for this customer</small>
+          <div class="next-actions"><button onclick="wa('${c.id}')">WhatsApp</button><button class="done" onclick="markDone()">✓ Mark done</button></div>
+        </div>
+        <button class="add-activity" onclick="openActivityModal()">＋ Add Activity</button>
+      </div>
+      <div class="profile-section"><h3>RECENT CONTACT</h3>
+        <div class="next"><b>🕒 ${esc(c.last||'No contact')}</b><small>${esc(lastEvent)}</small>
+          <div class="next-actions"><button onclick="openActivityModal()">＋ Add note</button><button onclick="openActivityModal()">＋ Activity</button></div>
+        </div>
+      </div>
+      <div class="profile-section"><h3>IMPORTANT NOTE</h3>
+        <div class="next" style="background:#f8f7ff;border-color:#ded8ff"><b>📝 Keep for next follow-up</b><small>${esc(c.note||'No important note added yet.')}</small></div>
+      </div>
+      <div class="profile-section" style="display:flex;justify-content:flex-end;gap:8px">
+        <button onclick="editCustomer()" style="border:1px solid #dfe4eb;background:#fff;border-radius:8px;padding:9px 13px;font-size:9px;font-weight:800">✎ Edit</button>
+        <button onclick="deleteCustomer()" style="border:1px solid #ffd1cf;background:#fff4f3;color:#c33b34;border-radius:8px;padding:9px 13px;font-size:9px;font-weight:800">Delete Customer</button>
+      </div>
+    </div>`;
 }
 function closeProfile(){$("profileOverlay").classList.remove("show")}
 function openCustomerModal(){applyTemplateUI();["fName","fPhone","fReq","fBudget","fArea","fNotes"].forEach(id=>$(id).value="");$("fCity").value=businessProfile?.city||"Jaipur";$("fStatus").value=currentTemplate().stages[0]||"New";$("fType").value=currentTemplate().contactTypes?.[0]||"Customer";$("fBusinessType").value=businessProfile?.businessType||currentTemplate().businessTypes?.[0]||"Other";$("fSource").value="Manual Entry";$("fDate").value=todayISO();$("fTime").value="15:30";$("customerModal").classList.add("show")}
