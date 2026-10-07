@@ -37,6 +37,91 @@
 @media(max-width:900px){.finder-grid{grid-template-columns:1fr 1fr}.finder-panels{grid-template-columns:1fr}.finder-add-grid{grid-template-columns:1fr 1fr}.finder-stats{grid-template-columns:1fr 1fr}}@media(max-width:600px){.finder-grid,.finder-add-grid,.finder-stats{grid-template-columns:1fr}.finder-list-toolbar{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="assets/premium-shell.css">
+
+<style id="business-os-v23-customer-comfort">
+/* V23 — Customer list comfort-first redesign. Functionality unchanged. */
+.customers-shell{padding:26px 24px 56px}
+.page-head{padding:0 8px 18px;gap:28px}
+.page-head h1{font-size:36px;line-height:1.08;letter-spacing:-1px}
+.page-head p{font-size:15px;line-height:1.5}
+.top-actions{gap:10px}
+.top-actions button{height:46px;padding:0 18px;border-radius:11px;font-size:13px}
+.session{font-size:11px}
+.session button{padding:9px 12px;font-size:10px}
+
+.smart-summary{height:auto;min-height:64px;padding:12px 20px;font-size:13px;gap:16px}
+.smart-summary b{font-size:19px}
+
+.list-card{border-radius:18px;box-shadow:0 14px 40px rgba(22,34,56,.07)}
+.list-head{min-height:104px;padding:0 26px;gap:24px}
+.list-head b{font-size:25px;letter-spacing:-.5px}
+.list-head small{font-size:13px;line-height:1.45}
+.list-search input{height:50px;font-size:14px;padding:0 15px;border-radius:12px}
+.list-search span{font-size:11px}
+
+.filters{grid-template-columns:1.15fr 1.15fr 1.05fr 1.05fr .9fr 92px;gap:12px;padding:18px 26px}
+.filters input,.filters select{height:48px;padding:0 13px;font-size:12px;border-radius:11px}
+.reset-filter{height:42px;font-size:11px;border-radius:10px}
+
+.table-head,.row{grid-template-columns:42px minmax(300px,2.5fr) minmax(135px,1fr) minmax(175px,1.35fr) minmax(105px,.8fr) minmax(130px,1fr) minmax(170px,1.25fr) minmax(220px,1.55fr);min-width:1320px}
+.table-head{height:54px;padding:0 26px;font-size:10px;letter-spacing:.1em}
+.row{height:108px;min-height:108px;padding:0 26px}
+.contact-cell{gap:16px}
+.avatar{width:54px;height:54px;border-radius:14px;font-size:12px}
+.contact-main b{font-size:18px;line-height:1.25}
+.contact-main small{font-size:12px;margin-top:6px}
+.type-pill{padding:7px 11px;font-size:11px}
+.data-cell{font-size:14px;line-height:1.45}
+.data-cell b{font-size:14px}
+.data-cell small{font-size:11px;margin-top:4px}
+.source-cell{font-size:13px}
+.status{padding:8px 12px;font-size:11px}
+.follow-cell b{font-size:14px}
+.follow-cell small{font-size:11px;margin-top:4px}
+.actions{gap:8px!important}
+.actions button{height:42px;min-width:0;padding:0 13px;border-radius:10px;font-size:11px;font-weight:900;white-space:nowrap}
+.actions .wa{padding:0 14px}
+.actions .view{background:#142039;color:#fff;border-color:#142039}
+.actions button:hover{transform:translateY(-1px);box-shadow:0 7px 16px rgba(20,32,57,.12)}
+
+/* Give the content more room on normal laptop widths: hide the least-important Source column. */
+@media(max-width:1350px){
+  .table-head,.row{grid-template-columns:42px minmax(310px,2.6fr) minmax(135px,1fr) minmax(180px,1.4fr) minmax(125px,1fr) minmax(180px,1.25fr) minmax(220px,1.55fr);min-width:1190px}
+  .table-head>div:nth-child(5),.row>.source-cell{display:none}
+}
+
+/* Large readable customer cards on narrower screens instead of tiny desktop rows. */
+@media(max-width:900px){
+  .customers-shell{padding:18px 12px 42px}
+  .page-head{align-items:flex-start;flex-direction:column;padding:0 4px 16px}
+  .page-head h1{font-size:32px}
+  .top-actions{width:100%;justify-content:flex-start;flex-wrap:wrap}
+  .list-head{min-height:auto;padding:20px;align-items:flex-start;flex-direction:column}
+  .list-search{width:100%;flex-direction:column;align-items:stretch}
+  .list-search input{width:100%}
+  .filters{grid-template-columns:1fr 1fr;padding:14px 18px}
+  .table-scroll{overflow:visible}
+  .table-head{display:none}
+  .row{display:grid;grid-template-columns:34px 1fr;grid-template-rows:auto auto auto auto;gap:10px 12px;min-width:0;height:auto;padding:18px;border-bottom:1px solid #e9edf2}
+  .row>.check{grid-row:1/5;align-self:start;padding-top:7px}
+  .row>.contact-cell{grid-column:2;grid-row:1}
+  .row>.type-pill,.row>div:nth-child(3){grid-column:2;grid-row:2}
+  .row>div:nth-child(4){grid-column:2;grid-row:3}
+  .row>div:nth-child(5){grid-column:2;grid-row:4}
+  .row>div:nth-child(6){grid-column:2;grid-row:2}
+  .row>div:nth-child(7){grid-column:2;grid-row:3}
+  .row>.actions{grid-column:2;grid-row:5;display:flex!important;flex-wrap:wrap}
+  .row>.contact-cell{min-width:0}
+  .contact-main b{font-size:19px}
+  .actions button{height:44px;font-size:12px}
+}
+
+@media(max-width:560px){
+  .filters{grid-template-columns:1fr}
+  .top-actions button{height:44px}
+}
+</style>
+
 </head>
 <body class="app-page">
 <header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
@@ -486,7 +571,7 @@ function render(){
  const arr=customers.filter(c=>{const hay=[c.name,c.phone,c.businessName,c.area,c.city,c.req,c.detail,c.budget,c.status,c.note,c.source,c.businessType].join(" ").toLowerCase();const d=parseNextDate(c.next);if(q&&!hay.includes(q))return false;if(ar&&c.area!==ar)return false;if(tp&&String(c.type||"Customer")!==tp)return false;if(sf&&c.status!==sf)return false;if(src&&String(c.source||"Other")!==src)return false;if(ff==="today"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||dateKey(d)!==dateKey(now)))return false;if(ff==="overdue"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||d>=dayStart)&&c.status!=="Overdue")return false;if(ff==="upcoming"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||d<=dayStart))return false;return true});
  const fs=followStats();
  $("total").textContent=customers.length;$("today").textContent=fs.today;$("hot").textContent=customers.filter(c=>["Interested","Follow-up","Site Visit","Negotiation"].includes(c.status)).length;$("overdue").textContent=fs.overdue;$("count").textContent=arr.length+" records";
- $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><b>${esc(c.name)}</b><small>${esc(c.name)} · ${esc(c.phone||"No mobile")}</small></div></div><div><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="source-cell">${esc(source)}</div><div><span class="status ${safeStatus(c.status)}">${esc(c.status||"New")}</span></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">◉</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉</button><button title="More" onclick="event.stopPropagation();selectCustomer('${c.id}')">•••</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
+ $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><b>${esc(c.name)}</b><small>${esc(c.name)} · ${esc(c.phone||"No mobile")}</small></div></div><div><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="source-cell">${esc(source)}</div><div><span class="status ${safeStatus(c.status)}">${esc(c.status||"New")}</span></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
   renderDashboard(); updateSideCounts();
 }
 async function selectCustomer(id){selectedId=id;const c=customers.find(x=>x.id===id);if(!c)return;renderProfile(c);$("profileOverlay").classList.add("show")}
