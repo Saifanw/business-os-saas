@@ -536,12 +536,19 @@ function emailTemplates(c){
 function openEmailComposer(c){
   if(!c){toast('Customer not found',true);return;}
   emailComposeCustomer=c;
+  const layer=$("emailCompose");
+  if(!layer)return;
+  // Keep the email composer above the customer profile/modal layer.
+  if(layer.parentElement!==document.body)document.body.appendChild(layer);
   $("emailComposeAvatar").textContent=ini(c.name);$("emailComposeName").textContent=c.name||'Customer';$("emailComposeAddress").textContent=c.email||'No email address';
   $("emailTemplate").value='new';applyEmailTemplate();
   const has=!!String(c.email||'').trim();$("emailMissing").style.display=has?'none':'block';$("emailOpenButton").disabled=!has;$("emailOpenButton").style.opacity=has?'1':'.55';
-  $("emailCompose").classList.add('show');setTimeout(()=>$("emailSubject")?.focus(),50);
+  layer.style.zIndex='10000';
+  layer.style.display='flex';
+  layer.classList.add('show');
+  setTimeout(()=>$("emailSubject")?.focus(),50);
 }
-function closeEmailComposer(){emailComposeCustomer=null;$("emailCompose")?.classList.remove('show')}
+function closeEmailComposer(){const layer=$("emailCompose");emailComposeCustomer=null;if(layer){layer.classList.remove('show');layer.style.display='none'}}
 function applyEmailTemplate(){if(!emailComposeCustomer)return;const t=emailTemplates(emailComposeCustomer)[$("emailTemplate").value]||{subject:'',body:''};$("emailSubject").value=t.subject;$("emailBody").value=t.body;updateEmailChar()}
 function updateEmailChar(){const e=$("emailBody"),c=$("emailChar");if(e&&c)c.textContent=e.value.length+' characters'}
 async function sendEmailComposer(){
