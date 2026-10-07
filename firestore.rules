@@ -61,6 +61,21 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    match /publicLeads/{leadId} {
+      // Public website forms may create a lead, but cannot read or modify CRM data.
+      allow create: if request.resource.data.keys().hasOnly(['businessId','templateId','status','name','phone','email','budget','requirement','city','area','message','createdAt'])
+        && request.resource.data.businessId is string
+        && request.resource.data.templateId is string
+        && request.resource.data.status == 'new'
+        && request.resource.data.name is string
+        && request.resource.data.phone is string
+        && request.resource.data.requirement is string
+        && request.resource.data.createdAt is timestamp
+        && exists(/databases/$(database)/documents/businesses/$(request.resource.data.businessId));
+      allow read, update, delete: if signedIn()
+        && ownsBusiness(resource.data.businessId);
+    }
+
     match /businesses/{businessId} {
       // New businesses are provisioned by Admin. Legacy self-created workspaces remain supported.
       allow create: if isAdmin() || (signedIn() && request.auth.uid == businessId);
