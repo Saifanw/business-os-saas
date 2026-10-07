@@ -156,6 +156,56 @@ async function deleteCustomer(){const c=customers.find(x=>x.id===selectedId);if(
 function openActivityModal(){$("modal").classList.add("show");$("adate").value=todayISO();$("atime").value=new Date().toTimeString().slice(0,5);$("anote").value="";typePick(document.querySelector('[data-type="Call"]'))}
 function closeModal(){$("modal").classList.remove("show")}
 function typePick(el){atype=el.dataset.type;document.querySelectorAll(".types button").forEach(b=>b.classList.toggle("active",b===el))}
+async function changeStage(){
+  const c=customers.find(x=>x.id===selectedId);
+  const sel=$("profileStageSelect");
+  if(!c || !sel) return;
+  const nextStage=sel.value;
+  const previousStage=c.status||"New";
+  if(nextStage===previousStage){toast("Stage is already "+nextStage);return}
+  const events=Array.isArray(c.events)?[...c.events]:[];
+  events.push({
+    date:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})+" · Now",
+    type:"Pipeline Stage Updated",
+    note:previousStage+" → "+nextStage
+  });
+  try{
+    await updateDoc(doc(db,"businesses",businessId,"contacts",c.id),{
+      status:nextStage,
+      events,
+      updatedAt:serverTimestamp()
+    });
+
+    // Won/Paid contacts become a deal/admission record.
+    if(["Won","Paid"].includes(nextStage)){
+      await setDoc(
+        doc(db,"businesses",businessId,"deals",c.id),
+        {
+          contactId:c.id,
+          customerId:c.id,
+          customerName:c.name||"",
+          businessType:c.businessType||"",
+          type:c.type||"Customer",
+          value:c.budget||"",
+          stage:nextStage,
+          status:"won",
+          source:c.source||"",
+          location:(c.area?c.area+", ":"")+ (c.city||""),
+          updatedAt:serverTimestamp(),
+          createdAt:c.createdAt||serverTimestamp()
+        },
+        {merge:true}
+      );
+    }
+
+    toast("Stage updated: "+nextStage);
+    await selectCustomer(c.id);
+  }catch(e){
+    console.error("Stage update failed",e);
+    toast(e.message||"Could not update stage",true);
+  }
+}
+
 async function saveActivity(){const c=customers.find(x=>x.id===selectedId);if(!c)return;const d=$("adate").value,t=$("atime").value,n=$("anote").value.trim()||"Activity added.";const events=Array.isArray(c.events)?[...c.events]:[];events.push({date:dateText(d,t),type:atype,note:n});const patch={events,note:n,updatedAt:serverTimestamp()};if(atype==="Deal Won")patch.status="Won";if(atype==="Site Visit")patch.status="Site Visit";if(atype==="Follow-up")patch.status="Follow-up";try{await updateDoc(doc(db,"businesses",businessId,"contacts",c.id),patch);closeModal();toast("Activity saved")}catch(e){toast(e.message||"Could not save activity",true)}}
 async function markDone(){const c=customers.find(x=>x.id===selectedId);if(!c)return;const events=Array.isArray(c.events)?[...c.events]:[];events.push({date:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})+" · Now",type:"Follow-up completed",note:"Next action marked complete."});try{await updateDoc(doc(db,"businesses",businessId,"contacts",c.id),{events,next:"Completed",last:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}),updatedAt:serverTimestamp()});toast("Follow-up completed")}catch(e){toast(e.message||"Could not update follow-up",true)}}
 function call(id){const c=customers.find(x=>x.id===id);if(c?.phone)window.location.href="tel:"+normalizePhone(c.phone);else toast("No mobile number",true)}
