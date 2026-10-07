@@ -86,7 +86,7 @@ async function ensureWorkspace(u){
 
   // New SaaS onboarding: an Admin can pre-create a business using the owner's email.
   if(!assignedId){
-    const pending=await getDocs(query(collection(db,'businesses'),where('ownerEmail','==',(u.email||'').toLowerCase())));
+    const pending=await getDocs(query(collection(db,'businesses'),where('ownerEmail','==',(u.email||'').toLowerCase()),where('ownerUid','==','')));
     const candidate=pending.docs.find(d=>!d.data()?.ownerUid || d.data()?.ownerUid===u.uid);
     if(candidate){
       assignedId=candidate.id;
