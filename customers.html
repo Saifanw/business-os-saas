@@ -85,6 +85,7 @@
 <div id="toast" class="save-state hidden"></div>
 
 <script src="templates.js"></script>
+<script src="assets/analytics-engine.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -124,23 +125,10 @@ function osNav(el,section){
   if(section==='whatsapp'){navView('whatsapp');document.getElementById('whatsappCenter')?.scrollIntoView({behavior:'smooth',block:'start'});renderWhatsAppCenter();return false}
   return false;
 }
-function parseNextDate(value){
-  const raw=String(value||'').trim();
-  if(!raw || /not set|completed/i.test(raw)) return null;
-  const m=raw.match(/(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})/);
-  if(!m)return null;
-  const d=new Date(`${m[1]} ${m[2]} ${m[3]} 00:00:00`);
-  return Number.isNaN(d.getTime())?null:d;
-}
-function dateKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-function followStats(){
-  const now=new Date(); const todayKey=dateKey(now);
-  let today=0,overdue=0,upcoming=0;
-  customers.forEach(c=>{const d=parseNextDate(c.next); if(!d)return; const k=dateKey(d); if(k===todayKey)today++; else if(d<new Date(now.getFullYear(),now.getMonth(),now.getDate()))overdue++; else if(d>now)upcoming++;});
-  overdue+=customers.filter(c=>String(c.status||'')==='Overdue').length;
-  return {today,overdue,upcoming};
-}
-function updateSideCounts(){const fs=followStats();const deals=customers.filter(c=>['Won','Paid'].includes(c.status)).length;const f=document.getElementById('sideFollowCount'),d=document.getElementById('sideDealCount');if(f)f.textContent=fs.today+fs.overdue;if(d)d.textContent=deals}
+function parseNextDate(value){ return BusinessAnalytics.parseFollowUp(value); }
+function dateKey(d){ return BusinessAnalytics.dateKey(d); }
+function followStats(){ return BusinessAnalytics.followStats(customers); }
+function updateSideCounts(){const a=BusinessAnalytics.calculate(customers);const f=document.getElementById("sideFollowCount"),d=document.getElementById("sideDealCount");if(f)f.textContent=a.today+a.overdue;if(d)d.textContent=a.won;}
 function applyTemplateUI(){
   const t=currentTemplate();
   const typeLabel=t.id==='property'?'Lead Type':t.id==='coaching'?'Student Type':'Contact Type';
@@ -230,8 +218,8 @@ function renderDashboard(){
 
 function render(){
  buildAreas();updatePipeline();const q=$("search").value.toLowerCase(),ar=$("area").value,tp=$("type").value,sf=$("statusFilter").value,src=$("sourceFilter").value,ff=$("followFilter").value;
- const arr=customers.filter(c=>{const hay=[c.name,c.phone,c.businessName,c.area,c.city,c.req,c.detail,c.budget,c.status,c.note,c.source,c.businessType].join(" ").toLowerCase();if(q&&!hay.includes(q))return false;if(ar&&c.area!==ar)return false;if(tp&&String(c.type||"Customer")!==tp)return false;if(sf&&c.status!==sf)return false;if(src&&String(c.source||"Other")!==src)return false;if(ff==="today"&&!String(c.next||"").toLowerCase().includes("today"))return false;if(ff==="overdue"&&c.status!=="Overdue")return false;if(ff==="upcoming"&&(c.status==="Overdue"||String(c.next||"").toLowerCase().includes("completed")||String(c.next||"").toLowerCase().includes("not set")))return false;return true});
- $("total").textContent=customers.length;$("today").textContent=customers.filter(c=>String(c.next||"").toLowerCase().includes("today")).length;$("hot").textContent=customers.filter(c=>["Interested","Site Visit","Negotiation"].includes(c.status)).length;$("overdue").textContent=customers.filter(c=>c.status==="Overdue").length;$("count").textContent=arr.length+" records";
+ const arr=customers.filter(c=>{const hay=[c.name,c.phone,c.businessName,c.area,c.city,c.req,c.detail,c.budget,c.status,c.note,c.source,c.businessType].join(" ").toLowerCase();if(q&&!hay.includes(q))return false;if(ar&&c.area!==ar)return false;if(tp&&String(c.type||"Customer")!==tp)return false;if(sf&&c.status!==sf)return false;if(src&&String(c.source||"Other")!==src)return false;const d=BusinessAnalytics.parseFollowUp(c.next),todayKey=BusinessAnalytics.dateKey(new Date());if(ff==="today"&&(!d||BusinessAnalytics.dateKey(d)!==todayKey))return false;if(ff==="overdue"&&!(c.status==="Overdue"||(d&&d<new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate()))))return false;if(ff==="upcoming"&&(c.status==="Overdue"||!d||d<=new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())))return false;return true});
+ const analytics=BusinessAnalytics.calculate(customers); document.getElementById("total").textContent=analytics.total; document.getElementById("today").textContent=analytics.today; document.getElementById("hot").textContent=analytics.hot; document.getElementById("overdue").textContent=analytics.overdue; document.getElementById("count").textContent=arr.length+" records";
  $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><b>${esc(c.name)}</b><small>${esc(c.name)} · ${esc(c.phone||"No mobile")}</small></div></div><div><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="source-cell">${esc(source)}</div><div><span class="status ${safeStatus(c.status)}">${esc(c.status||"New")}</span></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">◉</button><button title="Email" onclick="event.stopPropagation();email('${c.id}')">✉</button><button title="More" onclick="event.stopPropagation();selectCustomer('${c.id}')">•••</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
   renderDashboard(); updateSideCounts();
 }
