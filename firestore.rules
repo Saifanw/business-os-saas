@@ -19,6 +19,16 @@ service cloud.firestore {
         userBusinessId() == businessId
       );
     }
+    function isBusinessManager(businessId) {
+      return signedIn() && (
+        request.auth.uid == businessId ||
+        (
+          exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.businessId == businessId &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['owner','admin']
+        )
+      );
+    }
     function canClaimBusiness(businessId) {
       return signedIn()
         && resource.data.ownerUid == ''
@@ -26,20 +36,12 @@ service cloud.firestore {
         && request.resource.data.ownerUid == request.auth.uid
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ownerUid','status','onboardingStatus','updatedAt']);
     }
-
     function canCreateLegacyUser(uid) {
-      return signedIn()
-        && request.auth.uid == uid
-        && request.resource.data.uid == uid
-        && request.resource.data.businessId == uid;
+      return signedIn() && request.auth.uid == uid && request.resource.data.uid == uid && request.resource.data.businessId == uid;
     }
-
     function canUpdateUserProfile(uid) {
-      return signedIn()
-        && request.auth.uid == uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['email','displayName','updatedAt','businessName','templateId']);
+      return signedIn() && request.auth.uid == uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['email','displayName','updatedAt','businessName','templateId']);
     }
-
     function canLinkClaimedUser(uid) {
       return signedIn()
         && request.auth.uid == uid
@@ -47,6 +49,16 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/businesses/$(request.resource.data.businessId))
         && get(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)).data.ownerUid == uid
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['uid','email','displayName','businessId','businessName','role','templateId','createdAt','updatedAt']);
+    }
+    function canJoinInvitedUser(uid) {
+      return signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.businessId != null
+        && exists(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)/teamInvites/$(request.auth.token.email))
+        && get(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)/teamInvites/$(request.auth.token.email)).data.status == 'active'
+        && get(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)/teamInvites/$(request.auth.token.email)).data.role == request.resource.data.role;
     }
 
     match /admins/{uid} {
@@ -56,13 +68,12 @@ service cloud.firestore {
 
     match /users/{uid} {
       allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
-      allow create: if isAdmin() || canCreateLegacyUser(uid) || canLinkClaimedUser(uid);
+      allow create: if isAdmin() || canCreateLegacyUser(uid) || canLinkClaimedUser(uid) || canJoinInvitedUser(uid);
       allow update: if isAdmin() || canUpdateUserProfile(uid) || canLinkClaimedUser(uid);
       allow delete: if isAdmin();
     }
 
     match /publicLeads/{leadId} {
-      // Public website forms may create a lead, but cannot read or modify CRM data.
       allow create: if request.resource.data.keys().hasOnly(['businessId','templateId','status','name','phone','email','budget','requirement','city','area','message','createdAt'])
         && request.resource.data.businessId is string
         && request.resource.data.templateId is string
@@ -72,16 +83,14 @@ service cloud.firestore {
         && request.resource.data.requirement is string
         && request.resource.data.createdAt is timestamp
         && exists(/databases/$(database)/documents/businesses/$(request.resource.data.businessId));
-      allow read, update, delete: if signedIn()
-        && ownsBusiness(resource.data.businessId);
+      allow read, update, delete: if signedIn() && ownsBusiness(resource.data.businessId);
     }
 
     match /businesses/{businessId} {
-      // New businesses are provisioned by Admin. Legacy self-created workspaces remain supported.
       allow create: if isAdmin() || (signedIn() && request.auth.uid == businessId);
       allow read: if ownsBusiness(businessId) || isAdmin()
         || (signedIn() && resource.data.ownerUid == '' && resource.data.ownerEmail == request.auth.token.email);
-      allow update: if isAdmin() || ownsBusiness(businessId) || canClaimBusiness(businessId);
+      allow update: if isAdmin() || isBusinessManager(businessId) || canClaimBusiness(businessId);
       allow delete: if isAdmin() || (ownsBusiness(businessId) && request.auth.uid == businessId);
 
       match /contacts/{contactId} {
@@ -98,6 +107,10 @@ service cloud.firestore {
       }
       match /settings/{settingId} {
         allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
+      }
+      match /teamInvites/{email} {
+        allow read: if isAdmin() || isBusinessManager(businessId) || (signedIn() && resource.data.email == request.auth.token.email);
+        allow create, update, delete: if isAdmin() || isBusinessManager(businessId);
       }
     }
   }
