@@ -25,6 +25,9 @@
 @media(max-width:1100px){.dash-metrics{grid-template-columns:repeat(3,1fr)}.dash-grid{grid-template-columns:1fr}}@media(max-width:700px){.dashboard-v2{padding:15px}.dash-head{align-items:flex-start;flex-direction:column}.dash-actions{width:100%}.dash-actions button{flex:1}.dash-metrics{grid-template-columns:1fr 1fr}.metric-card em{max-width:110px}}
 
 .web-leads-panel{margin-top:10px}.web-lead-toolbar{display:flex;gap:8px;align-items:center}.web-lead-toolbar a,.web-lead-toolbar button{height:34px;padding:0 11px;border-radius:8px;font-size:10px;font-weight:900;border:1px solid #dce3eb;background:#fff;color:#344155}.web-lead-toolbar .lead-primary{background:#142039;color:#fff;border-color:#142039}.web-leads-list{display:grid;gap:7px}.web-lead-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #e8edf3;border-radius:10px;background:#fcfdff}.web-lead-main{min-width:0}.web-lead-main b{display:block;font-size:11px}.web-lead-main small{display:block;color:#8490a2;font-size:9px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.web-lead-actions{display:flex;gap:6px;flex:none}.web-lead-actions button{height:30px;padding:0 9px;border:1px solid #dce3eb;background:#fff;border-radius:7px;font-size:9px;font-weight:900}.web-lead-actions .convert{background:#0b9460;color:#fff;border-color:#0b9460}.web-lead-empty{padding:18px;text-align:center;color:#8a94a4;font-size:10px;border:1px dashed #dfe5ed;border-radius:10px}
+
+.wa-center-panel{margin-top:10px}.wa-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}.wa-summary>span{padding:12px 14px;border:1px solid #e8edf3;border-radius:10px;background:#fcfdff}.wa-summary b{display:block;font-size:18px}.wa-summary small{color:#8590a1;font-size:9px}.wa-center-list{display:grid;gap:8px}.wa-center-item{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px;border:1px solid #e8edf3;border-radius:10px;background:#fff}.wa-center-main{min-width:0}.wa-center-main b{display:block;font-size:12px}.wa-center-main small{display:block;color:#8590a1;font-size:9px;margin-top:3px}.wa-center-actions{display:flex;gap:6px;flex:none}.wa-center-actions button{height:32px;padding:0 10px;border:1px solid #dce3eb;background:#fff;border-radius:8px;font-size:9px;font-weight:900}.wa-center-actions .wa-open{background:#0b9460;color:#fff;border-color:#0b9460}.wa-center-empty{padding:24px;text-align:center;color:#8a94a4;font-size:10px;border:1px dashed #dfe5ed;border-radius:10px}
+@media(max-width:700px){.wa-summary{grid-template-columns:1fr}.wa-center-item{align-items:flex-start;flex-direction:column}.wa-center-actions{width:100%}.wa-center-actions button{flex:1}}
 </style>
 </head>
 <body>
@@ -42,6 +45,7 @@
   <a class="os-side-link" href="#customerList" onclick="osNav(this,'followups')"><span>◷</span><b>Follow-ups</b><em id="sideFollowCount">0</em></a>
   <a class="os-side-link" href="#customerList" onclick="osNav(this,'deals')"><span>✓</span><b>Deals</b><em id="sideDealCount">0</em></a>
   <a class="os-side-link" href="#websiteLeads" onclick="osNav(this,'website')"><span>↗</span><b>Website Leads</b><em id="sideWebLeadCount">0</em></a>
+  <a class="os-side-link" href="#whatsappCenter" onclick="osNav(this,'whatsapp')"><span>💬</span><b>WhatsApp</b><em id="sideWaCount">0</em></a>
   <div class="os-side-divider"></div>
   <div class="os-side-title">MANAGE</div>
   <a class="os-side-link side-disabled" href="javascript:void(0)" aria-disabled="true"><span>▥</span><b>Reports</b><small>Coming soon</small></a>
@@ -62,7 +66,7 @@
     <div class="dash-panel pipeline-panel"><div class="panel-head"><div><h3>Sales Pipeline</h3><p>Move customers through the journey.</p></div><span id="dashPipelineTotal">0 leads</span></div><div id="dashPipeline" class="dash-pipeline"></div></div>
     <div class="dash-panel action-panel"><div class="panel-head"><div><h3>Needs Attention</h3><p>Customers that need your next action.</p></div></div><div id="dashAttention" class="attention-list"></div></div>
   </div>
-  <div class="dash-panel web-leads-panel" id="websiteLeads"><div class="panel-head"><div><h3>Website Leads</h3><p>Enquiries submitted from your website lead form.</p></div><div class="web-lead-toolbar"><a id="leadFormLink" class="lead-primary" target="_blank" rel="noopener">Open Lead Form</a><button type="button" onclick="copyLeadFormLink()">Copy Link</button></div></div><div id="webLeadsList" class="web-leads-list"></div></div>
+  <div class="dash-panel wa-center-panel view-hidden" id="whatsappCenter"><div class="panel-head"><div><h3>WhatsApp Center</h3><p>Send contextual follow-ups without losing the customer history.</p></div><div class="web-lead-toolbar"><button type="button" onclick="waBroadcastHint()">Message tips</button></div></div><div class="wa-summary"><span><b id="waReadyCount">0</b><small>contacts with mobile</small></span><span><b id="waHotCount">0</b><small>priority leads</small></span><span><b id="waTodayCount">0</b><small>follow-ups today</small></span></div><div id="waCenterList" class="wa-center-list"></div></div><div class="dash-panel web-leads-panel" id="websiteLeads"><div class="panel-head"><div><h3>Website Leads</h3><p>Enquiries submitted from your website lead form.</p></div><div class="web-lead-toolbar"><a id="leadFormLink" class="lead-primary" target="_blank" rel="noopener">Open Lead Form</a><button type="button" onclick="copyLeadFormLink()">Copy Link</button></div></div><div id="webLeadsList" class="web-leads-list"></div></div>
   <div class="dash-panel" style="margin-top:10px"><div class="panel-head"><div><h3>Recent Leads & Deals</h3><p>Latest activity in this workspace.</p></div><button type="button" class="dash-secondary" onclick="osNav(document.querySelector('.os-side-link:nth-of-type(3)'),'customers')" style="height:34px;padding:0 11px;border-radius:8px;font-size:10px">View all</button></div><div id="dashRecent" class="attention-list"></div></div>
 </section>
 <div id="summary" class="smart-summary"><span><b id="total">0</b> contacts</span><i></i><span><b id="today">0</b> follow-ups today</span><i></i><span><b id="hot">0</b> hot leads</span><i></i><span><b id="overdue">0</b> overdue</span></div><div id="templatePipeline" class="template-pipeline"></div>
@@ -102,7 +106,9 @@ function navView(section){
   const summary=document.getElementById('summary');
   const pipeline=document.getElementById('templatePipeline');
   const list=document.getElementById('customerList');
+  const wa=document.getElementById('whatsappCenter');
   const showDash=section==='overview';
+  if(wa)wa.classList.toggle('view-hidden',section!=='whatsapp');
   if(dash)dash.classList.toggle('view-hidden',!showDash);
   [summary,pipeline,list].forEach(el=>{if(el)el.classList.toggle('view-hidden',showDash)});
 }
@@ -115,6 +121,7 @@ function osNav(el,section){
   if(section==='followups'){setFollowFilter('today');window.scrollTo({top:0,behavior:'smooth'});return false}
   if(section==='deals'){setStageFilter('Won');window.scrollTo({top:0,behavior:'smooth'});return false}
   if(section==='website'){navView('overview');document.getElementById('websiteLeads')?.scrollIntoView({behavior:'smooth',block:'center'});return false}
+  if(section==='whatsapp'){navView('whatsapp');document.getElementById('whatsappCenter')?.scrollIntoView({behavior:'smooth',block:'start'});renderWhatsAppCenter();return false}
   return false;
 }
 function parseNextDate(value){
@@ -217,7 +224,7 @@ function renderDashboard(){
   const recent=[...customers].sort((a,b)=>String(b.updatedAt?.seconds||b.createdAt?.seconds||0)-String(a.updatedAt?.seconds||a.createdAt?.seconds||0)).slice(0,5);
   const rb=$('dashRecent');
   if(rb)rb.innerHTML=recent.length?recent.map(c=>{const wonish=['Won','Paid'].includes(c.status);return `<button class="attention-item" type="button" onclick="selectCustomer('${c.id}')"><span class="attention-main"><b>${esc(c.name)}</b><small>${esc(c.status||'New')} · ${esc(c.source||'Manual Entry')}</small></span><span class="attention-badge ${wonish?'today':''}">${wonish?'DEAL':'LEAD'}</span></button>`}).join(''):'<div class="attention-empty">No leads yet.</div>';
-  renderWebsiteLeads();
+  renderWebsiteLeads(); renderWhatsAppCenter();
 }
 
 
@@ -343,7 +350,31 @@ async function changeStage(){
 async function saveActivity(){const c=customers.find(x=>x.id===selectedId);if(!c)return;const d=$("adate").value,t=$("atime").value,n=$("anote").value.trim()||"Activity added.";const events=Array.isArray(c.events)?[...c.events]:[];events.push({date:dateText(d,t),type:atype,note:n});const patch={events,note:n,updatedAt:serverTimestamp()};if(atype==="Deal Won")patch.status="Won";if(atype==="Site Visit")patch.status="Site Visit";if(atype==="Follow-up")patch.status="Follow-up";try{await updateDoc(doc(db,"businesses",businessId,"contacts",c.id),patch);closeModal();toast("Activity saved")}catch(e){toast(e.message||"Could not save activity",true)}}
 async function markDone(){const c=customers.find(x=>x.id===selectedId);if(!c)return;const events=Array.isArray(c.events)?[...c.events]:[];events.push({date:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})+" · Now",type:"Follow-up completed",note:"Next action marked complete."});try{await updateDoc(doc(db,"businesses",businessId,"contacts",c.id),{events,next:"Completed",last:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}),updatedAt:serverTimestamp()});toast("Follow-up completed")}catch(e){toast(e.message||"Could not update follow-up",true)}}
 function call(id){const c=customers.find(x=>x.id===id);if(c?.phone)window.location.href="tel:"+normalizePhone(c.phone);else toast("No mobile number",true)}
-function wa(id){const c=customers.find(x=>x.id===id);if(!c)return;window.open("https://wa.me/"+normalizePhone(c.phone)+"?text="+encodeURIComponent("Hi "+c.name+", following up regarding your "+(c.req||"requirement")+"."),"_blank")}
+function waMessage(c){
+  const t=currentTemplate(); const name=c.name||'there'; const req=c.req||c.requirement||'your enquiry';
+  const stage=c.status||'New';
+  if(t.id==='property') return `Hello ${name} ji, aapne ${req} ke regarding enquiry ki thi. Aapki requirement aur budget ke hisaab se options share kar sakte hain. Kya abhi baat karna convenient hai?`;
+  if(t.id==='coaching') return `Hello ${name} ji, aapne ${req} ke regarding enquiry ki thi. Aapko course, fees ya demo class ke baare mein information chahiye ho to batayein. Kya aaj baat kar sakte hain?`;
+  if(stage==='Won'||stage==='Paid') return `Hello ${name} ji, thank you for choosing us. Aapke next steps ke liye agar kisi help ki zarurat ho to message kijiye.`;
+  return `Hello ${name} ji, aapne ${req} ke regarding enquiry ki thi. Main aapka follow-up kar raha hoon. Kya abhi baat karna convenient hai?`;
+}
+function openWaFor(c){
+  if(!c?.phone){toast('No mobile number',true);return;}
+  const url='https://wa.me/'+normalizePhone(c.phone)+'?text='+encodeURIComponent(waMessage(c));
+  window.open(url,'_blank','noopener');
+  const events=Array.isArray(c.events)?[...c.events]:[]; events.push({date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · Now',type:'WhatsApp opened',note:'Contextual WhatsApp follow-up opened from Business OS.'});
+  updateDoc(doc(db,'businesses',businessId,'contacts',c.id),{events,last:'WhatsApp opened',updatedAt:serverTimestamp()}).catch(()=>{});
+}
+function renderWhatsAppCenter(){
+  const ready=customers.filter(c=>normalizePhone(c.phone));
+  const hot=customers.filter(c=>['Interested','Follow-up','Site Visit','Negotiation'].includes(c.status));
+  const fs=followStats(); const set=(id,v)=>{const e=$(id);if(e)e.textContent=v}; set('waReadyCount',ready.length);set('waHotCount',hot.length);set('waTodayCount',fs.today);set('sideWaCount',ready.length);
+  const box=$('waCenterList'); if(!box)return;
+  const ordered=[...customers].sort((a,b)=>{const ah=['Interested','Follow-up','Site Visit','Negotiation'].includes(a.status)?0:1,bh=['Interested','Follow-up','Site Visit','Negotiation'].includes(b.status)?0:1;return ah-bh}).slice(0,12);
+  box.innerHTML=ordered.length?ordered.map(c=>`<div class="wa-center-item"><div class="wa-center-main"><b>${esc(c.name)}</b><small>${esc(c.status||'New')} · ${esc(c.req||c.requirement||'No requirement')} · ${esc(c.phone||'No mobile')}</small></div><div class="wa-center-actions"><button onclick="selectCustomer('${c.id}')">View</button><button class="wa-open" onclick="openWaFor(customers.find(x=>x.id==='${c.id}'))">💬 WhatsApp</button></div></div>`).join(''):'<div class="wa-center-empty">No customers yet. Add a customer with a mobile number to start WhatsApp follow-ups.</div>';
+}
+function waBroadcastHint(){toast('Use individual contextual messages first. Bulk WhatsApp automation will require WhatsApp Business API approval.')}
+function wa(id){const c=customers.find(x=>x.id===id);if(!c)return;openWaFor(c)}
 function email(){toast("Email integration is the next communication phase")}
 function exportCSV(){const headers=["Name","Mobile","Business Type","Contact Type","City","Area","Requirement","Budget","Status","Source","Next Follow-up","Last Contact"];const lines=[headers.join(",")].concat(customers.map(c=>[c.name,c.phone,c.businessType,c.type,c.city,c.area,c.req,c.budget,c.status,c.source,c.next,c.last].map(v=>'"'+String(v??"").replaceAll('"','""')+'"').join(",")));const blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="business-os-customers.csv";a.click();URL.revokeObjectURL(a.href);toast("Export ready")}
 async function importCSV(e){const file=e.target.files[0];if(!file)return;try{let rows=[];if(/\.xlsx?$/i.test(file.name)){const data=await file.arrayBuffer(),wb=XLSX.read(data,{type:"array"}),ws=wb.Sheets[wb.SheetNames[0]];rows=XLSX.utils.sheet_to_json(ws,{defval:""})}else{const text=await file.text();rows=parseCSV(text)}if(!rows.length){toast("No customer rows found",true);return}const batch=writeBatch(db),existing=new Set(customers.map(c=>normalizePhone(c.phone)).filter(Boolean));let added=0,dupes=0;for(const r of rows){const name=String(r.Name||r.name||"").trim();if(!name)continue;const phone=String(r.Mobile||r.mobile||"").trim(),norm=normalizePhone(phone);if(norm&&existing.has(norm)){dupes++;continue}const ref=doc(collection(db,"businesses",businessId,"contacts"));batch.set(ref,{name,phone,phoneNormalized:norm,businessName:String(r.Business||r.businessName||""),businessType:String(r["Business Type"]||r.businessType||"Other"),type:String(r.Type||r["Contact Type"]||"Customer"),city:String(r.City||"Jaipur"),area:String(r.Area||""),req:String(r.Requirement||r.requirement||"New enquiry"),requirement:String(r.Requirement||r.requirement||"New enquiry"),detail:String(r.Detail||""),budget:String(r.Budget||""),status:String(r.Status||"New"),source:String(r.Source||"Excel Import"),next:String(r["Next Follow-up"]||r.Followup||"Not set"),last:String(r["Last Contact"]||"Imported"),note:"Imported customer. Add an important note after the first contact.",events:[{date:"Imported",type:"Customer Imported",note:"Imported from CSV/Excel."}],createdAt:serverTimestamp(),updatedAt:serverTimestamp()});if(norm)existing.add(norm);added++}if(added)await batch.commit();toast(added+" imported · "+dupes+" duplicates skipped")}catch(e){toast(e.message||"Import failed",true)}finally{e.target.value=""}}
