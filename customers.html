@@ -123,6 +123,72 @@
 </style>
 
 
+
+<style id="business-os-v25-premium-topbar">
+/* V25 — Premium application topbar: clear, calm, workspace-first */
+body.app-page .app-topbar{
+  height:74px!important; padding:0 28px!important; gap:24px!important;
+  display:grid!important; grid-template-columns:250px minmax(260px,1fr) auto auto!important;
+  background:rgba(255,255,255,.94)!important;
+  border-bottom:1px solid #e5ebf3!important;
+  box-shadow:0 8px 28px rgba(17,35,67,.055)!important;
+  backdrop-filter:blur(18px)!important;
+}
+body.app-page .app-topbar .brand{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;font-size:22px!important;letter-spacing:-.045em!important;color:#0b1f3a!important}
+body.app-page .app-topbar .brand i{width:40px!important;height:40px!important;border-radius:12px!important;margin:0!important;background:linear-gradient(145deg,#0b1f3a,#183765)!important;box-shadow:0 8px 20px rgba(11,31,58,.16)!important;font-size:19px!important}
+body.app-page .app-topbar .brand-name{font-weight:900!important;white-space:nowrap!important;color:#0b1f3a!important}
+body.app-page .app-topbar .brand-name span{color:#2563eb!important}
+body.app-page .global-search{height:46px;max-width:620px;width:100%;justify-self:center;display:flex;align-items:center;gap:10px;padding:0 12px 0 14px;background:#f5f8fc;border:1px solid #e1e8f2;border-radius:13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9);transition:.18s ease}
+body.app-page .global-search:focus-within{background:#fff;border-color:#9bb7ff;box-shadow:0 0 0 4px rgba(37,99,235,.09),0 8px 22px rgba(24,52,96,.06)}
+body.app-page .global-search-icon{font-size:25px;line-height:1;color:#55708f;transform:rotate(-15deg);display:inline-block}
+body.app-page .global-search input{border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;width:100%;height:100%;padding:0!important;font-size:13px!important;color:#132542!important}
+body.app-page .global-search input::placeholder{color:#8290a5}
+body.app-page .global-search kbd{border:1px solid #dbe3ef;background:#fff;color:#71819a;border-radius:7px;padding:4px 7px;font:700 10px Arial,sans-serif;white-space:nowrap;box-shadow:0 1px 2px rgba(18,38,75,.05)}
+body.app-page .app-nav{display:flex!important;align-items:center!important;gap:4px!important;height:100%!important;margin:0!important;font-size:12px!important;font-weight:800!important;color:#607089!important;white-space:nowrap!important}
+body.app-page .app-nav a{position:relative;display:flex!important;align-items:center!important;gap:7px!important;height:100%!important;padding:0 10px!important;color:#52647e!important;border:0!important;transition:color .18s ease,background .18s ease!important}
+body.app-page .app-nav a span{font-size:17px!important;line-height:1!important;color:#50698a!important}
+body.app-page .app-nav a:hover{color:#1f58d7!important;background:#f5f8ff!important;transform:none!important}
+body.app-page .app-nav a.active{color:#1f5be7!important}
+body.app-page .app-nav a.active::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:3px;border-radius:3px 3px 0 0;background:#2563eb}
+body.app-page .app-nav a.active span{color:#2563eb!important}
+body.app-page .app-tools{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:max-content}
+body.app-page .icon-tool{position:relative;width:40px;height:40px;border:1px solid #e1e8f1;background:#fff;border-radius:11px;color:#18365d;font-size:19px;display:grid;place-items:center;text-decoration:none;box-shadow:0 2px 8px rgba(18,38,75,.035);cursor:pointer}
+body.app-page .icon-tool:hover{background:#f5f8ff!important;color:#2563eb!important;transform:translateY(-1px)!important}
+body.app-page .icon-tool em{position:absolute;right:-3px;top:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:#ef4444;color:#fff;font:900 9px/17px Arial,sans-serif;text-align:center;font-style:normal;border:2px solid #fff}
+body.app-page .top-user{display:flex;align-items:center;gap:9px;padding-left:7px;margin-left:2px;border-left:1px solid #e8edf4;min-width:145px}
+body.app-page .top-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#0b1f3a,#2563eb);color:#fff;font-size:14px;font-weight:900;box-shadow:0 6px 16px rgba(37,99,235,.18)}
+body.app-page .top-user-copy{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+body.app-page .top-user-copy b{font-size:12px;color:#142746;white-space:nowrap}
+body.app-page .top-user-copy small{font-size:10px;color:#8290a5;margin-top:3px}
+body.app-page .top-chevron{font-size:18px;color:#73839b;margin-left:auto}
+body.app-page .app-topbar + .auth-screen{min-height:calc(100vh - 74px)}
+@media(max-width:1180px){
+ body.app-page .app-topbar{grid-template-columns:220px minmax(220px,1fr) auto auto!important;gap:14px!important;padding:0 18px!important}
+ body.app-page .app-nav{gap:0!important}
+ body.app-page .app-nav a{padding:0 7px!important}
+ body.app-page .app-nav a span{display:none!important}
+ body.app-page .top-user{min-width:105px}
+}
+@media(max-width:980px){
+ body.app-page .app-topbar{grid-template-columns:190px 1fr auto!important;height:68px!important;padding:0 12px!important}
+ body.app-page .app-nav{display:none!important}
+ body.app-page .global-search{max-width:none}
+ body.app-page .global-search kbd{display:none}
+ body.app-page .app-topbar .brand{font-size:19px!important}
+ body.app-page .top-user-copy,.top-chevron{display:none!important}
+ body.app-page .top-user{min-width:auto;border-left:0;padding-left:0}
+ body.app-page .app-topbar + .auth-screen{min-height:calc(100vh - 68px)}
+}
+@media(max-width:560px){
+ body.app-page .app-topbar{grid-template-columns:1fr auto!important}
+ body.app-page .global-search{grid-column:1/-1;grid-row:2;height:42px;position:absolute;top:70px;left:10px;right:10px;max-width:none;z-index:110}
+ body.app-page .app-topbar{height:68px!important}
+ body.app-page .app-tools{margin-left:auto}
+ body.app-page .app-tools .icon-tool:first-child{display:none}
+ body.app-page .app-topbar .brand i{width:36px!important;height:36px!important}
+}
+</style>
+
 <style id="business-os-v24-sidebar-final">
 body.app-page .customers-shell{overflow:visible!important;}
 body.app-page .customers-page{overflow:visible!important;}
@@ -133,7 +199,26 @@ body.app-page .table-scroll{max-width:100%;}
 
 </head>
 <body class="app-page">
-<header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
+<header class="nav app-topbar" aria-label="BusinessOS application header">
+  <a class="brand" href="customers.html" aria-label="BusinessOS home"><i>B</i><span class="brand-name">Business<span>OS</span></span></a>
+  <div class="global-search" role="search">
+    <span class="global-search-icon">⌕</span>
+    <input id="globalSearch" type="search" placeholder="Search customers, leads, phone number, city..." aria-label="Search customers, leads, phone number, city" autocomplete="off">
+    <kbd>Ctrl K</kbd>
+  </div>
+  <nav class="app-nav" aria-label="Primary navigation">
+    <a class="active" href="#dashboardV2" onclick="osNav(this,'overview');return false;"><span>⌂</span>Overview</a>
+    <a href="#customerList" onclick="osNav(this,'customers');return false;"><span>♙</span>Customers</a>
+    <a href="#customerList" onclick="osNav(this,'followups');return false;"><span>◷</span>Follow-ups</a>
+    <a href="deals.html"><span>✓</span>Deals</a>
+    <a href="reports.html"><span>▥</span>Reports</a>
+  </nav>
+  <div class="app-tools">
+    <button type="button" class="icon-tool" aria-label="Toggle appearance" title="Appearance">☼</button>
+    <a class="icon-tool" href="notifications.html" aria-label="Notifications" title="Notifications"><span>♧</span><em id="topUnreadCount">0</em></a>
+    <div class="top-user"><span class="top-avatar" id="topUserInitial">S</span><span class="top-user-copy"><b id="topUserName">Saif Anwar</b><small>Admin</small></span><span class="top-chevron">⌄</span></div>
+  </div>
+</header>
 
 <section id="authScreen" class="auth-screen"><div class="auth-card"><div class="auth-mark">B</div><h1>Customer Login</h1><p>Apne Business OS workspace mein enter karne ke liye Google se sign in karein. Aapke customers, leads aur follow-ups private rahenge.</p><button type="button" id="googleBtn" class="google-btn">🔐 Continue with Google</button><div id="authMsg" class="auth-msg"></div></div></section>
 
@@ -158,7 +243,7 @@ body.app-page .table-scroll{max-width:100%;}
   <a class="os-side-link" href="notifications.html"><span>🔔</span><b>Notifications</b><em id="sideUnreadCount">0</em></a>
 </aside>
 <div class="os-content">
-<div class="page-head"><div><h1>Customers</h1><p>अपने customers की पूरी journey एक जगह track करें.</p></div><div class="top-actions"><div class="session"><span id="userEmail"></span><button onclick="logout()">Logout</button></div><button onclick="document.getElementById('csvFile').click()">↑ Import</button><button onclick="exportCSV()">↓ Export</button><button class="primary" onclick="openCustomerModal()">＋ Add Customer</button><input id="csvFile" class="file-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="importCSV(event)"></div></div>
+<div class="page-head"><div><h1>Customers</h1><p>अपने customers की पूरी journey एक जगह track करें.</p></div><div class="top-actions"><button onclick="document.getElementById('csvFile').click()">↑ Import</button><button onclick="exportCSV()">↓ Export</button><button class="primary" onclick="openCustomerModal()">＋ Add Customer</button><input id="csvFile" class="file-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="importCSV(event)"></div></div>
 <section class="dashboard-v2" id="dashboardV2">
   <div class="dash-head">
     <div>
@@ -307,6 +392,18 @@ body.app-page .table-scroll{max-width:100%;}
 <div id="toast" class="save-state hidden"></div>
 
 <script src="templates.js"></script>
+<script>
+(function(){
+  const bootSearch=()=>{
+    const g=document.getElementById('globalSearch'); const q=document.getElementById('search');
+    if(!g||!q)return;
+    g.addEventListener('input',()=>{q.value=g.value; q.dispatchEvent(new Event('input',{bubbles:true}));});
+    g.addEventListener('keydown',e=>{if(e.key==='Escape'){g.value='';q.value='';q.dispatchEvent(new Event('input',{bubbles:true}));g.blur();} });
+    document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();g.focus();g.select();}});
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootSearch);else bootSearch();
+})();
+</script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -937,7 +1034,7 @@ $("googleBtn").onclick=async()=>{
 
 await finishRedirect();
 
-onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();if(unsubPublicLeads)unsubPublicLeads();$("googleBtn").disabled=false;return}try{$("authMsg").textContent="Opening your workspace...";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userEmail").textContent=u.email||"";subscribe();subscribePublicLeads()}catch(e){console.error("Workspace setup error",e);$("authMsg").textContent=e.message||"Workspace setup failed.";$("googleBtn").disabled=false;}});
+onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();if(unsubPublicLeads)unsubPublicLeads();$("googleBtn").disabled=false;return}try{$("authMsg").textContent="Opening your workspace...";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userEmail").textContent=u.email||"";const n=(u.displayName||u.email||"User").split(" ")[0];const tn=$("topUserName"),ti=$("topUserInitial");if(tn)tn.textContent=u.displayName||u.email||"User";if(ti)ti.textContent=n.charAt(0).toUpperCase();subscribe();subscribePublicLeads()}catch(e){console.error("Workspace setup error",e);$("authMsg").textContent=e.message||"Workspace setup failed.";$("googleBtn").disabled=false;}});
 navView('overview');
 window.setFollowCenterTab=setFollowCenterTab;window.markDoneFor=markDoneFor;window.logout=logout;window.openCustomerModal=openCustomerModal;window.openWaComposer=openWaComposer;window.closeWaComposer=closeWaComposer;window.applyWaTemplate=applyWaTemplate;window.updateWaChar=updateWaChar;window.sendWaComposer=sendWaComposer;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.openEmailComposer=openEmailComposer;window.closeEmailComposer=closeEmailComposer;window.applyEmailTemplate=applyEmailTemplate;window.updateEmailChar=updateEmailChar;window.sendEmailComposer=sendEmailComposer;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;window.stagePick=stagePick;window.updatePipeline=updatePipeline;window.changeStage=changeStage;window.clearDashFilter=clearDashFilter;window.setStageFilter=setStageFilter;window.setFollowFilter=setFollowFilter;window.osNav=osNav;window.copyLeadFormLink=copyLeadFormLink;window.convertPublicLead=convertPublicLead;window.leadCall=leadCall;window.searchBusinessFinder=searchBusinessFinder;window.copyFinderSearch=copyFinderSearch;window.useFinderIdea=useFinderIdea;window.saveFinderProspect=saveFinderProspect;window.renderBusinessFinder=renderBusinessFinder;window.openFinderWebsite=openFinderWebsite;window.startFinderFollowup=startFinderFollowup;window.convertFinderProspect=convertFinderProspect;
 </script>
