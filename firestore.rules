@@ -1,104 +1,48 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn() { return request.auth != null; }
+
     function isAdmin() {
-      return signedIn() && (
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
-        request.auth.token.email == "saif.anwar1618@gmail.com"
-      );
-    }
-    function userBusinessId() {
-      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.businessId
-        : null;
-    }
-    function ownsBusiness(businessId) {
-      return signedIn() && (
-        request.auth.uid == businessId ||
-        userBusinessId() == businessId
-      );
-    }
-    function canClaimBusiness(businessId) {
-      return signedIn()
-        && resource.data.ownerUid == ''
-        && resource.data.ownerEmail == request.auth.token.email
-        && request.resource.data.ownerUid == request.auth.uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ownerUid','status','onboardingStatus','updatedAt']);
+      return request.auth != null
+        && request.auth.token.email == "saif.anwar1618@gmail.com";
     }
 
-    function canCreateLegacyUser(uid) {
-      return signedIn()
-        && request.auth.uid == uid
-        && request.resource.data.uid == uid
-        && request.resource.data.businessId == uid;
+    match /crmContacts/{docId} {
+      allow read, write: if isAdmin();
     }
 
-    function canUpdateUserProfile(uid) {
-      return signedIn()
-        && request.auth.uid == uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['email','displayName','updatedAt','businessName','templateId']);
+    match /publicRequirements/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
-    function canLinkClaimedUser(uid) {
-      return signedIn()
-        && request.auth.uid == uid
-        && request.resource.data.businessId != null
-        && exists(/databases/$(database)/documents/businesses/$(request.resource.data.businessId))
-        && get(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)).data.ownerUid == uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['uid','email','displayName','businessId','businessName','role','templateId','createdAt','updatedAt']);
-    }
-
-    match /admins/{uid} {
-      allow read: if signedIn() && request.auth.uid == uid;
-      allow write: if false;
-    }
-
-    match /users/{uid} {
-      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
-      allow create: if isAdmin() || canCreateLegacyUser(uid) || canLinkClaimedUser(uid);
-      allow update: if isAdmin() || canUpdateUserProfile(uid) || canLinkClaimedUser(uid);
-      allow delete: if isAdmin();
-    }
-
-    match /publicLeads/{leadId} {
-      // Public website forms may create a lead, but cannot read or modify CRM data.
-      allow create: if request.resource.data.keys().hasOnly(['businessId','templateId','status','name','phone','email','budget','requirement','city','area','message','createdAt'])
-        && request.resource.data.businessId is string
-        && request.resource.data.templateId is string
-        && request.resource.data.status == 'new'
+    match /publicSubmissions/{docId} {
+      allow create: if request.resource.data.status == "pending"
+        && request.resource.data.source == "Public Website"
         && request.resource.data.name is string
-        && request.resource.data.phone is string
-        && request.resource.data.requirement is string
-        && request.resource.data.createdAt is timestamp
-        && exists(/databases/$(database)/documents/businesses/$(request.resource.data.businessId));
-      allow read, update, delete: if signedIn()
-        && ownsBusiness(resource.data.businessId);
+        && request.resource.data.mobile is string
+        && request.resource.data.area is string
+        && request.resource.data.propertyType is string
+        && request.resource.data.details is string;
+      allow read, update, delete: if isAdmin();
     }
 
-    match /businesses/{businessId} {
-      // New businesses are provisioned by Admin. Legacy self-created workspaces remain supported.
-      allow create: if isAdmin() || (signedIn() && request.auth.uid == businessId);
-      allow read: if ownsBusiness(businessId) || isAdmin()
-        || (signedIn() && resource.data.ownerUid == '' && resource.data.ownerEmail == request.auth.token.email);
-      allow update: if isAdmin() || ownsBusiness(businessId) || canClaimBusiness(businessId);
-      allow delete: if isAdmin() || (ownsBusiness(businessId) && request.auth.uid == businessId);
+    match /publicReviews/{docId} {
+      allow read: if resource.data.status == "approved";
+      allow create: if request.resource.data.status == "pending"
+        && request.resource.data.source == "Public Website"
+        && request.resource.data.name is string
+        && request.resource.data.comment is string;
+      allow read, update, delete: if isAdmin();
+    }
 
-      match /contacts/{contactId} {
-        allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
-        match /followups/{followupId} {
-          allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
-        }
-      }
-      match /deals/{dealId} {
-        allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
-      }
-      match /prospects/{prospectId} {
-        allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
-      }
-      match /settings/{settingId} {
-        allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
-      }
+    match /crmMatches/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
