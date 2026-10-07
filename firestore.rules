@@ -23,6 +23,10 @@ service cloud.firestore {
       return signedIn() && (
         request.auth.uid == businessId ||
         (
+          exists(/databases/$(database)/documents/businesses/$(businessId)) &&
+          get(/databases/$(database)/documents/businesses/$(businessId)).data.ownerUid == request.auth.uid
+        ) ||
+        (
           exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.businessId == businessId &&
           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['owner','admin']
