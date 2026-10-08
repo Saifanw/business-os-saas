@@ -1401,3 +1401,123 @@ body.app-page .workspace{display:block!important}
 @media(max-width:1200px){body.app-page .os-layout{grid-template-columns:220px minmax(0,1fr)!important}.filters{grid-template-columns:repeat(3,1fr)!important}.table-head,.row{grid-template-columns:34px minmax(250px,2fr) minmax(135px,1fr) minmax(140px,1fr) minmax(155px,1.15fr) minmax(120px,.9fr) minmax(115px,.85fr) minmax(220px,1.4fr)!important}}
 @media(max-width:900px){body.app-page .customers-shell{padding:16px 10px 36px!important}body.app-page .os-layout{display:block!important}body.app-page .os-sidebar{position:static!important;height:auto!important;margin-bottom:14px!important}.filters{grid-template-columns:1fr 1fr!important}.list-head{flex-direction:column!important;align-items:stretch!important}.list-search{margin-left:0!important}.list-search input{width:100%!important}.table-head{display:none!important}.row{display:grid!important;grid-template-columns:28px minmax(0,1fr)!important;grid-template-rows:auto auto auto auto!important;height:auto!important;min-height:0!important;padding:18px!important;gap:10px 12px!important}.row>.check{grid-row:1/6!important;align-self:start!important}.row>.contact-cell{grid-column:2!important;grid-row:1!important}.row>div:nth-child(3){grid-column:2!important;grid-row:2!important}.row>div:nth-child(4){grid-column:2!important;grid-row:3!important}.row>div:nth-child(5){grid-column:2!important;grid-row:4!important}.row>div:nth-child(6){grid-column:2!important;grid-row:2!important}.row>div:nth-child(7){grid-column:2!important;grid-row:3!important}.row>.actions{grid-column:2!important;grid-row:5!important;flex-wrap:wrap!important}.smart-summary{overflow:auto!important}}
 </style>
+<style id="businessos-customers-v33-powerbi-shell">
+/* V33 — Full-width Power BI inspired customer workspace. Logic/data untouched. */
+:root{--v33-bg:#f4f7fb;--v33-ink:#14213d;--v33-muted:#6d7b91;--v33-line:#dfe6f0;--v33-blue:#2563eb;--v33-blue2:#4f7cff;--v33-soft:#eef4ff;}
+body.app-page{background:linear-gradient(180deg,#f3f6fb 0%,#f7f9fc 100%)!important}
+body.app-page .customers-shell{padding:18px 22px 48px!important}
+body.app-page .os-layout{display:block!important;max-width:none!important}
+body.app-page .os-sidebar{display:none!important}
+body.app-page .os-content{width:100%!important;max-width:1500px!important;margin:0 auto!important}
+body.app-page .record-quickbar{display:none!important}
+
+/* Premium top navigation */
+.v33-topbar{display:flex;align-items:center;gap:22px;min-height:72px;padding:10px 14px 10px 16px;margin:0 0 18px;background:rgba(255,255,255,.94);border:1px solid var(--v33-line);border-radius:18px;box-shadow:0 12px 35px rgba(25,43,75,.07);backdrop-filter:blur(12px)}
+.v33-brand{display:flex;align-items:center;gap:11px;min-width:190px;text-decoration:none;color:var(--v33-ink)}
+.v33-brand-mark{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-size:18px;font-weight:950;background:linear-gradient(145deg,#1d4ed8,#4f7cff);box-shadow:0 9px 20px rgba(37,99,235,.24);position:relative;overflow:hidden}
+.v33-brand-mark:after{content:"";position:absolute;width:20px;height:20px;border:2px solid rgba(255,255,255,.42);border-radius:50%;top:-7px;right:-7px}
+.v33-brand-copy b{display:block;font-size:17px;letter-spacing:-.4px;line-height:1}
+.v33-brand-copy span{display:block;font-size:8px;letter-spacing:.15em;font-weight:900;color:#8a96aa;margin-top:5px;text-transform:uppercase}
+.v33-nav{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+.v33-nav::-webkit-scrollbar{display:none}
+.v33-nav button{height:40px;padding:0 13px;border:1px solid transparent;background:transparent;border-radius:10px;color:#617087;font-size:10px;font-weight:900;white-space:nowrap;cursor:pointer;transition:.16s ease}
+.v33-nav button:hover{background:#f5f8fd;color:#234aab}
+.v33-nav button.active{background:var(--v33-soft);border-color:#d8e5ff;color:#1f5bd7;box-shadow:inset 0 -2px 0 #2563eb}
+.v33-nav button .nav-count{display:inline-flex;min-width:18px;height:18px;padding:0 5px;margin-left:5px;align-items:center;justify-content:center;border-radius:999px;background:#e9eef7;color:#68778e;font-size:8px}
+.v33-nav button.active .nav-count{background:#dce8ff;color:#2563eb}
+.v33-nav-divider{height:30px;width:1px;background:#e7ecf3;flex:none}
+.v33-nav-action{display:flex;gap:7px;flex:none}
+.v33-nav-action button{height:40px;border-radius:10px;padding:0 12px;font-size:10px;font-weight:900;border:1px solid #dce5f0;background:#fff;color:#35445d;cursor:pointer}
+.v33-nav-action .add{background:linear-gradient(135deg,#2563eb,#4f7cff);border-color:#2563eb;color:#fff;box-shadow:0 8px 18px rgba(37,99,235,.2)}
+
+/* Page title becomes a clean report header */
+body.app-page .page-head{padding:3px 6px 15px!important;min-height:58px!important}
+body.app-page .page-head h1{font-size:30px!important;letter-spacing:-1px!important}
+body.app-page .page-head p{font-size:12px!important}
+body.app-page .page-head .top-actions{display:flex!important;gap:7px!important}
+body.app-page .page-head .top-actions button{height:38px!important;border-radius:10px!important;font-size:10px!important;padding:0 13px!important}
+body.app-page .page-head .top-actions .primary{display:none!important}
+
+/* KPI strip — Power BI style */
+body.app-page .smart-summary{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:10px!important;padding:0!important;margin:0 0 14px!important;background:transparent!important;border:0!important;box-shadow:none!important;min-height:0!important}
+body.app-page .smart-summary span{position:relative;display:flex!important;align-items:flex-end!important;gap:8px!important;min-height:72px!important;padding:13px 17px!important;background:#fff!important;border:1px solid var(--v33-line)!important;border-radius:14px!important;box-shadow:0 8px 24px rgba(25,43,75,.045)!important}
+body.app-page .smart-summary span:before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 4px 4px 0;background:#2563eb}
+body.app-page .smart-summary span:nth-of-type(2):before{background:#f59e0b}
+body.app-page .smart-summary span:nth-of-type(3):before{background:#8b5cf6}
+body.app-page .smart-summary span:nth-of-type(4):before{background:#ef4444}
+body.app-page .smart-summary b{font-size:25px!important;line-height:1!important;color:#15233e!important}
+body.app-page .smart-summary span{font-size:10px!important;font-weight:800!important;color:#7a879b!important}
+body.app-page .smart-summary i{display:none!important}
+
+/* List/report container */
+body.app-page .list-card{border-radius:18px!important;border:1px solid #dce4ef!important;box-shadow:0 15px 45px rgba(20,33,61,.065)!important}
+body.app-page .list-head{min-height:94px!important;padding:18px 22px!important}
+body.app-page .list-head b{font-size:22px!important}
+body.app-page .list-head small{font-size:11px!important}
+body.app-page .record-sort-note{font-size:10px!important}
+body.app-page .list-search input{height:44px!important;width:min(390px,31vw)!important;border-radius:11px!important;font-size:12px!important}
+body.app-page .filters{grid-template-columns:repeat(5,minmax(120px,1fr)) 84px!important;padding:12px 22px!important;gap:8px!important}
+body.app-page .filters select,body.app-page .reset-filter{height:40px!important;border-radius:10px!important;font-size:10px!important}
+
+/* Fix the old 8-column grid bug: rows actually contain 9 columns. */
+body.app-page .table-head,body.app-page .row{grid-template-columns:32px minmax(250px,2.2fr) minmax(145px,1.05fr) minmax(130px,.95fr) minmax(160px,1.2fr) minmax(130px,.95fr) minmax(105px,.75fr) minmax(145px,1fr) minmax(205px,1.45fr)!important}
+body.app-page .table-head{height:48px!important;padding-left:22px!important;padding-right:22px!important;background:#f5f8fc!important;color:#7c899d!important;font-size:9px!important;letter-spacing:.11em!important}
+body.app-page .row{height:88px!important;min-height:88px!important;padding-left:22px!important;padding-right:22px!important}
+body.app-page .row:hover{box-shadow:inset 3px 0 0 #2563eb,0 8px 22px rgba(25,43,75,.06)!important;background:#fbfdff!important}
+body.app-page .contact-main b{font-size:14px!important}
+body.app-page .contact-main small{font-size:10px!important}
+body.app-page .data-cell b{font-size:11px!important}
+body.app-page .data-cell small,.follow-cell small{font-size:9px!important}
+body.app-page .status{font-size:9px!important;padding:6px 9px!important}
+body.app-page .actions{gap:5px!important;align-items:center!important;flex-wrap:nowrap!important}
+body.app-page .actions button{height:32px!important;padding:0 9px!important;font-size:9px!important;white-space:nowrap!important}
+body.app-page .actions .wa{font-size:0!important;width:34px!important;padding:0!important}
+body.app-page .actions .wa:after{content:"◉";font-size:12px}
+body.app-page .actions button:nth-child(2){font-size:0!important;width:34px!important;padding:0!important}
+body.app-page .actions button:nth-child(2):after{content:"✉";font-size:12px}
+body.app-page .actions .view{font-size:9px!important;width:auto!important;padding:0 10px!important}
+
+/* Hide unused embedded overview sections even if a legacy script toggles them later. */
+body.app-page #dashboardV2,body.app-page #followupCenter,body.app-page #websiteLeadCenter,body.app-page #businessFinderView{display:none!important}
+
+@media(max-width:1100px){.v33-brand{min-width:155px}.v33-nav button{padding:0 10px}.v33-nav-action{display:none}body.app-page .smart-summary{grid-template-columns:repeat(2,1fr)!important}.list-search input{width:280px!important}}
+@media(max-width:900px){body.app-page .customers-shell{padding:12px 10px 32px!important}.v33-topbar{gap:10px;padding:9px}.v33-brand{min-width:auto}.v33-brand-copy{display:none}.v33-nav{order:3;width:100%;flex-basis:100%}.v33-topbar{flex-wrap:wrap}.v33-nav-divider{display:none}body.app-page .smart-summary{grid-template-columns:1fr 1fr!important}.list-head{flex-direction:column!important;align-items:stretch!important}.list-search{margin-left:0!important}.list-search input{width:100%!important}.table-head{display:none!important}.row{display:grid!important;grid-template-columns:28px minmax(0,1fr)!important;grid-template-rows:auto auto auto auto!important;height:auto!important;min-height:0!important;padding:17px!important;gap:9px 12px!important}.row>.check{grid-row:1/6!important;align-self:start!important}.row>.contact-cell{grid-column:2!important;grid-row:1!important}.row>div:nth-child(3){grid-column:2!important;grid-row:2!important}.row>div:nth-child(4){grid-column:2!important;grid-row:3!important}.row>div:nth-child(5){grid-column:2!important;grid-row:4!important}.row>div:nth-child(6){grid-column:2!important;grid-row:2!important}.row>div:nth-child(7){grid-column:2!important;grid-row:3!important}.row>div:nth-child(8){grid-column:2!important;grid-row:4!important}.row>.actions{grid-column:2!important;grid-row:5!important;flex-wrap:wrap!important}.actions button{width:auto!important;font-size:10px!important}.actions .wa,.actions button:nth-child(2){font-size:10px!important;width:auto!important;padding:0 10px!important}.actions .wa:after,.actions button:nth-child(2):after{content:none!important}}
+</style>
+<script id="businessos-customers-v33-nav">
+(function(){
+  function buildV33(){
+    if(document.querySelector('.v33-topbar')) return;
+    const head=document.querySelector('.page-head'); if(!head) return;
+    const bar=document.createElement('div');
+    bar.className='v33-topbar';
+    bar.innerHTML=`
+      <a class="v33-brand" href="customers.html" onclick="return osNav(this,'overview')">
+        <span class="v33-brand-mark">B</span><span class="v33-brand-copy"><b>BusinessOS</b><span>Business Intelligence</span></span>
+      </a>
+      <div class="v33-nav" aria-label="Business OS navigation">
+        <button onclick="return osNav(null,'overview')">⌂ Overview</button>
+        <button class="active" onclick="return osNav(null,'customers')">▦ Customers</button>
+        <button onclick="return osNav(null,'followups')">◷ Follow-ups <span class="nav-count" id="v33Follow">0</span></button>
+        <button onclick="return osNav(null,'deals')">✓ Deals <span class="nav-count" id="v33Deals">0</span></button>
+        <button onclick="return osNav(null,'website')">↗ Leads <span class="nav-count" id="v33Leads">0</span></button>
+        <button onclick="return osNav(null,'whatsapp')">◉ WhatsApp <span class="nav-count" id="v33WA">0</span></button>
+        <button onclick="return osNav(null,'finder')">⌕ Finder</button>
+        <span class="v33-nav-divider"></span>
+        <button onclick="return osNav(null,'reports')">▥ Reports</button>
+      </div>
+      <div class="v33-nav-action">
+        <button onclick="document.getElementById('csvFile').click()">↑ Import</button>
+        <button onclick="exportCSV()">↓ Export</button>
+        <button class="add" onclick="openCustomerModal()">＋ Add Customer</button>
+      </div>`;
+    head.parentNode.insertBefore(bar,head);
+  }
+  function syncCounts(){
+    const map=[['v33Follow','sideFollowCount'],['v33Deals','sideDealCount'],['v33Leads','sideWebLeadCount'],['v33WA','sideWaCount']];
+    map.forEach(([a,b])=>{const x=document.getElementById(a),y=document.getElementById(b);if(x&&y)x.textContent=y.textContent||'0'});
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{buildV33();syncCounts()});
+  else {buildV33();syncCounts()}
+  setInterval(syncCounts,1200);
+})();
+</script>
