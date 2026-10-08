@@ -997,9 +997,7 @@ async function ensureWorkspace(u){
   await setDoc(userRef,{uid:u.uid,email:u.email||'',displayName:u.displayName||'',businessId,businessName:name,role:memberRole,templateId:businessProfile.templateId||'general',updatedAt:serverTimestamp()},{merge:true});
 }
 
-
 function subscribe(){if(unsub)unsub();const q=query(collection(db,"businesses",businessId,"contacts"),orderBy("createdAt","desc"));unsub=onSnapshot(q,snap=>{customers=snap.docs.map(d=>({id:d.id,...d.data()}));render()},err=>toast(err.message||"Could not load CRM data",true))}
-
 async function finishRedirect(){
   try{
     const result=await getRedirectResult(auth);
