@@ -219,6 +219,8 @@ body.app-page #summary,body.app-page #templatePipeline{display:none!important}bo
 @media(max-width:820px){.bos-app-topnav{position:relative;top:0;margin:10px;border-radius:15px;flex-wrap:wrap}.bos-app-brand{min-width:auto}.bos-app-nav{order:3;width:100%;overflow:auto}.bos-app-actions{margin-left:auto}.ov-hero{align-items:start}.ov-date{display:none}.ov-kpis{grid-template-columns:repeat(2,1fr)}.ov-insight-grid{grid-template-columns:1fr}.ov-flow{grid-template-columns:repeat(2,1fr)}.customers-page{padding:0 10px 24px!important}}
 </style>
 <style id="business-os-v42-overview-final-polish">
+/* V47 — slightly more breathing room between navigation and command center. */
+.bos-app-topnav{margin-bottom:24px!important;}
 /* V42 — keep Overview focused: analytics first, compact latest-customer workspace second. */
 .overview-command-center + .smart-summary{margin-top:8px!important;}
 .overview-command-center ~ .smart-summary{max-height:42px!important;}
@@ -1023,33 +1025,76 @@ async function recoverWorkspaceWithContacts(){
   return false;
 }
 
+function sortCustomersLatestFirst(list){
+  return list.sort((a,b)=>{
+    const ta=Number(a.createdAt?.seconds||a.updatedAt?.seconds||0);
+    const tb=Number(b.createdAt?.seconds||b.updatedAt?.seconds||0);
+    return tb-ta;
+  });
+}
+
+async function tryUidWorkspaceContacts(){
+  if(!currentUser?.uid) return false;
+  try{
+    const uid=currentUser.uid;
+    const snap=await getDocs(collection(db,"businesses",uid,"contacts"));
+    if(!snap.empty){
+      businessId=uid;
+      const bs=await getDoc(doc(db,"businesses",uid));
+      businessProfile=bs.exists()?bs.data():businessProfile||{};
+      try{await setDoc(doc(db,"users",uid),{businessId:uid,businessName:businessProfile?.name||"",updatedAt:serverTimestamp()},{merge:true})}catch(e){console.warn("User workspace pointer update skipped",e)}
+      customers=sortCustomersLatestFirst(snap.docs.map(d=>({id:d.id,...d.data()})));
+      return true;
+    }
+  }catch(e){console.warn("UID workspace contact check failed",e)}
+  return false;
+}
+
 function subscribe(){
   if(unsub)unsub();
   const base=collection(db,"businesses",businessId,"contacts");
-  const q=query(base,orderBy("createdAt","desc"));
-  unsub=onSnapshot(q,async snap=>{
-    customers=snap.docs.map(d=>({id:d.id,...d.data()}));
+  // Deliberately avoid orderBy here. Older CRM records may not have createdAt,
+  // and a server-side ordered query can make the entire listener fail.
+  unsub=onSnapshot(base,async snap=>{
+    customers=sortCustomersLatestFirst(snap.docs.map(d=>({id:d.id,...d.data()})));
     render();
     if(!customers.length){
+      const uidRecovered=await tryUidWorkspaceContacts();
+      if(uidRecovered){
+        if(unsub)unsub();
+        const rq=collection(db,"businesses",businessId,"contacts");
+        unsub=onSnapshot(rq,rs=>{customers=sortCustomersLatestFirst(rs.docs.map(d=>({id:d.id,...d.data()})));render()},e=>console.error("CRM listener error",e));
+        render();
+        return;
+      }
       const recovered=await recoverWorkspaceWithContacts();
       if(recovered){
         if(unsub)unsub();
         const rq=collection(db,"businesses",businessId,"contacts");
-        unsub=onSnapshot(rq,rs=>{customers=rs.docs.map(d=>({id:d.id,...d.data()}));customers.sort((a,b)=>Number(b.createdAt?.seconds||b.updatedAt?.seconds||0)-Number(a.createdAt?.seconds||a.updatedAt?.seconds||0));render()},e=>console.error("Recovered CRM listener error",e));
+        unsub=onSnapshot(rq,rs=>{customers=sortCustomersLatestFirst(rs.docs.map(d=>({id:d.id,...d.data()})));render()},e=>console.error("Recovered CRM listener error",e));
         render();
       }
     }
   },async err=>{
     console.error("Could not load CRM data",err);
+    const uidRecovered=await tryUidWorkspaceContacts();
+    if(uidRecovered){
+      if(unsub)unsub();
+      const rq=collection(db,"businesses",businessId,"contacts");
+      unsub=onSnapshot(rq,rs=>{customers=sortCustomersLatestFirst(rs.docs.map(d=>({id:d.id,...d.data()})));render()},e=>console.error("UID CRM listener error",e));
+      render();
+      return;
+    }
     const recovered=await recoverWorkspaceWithContacts();
     if(recovered){
       if(unsub)unsub();
       const rq=collection(db,"businesses",businessId,"contacts");
-      unsub=onSnapshot(rq,rs=>{customers=rs.docs.map(d=>({id:d.id,...d.data()}));customers.sort((a,b)=>Number(b.createdAt?.seconds||b.updatedAt?.seconds||0)-Number(a.createdAt?.seconds||a.updatedAt?.seconds||0));render()},e=>console.error("Recovered CRM listener error",e));
+      unsub=onSnapshot(rq,rs=>{customers=sortCustomersLatestFirst(rs.docs.map(d=>({id:d.id,...d.data()})));render()},e=>console.error("Recovered CRM listener error",e));
       render();
     }else toast(err.message||"Could not load CRM data",true);
   });
 }
+
 async function finishRedirect(){
   try{
     const result=await getRedirectResult(auth);
