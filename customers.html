@@ -202,7 +202,7 @@ body.module-page .os-content{min-width:0!important}
 :root{--ov-ink:#14233f;--ov-muted:#71809a;--ov-line:#e5ebf4;--ov-bg:#f5f8fd;--ov-blue:#2f67f5}
 body.app-page{background:linear-gradient(180deg,#f7f9fd 0%,#eef3fa 100%)!important;color:var(--ov-ink)}
 body.app-page>.nav{display:none!important}
-.bos-app-topnav{position:sticky;top:10px;z-index:50;margin:10px 8px 18px;padding:10px 12px 10px 16px;min-height:68px;display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.96);border:1px solid #dfe6f0;border-radius:20px;box-shadow:0 10px 30px rgba(27,50,88,.09);backdrop-filter:blur(14px)}
+.bos-app-topnav{position:sticky;top:8px;z-index:50;margin:8px 4px 18px;padding:10px 12px 10px 16px;min-height:68px;display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.96);border:1px solid #dfe6f0;border-radius:20px;box-shadow:0 10px 30px rgba(27,50,88,.09);backdrop-filter:blur(14px)}
 .bos-app-brand{display:flex;align-items:center;gap:10px;min-width:188px;text-decoration:none;color:var(--ov-ink)}
 .bos-logo{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#376ff7,#2558df);color:#fff;font-size:24px;font-weight:900;box-shadow:0 8px 18px rgba(47,103,245,.25)}
 .bos-app-brand strong{display:block;font-size:18px;line-height:1}.bos-app-brand small{display:block;margin-top:5px;font-size:7px;letter-spacing:1.5px;color:#7b89a0;font-weight:900}
@@ -997,7 +997,7 @@ async function ensureWorkspace(u){
   await setDoc(userRef,{uid:u.uid,email:u.email||'',displayName:u.displayName||'',businessId,businessName:name,role:memberRole,templateId:businessProfile.templateId||'general',updatedAt:serverTimestamp()},{merge:true});
 }
 
-function subscribe(){if(unsub)unsub();const q=query(collection(db,"businesses",businessId,"contacts"),orderBy("createdAt","desc"));unsub=onSnapshot(q,snap=>{customers=snap.docs.map(d=>({id:d.id,...d.data()}));render()},err=>toast(err.message||"Could not load CRM data",true))}
+function subscribe(){if(unsub)unsub();const q=query(collection(db,"businesses",businessId,"contacts"),orderBy("createdAt","desc"));unsub=onSnapshot(q,snap=>{customers=snap.docs.map(d=>({id:d.id,...d.data()}));render()},err=>{console.error("Could not load CRM data",err);toast(err.message||"Could not load CRM data",true)})}
 async function finishRedirect(){
   try{
     const result=await getRedirectResult(auth);
