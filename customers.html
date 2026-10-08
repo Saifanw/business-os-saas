@@ -997,7 +997,78 @@ async function ensureWorkspace(u){
   await setDoc(userRef,{uid:u.uid,email:u.email||'',displayName:u.displayName||'',businessId,businessName:name,role:memberRole,templateId:businessProfile.templateId||'general',updatedAt:serverTimestamp()},{merge:true});
 }
 
-function subscribe(){if(unsub)unsub();const q=query(collection(db,"businesses",businessId,"contacts"),orderBy("createdAt","desc"));unsub=onSnapshot(q,snap=>{customers=snap.docs.map(d=>({id:d.id,...d.data()}));render()},err=>toast(err.message||"Could not load CRM data",true))}
+async function recoverWorkspaceWithContacts(){
+  try{
+    if(!currentUser)return false;
+    const candidates=[];
+    const pushDocs=s=>s.docs.forEach(d=>{if(d.id!==businessId && d.data()?.name)candidates.push(d)});
+    const byUid=await getDocs(query(collection(db,"businesses"),where("ownerUid","==",currentUser.uid)));
+    pushDocs(byUid);
+    if(!byUid.docs.length && currentUser.email){
+      const byEmail=await getDocs(query(collection(db,"businesses"),where("ownerEmail","==",String(currentUser.email).toLowerCase())));
+      pushDocs(byEmail);
+    }
+    for(const b of candidates){
+      const snap=await getDocs(collection(db,"businesses",b.id,"contacts"));
+      if(!snap.empty){
+        businessId=b.id;
+        businessProfile=b.data()||{};
+        try{await setDoc(doc(db,"users",currentUser.uid),{businessId, businessName:businessProfile.name||"", updatedAt:serverTimestamp()},{merge:true})}catch(e){console.warn("Workspace pointer update skipped",e)}
+        customers=snap.docs.map(d=>({id:d.id,...d.data()}));
+        customers.sort((a,b)=>Number(b.createdAt?.seconds||b.updatedAt?.seconds||0)-Number(a.createdAt?.seconds||a.updatedAt?.seconds||0));
+        return true;
+      }
+    }
+  }catch(e){console.warn("Workspace recovery check failed",e)}
+  return false;
+}
+
+function subscribe(){
+  if(unsub)unsub();
+  const listen=(id,onLoaded)=>{
+    const base=collection(db,"businesses",id,"contacts");
+    return onSnapshot(base,async snap=>{
+      customers=snap.docs.map(d=>({id:d.id,...d.data()}));
+      customers.sort((a,b)=>{
+        const av=Number(a.createdAt?.seconds||0)||Number(a.updatedAt?.seconds||0)||0;
+        const bv=Number(b.createdAt?.seconds||0)||Number(b.updatedAt?.seconds||0)||0;
+        return bv-av;
+      });
+      onLoaded(snap);
+    },async err=>{
+      console.error("CRM listener error",id,err);
+      toast(err.message||"Could not load CRM data",true);
+    });
+  };
+
+  const activeBusinessId=businessId;
+  unsub=listen(activeBusinessId,snap=>{
+    // If the saved workspace pointer is stale/empty, try the original
+    // self-serve workspace id (the signed-in user's uid). This is permitted
+    // by the existing Firestore ownership rules and does not alter Firebase
+    // rules or customer data.
+    if(snap.empty && currentUser && activeBusinessId!==currentUser.uid){
+      const fallbackId=currentUser.uid;
+      const fallbackUnsub=listen(fallbackId,fallbackSnap=>{
+        if(!fallbackSnap.empty){
+          businessId=fallbackId;
+          businessProfile=businessProfile||{};
+          if(unsub)unsub();
+          unsub=fallbackUnsub;
+          render();
+          return;
+        }
+        render();
+      });
+      // Keep the existing listener alive until fallback proves it has data.
+      // If it is also empty, the original workspace remains the active one.
+      render();
+      return;
+    }
+    render();
+  });
+}
+
 async function finishRedirect(){
   try{
     const result=await getRedirectResult(auth);
