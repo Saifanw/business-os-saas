@@ -37,7 +37,6 @@
 @media(max-width:900px){.finder-grid{grid-template-columns:1fr 1fr}.finder-panels{grid-template-columns:1fr}.finder-add-grid{grid-template-columns:1fr 1fr}.finder-stats{grid-template-columns:1fr 1fr}}@media(max-width:600px){.finder-grid,.finder-add-grid,.finder-stats{grid-template-columns:1fr}.finder-list-toolbar{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="assets/premium-shell.css">
-<link rel="stylesheet" href="assets/launch-ui-v1.css">
 
 <style id="business-os-v23-customer-comfort">
 /* V23 — Customer list comfort-first redesign. Functionality unchanged. */
@@ -191,9 +190,48 @@ body.module-page .os-content{min-width:0!important}
 @media(min-width:1101px){.dashboard-v2{max-width:none}.dash-grid-main{grid-template-columns:minmax(0,1.45fr) minmax(300px,.8fr)!important}.dash-pipeline{grid-template-columns:repeat(7,minmax(0,1fr))!important}}
 @media(max-width:900px){.dash-metrics{grid-template-columns:repeat(2,1fr)!important}.dash-pipeline{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
 </style>
+
+<style id="businessos-overview-v41-final">
+/* V41 — BusinessOS Overview command center. Existing Firebase/business logic preserved. */
+:root{--ov-ink:#14233f;--ov-muted:#71809a;--ov-line:#e5ebf4;--ov-bg:#f5f8fd;--ov-blue:#2f67f5}
+body.app-page{background:linear-gradient(180deg,#f7f9fd 0%,#eef3fa 100%)!important;color:var(--ov-ink)}
+body.app-page>.nav{display:none!important}
+.bos-app-topnav{position:sticky;top:14px;z-index:50;margin:14px 22px 18px;padding:10px 12px 10px 16px;min-height:68px;display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.96);border:1px solid #dfe6f0;border-radius:20px;box-shadow:0 10px 30px rgba(27,50,88,.09);backdrop-filter:blur(14px)}
+.bos-app-brand{display:flex;align-items:center;gap:10px;min-width:188px;text-decoration:none;color:var(--ov-ink)}
+.bos-logo{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#376ff7,#2558df);color:#fff;font-size:24px;font-weight:900;box-shadow:0 8px 18px rgba(47,103,245,.25)}
+.bos-app-brand strong{display:block;font-size:18px;line-height:1}.bos-app-brand small{display:block;margin-top:5px;font-size:7px;letter-spacing:1.5px;color:#7b89a0;font-weight:900}
+.bos-app-nav{display:flex;align-items:center;gap:3px;flex:1;min-width:0}.bos-app-nav a{display:flex;align-items:center;gap:5px;white-space:nowrap;padding:12px 11px;border-radius:11px;color:#4f607d;text-decoration:none;font-size:12px;font-weight:800;transition:.18s}.bos-app-nav a:hover{background:#f3f6fb;color:#1d3d78}.bos-app-nav a.active{background:#edf3ff;color:#1954df;box-shadow:inset 0 -2px 0 #2866f6}.bos-app-actions{display:flex;gap:7px;flex-shrink:0}.bos-app-actions button{height:42px;border:1px solid #dbe3ef;background:#fff;color:#243653;border-radius:11px;padding:0 13px;font-size:11px;font-weight:900;cursor:pointer}.bos-app-actions .primary{background:linear-gradient(135deg,#3d70f6,#2861e9);color:#fff;border-color:#2861e9;box-shadow:0 8px 18px rgba(47,103,245,.2)}
+.customers-shell{display:block!important}.customers-page{padding:0 22px 34px!important}.os-layout{display:block!important}.os-sidebar{display:none!important}.os-content{width:100%!important;max-width:none!important;margin:0!important;padding:0!important}.os-content>.page-head{display:none!important}
+.overview-command-center{display:block!important;max-width:none!important;margin:0 0 18px!important;padding:24px!important;border:1px solid #dce5f1;border-radius:22px!important;background:linear-gradient(145deg,#ffffff 0%,#f8fbff 100%)!important;box-shadow:0 14px 38px rgba(25,49,87,.08)!important}
+.ov-hero{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:4px 4px 20px}.ov-kicker{font-size:10px;letter-spacing:1.8px;color:#3269ed;font-weight:950;margin-bottom:6px}.ov-hero h1{font-size:31px;line-height:1.05;margin:0;color:#152544;letter-spacing:-.7px}.ov-hero p{margin:8px 0 0;color:#70809b;font-size:13px}.ov-date{min-width:150px;padding:12px 15px;border:1px solid #e2e9f2;border-radius:13px;background:#f9fbfe;text-align:right}.ov-date span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#8491a7;font-weight:900}.ov-date b{display:block;font-size:15px;margin-top:3px}.ov-date small{display:block;color:#4d79df;font-size:9px;margin-top:3px;font-weight:800}
+.ov-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.ov-kpi{min-width:0;text-align:left;border:1px solid #e1e8f1;background:#fff;border-radius:15px;padding:14px 15px;cursor:pointer;box-shadow:0 5px 15px rgba(24,45,78,.04);position:relative;overflow:hidden}.ov-kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#2f67f5}.ov-kpi.amber:before{background:#f5a623}.ov-kpi.red:before{background:#ee4b5a}.ov-kpi.purple:before{background:#8a5cf5}.ov-kpi.green:before{background:#27b77b}.ov-kpi-top{display:flex;justify-content:space-between;align-items:center}.ov-kpi small{font-size:10px;color:#74839b;font-weight:900}.ov-kpi-top i{width:25px;height:25px;border-radius:8px;background:#eef4ff;color:#2e66ee;display:grid;place-items:center;font-style:normal;font-size:12px}.ov-kpi.amber .ov-kpi-top i{background:#fff5df;color:#d88900}.ov-kpi.red .ov-kpi-top i{background:#fff0f1;color:#df3e4e}.ov-kpi.purple .ov-kpi-top i{background:#f3efff;color:#8052e9}.ov-kpi.green .ov-kpi-top i{background:#eaf9f3;color:#159e69}.ov-kpi b{display:block;font-size:26px;line-height:1;margin-top:10px;letter-spacing:-.5px}.ov-kpi em{display:block;margin-top:5px;font-size:9px;font-style:normal;color:#8a96aa;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov-flow-head{display:flex;justify-content:space-between;align-items:end;margin:22px 2px 9px}.ov-flow-head span{display:block;color:#8190a8;font-size:9px;letter-spacing:1.5px;font-weight:950}.ov-flow-head b{display:block;margin-top:3px;font-size:14px}.ov-flow-head em{font-style:normal;color:#73819a;font-size:10px;font-weight:800}.ov-flow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.ov-flow .dash-stage{background:#fff!important;border:1px solid #e1e8f2!important;border-radius:12px!important;min-height:70px!important;padding:11px!important;box-shadow:none!important}.ov-flow .dash-stage:hover{border-color:#9ebcf9!important;transform:translateY(-1px)}.ov-flow .dash-stage small{font-size:9px!important}.ov-flow .dash-stage b{font-size:21px!important;margin-top:7px!important}
+.ov-insight-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.75fr);gap:12px;margin-top:12px}.ov-panel{border:1px solid #e1e8f1;background:#fff;border-radius:15px;padding:16px}.ov-panel-head{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:10px}.ov-panel-head span{font-size:9px;letter-spacing:1.4px;color:#8190a8;font-weight:950}.ov-panel-head h3{margin:4px 0 2px;font-size:17px}.ov-panel-head p{margin:0;color:#8491a5;font-size:10px}.ov-panel-head button{border:0;background:transparent;color:#2763eb;font-size:10px;font-weight:900;cursor:pointer;white-space:nowrap}.ov-health-list{display:grid;gap:5px}.ov-health-list button{display:flex;justify-content:space-between;align-items:center;border:1px solid #edf1f6;background:#fbfcfe;border-radius:9px;padding:10px 11px;cursor:pointer}.ov-health-list span{font-size:10px;color:#53647f;font-weight:800}.ov-health-list span i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;background:#3270f5}.ov-health-list span i.green{background:#28b47b}.ov-health-list span i.red{background:#ef4b58}.ov-health-list span i.purple{background:#8a5cf5}.ov-health-list b{font-size:13px}.ov-panel .attention-item{min-height:47px!important;border-radius:9px!important}.ov-panel .attention-item b{font-size:11px!important}.ov-panel .attention-item small{font-size:9px!important}
+body.app-page #summary,body.app-page #templatePipeline{display:none!important}body.app-page .source-panel{display:none!important}body.app-page .wa-center-panel,body.app-page .web-leads-panel,body.app-page #followupCenter,body.app-page #businessFinder{display:none!important}
+.workspace{margin-top:0!important}.workspace .list-card{border-radius:18px!important;border:1px solid #dce5ef!important;box-shadow:0 10px 28px rgba(25,49,87,.06)!important}.workspace .list-head{padding:18px 22px!important}.workspace .filters{padding:12px 22px!important}.workspace .table-scroll{border-top:1px solid #e8edf4}.workspace .row{min-height:84px!important}
+@media(max-width:1150px){.bos-app-nav a{padding:11px 8px;font-size:11px}.bos-app-brand{min-width:160px}.bos-app-actions button{padding:0 10px}.ov-kpis{grid-template-columns:repeat(3,1fr)}.ov-flow{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:820px){.bos-app-topnav{position:relative;top:0;margin:10px;border-radius:15px;flex-wrap:wrap}.bos-app-brand{min-width:auto}.bos-app-nav{order:3;width:100%;overflow:auto}.bos-app-actions{margin-left:auto}.ov-hero{align-items:start}.ov-date{display:none}.ov-kpis{grid-template-columns:repeat(2,1fr)}.ov-insight-grid{grid-template-columns:1fr}.ov-flow{grid-template-columns:repeat(2,1fr)}.customers-page{padding:0 10px 24px!important}}
+</style>
 </head>
 <body class="app-page">
-<header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
+<header class="bos-app-topnav">
+  <a class="bos-app-brand" href="customers.html"><span class="bos-logo">B</span><span><strong>BusinessOS</strong><small>BUSINESS INTELLIGENCE</small></span></a>
+  <nav class="bos-app-nav" aria-label="Business OS navigation">
+    <a class="active" href="customers.html">⌂ <b>Overview</b></a>
+    <a href="customer-list.html">▣ <b>Customers</b></a>
+    <a href="followups.html">◷ <b>Follow-ups</b></a>
+    <a href="deals.html">✓ <b>Deals</b></a>
+    <a href="website-leads.html">↗ <b>Leads</b></a>
+    <a href="whatsapp-center.html">☏ <b>WhatsApp</b></a>
+    <a href="business-finder-app.html">⌕ <b>Finder</b></a>
+    <a href="reports.html">▥ <b>Reports</b></a>
+  </nav>
+  <div class="bos-app-actions">
+    <button type="button" onclick="document.getElementById('csvFile').click()">↑ Import</button>
+    <button type="button" onclick="exportCSV()">↓ Export</button>
+    <button type="button" class="primary" onclick="openCustomerModal()">＋ Add Customer</button>
+  </div>
+</header>
 
 <section id="authScreen" class="auth-screen"><div class="auth-card"><div class="auth-mark">B</div><h1>Customer Login</h1><p>Apne Business OS workspace mein enter karne ke liye Google se sign in karein. Aapke customers, leads aur follow-ups private rahenge.</p><button type="button" id="googleBtn" class="google-btn">🔐 Continue with Google</button><div id="authMsg" class="auth-msg"></div></div></section>
 
@@ -218,71 +256,33 @@ body.module-page .os-content{min-width:0!important}
   <a class="os-side-link" href="notifications.html"><span>🔔</span><b>Notifications</b><em id="sideUnreadCount">0</em></a>
 </aside>
 <div class="os-content">
-<div class="page-head"><div><h1>Customers</h1><p>अपने customers की पूरी journey एक जगह track करें.</p></div><div class="top-actions"><div class="session"><span id="userEmail"></span><button onclick="logout()">Logout</button></div><button onclick="document.getElementById('csvFile').click()">↑ Import</button><button onclick="exportCSV()">↓ Export</button><button class="primary" onclick="openCustomerModal()">＋ Add Customer</button><input id="csvFile" class="file-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="importCSV(event)"></div></div>
-<section class="dashboard-v2" id="dashboardV2">
-  <div class="dash-head">
+<section class="dashboard-v2 overview-command-center" id="dashboardV2">
+  <div class="ov-hero">
     <div>
-      <div class="dash-kicker">BUSINESS OVERVIEW</div>
-      <h2 id="dashTitle">Good morning</h2>
-      <p id="dashSubtitle">Your business health, pipeline and next actions — in one place.</p>
+      <div class="ov-kicker">BUSINESS COMMAND CENTER</div>
+      <h1 id="dashTitle">Good evening</h1>
+      <p id="dashSubtitle">Everything important about your customer flow — in one clear view.</p>
     </div>
-    <div class="dash-actions">
-      <button type="button" onclick="openCustomerModal()" class="dash-primary">＋ Add Customer</button>
-      <button type="button" onclick="document.querySelector('.list-card')?.scrollIntoView({behavior:'smooth'})" class="dash-secondary">View Customers</button>
-    </div>
+    <div class="ov-date"><span>Today</span><b id="ovDate">08 Oct 2026</b><small>Live workspace</small></div>
   </div>
-  <div class="dash-metrics">
-    <button class="metric-card" type="button" onclick="clearDashFilter()"><span class="metric-icon blue">◎</span><span><small>Total Leads</small><b id="dashTotal">0</b><em id="dashTotalMeta">All active records</em></span></button>
-    <button class="metric-card" type="button" onclick="setFollowFilter('today')"><span class="metric-icon amber">◷</span><span><small>Follow-ups Today</small><b id="dashToday">0</b><em>Due today</em></span></button>
-    <button class="metric-card" type="button" onclick="setFollowFilter('overdue')"><span class="metric-icon red">!</span><span><small>Overdue</small><b id="dashOverdue">0</b><em>Needs attention</em></span></button>
-    <button class="metric-card" type="button" onclick="setStageFilter('Interested')"><span class="metric-icon purple">★</span><span><small>Hot Leads</small><b id="dashHot">0</b><em>Interested / visit / negotiation</em></span></button>
-    <button class="metric-card" type="button" onclick="setStageFilter('Won')"><span class="metric-icon green">✓</span><span><small>Won</small><b id="dashWon">0</b><em id="dashWonRate">0% conversion</em></span></button>
+  <div class="ov-kpis">
+    <button class="ov-kpi blue" type="button" onclick="clearDashFilter()"><span class="ov-kpi-top"><small>Customers</small><i>◎</i></span><b id="dashTotal">0</b><em id="dashTotalMeta">All active records</em></button>
+    <button class="ov-kpi amber" type="button" onclick="setFollowFilter('today')"><span class="ov-kpi-top"><small>Follow-ups today</small><i>◷</i></span><b id="dashToday">0</b><em>Due today</em></button>
+    <button class="ov-kpi red" type="button" onclick="setFollowFilter('overdue')"><span class="ov-kpi-top"><small>Overdue</small><i>!</i></span><b id="dashOverdue">0</b><em>Needs attention</em></button>
+    <button class="ov-kpi purple" type="button" onclick="setStageFilter('Interested')"><span class="ov-kpi-top"><small>Hot opportunities</small><i>★</i></span><b id="dashHot">0</b><em>Interested · visit · negotiation</em></button>
+    <button class="ov-kpi green" type="button" onclick="setStageFilter('Won')"><span class="ov-kpi-top"><small>Won</small><i>✓</i></span><b id="dashWon">0</b><em id="dashWonRate">0% conversion</em></button>
   </div>
-
-  <div class="dash-section-label"><span>PIPELINE</span><b>Move opportunities forward</b><em id="dashPipelineTotal">0 leads</em></div>
-  <div class="dash-panel pipeline-panel pipeline-wide">
-    <div class="panel-head"><div><h3>Sales Pipeline</h3><p>See where customers are in their journey and jump directly into a stage.</p></div></div>
-    <div id="dashPipeline" class="dash-pipeline"></div>
+  <div class="ov-flow-head"><div><span>BUSINESS FLOW</span><b>Lead → Customer → Follow-up → Deal → Won</b></div><em id="dashPipelineTotal">0 leads</em></div>
+  <div class="ov-flow" id="dashPipeline"></div>
+  <div class="ov-insight-grid">
+    <section class="ov-panel ov-attention"><div class="ov-panel-head"><div><span>NEEDS ATTENTION</span><h3>Today's priorities</h3><p>Only the customers that need action right now.</p></div><button type="button" onclick="setFollowFilter('today')">View follow-ups →</button></div><div id="dashAttention" class="attention-list"></div></section>
+    <section class="ov-panel ov-health"><div class="ov-panel-head"><div><span>BUSINESS HEALTH</span><h3>Quick pulse</h3><p>A simple snapshot of your current flow.</p></div></div><div class="ov-health-list">
+      <button type="button" onclick="clearDashFilter()"><span><i class="blue"></i>Active pipeline</span><b id="healthActive">0</b></button>
+      <button type="button" onclick="setStageFilter('Won')"><span><i class="green"></i>Won customers</span><b id="healthWon">0</b></button>
+      <button type="button" onclick="setFollowFilter('overdue')"><span><i class="red"></i>Overdue actions</span><b id="healthOverdue">0</b></button>
+      <button type="button" onclick="setStageFilter('Interested')"><span><i class="purple"></i>Hot opportunities</span><b id="healthHot">0</b></button>
+    </div></section>
   </div>
-
-  <div class="dash-grid dash-grid-main">
-    <div class="dash-panel attention-panel">
-      <div class="panel-head"><div><h3>Needs Attention</h3><p>Prioritize the customers that need an action now.</p></div><button type="button" class="panel-link" onclick="setFollowFilter('today')">View follow-ups →</button></div>
-      <div id="dashAttention" class="attention-list"></div>
-    </div>
-    <div class="dash-panel health-panel">
-      <div class="panel-head"><div><h3>Business Health</h3><p>A quick view of your current customer flow.</p></div></div>
-      <div class="health-list">
-        <button type="button" class="health-row" onclick="clearDashFilter()"><span class="health-label"><i class="health-dot blue"></i>Active pipeline</span><b id="healthActive">0</b></button>
-        <button type="button" class="health-row" onclick="setStageFilter('Won')"><span class="health-label"><i class="health-dot green"></i>Won customers</span><b id="healthWon">0</b></button>
-        <button type="button" class="health-row" onclick="setFollowFilter('overdue')"><span class="health-label"><i class="health-dot red"></i>Overdue actions</span><b id="healthOverdue">0</b></button>
-        <button type="button" class="health-row" onclick="setStageFilter('Interested')"><span class="health-label"><i class="health-dot purple"></i>Hot opportunities</span><b id="healthHot">0</b></button>
-      </div>
-    </div>
-  </div>
-
-  <div class="dash-grid dash-grid-main">
-    <div class="dash-panel">
-      <div class="panel-head"><div><h3>Recent Leads & Deals</h3><p>Latest records added or updated in this workspace.</p></div><button type="button" class="panel-link" onclick="clearDashFilter()">View customers →</button></div>
-      <div id="dashRecent" class="attention-list"></div>
-    </div>
-    <div class="dash-panel quick-panel">
-      <div class="panel-head"><div><h3>Quick Actions</h3><p>Get important work done without leaving the dashboard.</p></div></div>
-      <div class="quick-actions">
-        <button type="button" onclick="openCustomerModal()"><span>＋</span><div><b>Add customer</b><small>Create a new lead or customer record</small></div></button>
-        <button type="button" onclick="osNav(document.querySelector('.os-side-link[href=\"#websiteLeads\"]'),'website')"><span>↗</span><div><b>Check website leads</b><small>Review new enquiries</small></div></button>
-        <button type="button" onclick="osNav(document.querySelector('.os-side-link[href=\"#businessFinder\"]'),'finder')"><span>⌕</span><div><b>Find prospects</b><small>Build your next pipeline</small></div></button>
-      </div>
-    </div>
-  </div>
-
-  <div class="dash-panel source-panel">
-    <div class="panel-head"><div><h3>Lead Sources</h3><p>Understand where your customer opportunities are coming from.</p></div><span id="dashSourceTotal">0 records</span></div>
-    <div id="dashSources" class="source-grid"></div>
-  </div>
-
-  <div class="dash-panel wa-center-panel view-hidden" id="whatsappCenter"><div class="panel-head"><div><h3>WhatsApp Center</h3><p>Send contextual follow-ups without losing the customer history.</p></div><div class="web-lead-toolbar"><button type="button" onclick="waBroadcastHint()">Message tips</button></div></div><div class="wa-summary"><span><b id="waReadyCount">0</b><small>contacts with mobile</small></span><span><b id="waHotCount">0</b><small>priority leads</small></span><span><b id="waTodayCount">0</b><small>follow-ups today</small></span></div><div id="waCenterList" class="wa-center-list"></div></div>
-  <div class="dash-panel web-leads-panel" id="websiteLeads"><div class="panel-head"><div><h3>Website Leads</h3><p>Enquiries submitted from your website lead form.</p></div><div class="web-lead-toolbar"><a id="leadFormLink" class="lead-primary" target="_blank" rel="noopener">Open Lead Form</a><button type="button" onclick="copyLeadFormLink()">Copy Link</button></div></div><div id="webLeadsList" class="web-leads-list"></div></div>
 </section>
 <section id="followupCenter" class="followup-center view-hidden">
   <div class="followup-head"><div><div class="dash-kicker">FOLLOW-UP CENTER</div><h2>Today’s follow-ups</h2><p>Track due, overdue and upcoming customer actions from one place.</p></div><button type="button" class="dash-secondary" onclick="navView('customers');setFollowFilter('')">View all customers</button></div>
@@ -395,7 +395,7 @@ function navView(section){
   const finder=document.getElementById('businessFinder');
   const source=document.querySelector('.source-panel');
   const showDash=section==='overview';
-  const showCustomers=section==='customers';
+  const showCustomers=section==='customers'||section==='overview';
   const showFollow=section==='followups';
   const showWebsite=section==='website';
   const showFinder=section==='finder';
@@ -628,7 +628,7 @@ function renderDashboard(){
   const set=(id,v)=>{const el=$(id);if(el)el.textContent=v};
   const hour=new Date().getHours();
   const greeting=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
-  set('dashTitle',greeting);
+  set('dashTitle',greeting); const od=$('ovDate'); if(od) od.textContent=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
   set('dashSubtitle','Your business health, pipeline and next actions — in one place.');
   set('dashTotal',total); set('dashToday',today); set('dashOverdue',overdue); set('dashHot',hot); set('dashWon',won); set('dashWonRate',rate+'% conversion');
   set('healthActive',active); set('healthWon',won); set('healthOverdue',overdue); set('healthHot',hot); set('dashPipelineTotal',total+' leads');
