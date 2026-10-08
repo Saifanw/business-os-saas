@@ -1,0 +1,151 @@
+/* BusinessOS Launch UI V1
+   Visual-only layer. Existing Firebase, Firestore, CRUD and navigation logic are untouched. */
+:root{
+  --launch-ink:#12213b;
+  --launch-muted:#748197;
+  --launch-line:#e5eaf2;
+  --launch-bg:#f6f8fc;
+  --launch-card:#ffffff;
+  --launch-blue:#2563eb;
+  --launch-blue-soft:#eef4ff;
+  --launch-green:#0b9566;
+  --launch-amber:#b97908;
+  --launch-red:#d64b45;
+  --launch-purple:#7655d6;
+  --launch-shadow:0 12px 34px rgba(18,33,59,.055);
+}
+
+body.app-page{background:var(--launch-bg)!important;color:var(--launch-ink)!important}
+body.app-page .nav{height:68px!important;padding:0 28px!important;background:rgba(255,255,255,.94)!important;border-bottom:1px solid var(--launch-line)!important;box-shadow:0 5px 22px rgba(18,33,59,.035)!important}
+body.app-page .brand{font-size:19px!important}
+body.app-page .brand i{width:34px!important;height:34px!important;border-radius:10px!important}
+body.app-page .nav nav{gap:20px!important;font-size:11px!important}
+body.app-page .nav nav a{color:#6d7a90!important}
+body.app-page .nav .btn{padding:9px 13px!important;border-radius:10px!important;font-size:11px!important}
+
+/* Once the authenticated workspace is visible, the public website header is redundant. */
+body.app-page:has(#app:not(.hidden))>.nav{display:none!important}
+body.app-page:has(#app:not(.hidden)) .customers-shell{min-height:100vh!important}
+
+body.app-page .customers-shell{padding:24px 28px 44px!important}
+body.app-page .customers-page{max-width:1600px!important}
+body.app-page .os-layout{grid-template-columns:248px minmax(0,1fr)!important;gap:24px!important}
+body.app-page .os-sidebar{width:248px!important;min-width:248px!important;height:calc(100vh - 48px)!important;min-height:560px!important;top:24px!important;padding:14px 10px!important;border-radius:18px!important;background:#fff!important;border:1px solid var(--launch-line)!important;box-shadow:var(--launch-shadow)!important}
+body.app-page .os-side-title{font-size:9px!important;letter-spacing:.14em!important;color:#98a4b6!important;padding:10px 12px 7px!important}
+body.app-page .os-side-link{height:42px!important;min-height:42px!important;border-radius:10px!important;padding:0 11px!important;color:#607089!important;font-size:11px!important}
+body.app-page .os-side-link b{font-size:11px!important}
+body.app-page .os-side-link span{font-size:14px!important}
+body.app-page .os-side-link.active{background:var(--launch-blue-soft)!important;color:#1f5bd5!important;box-shadow:inset 3px 0 0 var(--launch-blue)!important}
+body.app-page .os-side-link em{background:#f1f4f8!important;color:#718096!important}
+body.app-page .os-side-divider{margin:11px 2px!important;background:#edf1f6!important}
+
+body.app-page .os-content{min-width:0!important}
+body.app-page .page-head{padding:0 2px 18px!important;align-items:flex-end!important}
+body.app-page .page-head h1{font-size:30px!important;line-height:1.05!important;letter-spacing:-.035em!important;color:var(--launch-ink)!important}
+body.app-page .page-head p{font-size:12px!important;color:var(--launch-muted)!important;margin-top:7px!important}
+body.app-page .top-actions{gap:8px!important}
+body.app-page .top-actions button{height:40px!important;border-radius:9px!important;padding:0 13px!important;font-size:11px!important;font-weight:800!important;border-color:#dce3ed!important;background:#fff!important}
+body.app-page .top-actions .primary{background:var(--launch-blue)!important;border-color:var(--launch-blue)!important;box-shadow:0 7px 18px rgba(37,99,235,.17)!important}
+body.app-page .session button{height:34px!important;padding:0 9px!important}
+
+/* Dashboard: remove the heavy wrapper and let the information hierarchy breathe. */
+body.app-page .dashboard-v2{padding:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important}
+body.app-page .dash-head{display:flex!important;align-items:flex-end!important;justify-content:space-between!important;margin:0 0 16px!important}
+body.app-page .dash-kicker{font-size:9px!important;letter-spacing:.14em!important;color:var(--launch-blue)!important;font-weight:900!important}
+body.app-page .dash-head h2{font-size:27px!important;letter-spacing:-.035em!important;color:var(--launch-ink)!important;margin:4px 0!important}
+body.app-page .dash-head p{font-size:12px!important;color:var(--launch-muted)!important}
+body.app-page .dash-actions{gap:7px!important}
+body.app-page .dash-actions button{height:39px!important;border-radius:9px!important;padding:0 12px!important;font-size:11px!important}
+body.app-page .dash-primary{background:var(--launch-blue)!important;color:#fff!important;border-color:var(--launch-blue)!important;box-shadow:0 7px 18px rgba(37,99,235,.15)!important}
+body.app-page .dash-secondary{background:#fff!important;border:1px solid var(--launch-line)!important;color:#4e5d73!important}
+
+body.app-page .dash-metrics{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:11px!important;margin-bottom:16px!important}
+body.app-page .metric-card{min-height:96px!important;background:#fff!important;border:1px solid var(--launch-line)!important;border-radius:14px!important;box-shadow:var(--launch-shadow)!important;padding:15px!important;display:flex!important;align-items:center!important;gap:11px!important;text-align:left!important}
+body.app-page .metric-card:hover{transform:translateY(-2px)!important;border-color:#d5def0!important;box-shadow:0 16px 34px rgba(18,33,59,.08)!important}
+body.app-page .metric-icon{width:37px!important;height:37px!important;min-width:37px!important;border-radius:10px!important}
+body.app-page .metric-card small{font-size:10px!important;color:#7d899c!important;font-weight:700!important}
+body.app-page .metric-card b{font-size:23px!important;line-height:1.1!important;color:var(--launch-ink)!important;margin:4px 0 3px!important}
+body.app-page .metric-card em{font-size:9px!important;color:#95a0b0!important;font-style:normal!important}
+
+body.app-page .dash-section-label{margin:16px 2px 8px!important;font-size:10px!important}
+body.app-page .dash-section-label span{color:#8c98aa!important;letter-spacing:.12em!important;font-weight:900!important}
+body.app-page .dash-section-label b{color:#43526a!important;margin-left:8px!important}
+body.app-page .dash-section-label em{font-style:normal!important;color:#8995a8!important;float:right!important}
+body.app-page .dash-panel{background:#fff!important;border:1px solid var(--launch-line)!important;border-radius:14px!important;box-shadow:var(--launch-shadow)!important;padding:0!important}
+body.app-page .panel-head{padding:15px 17px!important;border-bottom:1px solid #edf1f6!important}
+body.app-page .panel-head h3{font-size:13px!important;color:var(--launch-ink)!important}
+body.app-page .panel-head p{font-size:10px!important;color:#8a96a8!important;margin-top:4px!important}
+body.app-page .panel-link{font-size:10px!important;color:var(--launch-blue)!important}
+body.app-page .dash-pipeline{padding:12px!important;gap:8px!important}
+body.app-page .dash-stage{min-height:70px!important;padding:11px!important;border-radius:10px!important;border:1px solid #e7ecf3!important;background:#fafbfd!important}
+body.app-page .dash-stage b{font-size:18px!important;color:var(--launch-ink)!important}
+body.app-page .dash-stage span{font-size:9px!important;color:#8490a3!important}
+body.app-page .dash-grid-main{gap:12px!important;margin-top:12px!important}
+body.app-page .health-row{min-height:43px!important;border-bottom:1px solid #eef2f6!important}
+body.app-page .quick-actions{padding:12px!important;gap:7px!important}
+body.app-page .quick-actions button{min-height:49px!important;border-radius:10px!important}
+
+/* Customer directory */
+body.app-page .smart-summary{min-height:54px!important;padding:0 16px!important;border-radius:11px!important;border:1px solid var(--launch-line)!important;box-shadow:none!important;background:#fff!important;font-size:11px!important}
+body.app-page .smart-summary b{font-size:17px!important;color:var(--launch-ink)!important}
+body.app-page .list-card{margin-top:12px!important;border-radius:15px!important;border:1px solid var(--launch-line)!important;box-shadow:var(--launch-shadow)!important;background:#fff!important;overflow:hidden!important}
+body.app-page .list-head{min-height:88px!important;padding:0 20px!important;background:#fff!important;border-bottom:1px solid #edf1f6!important}
+body.app-page .list-head b{font-size:19px!important;color:var(--launch-ink)!important}
+body.app-page .list-head small{font-size:10px!important;color:#8793a6!important}
+body.app-page .record-sort-note{font-size:9px!important;color:#9aa5b4!important}
+body.app-page .latest-badge{padding:5px 8px!important;font-size:8px!important}
+body.app-page .list-search input{height:40px!important;width:min(330px,32vw)!important;border-radius:9px!important;font-size:11px!important}
+body.app-page .list-search span{font-size:9px!important}
+body.app-page .filters{grid-template-columns:repeat(5,minmax(120px,1fr)) 74px!important;gap:8px!important;padding:12px 20px!important;background:#fafbfd!important;border-bottom:1px solid #edf1f6!important}
+body.app-page .filters input,body.app-page .filters select{height:40px!important;border-radius:9px!important;font-size:10px!important;padding:0 10px!important}
+body.app-page .reset-filter{height:36px!important;border-radius:9px!important;font-size:9px!important}
+body.app-page .table-scroll{overflow-x:auto!important}
+body.app-page .table-head,body.app-page .row{grid-template-columns:30px minmax(205px,1.65fr) minmax(105px,.9fr) minmax(105px,.9fr) minmax(120px,1fr) minmax(110px,.9fr) minmax(95px,.8fr) minmax(135px,1.05fr) minmax(150px,1.1fr)!important;min-width:1120px!important}
+body.app-page .table-head{height:45px!important;padding:0 18px!important;background:#f8fafc!important;font-size:8px!important;color:#8a96a8!important}
+body.app-page .row{height:88px!important;min-height:88px!important;padding:0 18px!important;background:#fff!important;border-bottom:1px solid #edf1f6!important}
+body.app-page .row:hover{background:#fbfdff!important;box-shadow:inset 3px 0 0 var(--launch-blue)!important;transform:none!important}
+body.app-page .avatar{width:40px!important;height:40px!important;border-radius:11px!important;font-size:10px!important;box-shadow:none!important;background:#eef4ff!important;color:#2b60d6!important}
+body.app-page .contact-cell{gap:10px!important}
+body.app-page .contact-main b{font-size:13px!important;color:#17263e!important}
+body.app-page .contact-main small{font-size:9px!important;color:#8b96a7!important;margin-top:4px!important}
+body.app-page .type-pill{padding:5px 8px!important;font-size:8px!important}
+body.app-page .data-cell{font-size:10px!important;color:#4c5c73!important}
+body.app-page .data-cell b{font-size:10px!important;color:#26364e!important}
+body.app-page .data-cell small{font-size:8px!important;color:#8a96a8!important}
+body.app-page .status{padding:6px 9px!important;font-size:8px!important}
+body.app-page .follow-cell b{font-size:10px!important}
+body.app-page .follow-cell small{font-size:8px!important}
+body.app-page .actions{gap:5px!important}
+body.app-page .actions button{height:32px!important;padding:0 8px!important;border-radius:8px!important;font-size:8px!important;box-shadow:none!important}
+body.app-page .actions .view{background:var(--launch-ink)!important;color:#fff!important;border-color:var(--launch-ink)!important}
+
+/* Dialogs: make the existing functional modals look like the same product. */
+body.app-page .customer-modal-card,body.app-page .customer-modal-box,body.app-page .modal-box{border-radius:18px!important;border:1px solid #e1e7ef!important;box-shadow:0 30px 90px rgba(10,25,50,.20)!important}
+body.app-page .customer-modal-box h2,body.app-page .modal-box h2{color:var(--launch-ink)!important}
+
+@media(max-width:1180px){
+ body.app-page .dash-metrics{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ body.app-page .filters{grid-template-columns:repeat(3,minmax(130px,1fr))!important}
+ body.app-page .list-search input{width:min(280px,35vw)!important}
+}
+@media(max-width:900px){
+ body.app-page .customers-shell{padding:16px 12px 36px!important}
+ body.app-page .os-layout{grid-template-columns:1fr!important;gap:12px!important}
+ body.app-page .os-sidebar{width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;top:0!important;position:sticky!important;z-index:30!important;flex-direction:row!important;overflow-x:auto!important;padding:7px!important;border-radius:13px!important}
+ body.app-page .os-side-title,body.app-page .os-side-divider{display:none!important}
+ body.app-page .os-side-link{width:auto!important;min-width:max-content!important;height:38px!important;min-height:38px!important}
+ body.app-page .page-head{align-items:flex-start!important;flex-direction:column!important}
+ body.app-page .top-actions{width:100%!important;flex-wrap:wrap!important}
+ body.app-page .dash-head{align-items:flex-start!important;flex-direction:column!important;gap:12px!important}
+ body.app-page .dash-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body.app-page .dash-grid-main{grid-template-columns:1fr!important}
+ body.app-page .list-head{padding:16px!important;align-items:flex-start!important;flex-direction:column!important;gap:12px!important}
+ body.app-page .list-search{width:100%!important}
+ body.app-page .list-search input{width:100%!important}
+ body.app-page .filters{grid-template-columns:1fr 1fr!important;padding:12px 16px!important}
+}
+@media(max-width:560px){
+ body.app-page .dash-metrics{grid-template-columns:1fr!important}
+ body.app-page .filters{grid-template-columns:1fr!important}
+ body.app-page .page-head h1{font-size:27px!important}
+}
