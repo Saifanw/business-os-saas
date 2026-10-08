@@ -229,11 +229,6 @@ body.app-page #summary,body.app-page #templatePipeline{display:none!important}bo
 .overview-command-center ~ .workspace .filters{padding:10px 20px!important;}
 </style>
 
-<style id="businessos-v51-auth-visibility-fix">
-/* V51: auth gate must not coexist with the CRM app. */
-.auth-screen.hidden{display:none!important;}
-.customers-shell.hidden{display:none!important;}
-</style>
 </head>
 <body class="app-page">
 <header class="bos-app-topnav">
@@ -1028,17 +1023,52 @@ async function recoverWorkspaceWithContacts(){
   return false;
 }
 
-function subscribe(){if(unsub)unsub();const q=query(collection(db,"businesses",businessId,"contacts"),orderBy("createdAt","desc"));unsub=onSnapshot(q,snap=>{customers=snap.docs.map(d=>({id:d.id,...d.data()}));render()},err=>toast(err.message||"Could not load CRM data",true))}
-async function finishRedirect(){
-  try{
-    const result=await getRedirectResult(auth);
-    if(result&&result.user){
-      $("authMsg").textContent="Signed in. Opening your workspace...";
+function subscribe(){
+  if(unsub)unsub();
+  const base=collection(db,"businesses",businessId,"contacts");
+
+  // Overview/customer data source of truth: listen to the raw contacts
+  // collection first. Do NOT use orderBy here because older CRM records
+  // may not have createdAt and Firestore would omit them from the result.
+  unsub=onSnapshot(base,async snap=>{
+    // IMPORTANT: an empty snapshot can still mean the user is attached to a
+    // valid but empty workspace. Do not treat that as real zero-data; first
+    // try the other owner workspaces where the existing CRM data may live.
+    if(snap.empty && currentUser){
+      const recovered=await recoverWorkspaceWithContacts();
+      if(recovered){
+        if(unsub)unsub();
+        subscribe();
+        return;
+      }
     }
-  }catch(e){
-    console.error("Google redirect result error",e);
-    $("authMsg").textContent=e.code?((e.message||"Google sign-in failed.")+" ["+e.code+"]"):(e.message||"Google sign-in failed.");
-  }
+    customers=snap.docs.map(d=>({id:d.id,...d.data()}));
+    customers.sort((a,b)=>{
+      const av=Number(a.createdAt?.seconds||0)||Number(a.updatedAt?.seconds||0)||0;
+      const bv=Number(b.createdAt?.seconds||0)||Number(b.updatedAt?.seconds||0)||0;
+      return bv-av;
+    });
+    render();
+  },async err=>{
+    console.error("Could not load CRM contacts",err);
+    // Only if the current workspace itself cannot be read, try workspace recovery.
+    const recovered=await recoverWorkspaceWithContacts();
+    if(recovered){
+      if(unsub)unsub();
+      const recoveredBase=collection(db,"businesses",businessId,"contacts");
+      unsub=onSnapshot(recoveredBase,rs=>{
+        customers=rs.docs.map(d=>({id:d.id,...d.data()}));
+        customers.sort((a,b)=>{
+          const av=Number(a.createdAt?.seconds||0)||Number(a.updatedAt?.seconds||0)||0;
+          const bv=Number(b.createdAt?.seconds||0)||Number(b.updatedAt?.seconds||0)||0;
+          return bv-av;
+        });
+        render();
+      },e=>console.error("Recovered CRM listener error",e));
+    }else{
+      toast(err.message||"Could not load CRM data",true);
+    }
+  });
 }
 
 async function finishRedirect(){
