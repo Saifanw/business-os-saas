@@ -97,3 +97,29 @@ onAuthStateChanged(auth,async u=>{if(!u){$('login').style.display='block';$('app
 })();
 </script>
 <style id="businessos-v36-notifications">body.bos36-notifications .layout,body.bos36-notifications .content{max-width:1500px!important;width:100%!important;margin:0 auto!important}body.bos36-notifications .head h1{font-size:30px!important;letter-spacing:-.7px!important}</style></body></html>
+
+<style id="businessos-v37-module-fix">
+/* V37 — module workspace correction: one module per page, full-width canvas. */
+.view-hidden{display:none!important;}
+body.bos36-module #app{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;padding:0 22px 52px!important;margin:0!important;}
+body.bos36-module .customers-page{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;}
+body.bos36-module .os-layout{display:block!important;width:100%!important;max-width:none!important;margin:0!important;}
+body.bos36-module .os-content{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;}
+body.bos36-module .page-head{display:none!important;}
+body.bos36-module #dashboardV2,body.bos36-module #summary,body.bos36-module #templatePipeline,body.bos36-module #customerList,body.bos36-module .source-panel,body.bos36-module #websiteLeads{display:none!important;}
+body.bos36-followups #followupCenter,body.bos36-website #websiteLeadCenter,body.bos36-whatsapp #whatsappCenter,body.bos36-finder #businessFinder{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;}
+body.bos36-followups #followupCenter .followup-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+body.bos36-finder #businessFinder .finder-shell{width:100%!important;max-width:none!important;}
+body.bos36-finder #businessFinder .finder-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;}
+body.bos36-finder #businessFinder .finder-panels{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)!important;}
+body.bos36-whatsapp #whatsappCenter{padding:20px!important;}
+body.bos36-whatsapp #whatsappCenter .wa-summary{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+body.bos36-website #websiteLeadCenter{padding:0!important;}
+body.bos36-website #websiteLeadCenter .website-lead-center-list{width:100%!important;}
+@media(max-width:900px){
+ body.bos36-module #app{padding:0 10px 36px!important;}
+ body.bos36-followups #followupCenter .followup-grid{grid-template-columns:1fr!important;}
+ body.bos36-finder #businessFinder .finder-grid,body.bos36-finder #businessFinder .finder-panels{grid-template-columns:1fr!important;}
+ body.bos36-whatsapp #whatsappCenter .wa-summary{grid-template-columns:1fr!important;}
+}
+</style>
