@@ -229,6 +229,11 @@ body.app-page #summary,body.app-page #templatePipeline{display:none!important}bo
 .overview-command-center ~ .workspace .filters{padding:10px 20px!important;}
 </style>
 
+<style id="businessos-v51-auth-visibility-fix">
+/* V51: auth gate must not coexist with the CRM app. */
+.auth-screen.hidden{display:none!important;}
+.customers-shell.hidden{display:none!important;}
+</style>
 </head>
 <body class="app-page">
 <header class="bos-app-topnav">
