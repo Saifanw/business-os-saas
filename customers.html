@@ -318,7 +318,29 @@ body.app-page .dash-head p{font-size:12.5px!important}
 }
 </style>
 
-<link rel="stylesheet" href="assets/enterprise-polish-v26.css">
+
+<style>
+/* V26 — spacious dedicated workspace views */
+.workspace-view-back{display:none;align-items:center;gap:12px;margin:0 0 14px;padding:0 2px;font-size:13px;color:#64748b}
+.workspace-view-back a,.view-section-back a{color:#2563eb;text-decoration:none;font-weight:800}
+.workspace-view-back a:hover,.view-section-back a:hover{text-decoration:underline}
+.workspace-view-back span{font-weight:800;color:#0f172a}
+.view-section-back{margin:0 0 14px;padding:0 2px}
+.view-section-back a{font-size:13px}
+body.workspace-detail-view .dashboard-v2{display:none!important}
+body.workspace-detail-view #customersPageHead{display:none!important}
+body.workspace-customers-view #customersPageHead{display:flex!important}
+body.workspace-detail-view #workspaceViewBack{display:flex}
+body.workspace-overview-view #customersPageHead{display:none!important}
+body.workspace-overview-view #workspaceViewBack{display:none!important}
+body.workspace-detail-view .os-content{padding-bottom:48px}
+body.workspace-detail-view #customerList{min-height:calc(100vh - 210px)}
+body.workspace-detail-view .followup-center,
+body.workspace-detail-view .website-lead-center,
+body.workspace-detail-view #businessFinder,
+body.workspace-detail-view #whatsappCenter{max-width:none}
+@media (max-width:900px){.workspace-view-back{margin-bottom:10px}.view-section-back{margin-bottom:10px}}
+</style>
 </head>
 <body class="app-page">
 <header class="nav app-topbar" aria-label="BusinessOS application header">
@@ -349,13 +371,13 @@ body.app-page .dash-head p{font-size:12.5px!important}
 <div class="os-layout">
 <aside class="os-sidebar" aria-label="Business OS navigation">
   <div class="os-side-title">WORKSPACE</div>
-  <a class="os-side-link active" href="#dashboardV2" onclick="osNav(this,'overview')"><span>⌂</span><b>Overview</b></a>
-  <a class="os-side-link" href="#customerList" onclick="osNav(this,'customers')"><span>👥</span><b>Customers</b></a>
-  <a class="os-side-link" href="#customerList" onclick="osNav(this,'followups')"><span>◷</span><b>Follow-ups</b><em id="sideFollowCount">0</em></a>
+  <a class="os-side-link active" href="customers.html?view=overview" onclick="return osNav(this,'overview')"><span>⌂</span><b>Overview</b></a>
+  <a class="os-side-link" href="customers.html?view=customers" onclick="return osNav(this,'customers')"><span>👥</span><b>Customers</b></a>
+  <a class="os-side-link" href="customers.html?view=followups" onclick="return osNav(this,'followups')"><span>◷</span><b>Follow-ups</b><em id="sideFollowCount">0</em></a>
   <a class="os-side-link" href="deals.html"><span>✓</span><b>Deals</b><em id="sideDealCount">0</em></a>
-  <a class="os-side-link" href="#websiteLeads" onclick="osNav(this,'website')"><span>↗</span><b>Website Leads</b><em id="sideWebLeadCount">0</em></a>
-  <a class="os-side-link" href="#whatsappCenter" onclick="osNav(this,'whatsapp')"><span>💬</span><b>WhatsApp</b><em id="sideWaCount">0</em></a>
-  <a class="os-side-link" href="#businessFinder" onclick="osNav(this,'finder')"><span>⌕</span><b>Business Finder</b><em id="sideFinderCount">0</em></a>
+  <a class="os-side-link" href="customers.html?view=website" onclick="return osNav(this,'website')"><span>↗</span><b>Website Leads</b><em id="sideWebLeadCount">0</em></a>
+  <a class="os-side-link" href="customers.html?view=whatsapp" onclick="return osNav(this,'whatsapp')"><span>💬</span><b>WhatsApp</b><em id="sideWaCount">0</em></a>
+  <a class="os-side-link" href="customers.html?view=finder" onclick="return osNav(this,'finder')"><span>⌕</span><b>Business Finder</b><em id="sideFinderCount">0</em></a>
   <div class="os-side-divider"></div>
   <div class="os-side-title">MANAGE</div>
   <a class="os-side-link" href="reports.html"><span>▥</span><b>Reports</b></a>
@@ -370,7 +392,8 @@ body.app-page .dash-head p{font-size:12.5px!important}
   </a>
 </aside>
 <div class="os-content">
-<div class="page-head"><div><h1>Customers</h1><p>अपने customers की पूरी journey एक जगह track करें.</p></div><div class="top-actions"><button onclick="document.getElementById('csvFile').click()">↑ Import</button><button onclick="exportCSV()">↓ Export</button><button class="primary" onclick="openCustomerModal()">＋ Add Customer</button><input id="csvFile" class="file-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="importCSV(event)"></div></div>
+<div class="workspace-view-back" id="workspaceViewBack"><a href="customers.html?view=overview">← Overview</a><span id="workspaceViewLabel">Customers</span></div>
+<div class="page-head" id="customersPageHead"><div><h1>Customers</h1><p>अपने customers की पूरी journey एक जगह track करें.</p></div><div class="top-actions"><button onclick="document.getElementById('csvFile').click()">↑ Import</button><button onclick="exportCSV()">↓ Export</button><button class="primary" onclick="openCustomerModal()">＋ Add Customer</button><input id="csvFile" class="file-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="importCSV(event)"></div></div>
 <section class="dashboard-v2" id="dashboardV2">
   <div class="dash-head">
     <div>
@@ -433,20 +456,23 @@ body.app-page .dash-head p{font-size:12.5px!important}
     <div id="dashSources" class="source-grid"></div>
   </div>
 
-  <div class="dash-panel wa-center-panel view-hidden" id="whatsappCenter"><div class="panel-head"><div><h3>WhatsApp Center</h3><p>Send contextual follow-ups without losing the customer history.</p></div><div class="web-lead-toolbar"><button type="button" onclick="waBroadcastHint()">Message tips</button></div></div><div class="wa-summary"><span><b id="waReadyCount">0</b><small>contacts with mobile</small></span><span><b id="waHotCount">0</b><small>priority leads</small></span><span><b id="waTodayCount">0</b><small>follow-ups today</small></span></div><div id="waCenterList" class="wa-center-list"></div></div>
+  <div class="dash-panel wa-center-panel view-hidden" id="whatsappCenter"><div class="view-section-back"><a href="customers.html?view=overview">← Back to Overview</a></div><div class="panel-head"><div><h3>WhatsApp Center</h3><p>Send contextual follow-ups without losing the customer history.</p></div><div class="web-lead-toolbar"><button type="button" onclick="waBroadcastHint()">Message tips</button></div></div><div class="wa-summary"><span><b id="waReadyCount">0</b><small>contacts with mobile</small></span><span><b id="waHotCount">0</b><small>priority leads</small></span><span><b id="waTodayCount">0</b><small>follow-ups today</small></span></div><div id="waCenterList" class="wa-center-list"></div></div>
   <div class="dash-panel web-leads-panel" id="websiteLeads"><div class="panel-head"><div><h3>Website Leads</h3><p>Enquiries submitted from your website lead form.</p></div><div class="web-lead-toolbar"><a id="leadFormLink" class="lead-primary" target="_blank" rel="noopener">Open Lead Form</a><button type="button" onclick="copyLeadFormLink()">Copy Link</button></div></div><div id="webLeadsList" class="web-leads-list"></div></div>
 </section>
 <section id="followupCenter" class="followup-center view-hidden">
+  <div class="view-section-back"><a href="customers.html?view=overview">← Back to Overview</a></div>
   <div class="followup-head"><div><div class="dash-kicker">FOLLOW-UP CENTER</div><h2>Today’s follow-ups</h2><p>Track due, overdue and upcoming customer actions from one place.</p></div><button type="button" class="dash-secondary" onclick="navView('customers');setFollowFilter('')">View all customers</button></div>
   <div class="followup-tabs"><button id="fuTabToday" class="followup-tab active" onclick="setFollowCenterTab('today')">Today <span id="fuTodayCount">0</span></button><button id="fuTabOverdue" class="followup-tab" onclick="setFollowCenterTab('overdue')">Overdue <span id="fuOverdueCount">0</span></button><button id="fuTabUpcoming" class="followup-tab" onclick="setFollowCenterTab('upcoming')">Upcoming <span id="fuUpcomingCount">0</span></button><button id="fuTabAll" class="followup-tab" onclick="setFollowCenterTab('all')">All Scheduled <span id="fuAllCount">0</span></button></div>
   <div class="followup-grid"><div class="followup-column"><div class="followup-column-head"><b id="fuPrimaryTitle">Due Today</b><span id="fuPrimaryCount">0</span></div><div id="fuPrimary" class="followup-items"></div></div><div class="followup-column"><div class="followup-column-head"><b>Overdue</b><span id="fuOverdueSide">0</span></div><div id="fuOverdue" class="followup-items"></div></div><div class="followup-column"><div class="followup-column-head"><b>Upcoming</b><span id="fuUpcomingSide">0</span></div><div id="fuUpcoming" class="followup-items"></div></div></div>
 </section>
 <section id="websiteLeadCenter" class="website-lead-center view-hidden">
+  <div class="view-section-back"><a href="customers.html?view=overview">← Back to Overview</a></div>
   <div class="website-lead-center-head"><div><div class="dash-kicker">WEBSITE LEADS</div><h2>Website Enquiries</h2><p>Leads submitted through your public enquiry form. Convert genuine enquiries into private CRM leads.</p></div><div class="website-lead-stats"><span class="website-lead-stat"><b id="webLeadTotal">0</b>Total</span><span class="website-lead-stat"><b id="webLeadNew">0</b>New</span><span class="website-lead-stat"><b id="webLeadConverted">0</b>Converted</span></div></div>
   <div class="website-lead-center-toolbar"><div class="website-lead-tabs"><button id="webLeadTabNew" class="website-lead-tab active" onclick="setWebsiteLeadTab('new')">New</button><button id="webLeadTabConverted" class="website-lead-tab" onclick="setWebsiteLeadTab('converted')">Converted</button><button id="webLeadTabAll" class="website-lead-tab" onclick="setWebsiteLeadTab('all')">All</button></div><div class="lead-copy-box"><input id="leadFormShareUrl" readonly><button onclick="copyLeadFormLink()">Copy Link</button><a id="leadFormCenterLink" class="primary" target="_blank" rel="noopener">Open Form</a></div></div>
   <div id="webLeadsCenterList" class="website-lead-center-list"></div>
 </section>
 <section id="businessFinder" class="view-hidden">
+  <div class="view-section-back"><a href="customers.html?view=overview">← Back to Overview</a></div>
   <div class="finder-shell">
     <div class="finder-hero"><div class="dash-kicker" style="color:#a9b9d3">PROSPECTING CENTER</div><h2>Find businesses. Build your pipeline.</h2><p>Search a business category and location on Google Maps, then add genuine prospects to your private CRM. BusinessOS does not scrape or copy private contact data.</p></div>
     <div class="finder-search">
@@ -556,33 +582,58 @@ function navView(section){
   const fu=document.getElementById('followupCenter');
   const web=document.getElementById('websiteLeadCenter');
   const finder=document.getElementById('businessFinder');
-  const showDash=section==='overview';
+  const head=document.getElementById('customersPageHead');
+  const back=document.getElementById('workspaceViewBack');
+  const label=document.getElementById('workspaceViewLabel');
+  const isOverview=section==='overview';
+  const isCustomers=section==='customers';
   const showFollow=section==='followups';
   const showWebsite=section==='website';
   const showFinder=section==='finder';
-  if(wa)wa.classList.toggle('view-hidden',section!=='whatsapp');
+  const showWa=section==='whatsapp';
+  document.body.classList.toggle('workspace-overview-view',isOverview);
+  document.body.classList.toggle('workspace-detail-view',!isOverview);
+  document.body.classList.toggle('workspace-customers-view',isCustomers);
+  if(head)head.style.display=isCustomers?'flex':'';
+  if(back)back.style.display=isOverview?'none':'flex';
+  if(label)label.textContent=isCustomers?'Customers':showFollow?'Follow-ups':showWebsite?'Website Leads':showWa?'WhatsApp':showFinder?'Business Finder':'';
+  if(wa)wa.classList.toggle('view-hidden',!showWa);
   if(fu)fu.classList.toggle('view-hidden',!showFollow);
   if(web)web.classList.toggle('view-hidden',!showWebsite);
   if(finder)finder.classList.toggle('view-hidden',!showFinder);
-  if(dash)dash.classList.toggle('view-hidden',showDash);
-  [summary,pipeline,list].forEach(el=>{if(el)el.classList.toggle('view-hidden',showDash||showFollow||showWebsite||showFinder)});
+  if(dash)dash.classList.toggle('view-hidden',!isOverview);
+  [summary,pipeline,list].forEach(el=>{if(el)el.classList.toggle('view-hidden',!isCustomers)});
   if(showFinder)renderBusinessFinder();
   if(showFollow)renderFollowupCenter();
   if(showWebsite)renderWebsiteLeadCenter();
+  if(showWa)renderWhatsAppCenter();
 }
 function osNav(el,section){
   document.querySelectorAll('.os-side-link').forEach(x=>x.classList.remove('active'));
   if(el)el.classList.add('active');
-  navView(section);
-  if(section==='overview'){window.scrollTo({top:0,behavior:'smooth'});return false}
-  if(section==='customers'){clearDashFilter();window.scrollTo({top:0,behavior:'smooth'});return false}
-  if(section==='followups'){navView('followups');window.scrollTo({top:0,behavior:'smooth'});return false}
+  const localViews=['overview','customers','followups','website','whatsapp','finder'];
+  if(localViews.includes(section)){
+    const target='customers.html?view='+encodeURIComponent(section);
+    try{history.pushState({view:section},'',target)}catch(e){}
+    navView(section);
+    if(section==='customers')clearDashFilter();
+    window.scrollTo({top:0,behavior:'smooth'});
+    return false;
+  }
   if(section==='deals'){window.location.href='deals.html';return false}
-  if(section==='website'){navView('website');window.scrollTo({top:0,behavior:'smooth'});return false}
-  if(section==='whatsapp'){navView('whatsapp');document.getElementById('whatsappCenter')?.scrollIntoView({behavior:'smooth',block:'start'});renderWhatsAppCenter();return false}
-  if(section==='finder'){navView('finder');window.scrollTo({top:0,behavior:'smooth'});renderBusinessFinder();return false}
-  return false;
+  return true;
 }
+function syncViewFromUrl(){
+  const view=new URLSearchParams(location.search).get('view')||'overview';
+  const allowed=['overview','customers','followups','website','whatsapp','finder'];
+  const section=allowed.includes(view)?view:'overview';
+  const map={overview:0,customers:1,followups:2,website:4,whatsapp:5,finder:6};
+  const links=document.querySelectorAll('.os-side-link');
+  links.forEach(x=>x.classList.remove('active'));
+  if(links[map[section]])links[map[section]].classList.add('active');
+  navView(section);
+}
+window.addEventListener('popstate',syncViewFromUrl);
 function parseNextDate(value){
   const raw=String(value||'').trim();
   if(!raw || /not set|completed/i.test(raw)) return null;
@@ -1163,7 +1214,7 @@ $("googleBtn").onclick=async()=>{
 await finishRedirect();
 
 onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();if(unsubPublicLeads)unsubPublicLeads();$("googleBtn").disabled=false;return}try{$("authMsg").textContent="Opening your workspace...";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userEmail").textContent=u.email||"";const n=(u.displayName||u.email||"User").split(" ")[0];const tn=$("topUserName"),ti=$("topUserInitial");if(tn)tn.textContent=u.displayName||u.email||"User";if(ti)ti.textContent=n.charAt(0).toUpperCase();subscribe();subscribePublicLeads()}catch(e){console.error("Workspace setup error",e);$("authMsg").textContent=e.message||"Workspace setup failed.";$("googleBtn").disabled=false;}});
-navView('overview');
+syncViewFromUrl();
 window.setFollowCenterTab=setFollowCenterTab;window.markDoneFor=markDoneFor;window.logout=logout;window.openCustomerModal=openCustomerModal;window.openWaComposer=openWaComposer;window.closeWaComposer=closeWaComposer;window.applyWaTemplate=applyWaTemplate;window.updateWaChar=updateWaChar;window.sendWaComposer=sendWaComposer;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.openEmailComposer=openEmailComposer;window.closeEmailComposer=closeEmailComposer;window.applyEmailTemplate=applyEmailTemplate;window.updateEmailChar=updateEmailChar;window.sendEmailComposer=sendEmailComposer;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;window.stagePick=stagePick;window.updatePipeline=updatePipeline;window.changeStage=changeStage;window.clearDashFilter=clearDashFilter;window.setStageFilter=setStageFilter;window.setFollowFilter=setFollowFilter;window.osNav=osNav;window.copyLeadFormLink=copyLeadFormLink;window.convertPublicLead=convertPublicLead;window.leadCall=leadCall;window.searchBusinessFinder=searchBusinessFinder;window.copyFinderSearch=copyFinderSearch;window.useFinderIdea=useFinderIdea;window.saveFinderProspect=saveFinderProspect;window.renderBusinessFinder=renderBusinessFinder;window.openFinderWebsite=openFinderWebsite;window.startFinderFollowup=startFinderFollowup;window.convertFinderProspect=convertFinderProspect;
 </script>
 
