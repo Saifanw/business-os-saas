@@ -314,7 +314,7 @@ body.app-page .table-scroll{max-width:100%;}
 </section>
 <div id="summary" class="smart-summary"><span><b id="total">0</b> contacts</span><i></i><span><b id="today">0</b> follow-ups today</span><i></i><span><b id="hot">0</b> hot leads</span><i></i><span><b id="overdue">0</b> overdue</span></div><div id="templatePipeline" class="template-pipeline"></div>
 <div class="workspace"><section class="list-card" id="customerList">
-<div class="list-head"><div><b id="listTitle">All Customers / Leads</b><small id="listSubtitle">Manage your customers, requirements and follow-ups.</small></div><div class="list-search"><input id="search" placeholder="Search name, mobile, company..." oninput="render()"><span id="count">0 records</span></div></div>
+<div class="list-head"><div class="list-title-wrap"><div><b id="listTitle">All Customers / Leads</b><small id="listSubtitle">Manage your customers, requirements and follow-ups.</small><small class="record-sort-note">Newest records appear first · latest enquiry stays easy to find.</small></div><span class="latest-badge">● Latest first</span></div><div class="list-search"><input id="search" placeholder="Search name, mobile, company..." oninput="render()"><span id="count">0 records</span></div></div>
 <div class="filters"><select id="type" onchange="render()"><option value="">All Business Types</option><option>Customer</option><option>Broker</option><option>Seller</option><option>Prospect</option></select><select id="area" onchange="render()"><option value="">All Cities / Areas</option></select><select id="statusFilter" onchange="render()"><option value="">All Statuses</option><option>New</option><option>Contacted</option><option>Interested</option><option>Follow-up</option><option>Demo</option><option>Site Visit</option><option>Negotiation</option><option>Won</option><option>Lost</option><option>Overdue</option></select><select id="sourceFilter" onchange="render()"><option value="">All Sources</option><option>Website</option><option>WhatsApp</option><option>Phone</option><option>Google</option><option>Facebook</option><option>Instagram</option><option>Referral</option><option>Business Finder</option><option>Walk-in</option><option>Other</option></select><select id="followFilter" onchange="render()"><option value="">Any Date</option><option value="today">Today</option><option value="overdue">Overdue</option><option value="upcoming">Upcoming</option></select><button class="reset-filter" onclick="resetFilters()">Reset</button></div>
 <div class="table-scroll"><div class="table-head"><div>✓</div><div>Customer / Business</div><div>Contact</div><div id="tableLocationLabel">Location</div><div>Requirement</div><div>Budget / Value</div><div>Status</div><div>Next Action</div><div>Action</div></div><div id="rows"></div></div>
 </section></div>
@@ -357,7 +357,7 @@ import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirect
 import{getFirestore,collection,collectionGroup,addDoc,updateDoc,deleteDoc,doc,getDocs,query,orderBy,onSnapshot,serverTimestamp,writeBatch,setDoc,getDoc,where}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const cfg={apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80",measurementId:"G-85D45ENBLK"};
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
-let customers=[],publicLeads=[],selectedId=null,atype="Call",unsub=null,unsubPublicLeads=null,currentUser=null,businessId=null,businessProfile=null;
+let customers=[],publicLeads=[],selectedId=null,newRecordId=null,atype="Call",unsub=null,unsubPublicLeads=null,currentUser=null,businessId=null,businessProfile=null;
 const $=id=>document.getElementById(id), ini=n=>String(n||"?").trim().split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase(), esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
 function toast(msg,error=false){$("toast").textContent=msg;$("toast").classList.remove("hidden","toast-error");if(error)$("toast").classList.add("toast-error");setTimeout(()=>$("toast").classList.add("hidden"),2400)}
 function todayISO(){return new Date().toISOString().slice(0,10)}
@@ -621,11 +621,12 @@ function setSourceFilter(source){const el=$("sourceFilter");if(el){el.value=sour
 function render(){
  buildAreas();updatePipeline();const q=$("search").value.toLowerCase(),ar=$("area").value,tp=$("type").value,sf=$("statusFilter").value,src=$("sourceFilter").value,ff=$("followFilter").value;
  const now=new Date(),dayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate());
- const arr=customers.filter(c=>{const hay=[c.name,c.phone,c.businessName,c.area,c.city,c.req,c.detail,c.budget,c.status,c.note,c.source,c.businessType].join(" ").toLowerCase();const d=parseNextDate(c.next);if(q&&!hay.includes(q))return false;if(ar&&c.area!==ar)return false;if(tp&&String(c.type||"Customer")!==tp)return false;if(sf&&c.status!==sf)return false;if(src&&String(c.source||"Other")!==src)return false;if(ff==="today"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||dateKey(d)!==dateKey(now)))return false;if(ff==="overdue"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||d>=dayStart)&&c.status!=="Overdue")return false;if(ff==="upcoming"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||d<=dayStart))return false;return true});
+ let arr=customers.filter(c=>{const hay=[c.name,c.phone,c.businessName,c.area,c.city,c.req,c.detail,c.budget,c.status,c.note,c.source,c.businessType].join(" ").toLowerCase();const d=parseNextDate(c.next);if(q&&!hay.includes(q))return false;if(ar&&c.area!==ar)return false;if(tp&&String(c.type||"Customer")!==tp)return false;if(sf&&c.status!==sf)return false;if(src&&String(c.source||"Other")!==src)return false;if(ff==="today"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||dateKey(d)!==dateKey(now)))return false;if(ff==="overdue"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||d>=dayStart)&&c.status!=="Overdue")return false;if(ff==="upcoming"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||d<=dayStart))return false;return true});
+ arr.sort((a,b)=>{const av=Number(a.createdAt?.seconds||0)||Number(a.updatedAt?.seconds||0)||0;const bv=Number(b.createdAt?.seconds||0)||Number(b.updatedAt?.seconds||0)||0;return bv-av;});
  const fs=followStats();
  $("total").textContent=customers.length;$("today").textContent=fs.today;$("hot").textContent=customers.filter(c=>["Interested","Follow-up","Site Visit","Negotiation"].includes(c.status)).length;$("overdue").textContent=fs.overdue;$("count").textContent=arr.length+" records";
- $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b>${esc(c.name)}</b><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span></div><small>${esc(c.businessName||source)}${c.email?' · '+esc(c.email):''}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small>${esc(c.source||"Manual Entry")}</small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div><span class="status ${safeStatus(c.status)}">${esc(c.status||"New")}</span></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
-  renderDashboard(); updateSideCounts();
+ $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b>${esc(c.name)}</b><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span></div><small>${esc(c.businessName||source)}${c.email?' · '+esc(c.email):''}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small>${esc(c.source||"Manual Entry")}</small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div><span class="status ${safeStatus(c.status)}">${esc(c.status||"New")}</span></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
+  renderDashboard(); updateSideCounts(); window.updateRecordQuickCounts?.();
 }
 async function selectCustomer(id){selectedId=id;const c=customers.find(x=>x.id===id);if(!c)return;renderProfile(c);$("profileOverlay").classList.add("show")}
 function renderProfile(c){
@@ -692,7 +693,7 @@ async function saveCustomer(){
   if(d) patch.next=dateText(d,t);
   try{
     if(editId){await updateDoc(doc(db,"businesses",businessId,"contacts",editId),patch);$("customerModal").dataset.editId="";closeCustomerModal();toast("Customer updated");await selectCustomer(editId);}
-    else{patch.detail="";patch.last="—";patch.next=patch.next||"Not set";patch.events=[{date:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})+" · "+(t||"Now"),type:"Enquiry Created",note:$("fNotes").value.trim()||"Customer added."}];patch.createdAt=serverTimestamp();const ref=await addDoc(collection(db,"businesses",businessId,"contacts"),patch);closeCustomerModal();toast("Customer saved");await selectCustomer(ref.id);}
+    else{patch.detail="";patch.last="—";patch.next=patch.next||"Not set";patch.events=[{date:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})+" · "+(t||"Now"),type:"Enquiry Created",note:$("fNotes").value.trim()||"Customer added."}];patch.createdAt=serverTimestamp();const ref=await addDoc(collection(db,"businesses",businessId,"contacts"),patch);newRecordId=ref.id;closeCustomerModal();toast("Customer saved — latest record is at the top");render();setTimeout(()=>document.querySelector(`[data-record-id="${CSS.escape(ref.id)}"]`)?.scrollIntoView({behavior:"smooth",block:"center"}),80);setTimeout(()=>{newRecordId=null;render()},3200);}
   }catch(e){toast(e.message||"Could not save customer",true)}
 }
 function editCustomer(){const c=customers.find(x=>x.id===selectedId);if(!c)return;$("fName").value=c.name||"";$("fPhone").value=c.phone||"";$("fEmail").value=c.email||"";$("fReq").value=c.req||c.requirement||"";$("fBudget").value=c.budget||"";$("fArea").value=c.area||"";$("fCity").value=c.city||"Jaipur";$("fStatus").value=c.status||"New";$("fType").value=c.type||"Customer";$("fBusinessType").value=c.businessType||"Real Estate";$("fSource").value=c.source||"Other";$("fNotes").value=c.note||c.notes||"";$("fDate").value="";$("fTime").value="";$("customerModal").classList.add("show");$("customerModal").dataset.editId=c.id}
@@ -1103,3 +1104,65 @@ body.app-page{background:
   .top-actions{width:100%!important;flex-wrap:wrap!important}
 }
 </style>
+
+<style id="business-os-v27-record-workspace">
+/* V27 — action-first record workspace: latest-first, no hunting, full-width scan */
+.record-quickbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 14px;padding:10px 12px;background:rgba(255,255,255,.88);border:1px solid #dfe7f2;border-radius:14px;box-shadow:0 10px 28px rgba(18,38,75,.055)}
+.record-quickbar .quick-label{font-size:10px;font-weight:900;letter-spacing:.12em;color:#8a97ab;margin:0 3px 0 2px;text-transform:uppercase}
+.record-quickbar button{height:40px;border:1px solid #dce5f0;background:#fff;color:#24324a;border-radius:10px;padding:0 13px;font-size:11px;font-weight:900;display:inline-flex;align-items:center;gap:7px;cursor:pointer}
+.record-quickbar button:hover{border-color:#b9c9ef;background:#f7f9ff;color:#2457d6;box-shadow:0 6px 16px rgba(37,87,214,.08)}
+.record-quickbar .quick-primary{background:linear-gradient(135deg,#315df6,#4d6dff);border-color:#315df6;color:#fff;box-shadow:0 8px 18px rgba(49,93,246,.18)}
+.record-quickbar .quick-primary:hover{color:#fff;filter:brightness(1.04)}
+.record-quickbar .quick-green{background:#eaf9f3;border-color:#cbeadf;color:#087f68}
+.record-quickbar .quick-count{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#edf2ff;color:#315df6;display:inline-flex;align-items:center;justify-content:center;font-size:9px}
+.list-head .list-title-wrap{display:flex;align-items:center;gap:10px;min-width:0}
+.latest-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;background:#eef4ff;color:#315df6;border:1px solid #dce6ff;font-size:9px;font-weight:900;white-space:nowrap}
+.record-sort-note{font-size:10px!important;color:#7b8799!important;margin-top:5px!important}
+.row.is-new{background:linear-gradient(90deg,#f0f6ff 0%,#fff 46%);box-shadow:inset 4px 0 0 #315df6,0 8px 24px rgba(49,93,246,.08);animation:newRecordGlow 2.2s ease both}
+@keyframes newRecordGlow{0%{background:#e8f0ff}100%{background:linear-gradient(90deg,#f0f6ff 0%,#fff 46%)}}
+@media(min-width:981px){
+  /* The app already has a sidebar; the record table must fit the remaining workspace instead of creating a second horizontal world. */
+  body.app-page .table-scroll{overflow-x:hidden!important}
+  body.app-page .table-head,body.app-page .row{min-width:0!important;width:100%!important;grid-template-columns:28px minmax(190px,2.15fr) minmax(105px,1.15fr) minmax(90px,1fr) minmax(125px,1.25fr) minmax(105px,1fr) minmax(78px,.78fr) minmax(160px,1.45fr)!important}
+  body.app-page .table-head{padding:0 16px!important}
+  body.app-page .row{padding:0 16px!important}
+  body.app-page .contact-cell{gap:10px!important}
+  body.app-page .avatar{width:44px!important;height:44px!important;border-radius:12px!important}
+  body.app-page .contact-main b{font-size:14px!important}
+  body.app-page .contact-main small{font-size:9px!important}
+  body.app-page .data-cell b{font-size:11px!important}
+  body.app-page .data-cell small{font-size:9px!important}
+  body.app-page .actions{gap:5px!important}
+  body.app-page .actions button{height:34px!important;padding:0 8px!important;font-size:9px!important}
+  body.app-page .actions .email{display:none}
+}
+@media(max-width:1100px) and (min-width:981px){
+  body.app-page .table-head,body.app-page .row{grid-template-columns:26px minmax(180px,2fr) minmax(95px,1fr) minmax(80px,.9fr) minmax(110px,1.1fr) minmax(90px,.9fr) minmax(76px,.75fr) minmax(125px,1.25fr)!important}
+  body.app-page .actions .email{display:none}
+  body.app-page .actions .view{display:none}
+}
+@media(max-width:900px){.record-quickbar{padding:10px;gap:7px}.record-quickbar .quick-label{width:100%;margin-bottom:1px}.record-quickbar button{height:42px;font-size:11px}.list-head .list-title-wrap{align-items:flex-start;flex-direction:column;gap:7px}}
+</style>
+<script>
+(function(){
+  const quick=`<div class="record-quickbar" id="recordQuickbar">
+    <span class="quick-label">Quick actions</span>
+    <button type="button" class="quick-primary" onclick="openCustomerModal()">＋ Add Customer</button>
+    <button type="button" onclick="osNav(document.querySelector('.os-side-link[href=\"#customerList\"]'),'followups')">◷ Today's Follow-ups <span class="quick-count" id="quickFollowCount">0</span></button>
+    <button type="button" onclick="osNav(document.querySelector('.os-side-link[href=\"#websiteLeads\"]'),'website')">↗ Website Leads <span class="quick-count" id="quickLeadCount">0</span></button>
+    <button type="button" class="quick-green" onclick="osNav(document.querySelector('.os-side-link[href=\"#whatsappCenter\"]'),'whatsapp')">💬 WhatsApp</button>
+    <button type="button" onclick="osNav(document.querySelector('.os-side-link[href=\"#businessFinder\"]'),'finder')">⌕ Find Prospects</button>
+  </div>`;
+  function mountQuick(){
+    const head=document.querySelector('.page-head'), bar=document.getElementById('recordQuickbar');
+    if(head && !bar) head.insertAdjacentHTML('afterend',quick);
+  }
+  mountQuick();
+  const obs=new MutationObserver(mountQuick); obs.observe(document.body,{childList:true,subtree:true});
+  window.updateRecordQuickCounts=function(){
+    const f=document.getElementById('quickFollowCount'),w=document.getElementById('quickLeadCount');
+    if(f){const x=document.getElementById('sideFollowCount');f.textContent=x?.textContent||'0';}
+    if(w){const x=document.getElementById('sideWebLeadCount');w.textContent=x?.textContent||'0';}
+  };
+})();
+</script>
