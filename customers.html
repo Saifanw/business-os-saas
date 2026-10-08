@@ -211,6 +211,113 @@ body.app-page .os-sidebar{overflow:hidden!important;}
 body.app-page .table-scroll{max-width:100%;}
 </style>
 
+
+<style id="business-os-v25-2-sidebar-upgrade">
+/* V25.2 — compact, fully visible sidebar + tasteful upgrade CTA */
+body.app-page .os-sidebar{
+  width:258px!important;
+  min-width:258px!important;
+  padding:10px 10px 9px!important;
+  gap:1px!important;
+  overflow:hidden!important;
+}
+body.app-page .os-layout{
+  grid-template-columns:258px minmax(0,1fr)!important;
+}
+body.app-page .os-side-title{
+  padding:7px 12px 5px!important;
+  font-size:8.5px!important;
+}
+body.app-page .os-side-link{
+  min-height:36px!important;
+  height:36px!important;
+  padding:0 11px!important;
+  border-radius:10px!important;
+  gap:10px!important;
+}
+body.app-page .os-side-link span{
+  width:22px!important;
+  min-width:22px!important;
+  font-size:14px!important;
+}
+body.app-page .os-side-link b{
+  font-size:11.5px!important;
+  font-weight:850!important;
+}
+body.app-page .os-side-link em{
+  min-width:19px!important;
+  height:19px!important;
+  font-size:9px!important;
+  padding:0 5px!important;
+}
+body.app-page .os-side-divider{
+  margin:6px 2px!important;
+}
+body.app-page .os-upgrade-card{
+  margin:7px 2px 1px!important;
+  min-height:58px!important;
+  height:58px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:9px!important;
+  padding:0 9px!important;
+  box-sizing:border-box!important;
+  text-decoration:none!important;
+  border:1px solid #dbe6ff!important;
+  border-radius:12px!important;
+  background:linear-gradient(135deg,#eef5ff 0%,#f7f4ff 100%)!important;
+  box-shadow:0 7px 18px rgba(37,99,235,.08)!important;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important;
+}
+body.app-page .os-upgrade-card:hover{
+  transform:translateY(-1px)!important;
+  border-color:#b9ccff!important;
+  box-shadow:0 11px 24px rgba(37,99,235,.13)!important;
+}
+body.app-page .os-upgrade-icon{
+  width:29px!important;height:29px!important;min-width:29px!important;
+  display:grid!important;place-items:center!important;
+  border-radius:9px!important;
+  background:linear-gradient(145deg,#2563eb,#6d4aff)!important;
+  color:#fff!important;font-size:14px!important;font-weight:900!important;
+  box-shadow:0 5px 12px rgba(37,99,235,.18)!important;
+}
+body.app-page .os-upgrade-copy{min-width:0!important;display:flex!important;flex-direction:column!important;gap:2px!important;line-height:1.1!important}
+body.app-page .os-upgrade-copy b{font-size:10.5px!important;color:#18325c!important;font-weight:900!important;white-space:nowrap!important}
+body.app-page .os-upgrade-copy small{font-size:8.5px!important;line-height:1.2!important;color:#6b7c97!important;display:block!important;max-width:165px!important}
+body.app-page .os-upgrade-arrow{margin-left:auto!important;color:#2563eb!important;font-size:17px!important;font-weight:900!important}
+
+/* Workspace header: business identity + actions in one balanced row */
+body.app-page .page-head{
+  margin:10px 0 14px!important;
+  padding:14px 16px!important;
+  min-height:74px!important;
+  border-radius:16px!important;
+  gap:18px!important;
+}
+body.app-page .page-head>div:first-child:before{margin-bottom:4px!important;font-size:8px!important}
+body.app-page .page-head h1{font-size:30px!important;line-height:1!important}
+body.app-page .page-head p{font-size:11.5px!important;margin-top:5px!important;max-width:680px!important}
+body.app-page .page-head .top-actions{gap:8px!important}
+body.app-page .page-head .top-actions button{height:42px!important;min-width:94px!important;padding:0 16px!important}
+body.app-page .page-head .top-actions .primary{min-width:136px!important}
+
+/* Dashboard greeting: clear human greeting + name */
+body.app-page .dash-head h2{font-size:30px!important;letter-spacing:-.045em!important}
+body.app-page .dash-head p{font-size:12.5px!important}
+
+@media(max-width:1100px){
+  body.app-page .os-sidebar{width:246px!important;min-width:246px!important}
+  body.app-page .os-layout{grid-template-columns:246px minmax(0,1fr)!important}
+  body.app-page .os-upgrade-copy small{max-width:145px!important}
+}
+@media(max-width:980px){
+  body.app-page .os-sidebar{width:auto!important;min-width:0!important}
+  body.app-page .os-layout{grid-template-columns:1fr!important}
+  body.app-page .os-upgrade-card{min-width:220px!important;width:max-content!important}
+}
+</style>
+
 </head>
 <body class="app-page">
 <header class="nav app-topbar" aria-label="BusinessOS application header">
@@ -255,6 +362,11 @@ body.app-page .table-scroll{max-width:100%;}
   <a class="os-side-link" href="team-settings.html"><span>⚙</span><b>Team & Settings</b></a>
   <a class="os-side-link" href="subscription.html"><span>◇</span><b>Plans & Limits</b></a>
   <a class="os-side-link" href="notifications.html"><span>🔔</span><b>Notifications</b><em id="sideUnreadCount">0</em></a>
+  <a class="os-upgrade-card" href="subscription.html" aria-label="Upgrade your BusinessOS plan">
+    <span class="os-upgrade-icon">✦</span>
+    <span class="os-upgrade-copy"><b>Upgrade BusinessOS</b><small>Unlock more customers, team &amp; growth tools.</small></span>
+    <span class="os-upgrade-arrow">→</span>
+  </a>
 </aside>
 <div class="os-content">
 <div class="page-head"><div><h1>Customers</h1><p>अपने customers की पूरी journey एक जगह track करें.</p></div><div class="top-actions"><button onclick="document.getElementById('csvFile').click()">↑ Import</button><button onclick="exportCSV()">↓ Export</button><button class="primary" onclick="openCustomerModal()">＋ Add Customer</button><input id="csvFile" class="file-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="importCSV(event)"></div></div>
@@ -660,7 +772,8 @@ function renderDashboard(){
   const set=(id,v)=>{const el=$(id);if(el)el.textContent=v};
   const hour=new Date().getHours();
   const greeting=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
-  set('dashTitle',greeting);
+  const firstName=(currentUser?.displayName||currentUser?.email||'').trim().split(' ')[0] || 'there';
+  set('dashTitle',`${greeting}, ${firstName}!`);
   set('dashSubtitle','Your business health, pipeline and next actions — in one place.');
   set('dashTotal',total); set('dashToday',today); set('dashOverdue',overdue); set('dashHot',hot); set('dashWon',won); set('dashWonRate',rate+'% conversion');
   set('healthActive',active); set('healthWon',won); set('healthOverdue',overdue); set('healthHot',hot); set('dashPipelineTotal',total+' leads');
