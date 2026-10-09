@@ -292,6 +292,35 @@ body.app-page #summary,body.app-page #templatePipeline{display:none!important}bo
  .bos-app-nav a{flex:0 0 auto!important;min-height:42px!important;padding:9px 12px!important}
 }
 </style>
+
+<style id="business-os-overview-table-alignment-final">
+/* Overview customer table: one shared grid for headings and records; no clipped right edge. */
+body.app-page #customerList .table-scroll{width:100%!important;max-width:100%!important;overflow-x:hidden!important;overflow-y:visible!important;}
+body.app-page #customerList .table-head,body.app-page #customerList .row{
+ display:grid!important; width:100%!important; min-width:0!important; box-sizing:border-box!important; align-items:center!important;
+ grid-template-columns:26px minmax(185px,2.1fr) minmax(100px,1.05fr) minmax(78px,.8fr) minmax(112px,1.15fr) minmax(92px,.9fr) minmax(72px,.72fr) minmax(126px,1.18fr) minmax(190px,1.75fr)!important;
+ column-gap:8px!important;
+}
+body.app-page #customerList .table-head{position:relative!important;top:auto!important;height:44px!important;padding:0 14px!important;white-space:nowrap!important;overflow:hidden!important;font-size:9px!important;letter-spacing:.07em!important;}
+body.app-page #customerList .table-head>div{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+body.app-page #customerList .row{height:70px!important;min-height:70px!important;padding:7px 14px!important;overflow:hidden!important;}
+body.app-page #customerList .row>*{min-width:0!important;}
+body.app-page #customerList .contact-cell{gap:8px!important;}
+body.app-page #customerList .avatar{width:34px!important;height:34px!important;flex:0 0 34px!important;}
+body.app-page #customerList .record-title-line{display:flex!important;align-items:center!important;gap:6px!important;min-width:0!important;}
+body.app-page #customerList .contact-main b{font-size:11px!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;}
+body.app-page #customerList .contact-main small,body.app-page #customerList .data-cell b,body.app-page #customerList .data-cell small,body.app-page #customerList .follow-cell b,body.app-page #customerList .follow-cell small{display:block!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;}
+body.app-page #customerList .contact-main small,body.app-page #customerList .data-cell small,body.app-page #customerList .follow-cell small{font-size:8px!important;}
+body.app-page #customerList .data-cell,body.app-page #customerList .data-cell b,body.app-page #customerList .follow-cell b{font-size:10px!important;line-height:1.25!important;}
+body.app-page #customerList .type-pill,body.app-page #customerList .status{padding:4px 6px!important;font-size:8px!important;white-space:nowrap!important;}
+body.app-page #customerList .actions{display:flex!important;flex-flow:row nowrap!important;align-items:center!important;gap:4px!important;overflow:hidden!important;}
+body.app-page #customerList .actions button{height:29px!important;padding:0 6px!important;font-size:8px!important;flex:0 1 auto!important;min-width:0!important;white-space:nowrap!important;}
+body.app-page #customerList .actions .wa{max-width:77px!important;overflow:hidden!important;}
+body.app-page #customerList .actions .email{max-width:54px!important;overflow:hidden!important;}
+body.app-page #customerList .actions .view{max-width:42px!important;overflow:hidden!important;}
+@media(max-width:1100px){body.app-page #customerList .table-scroll{overflow-x:auto!important;}body.app-page #customerList .table-head,body.app-page #customerList .row{min-width:1120px!important;}}
+</style>
+
 </head>
 <body class="app-page">
 <header class="bos-app-topnav">
