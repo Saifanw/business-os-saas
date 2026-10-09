@@ -335,7 +335,7 @@ body.bos36-module .customers-shell{padding:18px 22px 48px!important;min-height:c
   <div class="dash-panel web-leads-panel" id="websiteLeads"><div class="panel-head"><div><h3>Website Leads</h3><p>Enquiries submitted from your website lead form.</p></div><div class="web-lead-toolbar"><a id="leadFormLink" class="lead-primary" target="_blank" rel="noopener">Open Lead Form</a><button type="button" onclick="copyLeadFormLink()">Copy Link</button></div></div><div id="webLeadsList" class="web-leads-list"></div></div>
 </section>
 <section id="followupCenter" class="followup-center view-hidden">
-  <div class="followup-head"><div><div class="dash-kicker">FOLLOW-UP CENTER</div><h2>Today’s follow-ups</h2><p>Track due, overdue and upcoming customer actions from one place.</p></div><button type="button" class="dash-secondary" onclick="navView('customers');setFollowFilter('')">View all customers</button></div>
+  <div class="followup-head"><div><div class="dash-kicker">FOLLOW-UP CENTER</div><h2>Today’s follow-ups</h2><p>Track due, overdue and upcoming customer actions from one place.</p></div><button type="button" class="dash-secondary" id="viewAllCustomersFromFollowups" onclick="openAllCustomersFromFollowups()">View all customers</button></div>
   <div class="followup-tabs"><button id="fuTabToday" class="followup-tab active" onclick="setFollowCenterTab('today')">Today <span id="fuTodayCount">0</span></button><button id="fuTabOverdue" class="followup-tab" onclick="setFollowCenterTab('overdue')">Overdue <span id="fuOverdueCount">0</span></button><button id="fuTabUpcoming" class="followup-tab" onclick="setFollowCenterTab('upcoming')">Upcoming <span id="fuUpcomingCount">0</span></button><button id="fuTabAll" class="followup-tab" onclick="setFollowCenterTab('all')">All Scheduled <span id="fuAllCount">0</span></button></div>
   <div class="followup-grid"><div class="followup-column"><div class="followup-column-head"><b id="fuPrimaryTitle">Due Today</b><span id="fuPrimaryCount">0</span></div><div id="fuPrimary" class="followup-items"></div></div><div class="followup-column"><div class="followup-column-head"><b>Overdue</b><span id="fuOverdueSide">0</span></div><div id="fuOverdue" class="followup-items"></div></div><div class="followup-column"><div class="followup-column-head"><b>Upcoming</b><span id="fuUpcomingSide">0</span></div><div id="fuUpcoming" class="followup-items"></div></div></div>
 </section>
@@ -349,13 +349,12 @@ body.bos36-module .customers-shell{padding:18px 22px 48px!important;min-height:c
     <div class="finder-hero"><div class="dash-kicker" style="color:#a9b9d3">PROSPECTING CENTER</div><h2>Find businesses. Build your pipeline.</h2><p>Search a business category and location on Google Maps, then add genuine prospects to your private CRM. BusinessOS does not scrape or copy private contact data.</p></div>
     <div class="finder-search">
       <div class="finder-grid">
-        <div class="finder-field"><label>Business / Keyword</label><input id="finderKeyword" placeholder="e.g. coaching institute" oninput="updateFinderSearchPreview()" onkeydown="if(event.key==='Enter'){event.preventDefault();searchBusinessFinder()}"></div>
-        <div class="finder-field"><label>Business Type</label><select id="finderType" onchange="updateFinderSearchPreview()"><option value="">Any type</option><option>Real Estate</option><option>Coaching</option><option>Education</option><option>Consultancy</option><option>Agency</option><option>Automobile</option><option>Solar</option><option>Healthcare</option><option>Finance</option><option>Insurance</option><option>Retail</option><option>IT / Software</option><option>Services</option></select></div>
-        <div class="finder-field"><label>City</label><input id="finderCity" value="Jaipur" oninput="updateFinderSearchPreview()" onkeydown="if(event.key==='Enter'){event.preventDefault();searchBusinessFinder()}"></div>
-        <div class="finder-field"><label>Area / Locality</label><input id="finderArea" placeholder="e.g. Jhotwara" oninput="updateFinderSearchPreview()" onkeydown="if(event.key==='Enter'){event.preventDefault();searchBusinessFinder()}"></div>
+        <div class="finder-field"><label>Business / Keyword</label><input id="finderKeyword" placeholder="e.g. coaching institute"></div>
+        <div class="finder-field"><label>Business Type</label><select id="finderType"><option value="">Any type</option><option>Real Estate</option><option>Coaching</option><option>Education</option><option>Consultancy</option><option>Agency</option><option>Automobile</option><option>Solar</option><option>Healthcare</option><option>Finance</option><option>Insurance</option><option>Retail</option><option>IT / Software</option><option>Services</option></select></div>
+        <div class="finder-field"><label>City</label><input id="finderCity" value="Jaipur"></div>
+        <div class="finder-field"><label>Area / Locality</label><input id="finderArea" placeholder="e.g. Jhotwara"></div>
       </div>
-      <div class="finder-actions"><button class="finder-primary" id="finderSearchButton" onclick="searchBusinessFinder()">⌕ Search on Google Maps</button><button class="finder-secondary" onclick="copyFinderSearch()">Copy Search</button><span class="finder-note">Type your search, then press Enter or click Search. Results open in Google Maps.</span></div>
-      <div id="finderSearchPreview" aria-live="polite" style="margin-top:10px;padding:10px 12px;border:1px solid #e1e7ef;border-radius:10px;background:#f8fafc;color:#65748b;font-size:12px">Search preview: coaching institute Jaipur</div>
+      <div class="finder-actions"><button class="finder-primary" onclick="searchBusinessFinder()">⌕ Search on Google Maps</button><button class="finder-secondary" onclick="copyFinderSearch()">Copy Search</button><span class="finder-note">Opens Google Maps in a new tab — you choose which businesses to contact.</span></div>
       <div class="finder-disclaimer">For a fully automatic in-app business directory, the next upgrade would use an official Places/Business API with its own API key, quota and billing. This version avoids scraping and keeps the workflow safe.</div>
     </div>
     <div class="finder-stats">
@@ -569,6 +568,7 @@ function clearDashFilter(){
   const sf=$('statusFilter'),ff=$('followFilter'); if(sf)sf.value=''; if(ff)ff.value=''; render();
 }
 function setStageFilter(stage){ const sf=$('statusFilter'); if(sf){sf.value=stage; render(); document.querySelector('.list-card')?.scrollIntoView({behavior:'smooth',block:'start'});} }
+function openAllCustomersFromFollowups(){ navView('customers'); setFollowFilter(''); const target=$('customerList')||document.querySelector('.list-card'); if(target) target.scrollIntoView({behavior:'smooth',block:'start'}); }
 function setFollowFilter(mode){ const ff=$('followFilter'); if(ff){ff.value=mode; render(); document.querySelector('.list-card')?.scrollIntoView({behavior:'smooth',block:'start'});} }
 function leadFormUrl(){
   const base=new URL('lead-capture.html',window.location.href);
@@ -621,19 +621,11 @@ function finderQuery(){
   const area=String($('finderArea')?.value||'').trim();
   return [keyword,type,area,city].filter(Boolean).join(' ');
 }
-function updateFinderSearchPreview(){
-  const q=finderQuery();
-  const preview=$('finderSearchPreview');
-  const button=$('finderSearchButton');
-  if(preview) preview.textContent=q ? 'Ready to search: '+q : 'Type a business keyword or choose a business type to prepare your search.';
-  if(button) button.disabled=!q;
-}
 function searchBusinessFinder(){
   const q=finderQuery();
   if(!q){toast('Enter a business keyword or type first',true);return;}
   const url='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
-  const win=window.open(url,'_blank','noopener');
-  if(!win){window.location.href=url;return;}
+  window.open(url,'_blank','noopener');
   toast('Google Maps search opened');
 }
 async function copyFinderSearch(){
@@ -643,7 +635,6 @@ async function copyFinderSearch(){
 function finderProspectKey(c){return String(c.name||'').trim().toLowerCase().replace(/\s+/g,' ')+'|'+String(c.city||'').trim().toLowerCase()}
 function finderStatusClass(status){return String(status||'New').toLowerCase().replace(/[^a-z]+/g,'-')}
 function renderBusinessFinder(){
-  updateFinderSearchPreview();
   const list=$('finderProspects'),count=$('finderProspectCount'),side=$('sideFinderCount');
   const all=customers.filter(c=>String(c.source||'')==='Business Finder').sort((a,b)=>String(b.createdAt?.seconds||0)-String(a.createdAt?.seconds||0));
   const search=String($('finderProspectSearch')?.value||'').trim().toLowerCase();
@@ -663,7 +654,7 @@ function renderBusinessFinder(){
 function openFinderWebsite(id){const c=customers.find(x=>x.id===id);if(!c?.website){toast('No website or Maps link saved',true);return;}window.open(c.website,'_blank','noopener')}
 function startFinderFollowup(id){const c=customers.find(x=>x.id===id);if(!c)return;selectedId=id;openActivityModal();typePick(document.querySelector('#modal [data-type="Follow-up"]'));$('anote').value='Business Finder prospect follow-up';}
 async function convertFinderProspect(id){const c=customers.find(x=>x.id===id);if(!c)return;if(c.type==='Customer'||c.convertedFromFinder){toast('Prospect is already converted');return;}try{await updateDoc(doc(db,'businesses',businessId,'contacts',id),{type:'Customer',status:'Contacted',convertedFromFinder:true,convertedAt:serverTimestamp(),last:'Converted from Business Finder',updatedAt:serverTimestamp()});toast('Prospect converted to Customer');await selectCustomer(id);renderBusinessFinder();render()}catch(e){toast(e.message||'Could not convert prospect',true)}}
-function useFinderIdea(keyword,city){$('finderKeyword').value=keyword;$('finderType').value='';$('finderCity').value=city;$('finderArea').value='';updateFinderSearchPreview();searchBusinessFinder()}
+function useFinderIdea(keyword,city){$('finderKeyword').value=keyword;$('finderType').value='';$('finderCity').value=city;$('finderArea').value='';searchBusinessFinder()}
 async function saveFinderProspect(){
   const name=String($('finderName')?.value||'').trim(); if(!name){toast('Business / Person name is required',true);return;}
   const phone=String($('finderPhone')?.value||'').trim(),norm=normalizePhone(phone),email=String($('finderEmail')?.value||'').trim();
