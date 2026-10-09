@@ -1251,6 +1251,23 @@ onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList
 navView('overview');
 window.filterCustomersNow=filterCustomersNow;
 window.setFollowCenterTab=setFollowCenterTab;window.markDoneFor=markDoneFor;window.logout=logout;window.openCustomerModal=openCustomerModal;window.openWaComposer=openWaComposer;window.closeWaComposer=closeWaComposer;window.applyWaTemplate=applyWaTemplate;window.updateWaChar=updateWaChar;window.sendWaComposer=sendWaComposer;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.openEmailComposer=openEmailComposer;window.closeEmailComposer=closeEmailComposer;window.applyEmailTemplate=applyEmailTemplate;window.updateEmailChar=updateEmailChar;window.sendEmailComposer=sendEmailComposer;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;window.stagePick=stagePick;window.updatePipeline=updatePipeline;window.changeStage=changeStage;window.clearDashFilter=clearDashFilter;window.setStageFilter=setStageFilter;window.setFollowFilter=setFollowFilter;window.osNav=osNav;window.copyLeadFormLink=copyLeadFormLink;window.convertPublicLead=convertPublicLead;window.leadCall=leadCall;window.searchBusinessFinder=searchBusinessFinder;window.copyFinderSearch=copyFinderSearch;window.useFinderIdea=useFinderIdea;window.saveFinderProspect=saveFinderProspect;window.renderBusinessFinder=renderBusinessFinder;window.openFinderWebsite=openFinderWebsite;window.startFinderFollowup=startFinderFollowup;window.convertFinderProspect=convertFinderProspect;
+// Keep module-scoped helpers available to modal controls.
+window.updateSubcategoryOptions=updateSubcategoryOptions;
+window.toggleCustomSubcategory=toggleCustomSubcategory;
+window.filterCustomersNow=()=>{try{render();}catch(e){console.error("Customer render failed:",e);}};
+window.resetCustomerFilters=()=>{try{resetFilters();}catch(e){console.error("Customer reset failed:",e);}};
+const subcategorySelect=document.getElementById("fSubcategory");
+const customSubcategoryInput=document.getElementById("fCustomSubcategory");
+if(subcategorySelect && customSubcategoryInput){
+  subcategorySelect.addEventListener("change",()=>{
+    const isCustom=subcategorySelect.value==="__custom__";
+    customSubcategoryInput.style.display=isCustom?"block":"none";
+    customSubcategoryInput.disabled=!isCustom;
+    customSubcategoryInput.setAttribute("aria-hidden",isCustom?"false":"true");
+    if(isCustom){customSubcategoryInput.placeholder="Enter new subcategory";customSubcategoryInput.focus();}
+    else {customSubcategoryInput.value="";}
+  });
+}
 </script>
 
 <div class="modal" id="onboardingModal" style="display:none;position:fixed;inset:0;background:rgba(9,16,29,.72);backdrop-filter:blur(8px);z-index:9999;place-items:center;padding:18px">
@@ -1453,7 +1470,7 @@ body.app-page{background:
     if(w){const x=document.getElementById('sideWebLeadCount');w.textContent=x?.textContent||'0';}
   };
 })();
-window.updateSubcategoryOptions=updateSubcategoryOptions;window.toggleCustomSubcategory=toggleCustomSubcategory;window.filterCustomersNow=()=>{try{render()}catch(e){console.error(e);}};window.resetCustomerFilters=()=>{try{resetFilters()}catch(e){console.error(e);}};
+
 </script>
 
 
