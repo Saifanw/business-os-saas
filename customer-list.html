@@ -354,6 +354,22 @@ body.module-page .os-content{min-width:0!important}
   #customerList #rows>.row .actions{padding-right:92px!important}
 }
 </style>
+<style id="business-os-overview-only-action-heading">
+/* OVERVIEW ONLY: visually align ACTION label with the right-aligned button group.
+   The same customer table is reused elsewhere, so this rule is gated by module-page state. */
+body:not(.module-page) #customerList .table-head>div:nth-child(9){
+  position:relative!important;
+  left:250px!important;
+  text-align:left!important;
+  padding:0!important;
+  white-space:nowrap!important;
+}
+@media(max-width:1180px){
+  body:not(.module-page) #customerList .table-head>div:nth-child(9){
+    left:250px!important;
+  }
+}
+</style>
 </head>
 <body class="app-page">
 <header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
