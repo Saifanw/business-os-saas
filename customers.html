@@ -1430,3 +1430,33 @@ body.app-page #customerList .actions button{height:29px!important;padding:0 7px!
 body.app-page #customerList .list-search input:focus{outline:0!important;border-color:#7196ff!important;box-shadow:0 0 0 3px #3568f420!important}
 @media(max-width:900px){body.app-page #customerList .row{height:66px!important;min-height:66px!important}}
 </style>
+
+
+<!-- FINAL OVERVIEW TABLE ACTION VISIBILITY FIX -->
+<style id="business-os-overview-final-table-finish">
+/* Final override: one consistent 9-column grid for headings and customer rows. */
+body.app-page #customerList .table-scroll{width:100%!important;max-width:100%!important;overflow-x:auto!important;overflow-y:visible!important;}
+body.app-page #customerList .table-head,
+body.app-page #customerList .row{
+  display:grid!important;
+  grid-template-columns:28px minmax(190px,1.65fr) minmax(105px,1fr) minmax(78px,.75fr) minmax(105px,.95fr) minmax(90px,.8fr) minmax(76px,.7fr) minmax(125px,1.05fr) minmax(200px,1.55fr)!important;
+  width:100%!important;min-width:0!important;box-sizing:border-box!important;
+}
+body.app-page #customerList .table-head{height:42px!important;padding:0 14px!important;gap:8px!important;align-items:center!important;}
+body.app-page #customerList .row{height:66px!important;min-height:66px!important;padding:7px 14px!important;gap:8px!important;overflow:visible!important;}
+body.app-page #customerList .row>div{min-width:0!important;}
+body.app-page #customerList .contact-main,.app-page #customerList .contact-main>div{min-width:0!important;}
+body.app-page #customerList .contact-main b,
+body.app-page #customerList .contact-main small,
+body.app-page #customerList .data-cell b,
+body.app-page #customerList .follow-cell b{overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;}
+body.app-page #customerList .actions{display:flex!important;flex-flow:row nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:4px!important;min-width:0!important;overflow:visible!important;white-space:nowrap!important;}
+body.app-page #customerList .actions button{display:inline-flex!important;flex:0 0 auto!important;align-items:center!important;justify-content:center!important;height:29px!important;min-width:0!important;padding:0 7px!important;font-size:9px!important;line-height:1!important;white-space:nowrap!important;}
+body.app-page #customerList .actions .wa{max-width:none!important;}
+body.app-page #customerList .actions .email{max-width:none!important;}
+body.app-page #customerList .actions .view{max-width:none!important;display:inline-flex!important;}
+body.app-page #customerList .table-head>div{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;}
+@media(max-width:1120px){
+ body.app-page #customerList .table-head,body.app-page #customerList .row{min-width:1120px!important;}
+}
+</style>
