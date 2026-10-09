@@ -240,6 +240,22 @@ body.module-page .os-content{min-width:0!important}
 #customerModal select option{color:#24324a;font-weight:500}
 #customerModal #fCustomSubcategory{margin-top:7px}
 </style>
+<style id="business-os-status-polish">
+#customerList .status-cell{display:flex;align-items:center;justify-content:flex-start;min-width:0}
+#customerList .status-action{display:inline-flex;align-items:center;gap:7px;cursor:pointer;border:1px solid #dbe5f2;transition:background .15s,border-color .15s,transform .15s}
+#customerList .status-action:hover{background:#eaf1ff;border-color:#b8ccff;transform:translateY(-1px)}
+#customerList .status-edit-mark{font-size:12px;opacity:.7}
+#profileModalContent .profile-status-section{background:linear-gradient(120deg,#f4f7ff,#fff);border:1px solid #dce6ff;border-radius:14px;margin:14px 16px;padding:15px}
+#profileModalContent .profile-status-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+#profileModalContent .profile-status-heading h3{margin:0;color:#315fe8;font-size:10px;letter-spacing:.12em}
+#profileModalContent .profile-status-heading p{margin:4px 0 0;color:#73819a;font-size:11px}
+#profileModalContent .profile-update-stage{background:#245cf5!important;color:#fff!important;border:1px solid #245cf5!important;border-radius:9px!important;padding:0 16px!important;min-height:42px!important;font-weight:800!important;box-shadow:0 6px 14px rgba(36,92,245,.18)}
+#profileModalContent .profile-update-stage:hover{background:#1748d8!important}
+#profileModalContent .profile-update-stage span{margin-left:8px}
+#profileModalContent .pipeline-control{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+#profileModalContent .pipeline-control select{min-width:0;min-height:42px;border-radius:9px}
+@media(max-width:600px){#profileModalContent .pipeline-control{grid-template-columns:1fr}#profileModalContent .profile-status-heading{align-items:flex-start}}
+</style>
 </head>
 <body class="app-page">
 <header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
@@ -741,7 +757,7 @@ function render(){
  arr.sort((a,b)=>{const av=Number(a.createdAt?.seconds||0)||Number(a.updatedAt?.seconds||0)||0;const bv=Number(b.createdAt?.seconds||0)||Number(b.updatedAt?.seconds||0)||0;return bv-av;});
  const fs=followStats();
  $("total").textContent=customers.length;$("today").textContent=fs.today;$("hot").textContent=customers.filter(c=>["Interested","Follow-up","Site Visit","Negotiation"].includes(c.status)).length;$("overdue").textContent=fs.overdue;$("count").textContent=arr.length+" records";
- $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b title="${esc(c.name)}">${esc(c.name)}</b><div class="record-badges"><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span>${c.subcategory?`<span class="subcategory-pill" title="${esc(c.subcategory)}">${esc(c.subcategory)}</span>`:""}</div></div><small>${esc(c.businessName||source)}${c.email?' · '+esc(c.email):''}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small>${esc(c.source||"Manual Entry")}</small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div><span class="status ${safeStatus(c.status)}">${esc(c.status||"New")}</span></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
+ $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b title="${esc(c.name)}">${esc(c.name)}</b><div class="record-badges"><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span>${c.subcategory?`<span class="subcategory-pill" title="${esc(c.subcategory)}">${esc(c.subcategory)}</span>`:""}</div></div><small>${esc(c.businessName||source)}${c.email?' · '+esc(c.email):''}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small>${esc(c.source||"Manual Entry")}</small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div class="status-cell"><button type="button" class="status status-action ${safeStatus(c.status)}" title="Click to view or change status" onclick="event.stopPropagation();selectCustomer('${c.id}')">${esc(c.status||"New")} <span class="status-edit-mark">⌄</span></button></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
   renderDashboard(); updateSideCounts(); window.updateRecordQuickCounts?.();
 }
 async function selectCustomer(id){selectedId=id;const c=customers.find(x=>x.id===id);if(!c)return;renderProfile(c);$("profileOverlay").classList.add("show")}
@@ -770,11 +786,14 @@ function renderProfile(c){
         <div class="fact"><small>Requirement</small><b>${esc(c.req||'Not specified')}</b></div>
         <div class="fact"><small>Budget / Value</small><b>${esc(c.budget||'Not specified')}</b></div>
         <div class="fact"><small>Location</small><b>${esc(c.area||'—')}, ${esc(c.city||'—')}</b></div>
+        <div class="fact"><small>Category</small><b>${esc(c.type||'Customer')}</b></div>
+        <div class="fact"><small>Subcategory</small><b>${esc(c.subcategory||'Not set')}</b></div>
         <div class="fact"><small>Source</small><b>${esc(c.source||'Other')}</b></div>
         <div class="fact"><small>Last Contact</small><b>${esc(c.last||'—')}</b></div>
       </div></div>
-      <div class="profile-section"><h3>PIPELINE</h3>
-        <div class="pipeline-control"><select id="profileStageSelect">${stageOptions}</select><button onclick="changeStage()">Update Stage</button></div>
+      <div class="profile-section profile-status-section">
+        <div class="profile-status-heading"><div><h3>CURRENT STATUS</h3><p>Update this customer's stage</p></div><span class="status ${safeStatus(c.status)}">${esc(c.status||'New')}</span></div>
+        <div class="pipeline-control"><select id="profileStageSelect" aria-label="Choose customer status">${stageOptions}</select><button class="profile-update-stage" onclick="changeStage()">Update Status <span>→</span></button></div>
         ${dealBadge}
       </div>
       <div class="profile-section"><h3>NEXT ACTION</h3>
