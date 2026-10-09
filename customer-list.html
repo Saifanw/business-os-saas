@@ -1080,6 +1080,11 @@ await finishRedirect();
 onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();if(unsubPublicLeads)unsubPublicLeads();$("googleBtn").disabled=false;return}try{$("authMsg").textContent="Opening your workspace...";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userEmail").textContent=u.email||"";subscribe();subscribePublicLeads();setTimeout(()=>navView(window.__BOS_DEFAULT_VIEW||"overview"),0)}catch(e){console.error("Workspace setup error",e);$("authMsg").textContent=e.message||"Workspace setup failed.";$("googleBtn").disabled=false;}});
 navView('overview');
 window.setFollowCenterTab=setFollowCenterTab;window.markDoneFor=markDoneFor;window.logout=logout;window.openCustomerModal=openCustomerModal;window.openWaComposer=openWaComposer;window.closeWaComposer=closeWaComposer;window.applyWaTemplate=applyWaTemplate;window.updateWaChar=updateWaChar;window.sendWaComposer=sendWaComposer;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.openEmailComposer=openEmailComposer;window.closeEmailComposer=closeEmailComposer;window.applyEmailTemplate=applyEmailTemplate;window.updateEmailChar=updateEmailChar;window.sendEmailComposer=sendEmailComposer;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;window.stagePick=stagePick;window.updatePipeline=updatePipeline;window.changeStage=changeStage;window.clearDashFilter=clearDashFilter;window.setStageFilter=setStageFilter;window.setFollowFilter=setFollowFilter;window.osNav=osNav;window.copyLeadFormLink=copyLeadFormLink;window.convertPublicLead=convertPublicLead;window.leadCall=leadCall;window.searchBusinessFinder=searchBusinessFinder;window.copyFinderSearch=copyFinderSearch;window.useFinderIdea=useFinderIdea;window.saveFinderProspect=saveFinderProspect;window.renderBusinessFinder=renderBusinessFinder;window.openFinderWebsite=openFinderWebsite;window.startFinderFollowup=startFinderFollowup;window.convertFinderProspect=convertFinderProspect;
+// Expose module-scoped customer search/filter handlers to inline controls.
+window.updateSubcategoryOptions=updateSubcategoryOptions;
+window.toggleCustomSubcategory=toggleCustomSubcategory;
+window.filterCustomersNow=()=>{try{render();}catch(e){console.error("Customer search/filter failed:",e);}};
+window.resetCustomerFilters=()=>{try{resetFilters();}catch(e){console.error("Customer filter reset failed:",e);}};
 </script>
 
 <div class="modal" id="onboardingModal" style="display:none;position:fixed;inset:0;background:rgba(9,16,29,.72);backdrop-filter:blur(8px);z-index:9999;place-items:center;padding:18px">
@@ -1772,5 +1777,5 @@ body.app-page #dashboardV2,body.app-page #followupCenter,body.app-page #websiteL
   else {buildV33();syncCounts()}
   setInterval(syncCounts,1200);
 })();
-window.updateSubcategoryOptions=updateSubcategoryOptions;window.toggleCustomSubcategory=toggleCustomSubcategory;window.filterCustomersNow=()=>{try{render()}catch(e){console.error(e);}};window.resetCustomerFilters=()=>{try{resetFilters()}catch(e){console.error(e);}};
+
 </script>
