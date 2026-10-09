@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Overview — BusinessOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f172a;--mut:#64748b;--line:#e6eaf2;--bg:#f5f7fb;--card:#fff;--blue:#2f5bff;--blue2:#1e40e0;--green:#0f9d6a;--amber:#d98a00;--red:#e0483f;--purple:#7c4dff;--r:16px}
+*{box-sizing:border-box;margin:0}
+html,body{overflow-x:hidden}body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}
+.hidden{display:none!important}
+/* top bar */
+.top{position:sticky;top:0;z-index:30;background:#ffffffee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1320px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:22px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;letter-spacing:-.02em}
+.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#4f7bff,#2446e0);color:#fff;display:grid;place-items:center;font-weight:800}
+.nav{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}
+.nav a{padding:8px 13px;border-radius:9px;color:var(--mut);font-weight:600;font-size:13px;white-space:nowrap;display:flex;gap:7px;align-items:center}
+.nav a:hover{background:#f1f4fa;color:var(--ink)}.nav a.on{background:#eaf0ff;color:var(--blue)}
+.pill{background:var(--red);color:#fff;border-radius:99px;font-size:10px;padding:1px 6px;font-weight:700}
+.acts{display:flex;gap:10px;align-items:center}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:.15s}
+.btn:hover{border-color:#c9d3e6;background:#f8faff}
+.btn.p{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 16px #2f5bff33}.btn.p:hover{background:var(--blue2)}
+.menu{position:relative}
+.avatar{width:36px;height:36px;border-radius:50%;background:#e7edff;color:var(--blue);font-weight:700;display:grid;place-items:center;border:1px solid #d5defa}
+.dd{position:absolute;right:0;top:44px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 40px #0f172a1f;min-width:220px;padding:8px}
+.dd .em{padding:8px 10px;color:var(--mut);font-size:12px;border-bottom:1px solid var(--line);margin-bottom:6px;word-break:break-all}
+.dd a,.dd button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;font-size:13px;font-weight:600}
+.dd a:hover,.dd button:hover{background:#f3f6fc}
+/* layout */
+main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.hero small{color:var(--blue);font-weight:700;letter-spacing:.08em;font-size:11px;text-transform:uppercase}
+.hero h1{font-size:30px;letter-spacing:-.03em;font-weight:800;margin:4px 0}
+.hero p{color:var(--mut);font-size:15px}.hero p b{color:var(--ink)}
+.grid{display:grid;gap:16px}.grid>*{min-width:0}
+.kpis{grid-template-columns:repeat(5,1fr);margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:0 1px 2px #0f172a08}
+a.kpi{display:block;transition:.15s;position:relative;overflow:hidden}a.kpi:hover{transform:translateY(-2px);box-shadow:0 14px 30px #0f172a12}
+.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.kpi .l{color:var(--mut);font-weight:600;font-size:12px}.kpi .n{font-size:34px;font-weight:800;letter-spacing:-.03em;margin:6px 0 2px}.kpi .s{font-size:12px;color:var(--mut)}
+.two{grid-template-columns:1.7fr 1fr;margin-bottom:16px}.three{grid-template-columns:1fr 1fr 1fr}
+.h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.h h2{font-size:15px;font-weight:700;letter-spacing:-.01em}.h a{color:var(--blue);font-weight:600;font-size:12px}
+.sub{color:var(--mut);font-size:12px;margin-top:-10px;margin-bottom:14px}
+/* pipeline */
+.bar{display:flex;height:14px;border-radius:99px;overflow:hidden;background:#eef2f8;gap:2px;margin:6px 0 16px}.bar i{display:block;min-width:4px}
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.legend div{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mut);background:#f8faff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}.legend b{color:var(--ink);font-size:16px;margin-left:auto}.dot{width:9px;height:9px;border-radius:50%}
+/* lists */
+.item{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}.item:first-child{border-top:0}
+.av{width:38px;height:38px;border-radius:50%;background:#eaf0ff;color:var(--blue);display:grid;place-items:center;font-weight:700;font-size:12px;flex:none}
+.item .t{flex:1;min-width:0}.item .t b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.item .t span{color:var(--mut);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.tag.od{background:#fdecea;color:var(--red)}.tag.td{background:#fff3d6;color:#9a6200}.tag.st{background:#eef2f8;color:#475569}
+.mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600}.mini.wa{background:#e9f9f1;border-color:#c5ecd9;color:#0a7a50}.mini:hover{filter:brightness(.97)}
+.src{display:grid;grid-template-columns:90px 1fr 30px;gap:10px;align-items:center;font-size:12px;margin:10px 0;color:var(--mut)}.src .tr{height:8px;background:#eef2f8;border-radius:9px;overflow:hidden}.src .tr i{display:block;height:100%;background:var(--blue);border-radius:9px}.src b{color:var(--ink);text-align:right}
+.empty{text-align:center;padding:26px 10px;color:var(--mut)}.empty b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}
+.plan{background:linear-gradient(145deg,#1b2a6b,#2f5bff);color:#fff;border:0}.plan .l{opacity:.75;font-size:12px;font-weight:600}.plan .n{font-size:24px;font-weight:800;margin:4px 0 6px}.plan p{opacity:.8;font-size:12.5px;margin-bottom:14px}.plan .btn{background:#fff;color:var(--blue2);border:0}
+.err{background:#fff4f2;border:1px solid #f3c1bb;color:#9b2c22;border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:13px}
+.sk{background:linear-gradient(90deg,#eef2f8,#f8faff,#eef2f8);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:8px;color:transparent!important}@keyframes sk{to{background-position:-200% 0}}
+/* auth */
+.auth{min-height:70vh;display:grid;place-items:center}.auth .card{max-width:380px;text-align:center;padding:34px}.auth h2{font-size:22px;margin:10px 0 6px}.auth p{color:var(--mut);margin-bottom:18px}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.two,.three{grid-template-columns:minmax(0,1fr)}.three>.card{grid-column:auto!important}}
+@media(max-width:700px){.top-in{padding:0 14px;gap:10px;flex-wrap:wrap;height:auto;padding-top:10px}.nav{order:3;flex-basis:100%;padding-bottom:8px}.acts .btn:not(.p){display:none}main{padding:18px 14px 50px}.kpis{grid-template-columns:1fr 1fr}.kpis>:last-child{grid-column:span 2}.hero h1{font-size:24px}.item .mini.v{display:none}.item{flex-wrap:wrap}.item .t{flex-basis:calc(100% - 52px)}.item .tag,.item .mini.wa{margin-left:50px}.item .tag+.mini.wa{margin-left:0}}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="overview.html"><span class="logo">B</span>BusinessOS</a>
+  <nav class="nav">
+    <a class="on" href="overview.html">Overview</a><a href="customer-list.html">Customers</a>
+    <a href="followups.html">Follow-ups <span class="pill hidden" id="navFu">0</span></a><a href="deals.html">Deals</a>
+    <a href="website-leads.html">Leads</a><a href="whatsapp-center.html">WhatsApp</a><a href="business-finder-app.html">Finder</a><a href="reports.html">Reports</a>
+  </nav>
+  <div class="acts">
+    <a class="btn p" href="customer-list.html">＋ Add Customer</a>
+    <div class="menu"><button class="avatar" id="avBtn" aria-label="Account">?</button>
+      <div class="dd hidden" id="dd"><div class="em" id="ddEm"></div><a href="import-export.html#import-section">↑ Import customers</a><a href="import-export.html#export-section">↓ Export data</a><a href="team-settings.html">Settings</a><a href="subscription.html">Plan &amp; billing</a><button id="out">Logout</button></div></div>
+  </div>
+</div></header>
+
+<main>
+  <div id="auth" class="auth hidden"><div class="card"><div class="logo" style="margin:auto;width:46px;height:46px;font-size:20px">B</div><h2>Welcome to BusinessOS</h2><p>Sign in to see your customers, follow-ups and deals in one place.</p><button class="btn p" id="gbtn" style="width:100%;justify-content:center">Continue with Google</button><p id="aerr" style="color:var(--red);font-size:12px;margin:12px 0 0"></p></div></div>
+
+  <div id="app" class="hidden">
+    <div id="err" class="err hidden"></div>
+    <section class="hero">
+      <div><small id="date"></small><h1 id="hello">Welcome back</h1><p id="summary" class="sk">Loading your workspace summary…</p></div>
+      <div class="acts"><a class="btn" href="customer-list.html">View all customers</a><a class="btn p" href="followups.html">Start follow-ups →</a></div>
+    </section>
+
+    <section class="grid kpis" id="kpis"></section>
+
+    <section class="grid two">
+      <div class="card"><div class="h"><h2>Today's priorities</h2><a href="followups.html">Open follow-ups →</a></div><div class="sub">Overdue and due-today customers, most urgent first.</div><div id="prio"></div></div>
+      <div class="grid" style="align-content:start">
+        <div class="card plan"><div class="l">Your plan</div><div class="n" id="planName">—</div><p id="planTxt">Unlock more customers, team members and reports.</p><a class="btn" href="subscription.html">View plans &amp; upgrade</a></div>
+        <div class="card"><div class="h"><h2>Quick actions</h2></div>
+          <div class="grid" style="gap:8px"><a class="btn" href="import-export.html#import-section">↑ Import customers from Excel</a><a class="btn" href="whatsapp-center.html">◉ Send WhatsApp messages</a><a class="btn" href="business-finder-app.html">⌕ Find new businesses</a></div></div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-bottom:16px"><div class="h"><h2>Sales pipeline</h2><a href="customer-list.html" id="pipeTot">—</a></div><div class="bar" id="bar"></div><div class="legend" id="legend"></div></section>
+
+    <section class="grid three">
+      <div class="card" style="grid-column:span 2"><div class="h"><h2>Recently added</h2><a href="customer-list.html">See all →</a></div><div id="recent"></div></div>
+      <div class="card"><div class="h"><h2>Lead sources</h2></div><div id="sources"></div></div>
+    </section>
+  </div>
+</main>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import{getFirestore,collection,doc,getDoc,onSnapshot}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
+const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const clean=v=>String(v??"").replace(/["'`]+/g,"").trim();
+const ini=n=>clean(n||"?").split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"?";
+const TERM=["Won","Paid","Lost"],HOT=["Interested","Site Visit","Negotiation"];
+const M={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+function nextDate(c){const r=String(c.next||"");if(!r||/not set|completed/i.test(r))return null;const m=r.match(/(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})/);if(!m)return null;const mo=M[m[2].slice(0,3).toLowerCase()];return mo==null?null:new Date(+m[3],mo,+m[1])}
+const ts=c=>Number(c.createdAt?.seconds||c.updatedAt?.seconds||0);
+let user=null,unsub=null,bizId=null,customers=[];
+
+$("avBtn").onclick=e=>{e.stopPropagation();$("dd").classList.toggle("hidden")};document.addEventListener("click",()=>$("dd").classList.add("hidden"));
+$("out").onclick=()=>signOut(auth);
+$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message||"Sign-in failed"}};
+
+onAuthStateChanged(auth,async u=>{
+  user=u;
+  if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}
+  $("auth").classList.add("hidden");$("app").classList.remove("hidden");
+  $("avBtn").textContent=ini(u.displayName||u.email);$("ddEm").textContent=u.email||"";
+  const h=new Date().getHours(),nm=clean((u.displayName||u.email||"").split(/[ @]/)[0]);
+  $("hello").textContent=(h<12?"Good morning":h<17?"Good afternoon":"Good evening")+(nm?", "+nm.charAt(0).toUpperCase()+nm.slice(1):"");
+  $("date").textContent=new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  try{const us=await getDoc(doc(db,"users",u.uid));bizId=us.exists()&&us.data().businessId||u.uid}catch(e){bizId=u.uid}
+  listen(bizId);
+  try{const b=await getDoc(doc(db,"businesses",bizId));if(b.exists()){const d=b.data();$("planName").textContent=(d.plan||d.planName||"Free").toString().replace(/^./,x=>x.toUpperCase());}else $("planName").textContent="Free"}catch(e){$("planName").textContent="Free"}
+});
+
+function listen(id){
+  if(unsub)unsub();
+  unsub=onSnapshot(collection(db,"businesses",id,"contacts"),snap=>{
+    if(snap.empty&&user&&id!==user.uid){bizId=user.uid;return listen(user.uid)}
+    customers=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>ts(b)-ts(a));
+    $("err").classList.add("hidden");render();
+  },e=>{console.error(e);$("err").textContent="Could not load your data: "+(e.code||e.message)+". Please refresh or check your permissions.";$("err").classList.remove("hidden");$("summary").classList.remove("sk");$("summary").textContent="Data unavailable."});
+}
+
+function render(){
+  const now=new Date(),day=new Date(now.getFullYear(),now.getMonth(),now.getDate()),open=customers.filter(c=>!TERM.includes(c.status)&&!/completed/i.test(c.next||""));
+  const due=[];open.forEach(c=>{const d=nextDate(c);if(!d)return;const diff=Math.round((day-d)/864e5);if(diff>=0)due.push({c,diff})});
+  due.sort((a,b)=>b.diff-a.diff);
+  const od=due.filter(x=>x.diff>0).length,td=due.length-od;
+  const won=customers.filter(c=>c.status==="Won"||c.status==="Paid").length,hot=customers.filter(c=>HOT.includes(c.status)).length,total=customers.length;
+  const conv=total?Math.round(won/total*100):0;
+
+  $("summary").classList.remove("sk");
+  $("summary").innerHTML=!total?"Your workspace is ready — add or import your first customers to get started.":(od+td?`You have <b>${td} follow-up${td===1?"":"s"} today</b>${od?` and <b style="color:var(--red)">${od} overdue</b>`:""}. Let's clear them.`:`You're all caught up. <b>${hot}</b> hot opportunit${hot===1?"y is":"ies are"} worth a nudge.`);
+  $("navFu").textContent=od+td;$("navFu").classList.toggle("hidden",!(od+td));
+
+  const K=[["Total customers",total,"All active records","#2f5bff","customer-list.html"],["Due today",td,"Follow-ups scheduled","#d98a00","followups.html"],["Overdue",od,od?"Needs attention now":"Nothing pending","#e0483f","followups.html"],["Hot opportunities",hot,"Interested · visit · negotiation","#7c4dff","customer-list.html"],["Won",won,conv+"% conversion","#0f9d6a","deals.html"]];
+  $("kpis").innerHTML=K.map(k=>`<a class="card kpi" style="--c:${k[3]}" href="${k[4]}"><div class="l">${k[0]}</div><div class="n">${k[1]}</div><div class="s">${k[2]}</div></a>`).join("");
+
+  $("prio").innerHTML=due.length?due.slice(0,6).map(({c,diff})=>{const ph=String(c.phone||"").replace(/\D/g,""),wa=ph.length>=10?"https://wa.me/"+(ph.length===10?"91"+ph:ph):"",tm=String(c.next).split(" · ").slice(1).join(" · ");
+    return `<div class="item"><div class="av">${esc(ini(c.name))}</div><div class="t"><b>${esc(clean(c.name)||"Unnamed")}</b><span>${esc(clean(c.req||c.requirement)||"No requirement")}${tm?" · "+esc(tm):""}</span></div><span class="tag ${diff>0?"od":"td"}">${diff>0?diff+"d overdue":"Today"}</span>${wa?`<a class="mini wa" target="_blank" rel="noopener" href="${wa}">WhatsApp</a>`:""}<a class="mini v" href="customer-list.html">View</a></div>`}).join("")+(due.length>6?`<div style="padding-top:12px;text-align:center"><a class="mini" href="followups.html">+${due.length-6} more</a></div>`:"")
+    :`<div class="empty"><b>${total?"🎉 You're all caught up":"No customers yet"}</b>${total?"No follow-ups are due. Schedule the next ones to keep your pipeline moving.":"Import your list or add a customer to see priorities here."}<div style="margin-top:14px"><a class="btn p" href="${total?"customer-list.html":"import-export.html#import-section"}">${total?"Schedule follow-ups":"Import customers"}</a></div></div>`;
+
+  const order=["New","Contacted","Qualified","Interested","Follow-up","Site Visit","Negotiation","Won","Paid","Lost"],col={New:"#94a3b8",Contacted:"#38bdf8",Qualified:"#06b6d4",Interested:"#7c4dff","Follow-up":"#d98a00","Site Visit":"#f97316",Negotiation:"#ec4899",Won:"#0f9d6a",Paid:"#16a34a",Lost:"#e0483f"};
+  const cnt={};customers.forEach(c=>{const s=clean(c.status)||"New";cnt[s]=(cnt[s]||0)+1});
+  const keys=Object.keys(cnt).sort((a,b)=>(order.indexOf(a)<0?99:order.indexOf(a))-(order.indexOf(b)<0?99:order.indexOf(b)));
+  $("pipeTot").textContent=total+" customers →";
+  $("bar").innerHTML=keys.map(k=>`<i title="${esc(k)}: ${cnt[k]}" style="width:${cnt[k]/total*100}%;background:${col[k]||"#a1a1aa"}"></i>`).join("");
+  $("legend").innerHTML=keys.map(k=>`<div><span class="dot" style="background:${col[k]||"#a1a1aa"}"></span>${esc(k)}<b>${cnt[k]}</b></div>`).join("")||'<div class="empty" style="grid-column:1/-1">Pipeline appears once you add customers.</div>';
+
+  $("recent").innerHTML=customers.slice(0,5).map(c=>`<div class="item"><div class="av">${esc(ini(c.name))}</div><div class="t"><b>${esc(clean(c.name)||"Unnamed")}</b><span>${esc(clean(c.req||c.requirement)||"No requirement")}${clean(c.area)?" · "+esc(clean(c.area)):""}</span></div><span class="tag st">${esc(clean(c.status)||"New")}</span><a class="mini v" href="customer-list.html">View</a></div>`).join("")||'<div class="empty">No customers yet.</div>';
+
+  const sc={};customers.forEach(c=>{const s=clean(c.source)||"Other";sc[s]=(sc[s]||0)+1});const top=Object.entries(sc).sort((a,b)=>b[1]-a[1]).slice(0,5),mx=top[0]?.[1]||1;
+  $("sources").innerHTML=top.map(([k,v])=>`<div class="src"><span>${esc(k)}</span><div class="tr"><i style="width:${v/mx*100}%"></i></div><b>${v}</b></div>`).join("")||'<div class="empty">No data yet.</div>';
+}
+</script>
+</body>
+</html>
