@@ -340,8 +340,8 @@ body.bos36-module .customers-shell{padding:18px 22px 48px!important;min-height:c
   <div class="followup-grid"><div class="followup-column"><div class="followup-column-head"><b id="fuPrimaryTitle">Due Today</b><span id="fuPrimaryCount">0</span></div><div id="fuPrimary" class="followup-items"></div></div><div class="followup-column"><div class="followup-column-head"><b>Overdue</b><span id="fuOverdueSide">0</span></div><div id="fuOverdue" class="followup-items"></div></div><div class="followup-column"><div class="followup-column-head"><b>Upcoming</b><span id="fuUpcomingSide">0</span></div><div id="fuUpcoming" class="followup-items"></div></div></div>
 </section>
 <section id="websiteLeadCenter" class="website-lead-center view-hidden">
-  <div class="website-lead-center-head"><div><div class="dash-kicker">WEBSITE LEADS</div><h2>Website Enquiries</h2><p>Leads submitted through your public enquiry form. Convert genuine enquiries into private CRM leads.</p></div><div class="website-lead-stats"><span class="website-lead-stat"><b id="webLeadTotal">0</b>Total</span><span class="website-lead-stat"><b id="webLeadNew">0</b>New</span><span class="website-lead-stat"><b id="webLeadConverted">0</b>Converted</span></div></div>
-  <div class="website-lead-center-toolbar"><div class="website-lead-tabs"><button id="webLeadTabNew" class="website-lead-tab active" onclick="setWebsiteLeadTab('new')">New</button><button id="webLeadTabConverted" class="website-lead-tab" onclick="setWebsiteLeadTab('converted')">Converted</button><button id="webLeadTabAll" class="website-lead-tab" onclick="setWebsiteLeadTab('all')">All</button></div><div class="lead-copy-box"><input id="leadFormShareUrl" readonly><button onclick="copyLeadFormLink()">Copy Link</button><a id="leadFormCenterLink" class="primary" target="_blank" rel="noopener">Open Form</a></div></div>
+  <div class="website-lead-center-head"><div><div class="dash-kicker">WEBSITE LEADS</div><h2>Website Enquiries</h2><p>Leads submitted through your public enquiry form. Convert genuine enquiries into private CRM leads.</p></div><div class="website-lead-stats"><span class="website-lead-stat"><b id="webLeadTotal">0</b>Total</span><span class="website-lead-stat"><b id="webLeadNew">0</b>New</span><span class="website-lead-stat"><b id="webLeadConverted">0</b>Added to CRM</span></div></div>
+  <div class="website-lead-center-toolbar"><div class="website-lead-tabs"><button id="webLeadTabNew" class="website-lead-tab" onclick="setWebsiteLeadTab('new')">New enquiries</button><button id="webLeadTabConverted" class="website-lead-tab" onclick="setWebsiteLeadTab('converted')">Added to CRM</button><button id="webLeadTabAll" class="website-lead-tab active" onclick="setWebsiteLeadTab('all')">All enquiries</button></div><div class="lead-copy-box"><input id="leadFormShareUrl" readonly><button onclick="copyLeadFormLink()">Copy Link</button><a id="leadFormCenterLink" class="primary" target="_blank" rel="noopener">Open Form</a></div></div>
   <div id="webLeadsCenterList" class="website-lead-center-list"></div>
 </section>
 <section id="businessFinder" class="view-hidden">
@@ -576,7 +576,7 @@ function leadFormUrl(){
   base.searchParams.set('businessName',businessProfile?.name||'Business');
   return base.href;
 }
-function websiteLeadStatus(l){return l.status==='converted'?'Converted':'New'}
+function websiteLeadStatus(l){return l.status==='converted'?'Added to CRM':'New enquiry'}
 function renderWebsiteLeads(){
   const list=$('webLeadsList'), count=$('sideWebLeadCount'), link=$('leadFormLink');
   const active=publicLeads.filter(x=>x.status!=='converted');
@@ -588,23 +588,24 @@ function renderWebsiteLeads(){
 }
 function renderWebsiteLeadCenter(){
   const list=$('webLeadsCenterList'); if(!list)return;
-  const all=publicLeads||[]; const tab=window.websiteLeadTab||'new';
+  const all=publicLeads||[]; const tab=window.websiteLeadTab||'all';
   const filtered=tab==='all'?all:tab==='converted'?all.filter(x=>x.status==='converted'):all.filter(x=>x.status!=='converted');
   const set=(id,v)=>{const e=$(id);if(e)e.textContent=v};
   const formUrl=leadFormUrl(); const share=$('leadFormShareUrl'), centerLink=$('leadFormCenterLink'); if(share)share.value=formUrl; if(centerLink)centerLink.href=formUrl;
   set('webLeadTotal',all.length);set('webLeadNew',all.filter(x=>x.status!=='converted').length);set('webLeadConverted',all.filter(x=>x.status==='converted').length);
   ['new','converted','all'].forEach(k=>$("webLeadTab"+k.charAt(0).toUpperCase()+k.slice(1))?.classList.toggle('active',tab===k));
-  if(!filtered.length){list.innerHTML='<div class="website-lead-empty-center">No website leads in this view.</div>';return}
-  list.innerHTML=filtered.map(l=>`<div class="website-lead-card"><div><b>${esc(l.name||'Website visitor')}</b><small>${esc(l.phone||'No mobile')} · ${esc(l.email||'No email')} · ${esc(l.requirement||'New enquiry')}</small><small>${esc(l.city||'')} ${l.area?'· '+esc(l.area):''} ${l.budget?'· '+esc(l.budget):''}</small></div><div><span class="lead-status ${l.status==='converted'?'converted':''}">${websiteLeadStatus(l)}</span><small>${l.createdAt?.seconds?new Date(l.createdAt.seconds*1000).toLocaleString('en-IN'):''}</small></div><div><small>${esc(l.message||'No message')}</small></div><div class="lead-actions">${l.phone?`<button onclick="leadCall('${l.id}')">Call</button>`:''}${l.status==='converted'?`<button onclick="selectCustomer('${l.convertedContactId||''}')">View Lead</button>`:`<button class="convert" onclick="convertPublicLead('${l.id}')">Add to Leads</button>`}</div></div>`).join('');
+  if(!filtered.length){const msg=tab==='new'?'No new enquiries. Open “All enquiries” to review every submitted form.':tab==='converted'?'No enquiries have been added to CRM yet.':'No website enquiries received yet. Share the form link above to collect your first enquiry.';list.innerHTML='<div class="website-lead-empty-center">'+msg+'</div>';return}
+  list.innerHTML=filtered.map(l=>`<div class="website-lead-card"><div><b>${esc(l.name||'Website visitor')}</b><small>${esc(l.phone||'No mobile')} · ${esc(l.email||'No email')} · ${esc(l.requirement||'New enquiry')}</small><small>${esc(l.city||'')} ${l.area?'· '+esc(l.area):''} ${l.budget?'· '+esc(l.budget):''}</small></div><div><span class="lead-status ${l.status==='converted'?'converted':''}">${websiteLeadStatus(l)}</span><small>${l.createdAt?.seconds?new Date(l.createdAt.seconds*1000).toLocaleString('en-IN'):''}</small></div><div><small>${esc(l.message||'No message')}</small></div><div class="lead-actions">${l.phone?`<button onclick="leadCall('${l.id}')">Call</button>`:''}${l.status==='converted'?`<button onclick="openConvertedWebsiteLead('${l.id}')">View in CRM</button>`:`<button class="convert" onclick="convertPublicLead('${l.id}')">Add to CRM</button>`}</div></div>`).join('');
 }
 function setWebsiteLeadTab(tab){window.websiteLeadTab=tab;renderWebsiteLeadCenter()}
+function openConvertedWebsiteLead(id){const l=publicLeads.find(x=>x.id===id);if(!l)return;if(l.convertedContactId&&customers.some(c=>c.id===l.convertedContactId)){selectCustomer(l.convertedContactId);return}toast('This enquiry is marked as added, but its CRM contact link is missing. Check Customers before adding it again.',true)}
 function leadCall(id){const l=publicLeads.find(x=>x.id===id);if(l?.phone)window.location.href='tel:'+normalizePhone(l.phone);else toast('No mobile number',true)}
 async function copyLeadFormLink(){try{await navigator.clipboard.writeText(leadFormUrl());toast('Website lead form link copied')}catch(e){toast('Copy failed — use Open Lead Form',true)}}
 async function convertPublicLead(id){
   const l=publicLeads.find(x=>x.id===id); if(!l||l.status==='converted')return;
   const t=currentTemplate();
   const data={name:l.name||'Website Lead',phone:l.phone||'',phoneNormalized:normalizePhone(l.phone||''),email:l.email||'',businessName:'',businessType:businessProfile?.businessType||t.businessTypes?.[0]||'Other',type:t.contactTypes?.[0]||'Customer',requirement:l.requirement||'Website enquiry',req:l.requirement||'Website enquiry',detail:l.message||'',city:l.city||businessProfile?.city||'Jaipur',area:l.area||'',budget:l.budget||'',status:t.stages?.[0]||'New',source:'Website',notes:l.message||'',note:l.message||'',next:'Not set',last:'Website enquiry',events:[{date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · Now',type:'Website Lead Imported',note:'Converted from public website lead form.'}],createdAt:serverTimestamp(),updatedAt:serverTimestamp()};
-  try{const ref=await addDoc(collection(db,'businesses',businessId,'contacts'),data);await updateDoc(doc(db,'publicLeads',id),{status:'converted',convertedContactId:ref.id,convertedAt:serverTimestamp()});toast('Website lead added to Customers');renderWebsiteLeadCenter();}catch(e){toast(e.message||'Could not convert website lead',true)}
+  try{const ref=await addDoc(collection(db,'businesses',businessId,'contacts'),data);await updateDoc(doc(db,'publicLeads',id),{status:'converted',convertedContactId:ref.id,convertedAt:serverTimestamp()});toast('Enquiry added to CRM Customers');window.websiteLeadTab='all';renderWebsiteLeadCenter();}catch(e){toast(e.message||'Could not convert website lead',true)}
 }
 function subscribePublicLeads(){
   if(unsubPublicLeads)unsubPublicLeads();
