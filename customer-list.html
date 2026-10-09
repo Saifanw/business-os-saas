@@ -414,7 +414,7 @@ body.module-page .os-content{min-width:0!important}
   <a class="os-side-link" href="notifications.html"><span>🔔</span><b>Notifications</b><em id="sideUnreadCount">0</em></a>
 </aside>
 <div class="os-content">
-<div class="page-head"><div><h1>Customers</h1><p>अपने customers की पूरी journey एक जगह track करें.</p></div><div class="top-actions"><div class="session"><span id="userEmail"></span><button onclick="logout()">Logout</button></div><button onclick="document.getElementById('csvFile').click()">↑ Import</button><button onclick="exportCSV()">↓ Export</button><button class="primary" onclick="openCustomerModal()">＋ Add Customer</button><input id="csvFile" class="file-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="importCSV(event)"></div></div>
+<div class="page-head"><div><h1>Customers</h1><p>अपने customers की पूरी journey एक जगह track करें.</p></div><div class="top-actions"><div class="session"><span id="userEmail"></span><button onclick="logout()">Logout</button></div><button onclick="window.location.href='import-export.html'">↑ Import</button><button onclick="window.location.href='import-export.html'">↓ Export</button><button class="primary" onclick="openCustomerModal()">＋ Add Customer</button><input id="csvFile" class="file-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="importCSV(event)"></div></div>
 <section class="dashboard-v2" id="dashboardV2">
   <div class="dash-head">
     <div>
@@ -2064,8 +2064,8 @@ body.app-page #dashboardV2,body.app-page #followupCenter,body.app-page #websiteL
         <button onclick="return osNav(null,'reports')">▥ Reports</button>
       </div>
       <div class="v33-nav-action">
-        <button onclick="document.getElementById('csvFile').click()">↑ Import</button>
-        <button onclick="exportCSV()">↓ Export</button>
+        <button onclick="window.location.href='import-export.html'">↑ Import</button>
+        <button onclick="window.location.href='import-export.html'">↓ Export</button>
         <button class="add" onclick="openCustomerModal()">＋ Add Customer</button>
       </div>`;
     head.parentNode.insertBefore(bar,head);

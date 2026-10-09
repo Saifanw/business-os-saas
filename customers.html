@@ -501,8 +501,8 @@ body.app-page #customerList .actions .view{max-width:42px!important;overflow:hid
   <div class="bos-app-actions">
     <span class="bos-session-email" id="userEmail" title="Signed-in account"></span>
     <button type="button" class="bos-logout" onclick="logout()">Logout</button>
-    <button type="button" onclick="document.getElementById('csvFile').click()">↑ Import</button>
-    <button type="button" onclick="exportCSV()">↓ Export</button>
+    <button type="button" onclick="window.location.href='import-export.html'">↑ Import</button>
+    <button type="button" onclick="window.location.href='import-export.html'">↓ Export</button>
     <button type="button" class="primary" onclick="openCustomerModal()">＋ Add Customer</button>
     <input id="csvFile" class="file-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="importCSV(event)">
   </div>
