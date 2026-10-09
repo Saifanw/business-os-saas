@@ -254,6 +254,44 @@ body.app-page #summary,body.app-page #templatePipeline{display:none!important}bo
   .bos-app-nav a{padding:10px 6px!important}
 }
 </style>
+
+<style id="business-os-v44-prominent-main-navigation">
+/* V44: Main app navigation is the primary wayfinding, so give it a dedicated full-width row. */
+.bos-app-topnav{
+  display:grid!important;grid-template-columns:minmax(190px,1fr) auto!important;grid-template-rows:auto auto!important;
+  align-items:center!important;column-gap:20px!important;row-gap:12px!important;
+  min-height:124px!important;padding:12px 18px 13px!important;margin:8px 8px 26px!important;
+  border-radius:20px!important;background:linear-gradient(180deg,#fff 0%,#f8faff 100%)!important;
+  box-shadow:0 12px 32px rgba(27,50,88,.12)!important;border-color:#d7e2f2!important;
+}
+.bos-app-brand{grid-column:1;grid-row:1;min-width:190px!important;flex:none!important}
+.bos-app-actions{grid-column:2;grid-row:1;justify-self:end;display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important;flex-wrap:nowrap!important}
+.bos-session-email{max-width:150px!important}
+.bos-app-nav{grid-column:1/-1;grid-row:2;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:6px!important;min-width:0!important;width:100%!important;overflow:visible!important;white-space:normal!important;padding:5px!important;border:1px solid #e1e9f5!important;border-radius:15px!important;background:#f1f5fc!important}
+.bos-app-nav a{flex:1 1 0!important;justify-content:center!important;min-width:0!important;min-height:45px!important;padding:11px 12px!important;border:1px solid transparent!important;border-radius:11px!important;font-size:13px!important;font-weight:850!important;color:#425674!important;gap:7px!important;transition:background .15s,box-shadow .15s,border-color .15s!important}
+.bos-app-nav a b{font-size:13px!important}
+.bos-app-nav a:hover{background:#fff!important;border-color:#dce6f5!important;box-shadow:0 3px 10px rgba(30,55,95,.06)!important}
+.bos-app-nav a.active{background:#fff!important;color:#1e5be8!important;border-color:#d6e3ff!important;box-shadow:inset 0 -3px 0 #2866f6,0 4px 12px rgba(40,102,246,.10)!important}
+.bos-app-actions button{height:42px!important;font-size:11px!important;padding:0 13px!important}
+.bos-app-actions .primary{padding:0 15px!important}
+@media(max-width:1180px){
+ .bos-app-topnav{column-gap:12px!important;padding:11px 13px!important}
+ .bos-app-brand{min-width:170px!important}
+ .bos-app-nav a{padding:10px 7px!important;font-size:11.5px!important;gap:5px!important}
+ .bos-app-nav a b{font-size:11.5px!important}
+ .bos-session-email{max-width:110px!important}
+ .bos-app-actions{gap:5px!important}
+ .bos-app-actions button{padding:0 9px!important}
+}
+@media(max-width:820px){
+ .bos-app-topnav{display:flex!important;flex-wrap:wrap!important;gap:10px!important;min-height:0!important;margin:8px!important;padding:12px!important}
+ .bos-app-brand{order:1;min-width:0!important;flex:1 1 170px!important}
+ .bos-app-actions{order:2;max-width:100%;flex-wrap:wrap!important;justify-self:auto!important;margin-left:auto!important}
+ .bos-session-email{display:none!important}
+ .bos-app-nav{order:3;width:100%!important;flex:1 0 100%!important;justify-content:flex-start!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important}
+ .bos-app-nav a{flex:0 0 auto!important;min-height:42px!important;padding:9px 12px!important}
+}
+</style>
 </head>
 <body class="app-page">
 <header class="bos-app-topnav">
