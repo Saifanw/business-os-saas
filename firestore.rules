@@ -91,10 +91,10 @@ service cloud.firestore {
     }
 
     match /businesses/{businessId} {
-      allow create: if isAdmin() || (signedIn() && request.auth.uid == businessId);
+      allow create: if isAdmin() || (signedIn() && request.auth.uid == businessId && request.resource.data.plan in ['trial','free']);
       allow read: if ownsBusiness(businessId) || isAdmin()
         || (signedIn() && resource.data.ownerUid == '' && resource.data.ownerEmail == request.auth.token.email);
-      allow update: if isAdmin() || isBusinessManager(businessId) || canClaimBusiness(businessId);
+      allow update: if isAdmin() || (isBusinessManager(businessId) && request.resource.data.plan == resource.data.plan) || (signedIn() && request.auth.uid == businessId && !('name' in resource.data) && request.resource.data.plan in ['trial','free']) || canClaimBusiness(businessId);
       allow delete: if isAdmin() || (ownsBusiness(businessId) && request.auth.uid == businessId);
 
       match /contacts/{contactId} {

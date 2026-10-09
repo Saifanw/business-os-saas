@@ -442,6 +442,23 @@ const cfg={apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
 let gmailAccessToken="",gmailAccessTokenExpiresAt=0;
 let customers=[],publicLeads=[],selectedId=null,newRecordId=null,atype="Call",unsub=null,unsubPublicLeads=null,currentUser=null,businessId=null,businessProfile=null;
+// BusinessOS Free plan: 10 combined CRM records (customers + prospects).
+const BOS_FREE_RECORD_LIMIT = 10;
+function bosHasUnlimitedRecords(){
+  const email=String(currentUser?.email||'').toLowerCase();
+  const plan=String(businessProfile?.plan||'trial').toLowerCase();
+  return email==='saif.anwar1618@gmail.com' || ['starter','growth','custom','business','paid'].includes(plan);
+}
+function bosFreeRecordRemaining(){ const activeWebsiteLeads=(publicLeads||[]).filter(l=>l.status!=='converted').length; return bosHasUnlimitedRecords() ? Infinity : Math.max(0,BOS_FREE_RECORD_LIMIT-(customers?.length||0)-activeWebsiteLeads); }
+function bosCanCreateRecords(count=1){
+  if(bosHasUnlimitedRecords()) return true;
+  const remaining=bosFreeRecordRemaining();
+  if(count<=remaining) return true;
+  toast('Free plan limit reached: 10 total customer/lead records. Upgrade or request paid access to add more.',true);
+  setTimeout(()=>{ location.href='subscription.html'; },900);
+  return false;
+}
+
 const $=id=>document.getElementById(id), ini=n=>String(n||"?").trim().split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase(), esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
 function toast(msg,error=false){$("toast").textContent=msg;$("toast").classList.remove("hidden","toast-error");if(error)$("toast").classList.add("toast-error");setTimeout(()=>$("toast").classList.add("hidden"),2400)}
 function todayISO(){return new Date().toISOString().slice(0,10)}
@@ -672,6 +689,7 @@ function startFinderFollowup(id){const c=customers.find(x=>x.id===id);if(!c)retu
 async function convertFinderProspect(id){const c=customers.find(x=>x.id===id);if(!c)return;if(c.type==='Customer'||c.convertedFromFinder){toast('Prospect is already converted');return;}try{await updateDoc(doc(db,'businesses',businessId,'contacts',id),{type:'Customer',status:'Contacted',convertedFromFinder:true,convertedAt:serverTimestamp(),last:'Converted from Business Finder',updatedAt:serverTimestamp()});toast('Prospect converted to Customer');await selectCustomer(id);renderBusinessFinder();render()}catch(e){toast(e.message||'Could not convert prospect',true)}}
 function useFinderIdea(keyword,city){$('finderKeyword').value=keyword;$('finderType').value='';$('finderCity').value=city;$('finderArea').value='';searchBusinessFinder()}
 async function saveFinderProspect(){
+  if(!bosCanCreateRecords(1)) return;
   const name=String($('finderName')?.value||'').trim(); if(!name){toast('Business / Person name is required',true);return;}
   const phone=String($('finderPhone')?.value||'').trim(),norm=normalizePhone(phone),email=String($('finderEmail')?.value||'').trim();
   const city=String($('finderProspectCity')?.value||'').trim()||'Jaipur',area=String($('finderProspectArea')?.value||'').trim();
@@ -936,6 +954,7 @@ function closeCustomerModal(){$("customerModal").classList.remove("show")}
 async function saveCustomer(){
   const name=$("fName").value.trim(); if(!name){toast("Customer name is required",true);return}
   const phone=$("fPhone").value.trim(),email=$("fEmail").value.trim(),norm=normalizePhone(phone),editId=$("customerModal").dataset.editId||"";
+  if(!editId && !bosCanCreateRecords(1)) return;
   if(norm&&customers.some(c=>c.id!==editId&&normalizePhone(c.phone)===norm)){toast("Customer already exists with this mobile",true);return}
   const d=$("fDate").value,t=$("fTime").value;
   const chosenSubcategory=$("fSubcategory").value==="__custom__"?$("fCustomSubcategory").value.trim():$("fSubcategory").value;
@@ -1170,7 +1189,7 @@ async function sendEmailComposer(){
 }
 function email(id){const c=customers.find(x=>x.id===id);if(!c)return;openEmailComposer(c)}
 function exportCSV(){const headers=["Name","Mobile","Business Type","Contact Type","City","Area","Requirement","Budget","Status","Source","Next Follow-up","Last Contact"];const lines=[headers.join(",")].concat(customers.map(c=>[c.name,c.phone,c.businessType,c.type,c.city,c.area,c.req,c.budget,c.status,c.source,c.next,c.last].map(v=>'"'+String(v??"").replaceAll('"','""')+'"').join(",")));const blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="business-os-customers.csv";a.click();URL.revokeObjectURL(a.href);toast("Export ready")}
-async function importCSV(e){const file=e.target.files[0];if(!file)return;try{let rows=[];if(/\.xlsx?$/i.test(file.name)){const data=await file.arrayBuffer(),wb=XLSX.read(data,{type:"array"}),ws=wb.Sheets[wb.SheetNames[0]];rows=XLSX.utils.sheet_to_json(ws,{defval:""})}else{const text=await file.text();rows=parseCSV(text)}if(!rows.length){toast("No customer rows found",true);return}const batch=writeBatch(db),existing=new Set(customers.map(c=>normalizePhone(c.phone)).filter(Boolean));let added=0,dupes=0;for(const r of rows){const name=String(r.Name||r.name||"").trim();if(!name)continue;const phone=String(r.Mobile||r.mobile||"").trim(),norm=normalizePhone(phone);if(norm&&existing.has(norm)){dupes++;continue}const ref=doc(collection(db,"businesses",businessId,"contacts"));batch.set(ref,{name,phone,phoneNormalized:norm,businessName:String(r.Business||r.businessName||""),businessType:String(r["Business Type"]||r.businessType||"Other"),type:String(r.Type||r["Contact Type"]||"Customer"),city:String(r.City||"Jaipur"),area:String(r.Area||""),req:String(r.Requirement||r.requirement||"New enquiry"),requirement:String(r.Requirement||r.requirement||"New enquiry"),detail:String(r.Detail||""),budget:String(r.Budget||""),status:String(r.Status||"New"),source:String(r.Source||"Excel Import"),next:String(r["Next Follow-up"]||r.Followup||"Not set"),last:String(r["Last Contact"]||"Imported"),note:"Imported customer. Add an important note after the first contact.",events:[{date:"Imported",type:"Customer Imported",note:"Imported from CSV/Excel."}],createdAt:serverTimestamp(),updatedAt:serverTimestamp()});if(norm)existing.add(norm);added++}if(added)await batch.commit();toast(added+" imported · "+dupes+" duplicates skipped")}catch(e){toast(e.message||"Import failed",true)}finally{e.target.value=""}}
+async function importCSV(e){const file=e.target.files[0];if(!file)return;try{let rows=[];if(/\.xlsx?$/i.test(file.name)){const data=await file.arrayBuffer(),wb=XLSX.read(data,{type:"array"}),ws=wb.Sheets[wb.SheetNames[0]];rows=XLSX.utils.sheet_to_json(ws,{defval:""})}else{const text=await file.text();rows=parseCSV(text)}if(!rows.length){toast("No customer rows found",true);return}const batch=writeBatch(db),existing=new Set(customers.map(c=>normalizePhone(c.phone)).filter(Boolean));let added=0,dupes=0,limitSkipped=0;const available=bosFreeRecordRemaining();for(const r of rows){const name=String(r.Name||r.name||"").trim();if(!name)continue;const phone=String(r.Mobile||r.mobile||"").trim(),norm=normalizePhone(phone);if(norm&&existing.has(norm)){dupes++;continue}if(added>=available){limitSkipped++;continue}const ref=doc(collection(db,"businesses",businessId,"contacts"));batch.set(ref,{name,phone,phoneNormalized:norm,businessName:String(r.Business||r.businessName||""),businessType:String(r["Business Type"]||r.businessType||"Other"),type:String(r.Type||r["Contact Type"]||"Customer"),city:String(r.City||"Jaipur"),area:String(r.Area||""),req:String(r.Requirement||r.requirement||"New enquiry"),requirement:String(r.Requirement||r.requirement||"New enquiry"),detail:String(r.Detail||""),budget:String(r.Budget||""),status:String(r.Status||"New"),source:String(r.Source||"Excel Import"),next:String(r["Next Follow-up"]||r.Followup||"Not set"),last:String(r["Last Contact"]||"Imported"),note:"Imported customer. Add an important note after the first contact.",events:[{date:"Imported",type:"Customer Imported",note:"Imported from CSV/Excel."}],createdAt:serverTimestamp(),updatedAt:serverTimestamp()});if(norm)existing.add(norm);added++}if(added)await batch.commit();toast(added+" imported · "+dupes+" duplicates skipped"+(limitSkipped?" · "+limitSkipped+" skipped: free limit is 10":""),!!limitSkipped);if(limitSkipped)setTimeout(()=>{location.href="subscription.html"},900)}catch(e){toast(e.message||"Import failed",true)}finally{e.target.value=""}}
 function parseCSV(text){const lines=text.replace(/^\ufeff/,"").split(/\r?\n/).filter(Boolean);if(lines.length<2)return[];const parse=line=>{const out=[];let cur="",q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'&&line[i+1]==='"'){cur+='"';i++;continue}if(ch==='"'){q=!q;continue}if(ch===','&&!q){out.push(cur);cur="";continue}cur+=ch}out.push(cur);return out};const h=parse(lines[0]);return lines.slice(1).map(line=>{const v=parse(line),o={};h.forEach((k,i)=>o[k.trim()]=v[i]||"");return o})}
 async function logout(){await signOut(auth)}
 async function ensureWorkspace(u){
