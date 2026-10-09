@@ -1,10 +1,14 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Customers — Business OS</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<title>Customers — BusinessOS</title>
 <link rel="stylesheet" href="assets/style.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<!-- Legacy base layer (modals, profile drawer, composers, auth card). Kept as-is so existing dialogs look identical. -->
 <style id="business-os-customers-production-v12">
 :root{--ink:#111827;--muted:#738096;--line:#e5e9ef;--soft:#f6f8fb;--blue:#315df6;--navy:#111b30;--green:#0b9460;--red:#d84a43;--amber:#a96e00;--purple:#6848d8}
 *{box-sizing:border-box}body{margin:0;background:#f4f6f9;color:var(--ink);font-family:Arial,sans-serif;font-size:15px}button,input,select,textarea{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}
@@ -31,220 +35,16 @@
 .email-compose{display:none;position:fixed;inset:0;background:#0b1224a8;backdrop-filter:blur(5px);z-index:250;align-items:center;justify-content:center;padding:20px}.email-compose.show{display:flex}.email-compose-card{width:min(680px,94vw);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 30px 90px #00000045}.email-compose-head{padding:20px 22px 14px;border-bottom:1px solid #e8edf3;display:flex;justify-content:space-between;align-items:flex-start}.email-compose-head h2{margin:0;font-size:19px}.email-compose-head p{margin:5px 0 0;color:#7b8798;font-size:10px}.email-compose-close{border:1px solid #dce3eb;background:#fff;border-radius:8px;width:32px;height:32px;cursor:pointer}.email-compose-body{padding:18px 22px}.email-compose-meta{display:flex;gap:10px;align-items:center;background:#f6f8fb;border:1px solid #e5eaf0;border-radius:11px;padding:11px 12px;margin-bottom:14px}.email-compose-avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#eef2ff;color:#315df6;font-weight:900;font-size:11px}.email-compose-meta b{display:block;font-size:12px}.email-compose-meta small{display:block;color:#7d8798;font-size:10px;margin-top:2px}.email-compose-field{margin-top:13px}.email-compose-field label{display:block;font-size:10px;font-weight:850;color:#526077;margin-bottom:6px}.email-compose-field select,.email-compose-field input,.email-compose-field textarea{width:100%;border:1px solid #dce3eb;border-radius:10px;padding:11px;font-size:12px;outline:none;background:#fff}.email-compose-field textarea{min-height:190px;resize:vertical;line-height:1.5}.email-compose-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 22px 20px}.email-compose-foot button{height:40px;border:1px solid #dce3eb;background:#fff;border-radius:9px;padding:0 14px;font-size:10px;font-weight:850;cursor:pointer}.email-compose-foot .email-send{background:#315df6;color:#fff;border-color:#315df6}.email-char{font-size:9px;color:#8a94a4;text-align:right;margin-top:4px}.email-missing{padding:12px;background:#fff5f3;border:1px solid #f2d2cd;border-radius:9px;color:#8f2923;font-size:10px;margin-top:12px}.gmail-send-hint{margin-top:10px;padding:9px 11px;border:1px solid #dce7ff;border-radius:9px;background:#f5f8ff;color:#60708b;font-size:10px;line-height:1.5}.email-compose-foot .email-send:disabled{opacity:.65;cursor:wait}
 
 </style>
-
-<style>
-.finder-shell{display:grid;gap:14px}.finder-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.finder-stat{background:#fff;border:1px solid #e1e7ef;border-radius:14px;padding:13px 14px;box-shadow:0 8px 24px rgba(22,34,56,.04)}.finder-stat small{display:block;color:#7b8799;font-size:9px;font-weight:800}.finder-stat b{display:block;font-size:22px;line-height:1.1;margin:5px 0 3px;color:#142039}.finder-stat span{font-size:8px;color:#9aa3b1}.finder-hero{background:linear-gradient(135deg,#101b31,#1d3158);color:#fff;border-radius:18px;padding:22px;box-shadow:0 16px 40px rgba(16,27,49,.16)}.finder-hero h2{margin:3px 0 6px;font-size:24px;letter-spacing:-.5px}.finder-hero p{margin:0;color:#c8d2e3;font-size:11px;line-height:1.55}.finder-search{margin-top:18px;background:#fff;border:1px solid #e1e7ef;border-radius:16px;padding:16px;box-shadow:0 10px 28px rgba(22,34,56,.06)}.finder-grid{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr;gap:10px}.finder-field label{display:block;font-size:9px;font-weight:850;color:#65748a;margin-bottom:5px}.finder-field input,.finder-field select{width:100%;height:40px;border:1px solid #dce3ed;border-radius:9px;padding:0 10px;background:#fff;color:#172033;font-size:11px;outline:none}.finder-field input:focus,.finder-field select:focus{border-color:#315df6;box-shadow:0 0 0 3px #315df615}.finder-actions{display:flex;gap:8px;align-items:center;margin-top:11px;flex-wrap:wrap}.finder-primary{height:40px;padding:0 16px;border:0;border-radius:9px;background:#315df6;color:#fff;font-weight:850;cursor:pointer}.finder-secondary{height:40px;padding:0 14px;border:1px solid #dce3ed;border-radius:9px;background:#fff;color:#1b2940;font-weight:800;cursor:pointer}.finder-note{font-size:9px;color:#7b8799}.finder-panels{display:grid;grid-template-columns:1fr 1fr;gap:14px}.finder-panel{background:#fff;border:1px solid #e1e7ef;border-radius:16px;overflow:hidden}.finder-panel-head{padding:14px 16px;border-bottom:1px solid #edf0f4;display:flex;justify-content:space-between;align-items:center}.finder-panel-head h3{margin:0;font-size:13px}.finder-panel-head p{margin:3px 0 0;color:#7a8799;font-size:9px}.finder-list-toolbar{display:grid;grid-template-columns:1fr 130px;gap:7px;padding:9px 8px 3px}.finder-list-toolbar input,.finder-list-toolbar select{height:35px;border:1px solid #dce3ed;border-radius:8px;padding:0 9px;background:#fff;font-size:10px;color:#172033;outline:none}.finder-list-toolbar input:focus,.finder-list-toolbar select:focus{border-color:#315df6;box-shadow:0 0 0 3px #315df615}.finder-count{font-size:9px;font-weight:900;background:#eef3ff;color:#315df6;padding:5px 8px;border-radius:999px}.finder-results{padding:8px}.finder-result{display:flex;justify-content:space-between;gap:10px;padding:12px;border-bottom:1px solid #eef1f5}.finder-result:last-child{border-bottom:0}.finder-result b{font-size:11px}.finder-result small{display:block;color:#7a8799;font-size:9px;margin-top:3px}.finder-result-actions{display:flex;gap:5px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.finder-result-actions button{height:30px;padding:0 9px;border:1px solid #dce3ed;border-radius:8px;background:#fff;font-size:9px;font-weight:850;cursor:pointer}.finder-result-actions .map{background:#edf3ff;color:#315df6;border-color:#d9e3ff}.finder-result-actions .add{background:#0b9460;color:#fff;border-color:#0b9460}.finder-result-actions .contact{background:#eaf8f3;color:#087f68;border-color:#cbeadf}.finder-result-actions .danger{background:#fff7ed;color:#a85b08;border-color:#f2ddc0}.finder-status{display:inline-flex;margin-top:5px;padding:3px 7px;border-radius:999px;background:#f1f4f8;color:#627087;font-size:8px;font-weight:900}.finder-empty{padding:28px 15px;text-align:center;color:#8792a2;font-size:10px}.finder-add{margin-top:14px;background:#fff;border:1px solid #e1e7ef;border-radius:16px;padding:16px}.finder-add h3{margin:0 0 10px;font-size:13px}.finder-add-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}.finder-add-grid label{font-size:9px;font-weight:850;color:#65748a}.finder-add-grid input,.finder-add-grid textarea{display:block;width:100%;margin-top:5px;border:1px solid #dce3ed;border-radius:9px;padding:9px 10px;font-size:10px}.finder-add-grid input{height:38px}.finder-add-grid textarea{min-height:65px;resize:vertical}.finder-add-grid .full{grid-column:1/-1}.finder-disclaimer{margin-top:10px;padding:9px 11px;border-radius:9px;background:#f7f9fc;color:#7a8799;font-size:9px;line-height:1.5}
+<style id="business-os-legacy-finder-view">.finder-shell{display:grid;gap:14px}.finder-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.finder-stat{background:#fff;border:1px solid #e1e7ef;border-radius:14px;padding:13px 14px;box-shadow:0 8px 24px rgba(22,34,56,.04)}.finder-stat small{display:block;color:#7b8799;font-size:9px;font-weight:800}.finder-stat b{display:block;font-size:22px;line-height:1.1;margin:5px 0 3px;color:#142039}.finder-stat span{font-size:8px;color:#9aa3b1}.finder-hero{background:linear-gradient(135deg,#101b31,#1d3158);color:#fff;border-radius:18px;padding:22px;box-shadow:0 16px 40px rgba(16,27,49,.16)}.finder-hero h2{margin:3px 0 6px;font-size:24px;letter-spacing:-.5px}.finder-hero p{margin:0;color:#c8d2e3;font-size:11px;line-height:1.55}.finder-search{margin-top:18px;background:#fff;border:1px solid #e1e7ef;border-radius:16px;padding:16px;box-shadow:0 10px 28px rgba(22,34,56,.06)}.finder-grid{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr;gap:10px}.finder-field label{display:block;font-size:9px;font-weight:850;color:#65748a;margin-bottom:5px}.finder-field input,.finder-field select{width:100%;height:40px;border:1px solid #dce3ed;border-radius:9px;padding:0 10px;background:#fff;color:#172033;font-size:11px;outline:none}.finder-field input:focus,.finder-field select:focus{border-color:#315df6;box-shadow:0 0 0 3px #315df615}.finder-actions{display:flex;gap:8px;align-items:center;margin-top:11px;flex-wrap:wrap}.finder-primary{height:40px;padding:0 16px;border:0;border-radius:9px;background:#315df6;color:#fff;font-weight:850;cursor:pointer}.finder-secondary{height:40px;padding:0 14px;border:1px solid #dce3ed;border-radius:9px;background:#fff;color:#1b2940;font-weight:800;cursor:pointer}.finder-note{font-size:9px;color:#7b8799}.finder-panels{display:grid;grid-template-columns:1fr 1fr;gap:14px}.finder-panel{background:#fff;border:1px solid #e1e7ef;border-radius:16px;overflow:hidden}.finder-panel-head{padding:14px 16px;border-bottom:1px solid #edf0f4;display:flex;justify-content:space-between;align-items:center}.finder-panel-head h3{margin:0;font-size:13px}.finder-panel-head p{margin:3px 0 0;color:#7a8799;font-size:9px}.finder-list-toolbar{display:grid;grid-template-columns:1fr 130px;gap:7px;padding:9px 8px 3px}.finder-list-toolbar input,.finder-list-toolbar select{height:35px;border:1px solid #dce3ed;border-radius:8px;padding:0 9px;background:#fff;font-size:10px;color:#172033;outline:none}.finder-list-toolbar input:focus,.finder-list-toolbar select:focus{border-color:#315df6;box-shadow:0 0 0 3px #315df615}.finder-count{font-size:9px;font-weight:900;background:#eef3ff;color:#315df6;padding:5px 8px;border-radius:999px}.finder-results{padding:8px}.finder-result{display:flex;justify-content:space-between;gap:10px;padding:12px;border-bottom:1px solid #eef1f5}.finder-result:last-child{border-bottom:0}.finder-result b{font-size:11px}.finder-result small{display:block;color:#7a8799;font-size:9px;margin-top:3px}.finder-result-actions{display:flex;gap:5px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.finder-result-actions button{height:30px;padding:0 9px;border:1px solid #dce3ed;border-radius:8px;background:#fff;font-size:9px;font-weight:850;cursor:pointer}.finder-result-actions .map{background:#edf3ff;color:#315df6;border-color:#d9e3ff}.finder-result-actions .add{background:#0b9460;color:#fff;border-color:#0b9460}.finder-result-actions .contact{background:#eaf8f3;color:#087f68;border-color:#cbeadf}.finder-result-actions .danger{background:#fff7ed;color:#a85b08;border-color:#f2ddc0}.finder-status{display:inline-flex;margin-top:5px;padding:3px 7px;border-radius:999px;background:#f1f4f8;color:#627087;font-size:8px;font-weight:900}.finder-empty{padding:28px 15px;text-align:center;color:#8792a2;font-size:10px}.finder-add{margin-top:14px;background:#fff;border:1px solid #e1e7ef;border-radius:16px;padding:16px}.finder-add h3{margin:0 0 10px;font-size:13px}.finder-add-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}.finder-add-grid label{font-size:9px;font-weight:850;color:#65748a}.finder-add-grid input,.finder-add-grid textarea{display:block;width:100%;margin-top:5px;border:1px solid #dce3ed;border-radius:9px;padding:9px 10px;font-size:10px}.finder-add-grid input{height:38px}.finder-add-grid textarea{min-height:65px;resize:vertical}.finder-add-grid .full{grid-column:1/-1}.finder-disclaimer{margin-top:10px;padding:9px 11px;border-radius:9px;background:#f7f9fc;color:#7a8799;font-size:9px;line-height:1.5}
 @media(max-width:900px){.finder-grid{grid-template-columns:1fr 1fr}.finder-panels{grid-template-columns:1fr}.finder-add-grid{grid-template-columns:1fr 1fr}.finder-stats{grid-template-columns:1fr 1fr}}@media(max-width:600px){.finder-grid,.finder-add-grid,.finder-stats{grid-template-columns:1fr}.finder-list-toolbar{grid-template-columns:1fr}}
 </style>
-<link rel="stylesheet" href="assets/premium-shell.css">
-<link rel="stylesheet" href="assets/launch-ui-v1.css">
+<style id="business-os-legacy-modal-fixes">
 
-<style id="business-os-v23-customer-comfort">
-/* V23 — Customer list comfort-first redesign. Functionality unchanged. */
-.customers-shell{padding:26px 24px 56px}
-.page-head{padding:0 8px 18px;gap:28px}
-.page-head h1{font-size:36px;line-height:1.08;letter-spacing:-1px}
-.page-head p{font-size:15px;line-height:1.5}
-.top-actions{gap:10px}
-.top-actions button{height:46px;padding:0 18px;border-radius:11px;font-size:13px}
-.session{font-size:11px}
-.session button{padding:9px 12px;font-size:10px}
-
-.smart-summary{height:auto;min-height:64px;padding:12px 20px;font-size:13px;gap:16px}
-.smart-summary b{font-size:19px}
-
-.list-card{border-radius:18px;box-shadow:0 14px 40px rgba(22,34,56,.07)}
-.list-head{min-height:104px;padding:0 26px;gap:24px}
-.list-head b{font-size:25px;letter-spacing:-.5px}
-.list-head small{font-size:13px;line-height:1.45}
-.list-search input{height:50px;font-size:14px;padding:0 15px;border-radius:12px}
-.list-search span{font-size:11px}
-
-.filters{grid-template-columns:1.15fr 1.15fr 1.05fr 1.05fr .9fr 92px;gap:12px;padding:18px 26px}
-.filters input,.filters select{height:48px;padding:0 13px;font-size:12px;border-radius:11px}
-.reset-filter{height:42px;font-size:11px;border-radius:10px}
-
-.table-head,.row{grid-template-columns:42px minmax(300px,2.5fr) minmax(135px,1fr) minmax(175px,1.35fr) minmax(105px,.8fr) minmax(130px,1fr) minmax(170px,1.25fr) minmax(220px,1.55fr);min-width:1320px}
-.table-head{height:54px;padding:0 26px;font-size:10px;letter-spacing:.1em}
-.row{height:108px;min-height:108px;padding:0 26px}
-.contact-cell{gap:16px}
-.avatar{width:54px;height:54px;border-radius:14px;font-size:12px}
-.contact-main b{font-size:18px;line-height:1.25}
-.contact-main small{font-size:12px;margin-top:6px}
-.type-pill{padding:7px 11px;font-size:11px}
-.data-cell{font-size:14px;line-height:1.45}
-.data-cell b{font-size:14px}
-.data-cell small{font-size:11px;margin-top:4px}
-.source-cell{font-size:13px}
-.status{padding:8px 12px;font-size:11px}
-.follow-cell b{font-size:14px}
-.follow-cell small{font-size:11px;margin-top:4px}
-.actions{gap:8px!important}
-.actions button{height:42px;min-width:0;padding:0 13px;border-radius:10px;font-size:11px;font-weight:900;white-space:nowrap}
-.actions .wa{padding:0 14px}
-.actions .view{background:#142039;color:#fff;border-color:#142039}
-.actions button:hover{transform:translateY(-1px);box-shadow:0 7px 16px rgba(20,32,57,.12)}
-
-/* Give the content more room on normal laptop widths: hide the least-important Source column. */
-@media(max-width:1350px){
-  .table-head,.row{grid-template-columns:42px minmax(310px,2.6fr) minmax(135px,1fr) minmax(180px,1.4fr) minmax(125px,1fr) minmax(180px,1.25fr) minmax(220px,1.55fr);min-width:1190px}
-  .table-head>div:nth-child(5),.row>.source-cell{display:none}
-}
-
-/* Large readable customer cards on narrower screens instead of tiny desktop rows. */
-@media(max-width:900px){
-  .customers-shell{padding:18px 12px 42px}
-  .page-head{align-items:flex-start;flex-direction:column;padding:0 4px 16px}
-  .page-head h1{font-size:32px}
-  .top-actions{width:100%;justify-content:flex-start;flex-wrap:wrap}
-  .list-head{min-height:auto;padding:20px;align-items:flex-start;flex-direction:column}
-  .list-search{width:100%;flex-direction:column;align-items:stretch}
-  .list-search input{width:100%}
-  .filters{grid-template-columns:1fr 1fr;padding:14px 18px}
-  .table-scroll{overflow:visible}
-  .table-head{display:none}
-  .row{display:grid;grid-template-columns:34px 1fr;grid-template-rows:auto auto auto auto;gap:10px 12px;min-width:0;height:auto;padding:18px;border-bottom:1px solid #e9edf2}
-  .row>.check{grid-row:1/5;align-self:start;padding-top:7px}
-  .row>.contact-cell{grid-column:2;grid-row:1}
-  .row>.type-pill,.row>div:nth-child(3){grid-column:2;grid-row:2}
-  .row>div:nth-child(4){grid-column:2;grid-row:3}
-  .row>div:nth-child(5){grid-column:2;grid-row:4}
-  .row>div:nth-child(6){grid-column:2;grid-row:2}
-  .row>div:nth-child(7){grid-column:2;grid-row:3}
-  .row>.actions{grid-column:2;grid-row:5;display:flex!important;flex-wrap:wrap}
-  .row>.contact-cell{min-width:0}
-  .contact-main b{font-size:19px}
-  .actions button{height:44px;font-size:12px}
-}
-
-@media(max-width:560px){
-  .filters{grid-template-columns:1fr}
-  .top-actions button{height:44px}
-}
-</style>
-
-
-<style id="business-os-v24-sidebar-final">
-body.app-page .customers-shell{overflow:visible!important;}
-body.app-page .customers-page{overflow:visible!important;}
-body.app-page .os-layout{overflow:visible!important;}
-body.app-page .os-sidebar{overflow:hidden!important;}
-body.app-page .table-scroll{max-width:100%;}
-</style>
-
-
-<style id="premium-record-list-v26">
-/* V26 — spacious business record list: preserve data, improve scanability */
-.list-card{border-radius:18px;box-shadow:0 14px 36px rgba(15,31,58,.06);}
-.list-head{min-height:92px;padding:0 24px;background:linear-gradient(180deg,#fff 0%,#fbfdff 100%);}
-.list-head b{font-size:24px;color:#0f1f3a;letter-spacing:-.5px;}
-.list-head small{font-size:12px;color:#718096;}
-.list-search input{height:50px;border-radius:12px;font-size:14px;}
-.filters{padding:16px 24px;background:#f9fbfe;gap:12px;}
-.filters input,.filters select{height:46px;border-radius:11px;font-size:12px;}
-.reset-filter{height:42px;font-size:11px;border-radius:10px;}
-.table-scroll{overflow-x:auto!important;overflow-y:visible!important;}
-.table-head,.row{grid-template-columns:38px minmax(285px,2.2fr) minmax(150px,1.1fr) minmax(150px,1.1fr) minmax(175px,1.3fr) minmax(135px,.95fr) minmax(115px,.85fr) minmax(165px,1.15fr) minmax(245px,1.65fr)!important;min-width:1450px!important;}
-.table-head{height:54px!important;padding:0 24px!important;background:#f7f9fc!important;color:#718096!important;font-size:10px!important;letter-spacing:.09em!important;}
-.row{height:104px;min-height:104px;padding:0 24px;border-bottom:1px solid #e9eef5;transition:transform .16s ease,box-shadow .16s ease,background .16s ease;cursor:pointer;}
-.row:hover{background:#fbfdff;box-shadow:inset 4px 0 0 #2563eb,0 6px 20px rgba(15,31,58,.05);}
-.contact-cell{gap:13px;}
-.avatar{width:48px;height:48px;border-radius:14px;font-size:11px;box-shadow:0 4px 12px rgba(49,96,220,.10);}
-.contact-main b{font-size:16px;line-height:1.2;color:#0f1f3a;}
-.contact-main small{font-size:11px;margin-top:6px;color:#718096;}
-.record-title-line{display:flex;align-items:center;gap:9px;min-width:0;}
-.record-title-line .type-pill{font-size:9px;padding:4px 7px;flex:none;}
-.data-cell{font-size:13px;line-height:1.35;}
-.data-cell b{font-size:13px;color:#1e2b42;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.data-cell small{font-size:10px;color:#8a96a8;margin-top:5px;}
-.requirement-data b{max-width:165px;}
-.budget-data b{font-size:14px;}
-.contact-data b{font-size:13px;}
-.status{padding:8px 12px;font-size:10px;}
-.follow-cell b{font-size:13px;}
-.follow-cell small{font-size:10px;margin-top:5px;}
-.actions{gap:7px!important;flex-wrap:wrap;}
-.actions button{height:38px;min-width:0;padding:0 11px;border-radius:9px;font-size:10px;}
-.actions .wa{font-weight:900;}
-@media(max-width:820px){
- .table-head{display:none!important;}
- .table-scroll{overflow:visible!important;}
- .row{display:grid;grid-template-columns:28px 1fr!important;min-width:0!important;height:auto;min-height:0;padding:18px 16px;gap:12px;border-bottom:1px solid #e7edf4;}
- .row>div:not(.check){grid-column:2;}
- .contact-cell{grid-row:1;}
- .contact-data{grid-row:2;} .row>div:nth-child(4){grid-row:3;} .requirement-data{grid-row:4;} .budget-data{grid-row:5;} .row>div:nth-child(7){grid-row:6;} .follow-cell{grid-row:7;} .actions{grid-row:8;}
- .actions{margin-top:4px!important;}
-}
-</style>
-
-<style id="dashboard-powerbi-v28">
-/* V28 — Power BI inspired overview: compact, visual, actionable */
-.dashboard-v2{padding:22px!important;border-radius:22px!important;background:linear-gradient(145deg,#fff 0%,#f9fbff 100%)!important;box-shadow:0 18px 48px rgba(15,31,58,.07)!important}
-.dash-head{margin-bottom:16px!important}.dash-head h2{font-size:30px!important}.dash-actions button{height:42px!important;border-radius:11px!important}
-.dash-metrics{gap:12px!important}.metric-card{min-height:88px!important;padding:14px!important;border-radius:15px!important}.metric-card b{font-size:24px!important}.metric-icon{width:38px!important;height:38px!important;border-radius:11px!important}
-.dash-section-label{margin:18px 2px 9px!important}.dash-panel{border-radius:15px!important;padding:16px!important}.pipeline-wide{padding-bottom:14px!important}.dash-pipeline{gap:8px!important}.dash-stage{padding:12px!important;min-height:72px!important;border-radius:11px!important}
-.dash-grid-main{align-items:start!important}.attention-panel,.health-panel{min-height:0!important;height:auto!important}.attention-empty{padding:16px!important}.attention-list{min-height:0!important}.quick-actions button{min-height:54px!important;padding:11px!important;border-radius:11px!important}
-.source-panel{margin-top:12px!important}.source-grid{gap:9px!important}
-body.module-page .dashboard-v2,body.module-page .source-panel{display:none!important}
-body.module-page .os-content>.page-head{margin-bottom:12px!important}
-body.module-page .os-content{min-width:0!important}
-@media(min-width:1101px){.dashboard-v2{max-width:none}.dash-grid-main{grid-template-columns:minmax(0,1.45fr) minmax(300px,.8fr)!important}.dash-pipeline{grid-template-columns:repeat(7,minmax(0,1fr))!important}}
-@media(max-width:900px){.dash-metrics{grid-template-columns:repeat(2,1fr)!important}.dash-pipeline{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
-</style>
-
-<style id="business-os-customer-list-v29-visible-refresh">
-/* V29 — Customer list visible refresh. Functionality/data untouched. */
-.list-card{box-shadow:0 22px 60px rgba(18,38,75,.09)!important;border-color:#d6e0ec!important}
-.list-head{min-height:116px!important}
-.list-head b{font-size:28px!important}
-.list-search input{height:56px!important;font-size:15px!important;border-radius:14px!important}
-.filters{padding:20px 30px!important}
-.filters input,.filters select{height:52px!important;font-size:13px!important;border-radius:13px!important}
-.table-head{height:60px!important;font-size:10px!important;background:#f7faff!important}
-.row{height:124px!important;min-height:124px!important}
-.avatar{width:62px!important;height:62px!important;border-radius:18px!important}
-.contact-main b{font-size:19px!important}
-.data-cell b{font-size:14px!important}
-.status{font-size:12px!important;padding:9px 14px!important}
-.actions button{height:46px!important;padding:0 15px!important;font-size:12px!important;border-radius:12px!important}
-@media(max-width:900px){.row{height:auto!important;min-height:0!important}.list-head{min-height:auto!important}}
-</style>
-
-<style id="businessos-v38-nav-polish">
-/* V38 — larger, clearer BusinessOS navigation */
-.bos36-topbar{min-height:78px!important;height:auto!important;padding:10px 16px!important;gap:16px!important;border-radius:18px!important;}
-.bos36-brand{min-width:235px!important;gap:10px!important;}
-.bos36-mark{width:46px!important;height:46px!important;border-radius:13px!important;font-size:20px!important;}
-.bos36-brandcopy b{font-size:16px!important;line-height:1.1!important;}
-.bos36-brandcopy small{font-size:7px!important;letter-spacing:.14em!important;}
-.bos36-nav{gap:5px!important;}
-.bos36-nav a{height:44px!important;padding:0 14px!important;border-radius:11px!important;font-size:11px!important;font-weight:900!important;}
-.bos36-nav a.active{box-shadow:inset 0 -3px 0 #2563eb!important;}
-.bos36-actions a{height:44px!important;padding:0 16px!important;font-size:11px!important;border-radius:11px!important;}
-@media(max-width:1200px){.bos36-brand{min-width:190px!important}.bos36-nav a{padding:0 10px!important;font-size:10px!important}}
-@media(max-width:980px){.bos36-brand{min-width:auto!important}.bos36-brandcopy{display:none!important}.bos36-nav a{padding:0 9px!important}}
-</style>
-<style id="business-os-subcategory-chip">
-/* Keep the customer name and category badges on separate, readable lines. */
-#customerList .contact-main{min-width:0;width:100%}
-#customerList .record-title-line{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;width:100%}
-#customerList .record-title-line>b{display:block;max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.25}
-#customerList .record-badges{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-width:0;max-width:100%}
-#customerList .record-badges .type-pill{flex:0 0 auto;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#customerList .subcategory-pill{display:inline-flex;align-items:center;max-width:125px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:1px solid #dbe6f7;background:#f7faff;color:#526581;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:600;line-height:1.2;flex:0 1 auto}
-#customerList .contact-main>small{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:5px}
-</style>
-<style id="business-os-form-placeholder-polish">
 #customerModal input::placeholder,#customerModal textarea::placeholder{color:#8b98ad!important;opacity:1!important;font-weight:500!important}
 #customerModal input:not([type="checkbox"]),#customerModal textarea,#customerModal select{font-weight:600}
 #customerModal select option{color:#24324a;font-weight:500}
 #customerModal #fCustomSubcategory{margin-top:7px}
-</style>
-<style id="business-os-status-polish">
-#customerList .status-cell{display:flex;align-items:center;justify-content:flex-start;min-width:0}
-#customerList .status-action{display:inline-flex;align-items:center;gap:7px;cursor:pointer;border:1px solid #dbe5f2;transition:background .15s,border-color .15s,transform .15s}
-#customerList .status-action:hover{background:#eaf1ff;border-color:#b8ccff;transform:translateY(-1px)}
-#customerList .status-edit-mark{font-size:12px;opacity:.7}
+
 #profileModalContent .profile-status-section{background:linear-gradient(120deg,#f4f7ff,#fff);border:1px solid #dce6ff;border-radius:14px;margin:14px 16px;padding:15px}
 #profileModalContent .profile-status-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
 #profileModalContent .profile-status-heading h3{margin:0;color:#315fe8;font-size:10px;letter-spacing:.12em}
@@ -255,27 +55,6 @@ body.module-page .os-content{min-width:0!important}
 #profileModalContent .pipeline-control{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
 #profileModalContent .pipeline-control select{min-width:0;min-height:42px;border-radius:9px}
 @media(max-width:600px){#profileModalContent .pipeline-control{grid-template-columns:1fr}#profileModalContent .profile-status-heading{align-items:flex-start}}
-</style>
-<style id="business-os-customer-list-simplify">
-/* Main list: show only the information needed to act quickly. */
-.table-head,.row{
-  grid-template-columns:34px minmax(205px,1.55fr) minmax(125px,.95fr) minmax(140px,1.1fr) minmax(105px,.8fr) minmax(135px,1fr) minmax(195px,1.35fr)!important;
-  min-width:1050px!important;
-}
-.table-head>div:nth-child(4),.row>div:nth-child(4),
-.table-head>div:nth-child(6),.row>div:nth-child(6){display:none!important}
-.row{height:76px!important;min-height:76px!important;padding:0 20px!important}
-.contact-cell{gap:11px!important}
-.contact-cell .avatar{width:40px!important;height:40px!important;flex:0 0 40px!important}
-#customerList .contact-main{min-width:0;width:100%}
-#customerList .record-title-line{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;width:100%}
-#customerList .record-title-line>b{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px!important;line-height:1.25}
-#customerList .record-badges{display:flex;align-items:center;gap:5px;flex-wrap:wrap;max-width:100%}
-#customerList .record-badges .type-pill,#customerList .subcategory-pill{padding:3px 7px!important;font-size:9px!important;line-height:1.15!important;max-width:115px!important}
-#customerList .customer-secondary,#customerList .contact-secondary{display:none!important}
-#customerList .contact-data small{display:none!important}
-#customerList .actions{gap:5px!important}
-#customerList .actions button{padding:7px 9px!important;font-size:10px!important}
 .profile-tabs{display:flex;gap:8px;padding:12px 20px;border-bottom:1px solid #e8edf4;background:#fbfcff;position:sticky;top:0;z-index:3}
 .profile-tab{border:1px solid #dce4f0;background:#fff;color:#53627b;border-radius:9px;padding:10px 14px;font-size:12px;font-weight:800;cursor:pointer;transition:.15s}
 .profile-tab:hover{border-color:#b9caff;color:#245cf5}
@@ -290,132 +69,63 @@ body.module-page .os-content{min-width:0!important}
 #profileModalContent .pipeline-control{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
 #profileModalContent .pipeline-control select{min-width:0;min-height:42px;border-radius:9px}
 @media(max-width:700px){.profile-tabs{padding:10px 14px}.profile-tab{flex:1;padding:10px 8px;font-size:11px}#profileModalContent .pipeline-control{grid-template-columns:1fr}#profileModalContent .profile-status-heading{align-items:flex-start}}
-</style>
-<style id="business-os-customer-list-layout-fix">
-#customerList .list-card,#customerList .table-wrap{width:100%;max-width:100%;min-width:0}
-#customerList #rows{display:block;width:100%;min-width:0}
-#customerList .table-head,#customerList #rows>.row{
-  width:100%;
-  grid-template-columns:34px minmax(220px,1.7fr) minmax(130px,1fr) minmax(155px,1.15fr) minmax(115px,.85fr) minmax(150px,1.05fr) minmax(215px,1.4fr)!important;
-}
-#customerList .table-wrap{overflow-x:auto;overflow-y:visible}
-#customerList #rows>.row{display:grid!important;visibility:visible!important}
 #customerList .profile-tabs [data-profile-tab]{pointer-events:auto;position:relative;z-index:5}
 #profileModalContent .status-tab-section[style*="display: none"]{display:none!important}
 #profileModalContent .status-tab-section{scroll-margin-top:12px}
-</style>
-<style id="business-os-clean-table-and-role">
-/* The contact type is represented by the single combined Category / Role selector. */
 #customerModal .legacy-contact-type-field{display:none!important}
-#customerList .record-badges{display:flex;align-items:center;gap:7px;flex-wrap:wrap;min-width:0}
-#customerList .subcategory-text{display:inline-block;max-width:125px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#d14343;font-size:10px;font-weight:700;line-height:1.2}
-#customerList .subcategory-pill{display:none!important}
-#customerList .table-head,#customerList #rows>.row{
- grid-template-columns:34px minmax(210px,1.45fr) minmax(125px,.85fr) minmax(150px,1.05fr) minmax(105px,.7fr) minmax(145px,.95fr) minmax(245px,1.55fr)!important;
- width:100%!important;min-width:1120px!important;box-sizing:border-box
-}
-#customerList #rows>.row{display:grid!important;align-items:center}
-#customerList .actions{display:flex!important;align-items:center;justify-content:flex-end;gap:6px!important;min-width:0;flex-wrap:nowrap!important;overflow:visible!important}
-#customerList .actions button{display:inline-flex!important;align-items:center;justify-content:center;gap:4px;flex:0 0 auto!important;width:auto!important;min-width:36px;white-space:nowrap!important;padding:8px 10px!important;font-size:10px!important;line-height:1.1!important}
-#customerList .actions button:after{content:none!important;display:none!important}
-#customerList .actions .wa:after{content:none!important;display:none!important}
-#customerList .table-head>div:last-child{text-align:right}
-@media(max-width:1180px){
- #customerList .table-head,#customerList #rows>.row{min-width:1120px!important}
- #customerList .actions{justify-content:flex-start}
-}
-</style>
-<style id="business-os-role-single-field-header-align">
 #customerModal .legacy-contact-type-field{display:none!important}
-#customerList .record-badges{display:flex;align-items:center;gap:0;min-width:0;flex-wrap:nowrap}
-#customerList .subcategory-text{display:inline-block;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#d14343;font-size:10px;font-weight:750;line-height:1.2}
-#customerList .subcategory-pill,#customerList .record-badges .type-pill{display:none!important}
-#customerList .table-head,#customerList #rows>.row{grid-template-columns:34px minmax(205px,1.3fr) minmax(125px,.8fr) minmax(155px,1fr) minmax(105px,.7fr) minmax(145px,.9fr) minmax(250px,1.35fr)!important;min-width:1120px!important;width:100%!important;box-sizing:border-box}
-#customerList .table-head>div:last-child{text-align:left!important;padding-left:12px}
-#customerList #rows>.row .actions{justify-content:flex-start!important;padding-left:12px;gap:6px!important;white-space:nowrap}
-#customerList #rows>.row .actions button{flex:0 0 auto!important}
-</style>
-<style id="business-os-overview-action-heading-final">
-/* Final alignment: place ACTION heading above the actual action-button cluster. */
-#customerList .table-head>div:last-child{
-  text-align:right!important;
-  padding-left:0!important;
-  padding-right:95px!important;
-  box-sizing:border-box!important;
-}
-#customerList #rows>.row .actions{
-  justify-content:flex-end!important;
-  padding-left:0!important;
-  padding-right:92px!important;
-  box-sizing:border-box!important;
-}
-@media(max-width:1180px){
-  #customerList .table-head>div:last-child{padding-right:95px!important}
-  #customerList #rows>.row .actions{padding-right:92px!important}
-}
-</style>
-<style id="business-os-customer-bulk-delete">
-.bulk-customer-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 18px;margin:0;border-bottom:1px solid #e2e8f0;background:#fff7f7}
-.bulk-customer-toolbar[hidden]{display:none!important}
-.bulk-customer-toolbar>div{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.bulk-customer-toolbar b{font-size:13px;color:#17243d}
-.bulk-customer-toolbar span{font-size:11px;color:#64748b}
-.bulk-delete-button,.delete-one-customer{display:inline-flex!important;align-items:center;justify-content:center;border:1px solid #fecaca!important;background:#fff1f2!important;color:#dc2626!important;font-weight:800!important;cursor:pointer!important}
-.bulk-delete-button{padding:9px 13px!important;border-radius:10px!important;font-size:12px!important}
-#customerList #rows>.row .actions .delete-one-customer{width:30px!important;height:30px!important;min-width:30px!important;padding:0!important;border-radius:9px!important;font-size:19px!important;line-height:1!important;box-shadow:none!important;flex:0 0 30px!important}
-#customerList .table-head input[type=checkbox],#customerList #rows .customer-row-select{width:15px;height:15px;accent-color:#dc2626;cursor:pointer}
-#customerList #rows>.row .actions{gap:6px!important;flex-wrap:nowrap!important}
-</style>
-<style id="business-os-delete-polish-and-handler-fix" id="business-os-delete-polish-and-handler-fix">
-#customerList #rows>.row .contact-main b,
-#customerList #rows>.row .data-cell b,
-#customerList #rows>.row .follow-cell b,
-#customerList #rows>.row .status-cell .status{color:#334155!important}
-#customerList #rows>.row .contact-main small,
-#customerList #rows>.row .data-cell small,
-#customerList #rows>.row .follow-cell small{color:#8491a7!important}
-#customerList #rows>.row .actions .delete-one-customer{
- width:24px!important;height:24px!important;min-width:24px!important;flex:0 0 24px!important;
- padding:0!important;border-radius:7px!important;font-size:14px!important;font-weight:650!important;
- line-height:1!important;background:#fff7f7!important;border-color:#fbd5d5!important;
- color:#e87979!important;box-shadow:none!important
-}
-#customerList #rows>.row .actions .delete-one-customer:hover{
- background:#fee2e2!important;border-color:#fca5a5!important;color:#dc2626!important
-}
-.bulk-customer-toolbar{padding:9px 14px!important;background:#fffafa!important}
-.bulk-customer-toolbar b{color:#334155!important}
-.bulk-delete-button{padding:7px 11px!important;font-size:11px!important;background:#fff7f7!important;color:#dc6262!important;border-color:#fbd5d5!important}
-</style>
-</head>
-<body class="app-page">
-<header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
 
+</style>
+<!-- BusinessOS shared design system (nav, header, KPI, filters, table, badges, buttons). Loaded last. -->
+<link rel="stylesheet" href="assets/bos-app.css">
+</head>
+<body class="app-page bos-app">
+<a class="bos-skip" href="#main">Skip to content</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol><symbol id="i-deal" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></symbol><symbol id="i-leads" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol><symbol id="i-wa" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></symbol><symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol><symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol><symbol id="i-card" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></symbol><symbol id="i-sheet" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h8"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></symbol><symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></symbol><symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></symbol><symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.4 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol><symbol id="i-swap" viewBox="0 0 24 24"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/></symbol><symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2z"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></symbol><symbol id="i-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></symbol></defs></svg>
 <section id="authScreen" class="auth-screen"><div class="auth-card"><div class="auth-mark">B</div><h1>Customer Login</h1><p>Apne Business OS workspace mein enter karne ke liye Google se sign in karein. Aapke customers, leads aur follow-ups private rahenge.</p><button type="button" id="googleBtn" class="google-btn">🔐 Continue with Google</button><div id="authMsg" class="auth-msg"></div></div></section>
 
 <main id="app" class="customers-shell hidden">
-<div class="customers-page">
-<div class="os-layout">
-<aside class="os-sidebar" aria-label="Business OS navigation">
-  <div class="os-side-title">WORKSPACE</div>
-  <a class="os-side-link active" href="customers.html" onclick="osNav(this,'overview')"><span>⌂</span><b>Overview</b></a>
-  <a class="os-side-link" href="customer-list.html" onclick="osNav(this,'customers')"><span>👥</span><b>Customers</b></a>
-  <a class="os-side-link" href="followups.html" onclick="osNav(this,'followups')"><span>◷</span><b>Follow-ups</b><em id="sideFollowCount">0</em></a>
-  <a class="os-side-link" href="deals.html"><span>✓</span><b>Deals</b><em id="sideDealCount">0</em></a>
-  <a class="os-side-link" href="website-leads.html" onclick="osNav(this,'website')"><span>↗</span><b>Website Leads</b><em id="sideWebLeadCount">0</em></a>
-  <a class="os-side-link" href="whatsapp-center.html" onclick="osNav(this,'whatsapp')"><span>💬</span><b>WhatsApp</b><em id="sideWaCount">0</em></a>
-  <a class="os-side-link" href="business-finder-app.html" onclick="osNav(this,'finder')"><span>⌕</span><b>Business Finder</b><em id="sideFinderCount">0</em></a>
-  <div class="os-side-divider"></div>
-  <div class="os-side-title">MANAGE</div>
-  <a class="os-side-link" href="reports.html"><span>▥</span><b>Reports</b></a>
-  <a class="os-side-link" href="import-export.html"><span>⇅</span><b>Import / Export</b></a>
-  <a class="os-side-link" href="team-settings.html"><span>⚙</span><b>Team & Settings</b></a>
-  <a class="os-side-link" href="subscription.html"><span>◇</span><b>Plans & Limits</b></a>
-  <a class="os-side-link" href="notifications.html"><span>🔔</span><b>Notifications</b><em id="sideUnreadCount">0</em></a>
-</aside>
-<div class="os-content">
-<div class="page-head"><div><h1>Customers</h1><p>अपने customers की पूरी journey एक जगह track करें.</p></div><div class="top-actions"><div class="session"><span id="userEmail"></span><button onclick="logout()">Logout</button></div><button onclick="document.getElementById('csvFile').click()">↑ Import</button><button onclick="exportCSV()">↓ Export</button><button class="primary" onclick="openCustomerModal()">＋ Add Customer</button><input id="csvFile" class="file-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="importCSV(event)"></div></div>
-<section class="dashboard-v2" id="dashboardV2">
+<header class="bos-topbar">
+  <a class="bos-brand" href="customers.html" aria-label="BusinessOS home"><span class="bos-logo">B</span><span class="bos-brand-text"><strong>BusinessOS</strong><small>Business Intelligence</small></span></a>
+  <nav class="bos-nav" aria-label="Main navigation">
+    <a href="customers.html"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Overview</a>
+    <a href="customer-list.html" class="active" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg>Customers</a>
+    <a href="followups.html"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>Follow-ups <em class="bos-count" id="sideFollowCount">0</em></a>
+    <a href="deals.html"><svg class="i" aria-hidden="true"><use href="#i-deal"/></svg>Deals <em class="bos-count" id="sideDealCount">0</em></a>
+    <a href="website-leads.html"><svg class="i" aria-hidden="true"><use href="#i-leads"/></svg>Leads <em class="bos-count" id="sideWebLeadCount">0</em></a>
+    <a href="whatsapp-center.html"><svg class="i" aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp <em class="bos-count" id="sideWaCount">0</em></a>
+    <a href="business-finder-app.html"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg>Finder <em class="bos-count" id="sideFinderCount">0</em></a>
+    <a href="reports.html"><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg>Reports</a>
+    <details class="bos-more"><summary aria-label="More pages"><svg class="i" aria-hidden="true"><use href="#i-more"/></svg>More</summary>
+      <div class="bos-menu">
+        <a href="import-export.html"><svg class="i" aria-hidden="true"><use href="#i-sheet"/></svg>Import / Export</a>
+        <a href="team-settings.html"><svg class="i" aria-hidden="true"><use href="#i-settings"/></svg>Team &amp; Settings</a>
+        <a href="subscription.html"><svg class="i" aria-hidden="true"><use href="#i-card"/></svg>Plans &amp; Limits</a>
+        <a href="notifications.html"><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg>Notifications <em class="bos-count is-alert" id="sideUnreadCount">0</em></a>
+      </div>
+    </details>
+    <a class="bos-nav-extra" href="import-export.html"><svg class="i" aria-hidden="true"><use href="#i-sheet"/></svg>Import / Export</a>
+    <a class="bos-nav-extra" href="team-settings.html"><svg class="i" aria-hidden="true"><use href="#i-settings"/></svg>Team &amp; Settings</a>
+    <a class="bos-nav-extra" href="subscription.html"><svg class="i" aria-hidden="true"><use href="#i-card"/></svg>Plans</a>
+    <a class="bos-nav-extra" href="notifications.html"><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg>Notifications</a>
+  </nav>
+  <div class="bos-actions">
+    <button type="button" class="bos-btn primary" onclick="openCustomerModal()"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg><span class="t">Add Customer</span></button>
+    <details class="bos-account"><summary aria-label="Account menu"><span class="bos-avatar"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg></span></summary>
+      <div class="bos-menu right">
+        <div class="bos-menu-head"><small>Signed in as</small><span id="userEmail" title="Signed-in account"></span></div>
+        <button type="button" onclick="document.getElementById('csvFile').click()"><svg class="i" aria-hidden="true"><use href="#i-upload"/></svg>Import customers (CSV / Excel)</button>
+        <button type="button" onclick="exportCSV()"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg>Export customers (CSV)</button>
+        <button type="button" class="out" onclick="logout()"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg>Log out</button>
+      </div>
+    </details>
+    <input id="csvFile" class="file-hidden" type="file" accept=".csv,.xlsx,.xls" onchange="importCSV(event)">
+  </div>
+</header>
+<div class="customers-page" id="main">
+<div class="os-layout"><div class="os-content">
+<div class="page-head"><div><div class="bos-eyebrow">Customer workspace</div><h1>Customers</h1><p>Track every customer's journey in one place.</p></div></div>
+<section class="dashboard-v2 view-hidden" id="dashboardV2">
   <div class="dash-head">
     <div>
       <div class="dash-kicker">BUSINESS OVERVIEW</div>
@@ -524,19 +234,44 @@ body.module-page .os-content{min-width:0!important}
     </div><div class="finder-actions"><button class="finder-primary" onclick="saveFinderProspect()">＋ Add to CRM</button><span class="finder-note">Saved with Source = Business Finder and Status = New.</span></div></div>
   </div>
 </section>
-<div id="summary" class="smart-summary"><span><b id="total">0</b> contacts</span><i></i><span><b id="today">0</b> follow-ups today</span><i></i><span><b id="hot">0</b> hot leads</span><i></i><span><b id="overdue">0</b> overdue</span></div><div id="templatePipeline" class="template-pipeline"></div>
-<div class="workspace"><section class="list-card" id="customerList">
-<div class="list-head"><div class="list-title-wrap"><div><b id="listTitle">All Customers / Leads</b><small id="listSubtitle">Manage your customers, requirements and follow-ups.</small><small class="record-sort-note">Newest records appear first · latest enquiry stays easy to find.</small></div><span class="latest-badge">● Latest first</span></div><div class="list-search"><input id="search" placeholder="Search name, mobile, company..." oninput="window.filterCustomersNow&&window.filterCustomersNow()"><span id="count">0 records</span></div></div>
-<div class="filters"><select id="type" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Categories</option><option>Customer</option><option>Broker</option><option>Seller</option><option>Prospect</option><option>Agent</option><option>Partner</option><option>Group / Team</option><option>Builder / Developer</option><option>Investor</option></select><select id="subcategoryFilter" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Subcategories</option></select><select id="area" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Cities / Areas</option></select><select id="statusFilter" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Statuses</option><option>New</option><option>Contacted</option><option>Interested</option><option>Follow-up</option><option>Demo</option><option>Site Visit</option><option>Negotiation</option><option>Won</option><option>Lost</option><option>Overdue</option></select><select id="sourceFilter" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Sources</option><option>Website</option><option>WhatsApp</option><option>Phone</option><option>Google</option><option>Facebook</option><option>Instagram</option><option>Referral</option><option>Business Finder</option><option>Walk-in</option><option>Other</option></select><select id="followFilter" onchange="window.toggleCustomFollowDates&&window.toggleCustomFollowDates();window.filterCustomersNow&&window.filterCustomersNow()"><option value="">Any Date</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="thisweek">This Week</option><option value="lastweek">Last Week</option><option value="thismonth">This Month</option><option value="lastmonth">Last Month</option><option value="overdue">Overdue</option><option value="upcoming">Upcoming</option><option value="custom">Custom Date Range</option></select><span id="customFollowDates" style="display:none;gap:6px;align-items:center"><input type="date" id="followDateFrom" aria-label="Follow-up from date" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><input type="date" id="followDateTo" aria-label="Follow-up to date" onchange="window.filterCustomersNow&&window.filterCustomersNow()"></span><button class="reset-filter" onclick="window.resetCustomerFilters&&window.resetCustomerFilters()">Reset</button></div>
+
+<div id="summary" class="bos-kpis" aria-label="Customer summary">
+  <button type="button" class="bos-kpi k-blue" onclick="clearDashFilter()"><b id="total">0</b><span>Contacts</span></button>
+  <button type="button" class="bos-kpi k-amber" onclick="setFollowFilter('today')"><b id="today">0</b><span>Follow-ups today</span></button>
+  <div class="bos-kpi k-purple"><b id="hot">0</b><span>Hot leads</span></div>
+  <button type="button" class="bos-kpi k-red" onclick="setFollowFilter('overdue')"><b id="overdue">0</b><span>Overdue</span></button>
+</div>
+<div id="templatePipeline" class="template-pipeline"></div>
+<div class="workspace"><section class="list-card" id="customerList" aria-label="Customers and leads">
+<div class="bos-listhead">
+  <div class="bos-listtitle"><b id="listTitle">All Customers / Leads</b><small id="listSubtitle">Manage customers, requirements and follow-ups.</small></div>
+  <div class="bos-search">
+    <label><svg class="i" aria-hidden="true"><use href="#i-search"/></svg><span class="bos-sr">Search customers</span><input id="search" type="search" placeholder="Search name, mobile, company…" oninput="window.filterCustomersNow && window.filterCustomersNow()" onkeydown="if(event.key==='Escape'){this.value='';window.filterCustomersNow && window.filterCustomersNow()}" autocomplete="off"></label>
+    <span class="bos-meta"><span id="count">0 records</span> · newest first</span>
+  </div>
+</div>
+<div class="bos-filters" role="group" aria-label="Filter customers"><select id="type" aria-label="Category" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Categories</option><option>Customer</option><option>Broker</option><option>Seller</option><option>Prospect</option><option>Agent</option><option>Partner</option><option>Group / Team</option><option>Builder / Developer</option><option>Investor</option></select><select id="subcategoryFilter" aria-label="Subcategory" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Subcategories</option></select><select id="area" aria-label="City or area" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Cities / Areas</option></select><select id="statusFilter" aria-label="Status" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Statuses</option><option>New</option><option>Contacted</option><option>Interested</option><option>Follow-up</option><option>Demo</option><option>Site Visit</option><option>Negotiation</option><option>Won</option><option>Lost</option><option>Overdue</option></select><select id="sourceFilter" aria-label="Source" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Sources</option><option>Website</option><option>WhatsApp</option><option>Phone</option><option>Google</option><option>Facebook</option><option>Instagram</option><option>Referral</option><option>Business Finder</option><option>Walk-in</option><option>Other</option></select><select id="followFilter" aria-label="Follow-up date" onchange="window.toggleCustomFollowDates&&window.toggleCustomFollowDates();window.filterCustomersNow&&window.filterCustomersNow()"><option value="">Any Date</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="thisweek">This Week</option><option value="lastweek">Last Week</option><option value="thismonth">This Month</option><option value="lastmonth">Last Month</option><option value="overdue">Overdue</option><option value="upcoming">Upcoming</option><option value="custom">Custom Date Range</option></select><span id="customFollowDates" style="display:none;gap:6px;align-items:center"><input type="date" id="followDateFrom" aria-label="Follow-up from date" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><input type="date" id="followDateTo" aria-label="Follow-up to date" onchange="window.filterCustomersNow&&window.filterCustomersNow()"></span><button class="bos-reset" onclick="window.resetCustomerFilters&&window.resetCustomerFilters()">Reset</button></div>
 <div id="bulkCustomerToolbar" class="bulk-customer-toolbar" hidden>
   <div><b id="selectedCustomerCount">0 selected</b><span>Choose only the records you want to remove.</span></div>
-  <button type="button" class="bulk-delete-button" onclick="deleteSelectedCustomers()">✕ Delete selected</button>
+  <div><button type="button" class="bos-btn ghost" onclick="toggleSelectAllCustomers(false)">Clear selection</button><button type="button" class="bos-btn danger bulk-delete-button" onclick="deleteSelectedCustomers()"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg>Delete selected</button></div>
 </div>
-<div class="table-scroll"><div class="table-head"><div><input type="checkbox" id="selectAllCustomers" aria-label="Select all visible customers" onchange="toggleSelectAllCustomers(this.checked)"></div><div>Customer / Business</div><div>Contact</div><div id="tableLocationLabel">Location</div><div>Requirement</div><div>Budget / Value</div><div>Status</div><div>Next Action</div><div>Action</div></div><div id="rows"></div></div>
+<div class="bx-chips" id="bxChips" role="group" aria-label="Quick filters">
+  <button type="button" data-k="" class="on" onclick="bxChip('')">All <span class="n">0</span></button>
+  <button type="button" data-k="Interested" onclick="bxChip('Interested')"><svg class="i" aria-hidden="true"><use href="#i-flame"/></svg>Interested <span class="n">0</span></button>
+  <button type="button" data-k="overdue" onclick="bxChip('overdue')"><svg class="i" aria-hidden="true"><use href="#i-alert"/></svg>Overdue <span class="n">0</span></button>
+  <button type="button" data-k="Won" onclick="bxChip('Won')"><svg class="i" aria-hidden="true"><use href="#i-trophy"/></svg>Won <span class="n">0</span></button>
+  <button type="button" data-k="Lost" onclick="bxChip('Lost')"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg>Lost <span class="n">0</span></button>
+</div>
+<div class="bx-scroll">
+  <div class="bx-head"><div><input type="checkbox" id="selectAllCustomers" aria-label="Select all visible customers" onchange="toggleSelectAllCustomers(this.checked)"></div><div>Customer</div><div>Requirement</div><div>Status</div><div>Next action</div><div class="bx-actions-h">Actions</div></div>
+  <span id="tableLocationLabel" hidden>Location</span><span id="tableTypeLabel" hidden>Type</span>
+  <div id="rows" aria-live="polite"><div class="bos-skel" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="bos-skel" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="bos-skel" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="bos-skel" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="bos-skel" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+</div>
 </section></div>
-</div><!-- /os-content -->
-</div><!-- /os-layout -->
-</div></main>
+</div></div>
+</main>
+
+
 
 <div class="customer-overlay" id="profileOverlay"><div class="customer-modal-card"><div id="profileModalContent"></div></div></div>
 <div class="modal" id="customerModal"><div class="customer-modal-box"><h2>＋ Add Customer</h2><p>Save directly to your private Firestore business workspace.</p><div class="customer-form"><label>Name<input id="fName" placeholder="Rahul Sharma"></label><label>Mobile<input id="fPhone" placeholder="9876543210"></label><label>Email<input id="fEmail" type="email" placeholder="customer@example.com"></label><label><span id="reqLabel">Requirement</span><input id="fReq" placeholder="Residential Plot"></label><label><span id="budgetLabel">Budget</span><input id="fBudget" placeholder="₹30–35 Lakh"></label><label><span id="businessTypeLabel">Business Type</span><select id="fBusinessType"><option>Real Estate</option><option>Education</option><option>Coaching</option><option>Consultancy</option><option>Agency</option><option>Automobile</option><option>Solar</option><option>Healthcare</option><option>Finance</option><option>Insurance</option><option>Retail</option><option>IT / Software</option><option>E-commerce</option><option>Services</option><option>Other</option></select></label><label class="legacy-contact-type-field" aria-hidden="true"><span id="contactTypeLabel">Contact Type / Category</span><select id="fType" onchange="window.updateSubcategoryOptions&&window.updateSubcategoryOptions()"><option>Customer</option><option>Broker</option><option>Seller</option><option>Prospect</option><option>Agent</option><option>Partner</option><option>Group / Team</option><option>Builder / Developer</option><option>Investor</option></select></label><label>Category / Role<select id="fSubcategory" onchange="window.toggleCustomSubcategory&&window.toggleCustomSubcategory()">
@@ -890,14 +625,82 @@ function buildSubcategoryFilters(){
  sel.innerHTML='<option value="">All Subcategories</option>'+vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');
  sel.value=vals.includes(current)?current:"";
 }
+
+/* ===== BusinessOS customer table renderer (UI only — reads existing fields, writes nothing) ===== */
+const bxClean=v=>{const s=String(v??"").trim();return /^[\s"'`“”‘’.,;:\-–—_\\\/|]*$/.test(s)?"":s};
+const BX_ICON={"new":"sparkle","contacted":"phone","interested":"flame","follow-up":"clock","demo":"calendar","site-visit":"pin","negotiation":"swap","won":"trophy","paid":"check","lost":"x","overdue":"alert"};
+const bxIco=(n,c="")=>`<svg class="i ${c}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+function bxTime(t){const m=String(t||"").trim().match(/^(\d{1,2}):(\d{2})\s*([AaPp][Mm])?$/);if(!m)return"";let h=+m[1];if(m[3])return`${h}:${m[2]} ${m[3].toUpperCase()}`;const ap=h>=12?"PM":"AM";h=h%12||12;return`${h}:${m[2]} ${ap}`}
+function bxNext(c){
+ const st=String(c.status||"New"),raw=bxClean(c.next);
+ if(st==="Won"||st==="Paid")return{cls:"won",t:"Deal closed",s:st==="Paid"?"Payment received":"Ask for a referral"};
+ if(st==="Lost")return{cls:"lost",t:"Closed as lost",s:"Reopen when ready"};
+ const none=!raw||/^not set$/i.test(raw);
+ if(!none&&/completed/i.test(raw)){
+  // "Completed" is only shown as done when a follow-up was really completed (event log) or the lead has moved past New/Contacted.
+  const doneEvt=Array.isArray(c.events)&&c.events.some(e=>/follow-?up completed/i.test(String(e&&e.type||"")));
+  if(doneEvt||!["New","Contacted"].includes(st))return{cls:"done",t:"Follow-up done",s:"Plan the next step",btn:"Set next"};
+  return{btn:"Set follow-up"};
+ }
+ if(none)return st==="Overdue"?{cls:"late",t:"Overdue",s:"Set a new date",btn:"Set follow-up"}:{btn:"Set follow-up"};
+ const parts=raw.split(" · ").map(x=>x.trim()).filter(Boolean),d=parseNextDate(raw),rest=parts.slice(1);
+ let time="",note="";
+ if(rest.length&&/^\d{1,2}:\d{2}/.test(rest[0])){time=bxTime(rest[0]);note=rest.slice(1).join(" · ")}else note=rest.join(" · ");
+ if(!d)return{cls:st==="Overdue"?"late":"",t:parts[0]||raw,s:note};
+ const n=new Date(),t0=new Date(n.getFullYear(),n.getMonth(),n.getDate()),diff=Math.round((d-t0)/86400000);
+ const dl=d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}),at=time?", "+time:"";
+ if(diff<0){const k=-diff;return{cls:"late",t:`${k} ${k===1?"day":"days"} overdue`,s:[dl+at,note].filter(Boolean).join(" · ")}}
+ if(diff===0)return{cls:"today",t:"Today"+at,s:note||"Due today"};
+ if(diff===1)return{cls:"soon",t:"Tomorrow"+at,s:note||"Scheduled"};
+ return{cls:"",t:dl+at,s:note||`In ${diff} days`};
+}
+function bxRow(c){
+ const st=String(c.status||"New"),key=safeStatus(st),won=st==="Won"||st==="Paid",hot=["Interested","Site Visit","Negotiation"].includes(st),n=bxNext(c),id=esc(c.id);
+ const phone=bxClean(c.phone),biz=bxClean(c.businessName),area=bxClean(c.area||c.city),tag=bxClean(c.subcategory||c.type);
+ const req=bxClean(c.req||c.requirement),budget=bxClean(c.budget),btype=bxClean(c.businessType),email=bxClean(c.email);
+ const sub=[biz?esc(biz):"",phone?esc(phone):'<span class="bx-miss">Add phone number</span>',area?esc(area):""].filter(Boolean).join(" · ");
+ const cls=["bx-row",won?"bx-won":"",hot&&n.cls!=="late"?"bx-hot":"",n.cls==="late"?"bx-late":"",newRecordId===c.id?"bx-new":""].filter(Boolean).join(" ");
+ const name=bxClean(c.name)||"Unnamed";
+ return `<div class="${cls}" data-record-id="${id}" tabindex="0" onclick="selectCustomer('${id}')" onkeydown="if(event.key==='Enter'&&event.target===this)selectCustomer('${id}')">`
+ +`<div class="bx-c"><input type="checkbox" class="customer-row-select" data-customer-id="${id}" onclick="event.stopPropagation()" onchange="updateCustomerSelection()" aria-label="Select ${esc(name)}"></div>`
+ +`<div class="bx-cust"><div class="bx-av">${esc(ini(name))}${won?`<span class="bx-trophy" aria-hidden="true">${bxIco("trophy")}</span>`:""}</div><div class="bx-cm"><div class="bx-nm"><b title="${esc(name)}">${esc(name)}</b>${tag?`<span class="bx-tag">${esc(tag)}</span>`:""}</div><small>${sub}</small></div></div>`
+ +`<div class="bx-req"><b>${req?esc(req):'<span class="bx-miss">Not added</span>'}</b><small>${esc(budget||btype||"")}</small></div>`
+ +`<div class="bx-stc"><button type="button" class="bx-st bx-st-${esc(key)}" title="View or change status" onclick="event.stopPropagation();selectCustomer('${id}')">${bxIco(BX_ICON[key]||"dot")}${esc(st)}</button></div>`
+ +`<div class="bx-next ${n.cls||""}">${n.t?`<b>${esc(n.t)}</b>`:""}${n.s?`<small>${esc(n.s)}</small>`:""}${n.btn?`<button type="button" class="bx-setfu" onclick="event.stopPropagation();selectCustomer('${id}')">+ ${esc(n.btn)}</button>`:""}</div>`
+ +`<div class="bx-act"><button type="button" class="bx-wa${phone?"":" bx-off"}" title="${phone?"Send WhatsApp message":"No mobile number — open composer"}" aria-label="WhatsApp ${esc(name)}" onclick="event.stopPropagation();wa('${id}')">${bxIco("wa")}<span class="t">WhatsApp</span></button><button type="button" class="bx-view" title="View customer" aria-label="View ${esc(name)}" onclick="event.stopPropagation();selectCustomer('${id}')">View</button><button type="button" class="bx-del" title="Delete customer (asks for confirmation)" aria-label="Delete ${esc(name)}" onclick="event.stopPropagation();deleteCustomerRecord('${id}')">${bxIco("trash")}</button></div></div>`;
+}
+function bxEmpty(){
+ if(window.__bxError)return'<div class="empty-state"><b>We couldn’t load your customers</b>Check your internet connection and try again.<div class="bos-empty-actions"><button type="button" class="bos-btn primary" onclick="location.reload()">Reload</button></div></div>';
+ if(!window.__bxLoaded)return'<div class="bos-skel" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>'.repeat(5);
+ if(!customers.length)return`<div class="empty-state"><b>No customers yet</b>Add your first customer or import your existing CSV / Excel list.<div class="bos-empty-actions"><button type="button" class="bos-btn primary" onclick="openCustomerModal()">${bxIco("plus")}Add customer</button><button type="button" class="bos-btn" onclick="document.getElementById('csvFile').click()">${bxIco("upload")}Import list</button></div></div>`;
+ return'<div class="empty-state"><b>No matching customers</b>Nothing matches your search or filters.<div class="bos-empty-actions"><button type="button" class="bos-btn" onclick="window.resetCustomerFilters&&window.resetCustomerFilters()">Clear filters</button></div></div>';
+}
+function bxSyncChips(){
+ const sf=$("statusFilter")?.value||"",ff=$("followFilter")?.value||"";
+ const k=ff==="overdue"?"overdue":(ff?"__other":sf);
+ document.querySelectorAll("#bxChips button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
+}
+// Chip counts come from the real records and use the SAME rules as the filters they trigger.
+function bxCounts(){
+ const now=new Date(),dayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ const late=c=>{const d=parseNextDate(c.next);return !(isTerminal(c)||isCompletedFollowUp(c)||!d||d>=dayStart)||c.status==="Overdue"};
+ const n={"":customers.length,Interested:customers.filter(c=>c.status==="Interested").length,overdue:customers.filter(late).length,Won:customers.filter(c=>c.status==="Won").length,Lost:customers.filter(c=>c.status==="Lost").length};
+ document.querySelectorAll("#bxChips button").forEach(b=>{const el=b.querySelector(".n");if(!el)return;const v=n[b.dataset.k]??0;el.textContent=v;el.classList.toggle("has",v>0)});
+}
+window.bxChip=function(k){
+ const sEl=$("statusFilter"),f=$("followFilter");if(!sEl||!f)return;
+ sEl.value=k==="overdue"?"":k;f.value=k==="overdue"?"overdue":"";
+ if(window.toggleCustomFollowDates)window.toggleCustomFollowDates();
+ (window.filterCustomersNow||render)();
+};
 function render(){
  buildAreas();updatePipeline();buildSubcategoryFilters();const rawQ=String($("search")?.value||"").trim().toLowerCase(),q=rawQ.replace(/[^a-z0-9]/g,""),ar=$("area")?.value||"",tp=$("type")?.value||"",subf=$("subcategoryFilter")?.value||"",sf=$("statusFilter")?.value||"",src=$("sourceFilter")?.value||"",ff=$("followFilter")?.value||"";
  const now=new Date(),dayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate());
  let arr=customers.filter(c=>{const rawHay=[c.name,c.phone,c.phoneNormalized,c.email,c.businessName,c.area,c.city,c.req,c.requirement,c.detail,c.budget,c.status,c.note,c.notes,c.source,c.businessType,c.type,c.subcategory].join(" ").toLowerCase();const hay=rawHay.replace(/[^a-z0-9]/g,"");const d=parseNextDate(c.next);if(rawQ&&!rawHay.includes(rawQ)&&!hay.includes(q))return false;if(ar&&c.area!==ar)return false;if(tp&&String(c.type||"Customer")!==tp)return false;if(subf&&String(c.subcategory||"")!==subf)return false;if(sf&&c.status!==sf)return false;if(src&&String(c.source||"Other")!==src)return false;if(ff==="today"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||dateKey(d)!==dateKey(now)))return false;if(ff==="yesterday"){const y=new Date(dayStart);y.setDate(y.getDate()-1);if(isTerminal(c)||isCompletedFollowUp(c)||!d||dateKey(d)!==dateKey(y))return false;}if(["thisweek","lastweek","thismonth","lastmonth","custom"].includes(ff)){if(isTerminal(c)||isCompletedFollowUp(c)||!d)return false;const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());let from,to;if(ff==="thisweek"){from=new Date(dayStart);from.setDate(from.getDate()-((from.getDay()+6)%7));to=new Date(from);to.setDate(to.getDate()+7);}if(ff==="lastweek"){to=new Date(dayStart);to.setDate(to.getDate()-((to.getDay()+6)%7));from=new Date(to);from.setDate(from.getDate()-7);}if(ff==="thismonth"){from=new Date(now.getFullYear(),now.getMonth(),1);to=new Date(now.getFullYear(),now.getMonth()+1,1);}if(ff==="lastmonth"){from=new Date(now.getFullYear(),now.getMonth()-1,1);to=new Date(now.getFullYear(),now.getMonth(),1);}if(ff==="custom"){const fs=$("followDateFrom")?.value,ts=$("followDateTo")?.value;if(!fs&&!ts)return false;if(fs)from=new Date(fs+"T00:00:00");if(ts){to=new Date(ts+"T00:00:00");to.setDate(to.getDate()+1);}}if(from&&x<from)return false;if(to&&x>=to)return false;}if(ff==="overdue"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||d>=dayStart)&&c.status!=="Overdue")return false;if(ff==="upcoming"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||d<=dayStart))return false;return true});
  arr.sort((a,b)=>{const av=Number(a.createdAt?.seconds||0)||Number(a.updatedAt?.seconds||0)||0;const bv=Number(b.createdAt?.seconds||0)||Number(b.updatedAt?.seconds||0)||0;return bv-av;});
  const fs=followStats();
- $("total").textContent=customers.length;$("today").textContent=fs.today;$("hot").textContent=customers.filter(c=>["Interested","Follow-up","Site Visit","Negotiation"].includes(c.status)).length;$("overdue").textContent=fs.overdue;$("count").textContent=arr.length+" records";
- $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" class="customer-row-select" data-customer-id="${esc(c.id)}" onclick="event.stopPropagation()" onchange="updateCustomerSelection()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b title="${esc(c.name)}">${esc(c.name)}</b><div class="record-badges">${(c.subcategory||c.type)?`<span class="subcategory-text" title="${esc(c.subcategory||c.type)}">${esc(c.subcategory||c.type)}</span>`:""}</div></div><small class="customer-secondary">${esc(c.businessName||'')}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small class="contact-secondary"></small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div class="status-cell"><button type="button" class="status status-action ${safeStatus(c.status)}" title="Click to view or change status" onclick="event.stopPropagation();selectCustomer('${c.id}')">${esc(c.status||"New")} <span class="status-edit-mark">⌄</span></button></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button><button type="button" class="delete-one-customer" title="Delete customer" aria-label="Delete ${esc(c.name)}" onclick="event.stopPropagation();deleteCustomerRecord('${c.id}')">×</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
+ $("total").textContent=customers.length;$("today").textContent=fs.today;$("hot").textContent=customers.filter(c=>["Interested","Follow-up","Site Visit","Negotiation"].includes(c.status)).length;$("overdue").textContent=fs.overdue;$("count").textContent=arr.length+(arr.length===1?" record":" records");
+ $("rows").innerHTML=arr.length?arr.map(bxRow).join(""):bxEmpty();bxSyncChips();bxCounts();
   renderDashboard(); updateSideCounts(); window.updateRecordQuickCounts?.();
 }
 function selectedCustomerIds(){
@@ -1326,7 +1129,7 @@ async function ensureWorkspace(u){
   await setDoc(userRef,{uid:u.uid,email:u.email||'',displayName:u.displayName||'',businessId,businessName:name,role:memberRole,templateId:businessProfile.templateId||'general',updatedAt:serverTimestamp()},{merge:true});
 }
 
-function subscribe(){if(unsub)unsub();const q=query(collection(db,"businesses",businessId,"contacts"),orderBy("createdAt","desc"));unsub=onSnapshot(q,snap=>{customers=snap.docs.map(d=>({id:d.id,...d.data()}));render()},err=>toast(err.message||"Could not load CRM data",true))}
+function subscribe(){if(unsub)unsub();const q=query(collection(db,"businesses",businessId,"contacts"),orderBy("createdAt","desc"));unsub=onSnapshot(q,snap=>{customers=snap.docs.map(d=>({id:d.id,...d.data()}));window.__bxLoaded=true;window.__bxError=false;render()},err=>{window.__bxLoaded=true;window.__bxError=true;toast(err.message||"Could not load CRM data",true);render()})}
 async function finishRedirect(){
   try{
     const result=await getRedirectResult(auth);
@@ -1388,7 +1191,6 @@ if(subcategorySelect && customSubcategoryInput){
   });
 }
 </script>
-
 <div class="modal" id="onboardingModal" style="display:none;position:fixed;inset:0;background:rgba(9,16,29,.72);backdrop-filter:blur(8px);z-index:9999;place-items:center;padding:18px">
   <div style="width:min(620px,96vw);max-height:92vh;overflow:auto;background:#fff;border-radius:20px;border:1px solid #e4e9f1;box-shadow:0 35px 100px rgba(0,0,0,.28);padding:26px">
     <div style="font-size:10px;font-weight:900;letter-spacing:.14em;color:#65748a">BUSINESS OS · FIRST-TIME SETUP</div>
@@ -1411,681 +1213,12 @@ if(subcategorySelect && customSubcategoryInput){
   </div>
 </div>
 
-<style id="businessos-customers-v32-launch-ui">
-/* V32 — Launch UI rebuild. Visual architecture only; Firebase/data/JS logic untouched. */
-:root{
-  --l-bg:#f4f7fb;--l-card:#ffffff;--l-ink:#15223b;--l-muted:#718098;--l-line:#dfe7f1;
-  --l-blue:#2563eb;--l-blue2:#4f7cff;--l-green:#0a8f67;--l-shadow:0 18px 55px rgba(19,42,76,.07)
-}
-html,body{background:var(--l-bg)!important}
-body.app-page{overflow-x:hidden!important;background:
-  radial-gradient(900px 420px at 85% -5%,rgba(63,111,240,.10),transparent 62%),
-  radial-gradient(700px 380px at 5% 25%,rgba(20,157,112,.045),transparent 62%),
-  var(--l-bg)!important;color:var(--l-ink)!important}
-body.app-page>.nav{display:none!important}
-body.app-page .customers-shell{padding:26px 28px 56px!important;min-height:100vh!important}
-body.app-page .customers-page{max-width:none!important;width:100%!important}
-body.app-page .os-layout{display:grid!important;grid-template-columns:232px minmax(0,1fr)!important;gap:24px!important;align-items:start!important}
-body.app-page .os-sidebar{position:sticky!important;top:22px!important;height:calc(100vh - 44px)!important;overflow:auto!important;padding:17px 11px!important;border:1px solid #dfe6f0!important;border-radius:22px!important;background:rgba(255,255,255,.94)!important;box-shadow:var(--l-shadow)!important;backdrop-filter:blur(10px)!important}
-body.app-page .os-side-title{padding:8px 12px!important;font-size:10px!important;letter-spacing:.13em!important;color:#8a97aa!important;font-weight:900!important}
-body.app-page .os-side-link{height:46px!important;margin:3px 2px!important;padding:0 12px!important;border-radius:12px!important;color:#506079!important;font-size:12px!important;display:flex!important;align-items:center!important;gap:11px!important;transition:.16s ease!important}
-body.app-page .os-side-link span{width:22px!important;text-align:center!important;font-size:15px!important}
-body.app-page .os-side-link b{font-weight:800!important;flex:1!important}
-body.app-page .os-side-link em{font-style:normal!important;min-width:22px!important;height:22px!important;padding:0 6px!important;border-radius:999px!important;background:#f1f4f8!important;color:#728096!important;display:grid!important;place-items:center!important;font-size:9px!important;font-weight:900!important}
-body.app-page .os-side-link:hover{background:#f5f8fd!important;color:#244fbd!important}
-body.app-page .os-side-link.active{background:linear-gradient(135deg,#edf3ff,#e8f0ff)!important;color:#1f5be0!important;box-shadow:inset 3px 0 0 #2f67ed!important}
-body.app-page .os-side-link.active em{background:#dbe8ff!important;color:#2861dc!important}
-body.app-page .os-side-divider{height:1px!important;background:#e8edf4!important;margin:15px 8px!important}
-body.app-page .os-content{min-width:0!important;width:100%!important}
-body.app-page .page-head{padding:2px 2px 18px!important;min-height:62px!important}
-body.app-page .page-head h1{font-size:32px!important;line-height:1.05!important;letter-spacing:-1.1px!important;font-weight:900!important;color:#12203a!important}
-body.app-page .page-head p{font-size:13px!important;margin-top:7px!important;color:#738199!important}
-body.app-page .top-actions{gap:8px!important}
-body.app-page .top-actions .session{display:none!important}
-body.app-page .top-actions button{height:42px!important;border-radius:11px!important;padding:0 15px!important;font-size:12px!important;font-weight:850!important;background:#fff!important;border:1px solid #dce4ef!important;color:#34445d!important;box-shadow:0 5px 14px rgba(20,40,70,.04)!important}
-body.app-page .top-actions .primary{background:linear-gradient(135deg,#2563eb,#3f72ef)!important;color:#fff!important;border-color:#2563eb!important;box-shadow:0 10px 22px rgba(37,99,235,.20)!important}
-/* Customer page means customer page — remove the embedded multi-module experience. */
-body.app-page #dashboardV2,
-body.app-page #followupCenter,
-body.app-page #websiteLeadCenter,
-body.app-page #businessFinder,
-body.app-page #businessFinderView,
-body.app-page #whatsappCenter,
-body.app-page #websiteLeads,
-body.app-page .record-quickbar,
-body.app-page #templatePipeline{display:none!important}
-body.app-page .smart-summary{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;min-height:76px!important;height:auto!important;margin:0 0 14px!important;padding:10px!important;border:1px solid #dfe7f1!important;border-radius:16px!important;background:rgba(255,255,255,.92)!important;box-shadow:0 12px 34px rgba(19,42,76,.05)!important;gap:8px!important}
-body.app-page .smart-summary span{min-height:52px!important;padding:0 14px!important;display:flex!important;align-items:center!important;gap:8px!important;border-radius:11px!important;background:#f8fafd!important;color:#738198!important;font-size:11px!important}
-body.app-page .smart-summary b{font-size:21px!important;color:#15243f!important}
-body.app-page .smart-summary i{display:none!important}
-body.app-page .list-card{border:1px solid #dce5f0!important;border-radius:20px!important;background:#fff!important;box-shadow:var(--l-shadow)!important;overflow:hidden!important}
-body.app-page .list-head{min-height:100px!important;padding:19px 24px!important;border-bottom:1px solid #e5ebf2!important;background:#fff!important;display:flex!important;align-items:center!important;gap:20px!important}
-body.app-page .list-title-wrap{display:flex!important;align-items:center!important;gap:11px!important;min-width:0!important}
-body.app-page .list-head b{font-size:22px!important;line-height:1.1!important;color:#15233d!important;font-weight:900!important}
-body.app-page .list-head small{font-size:11px!important;color:#748198!important;margin-top:4px!important}
-body.app-page .record-sort-note{font-size:11px!important;color:#2c63dc!important;font-weight:800!important}
-body.app-page .latest-badge{height:28px!important;padding:0 10px!important;background:#eef9f4!important;border:1px solid #d5eee2!important;color:#087b58!important;font-size:9px!important;border-radius:999px!important;font-weight:900!important}
-body.app-page .list-search{margin-left:auto!important;gap:10px!important}
-body.app-page .list-search input{width:min(360px,30vw)!important;height:46px!important;border-radius:12px!important;border:1px solid #d6e0ec!important;background:#f8fafd!important;font-size:13px!important;padding:0 14px!important}
-body.app-page .list-search input:focus{background:#fff!important;border-color:#87a5ed!important;box-shadow:0 0 0 4px rgba(37,99,235,.08)!important}
-body.app-page .list-search span{font-size:10px!important;color:#7a879a!important;font-weight:800!important;white-space:nowrap!important}
-body.app-page .filters{display:grid!important;grid-template-columns:repeat(5,minmax(120px,1fr)) 82px!important;gap:9px!important;padding:12px 24px!important;background:#f8fafd!important;border-bottom:1px solid #e3e9f1!important}
-body.app-page .filters select{height:42px!important;border-radius:10px!important;border:1px solid #d7e0eb!important;background:#fff!important;color:#4d5d75!important;font-size:11px!important;padding:0 10px!important}
-body.app-page .reset-filter{height:42px!important;border-radius:10px!important;border:1px solid #d7e0eb!important;background:#fff!important;color:#3c4d65!important;font-size:11px!important;font-weight:850!important}
-body.app-page .table-scroll{overflow-x:auto!important;overflow-y:visible!important}
-body.app-page .table-head,body.app-page .row{grid-template-columns:30px minmax(220px,2fr) minmax(120px,1.05fr) minmax(115px,1fr) minmax(135px,1.15fr) minmax(115px,.95fr) minmax(90px,.75fr) minmax(168px,1.25fr)!important;min-width:0!important;width:100%!important;padding-left:22px!important;padding-right:22px!important}
-body.app-page .table-head{height:48px!important;background:#f7f9fc!important;border-bottom:1px solid #e1e8f0!important;color:#7a879b!important;font-size:9px!important;letter-spacing:.10em!important;position:static!important}
-body.app-page .row{height:92px!important;min-height:92px!important;background:#fff!important;border-bottom:1px solid #edf1f5!important;transition:background .14s ease,box-shadow .14s ease!important}
-body.app-page .row:hover{background:#fbfdff!important;box-shadow:inset 3px 0 0 #2f67ed!important}
-body.app-page .row.is-new{background:#f1f6ff!important;box-shadow:inset 3px 0 0 #2563eb!important}
-body.app-page .avatar{width:46px!important;height:46px!important;border-radius:14px!important;font-size:11px!important;background:#eef3ff!important;color:#2e63dd!important;box-shadow:inset 0 0 0 1px #d9e4fc!important}
-body.app-page .contact-cell{gap:11px!important}
-body.app-page .contact-main b{font-size:14px!important;color:#15233d!important}
-body.app-page .contact-main small{font-size:10px!important;color:#7c899d!important;margin-top:4px!important}
-body.app-page .type-pill{padding:4px 8px!important;font-size:8px!important}
-body.app-page .data-cell{font-size:11px!important;color:#44546c!important}
-body.app-page .data-cell b{font-size:11px!important;color:#24344d!important;line-height:1.2!important}
-body.app-page .data-cell small{font-size:9px!important;color:#8a96a8!important;margin-top:4px!important}
-body.app-page .status{padding:6px 9px!important;font-size:9px!important}
-body.app-page .follow-cell b{font-size:11px!important;color:#33445e!important}
-body.app-page .follow-cell small{font-size:9px!important;color:#8a96a8!important;margin-top:4px!important}
-body.app-page .actions{display:flex!important;align-items:center!important;gap:5px!important;flex-wrap:nowrap!important}
-body.app-page .actions button{height:34px!important;border-radius:9px!important;padding:0 8px!important;font-size:9px!important;font-weight:850!important;white-space:nowrap!important;background:#fff!important;border:1px solid #dce4ee!important;color:#40516a!important}
-body.app-page .actions button:first-child{background:#edfaf5!important;color:#087b58!important;border-color:#cfeee0!important}
-body.app-page .actions button:last-child{background:#162540!important;color:#fff!important;border-color:#162540!important}
-body.app-page .empty-state{padding:90px 20px!important}
-/* Modals stay functional but visually match the new shell. */
-body.app-page .customer-modal-box,body.app-page .modal-box,body.app-page .customer-modal-card{border-radius:20px!important;box-shadow:0 30px 90px rgba(11,25,50,.22)!important}
-@media(max-width:1200px){
- body.app-page .os-layout{grid-template-columns:214px minmax(0,1fr)!important;gap:18px!important}
- body.app-page .smart-summary{grid-template-columns:repeat(2,1fr)!important}
- body.app-page .filters{grid-template-columns:repeat(3,1fr)!important}
- body.app-page .table-head,body.app-page .row{grid-template-columns:28px minmax(210px,1.9fr) minmax(105px,.95fr) minmax(105px,.95fr) minmax(125px,1.1fr) minmax(105px,.9fr) minmax(85px,.75fr) minmax(145px,1.2fr)!important}
-}
-@media(max-width:900px){
- body.app-page .customers-shell{padding:14px 10px 35px!important}
- body.app-page .os-layout{display:block!important}
- body.app-page .os-sidebar{position:static!important;height:auto!important;margin-bottom:14px!important}
- body.app-page .page-head{align-items:flex-start!important;gap:12px!important}
- body.app-page .page-head h1{font-size:28px!important}
- body.app-page .top-actions{flex-wrap:wrap!important}
- body.app-page .smart-summary{grid-template-columns:1fr 1fr!important}
- body.app-page .filters{grid-template-columns:1fr 1fr!important}
- body.app-page .list-head{flex-direction:column!important;align-items:stretch!important}
- body.app-page .list-search{margin-left:0!important}
- body.app-page .list-search input{width:100%!important}
- body.app-page .table-head{display:none!important}
- body.app-page .row{display:grid!important;grid-template-columns:26px minmax(0,1fr)!important;grid-template-rows:auto auto auto auto auto!important;height:auto!important;min-height:0!important;padding:17px!important;gap:9px 11px!important}
- body.app-page .row>.check{grid-column:1!important;grid-row:1/7!important;align-self:start!important}
- body.app-page .row>.contact-cell{grid-column:2!important;grid-row:1!important}
- body.app-page .row>div:nth-child(3){grid-column:2!important;grid-row:2!important}
- body.app-page .row>div:nth-child(4){grid-column:2!important;grid-row:3!important}
- body.app-page .row>div:nth-child(5){grid-column:2!important;grid-row:4!important}
- body.app-page .row>div:nth-child(6){grid-column:2!important;grid-row:5!important}
- body.app-page .row>div:nth-child(7){grid-column:2!important;grid-row:3!important}
- body.app-page .row>.follow-cell{grid-column:2!important;grid-row:6!important}
- body.app-page .row>.actions{grid-column:2!important;grid-row:7!important;flex-wrap:wrap!important}
-}
-</style>
 
-
-<style id="businessos-customers-v34-final-ui">
-/* V34 — final Customer BI workspace polish */
-body.app-page{background:#f4f7fb!important}
-body.app-page .customers-shell{padding:14px 22px 42px!important;max-width:1600px!important;margin:0 auto!important}
-
-/* Remove the redundant legacy page heading — BusinessOS topbar owns the identity. */
-body.app-page .page-head{display:none!important}
-
-/* Compact Power-BI-style KPI strip */
-body.app-page .smart-summary{
-  display:grid!important;
-  grid-template-columns:repeat(4,minmax(0,220px))!important;
-  justify-content:start!important;
-  gap:12px!important;
-  height:auto!important;
-  min-height:0!important;
-  padding:0!important;
-  margin:0 0 14px!important;
-  background:transparent!important;
-  border:0!important;
-  box-shadow:none!important;
-}
-body.app-page .smart-summary span{
-  position:relative!important;
-  min-height:62px!important;
-  box-sizing:border-box!important;
-  display:flex!important;
-  align-items:center!important;
-  gap:8px!important;
-  padding:11px 16px 11px 18px!important;
-  background:#fff!important;
-  border:1px solid #dfe6f0!important;
-  border-radius:13px!important;
-  box-shadow:0 5px 18px rgba(25,42,72,.045)!important;
-}
-body.app-page .smart-summary span:before{top:0!important;bottom:0!important;left:0!important;width:3px!important;border-radius:13px 0 0 13px!important}
-body.app-page .smart-summary b{font-size:24px!important;letter-spacing:-.7px!important}
-body.app-page .smart-summary span{font-size:10px!important;letter-spacing:.01em!important}
-body.app-page .smart-summary i{display:none!important}
-
-/* Top navigation: less pill-like, more polished BI product chrome */
-body.app-page .v33-topbar{
-  min-height:66px!important;
-  margin:10px 0 14px!important;
-  padding:8px 10px 8px 14px!important;
-  border-radius:17px!important;
-  background:rgba(255,255,255,.96)!important;
-  border:1px solid #dce4ef!important;
-  box-shadow:0 9px 30px rgba(21,38,68,.07)!important;
-}
-body.app-page .v33-brand{min-width:190px!important;gap:10px!important}
-body.app-page .v33-brand-mark{width:42px!important;height:42px!important;border-radius:12px!important;font-size:20px!important;box-shadow:0 7px 16px rgba(37,99,235,.22)!important}
-body.app-page .v33-brand-copy b{font-size:16px!important;letter-spacing:-.3px!important}
-body.app-page .v33-brand-copy span{font-size:8px!important;letter-spacing:.13em!important}
-body.app-page .v33-nav{gap:3px!important}
-body.app-page .v33-nav button{height:42px!important;border-radius:10px!important;padding:0 11px!important;font-size:10px!important;font-weight:850!important}
-body.app-page .v33-nav button.active{box-shadow:inset 0 -2px 0 #2563eb!important}
-body.app-page .v33-nav-action{gap:6px!important}
-body.app-page .v33-nav-action button{height:42px!important;border-radius:10px!important;font-size:10px!important}
-body.app-page .v33-nav-action .add{padding:0 17px!important;box-shadow:0 8px 18px rgba(37,99,235,.2)!important}
-
-/* Make the customer workspace itself feel like a report canvas, not a giant card. */
-body.app-page .list-card{
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  overflow:visible!important;
-}
-body.app-page .list-head{
-  min-height:86px!important;
-  padding:0 4px 12px!important;
-  border:0!important;
-  background:transparent!important;
-}
-body.app-page .list-title-wrap{gap:14px!important}
-body.app-page .list-head b{font-size:24px!important;letter-spacing:-.65px!important}
-body.app-page .list-head small{font-size:11px!important}
-body.app-page .record-sort-note{font-size:10px!important;color:#7b8799!important}
-body.app-page .latest-badge{background:#edf9f4!important;border-color:#cdebdc!important;color:#13815b!important}
-body.app-page .list-search input{height:44px!important;width:min(390px,32vw)!important;border-radius:11px!important;background:#fff!important;box-shadow:0 3px 12px rgba(23,39,67,.035)!important}
-
-/* Filters become a clean report toolbar */
-body.app-page .filters{
-  grid-template-columns:repeat(5,minmax(145px,1fr)) 84px!important;
-  padding:11px 0!important;
-  gap:8px!important;
-  background:transparent!important;
-  border:0!important;
-}
-body.app-page .filters select,body.app-page .reset-filter{height:39px!important;border-radius:10px!important;background:#fff!important;border-color:#dce4ee!important;font-size:10px!important}
-
-/* Data table: flat, spacious, high-density but readable */
-body.app-page .table-scroll{
-  border:1px solid #dce4ee!important;
-  border-radius:15px!important;
-  overflow:auto!important;
-  background:#fff!important;
-  box-shadow:0 12px 34px rgba(22,38,67,.055)!important;
-}
-body.app-page .table-head{
-  position:sticky!important;
-  top:0!important;
-  z-index:4!important;
-  height:46px!important;
-  background:#f7f9fc!important;
-  border-bottom:1px solid #dce4ee!important;
-  font-size:8px!important;
-}
-body.app-page .row{
-  height:82px!important;
-  min-height:82px!important;
-  background:#fff!important;
-  border-bottom:1px solid #edf1f5!important;
-}
-body.app-page .row:last-child{border-bottom:0!important}
-body.app-page .row:hover{
-  background:#f9fbff!important;
-  box-shadow:inset 3px 0 0 #2563eb!important;
-}
-body.app-page .contact-cell{gap:12px!important}
-body.app-page .avatar{width:42px!important;height:42px!important;border-radius:12px!important;font-size:10px!important}
-body.app-page .contact-main b{font-size:13px!important}
-body.app-page .contact-main small{font-size:9px!important}
-body.app-page .type-pill{font-size:9px!important;padding:4px 7px!important}
-body.app-page .data-cell b{font-size:11px!important}
-body.app-page .data-cell small,.follow-cell small{font-size:9px!important}
-body.app-page .status{font-size:9px!important;padding:6px 9px!important}
-body.app-page .follow-cell b{font-size:11px!important}
-body.app-page .actions{gap:5px!important}
-body.app-page .actions button{height:32px!important;border-radius:9px!important}
-
-/* Slightly richer visual treatment for key data */
-body.app-page .row .data-cell:nth-child(5) b{color:#1d355f!important}
-body.app-page .row .data-cell:nth-child(6) b{font-weight:900!important}
-body.app-page .row .follow-cell b{font-weight:850!important}
-
-@media(max-width:1100px){
-  body.app-page .v33-brand{min-width:155px!important}
-  body.app-page .v33-nav button{padding:0 8px!important}
-  body.app-page .v33-nav-action{display:none!important}
-  body.app-page .smart-summary{grid-template-columns:repeat(4,minmax(150px,1fr))!important}
-  body.app-page .filters{grid-template-columns:repeat(3,minmax(140px,1fr)) 84px!important}
-}
-@media(max-width:900px){
-  body.app-page .customers-shell{padding:10px 10px 30px!important}
-  body.app-page .v33-topbar{margin-top:6px!important}
-  body.app-page .smart-summary{grid-template-columns:1fr 1fr!important}
-  body.app-page .smart-summary span{min-height:58px!important}
-  body.app-page .list-head{align-items:flex-start!important;flex-direction:column!important;padding-bottom:10px!important}
-  body.app-page .list-search{width:100%!important}
-  body.app-page .list-search input{width:100%!important}
-  body.app-page .filters{grid-template-columns:1fr 1fr!important}
-}
-</style>
-
-
-<style id="businessos-customers-v35-final-polish">
-/* V35 FINAL — micro polish only; preserve all Firebase/business logic. */
-body.app-page .page-head{display:none!important}
-body.app-page .customers-shell{padding-top:16px!important}
-body.app-page .v33-topbar{border-color:#d9e3f1!important;box-shadow:0 10px 30px rgba(18,37,68,.07)!important}
-body.app-page .v33-brand-copy strong{color:#101d35!important;font-size:17px!important}
-body.app-page .v33-brand-copy small{color:#66758e!important;letter-spacing:.16em!important}
-body.app-page .v33-nav button{color:#42516a!important;font-size:10px!important;font-weight:850!important}
-body.app-page .v33-nav button:hover{color:#174bb7!important;background:#f3f7fd!important}
-body.app-page .v33-nav button.active{color:#1555cf!important}
-body.app-page .v33-nav button .nav-count{font-size:9px!important;color:#5d6b82!important;background:#edf1f7!important}
-body.app-page .v33-nav-action button{color:#33435c!important}
-body.app-page .v33-nav-action .add{color:#fff!important}
-/* Compact BI KPI strip */
-body.app-page .smart-summary{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important;margin-bottom:12px!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
-body.app-page .smart-summary span{height:58px!important;min-height:58px!important;padding:0 16px!important;border-radius:13px!important;box-shadow:0 7px 20px rgba(25,43,75,.045)!important;align-items:center!important}
-body.app-page .smart-summary span:before{top:11px!important;bottom:11px!important;width:3px!important}
-body.app-page .smart-summary b{font-size:23px!important}
-/* Cleaner report canvas */
-body.app-page .list-card{border-radius:16px!important;box-shadow:0 12px 34px rgba(20,33,61,.055)!important}
-body.app-page .list-head{min-height:88px!important;padding:16px 21px!important}
-body.app-page .list-head b{font-size:21px!important}
-body.app-page .list-head small{font-size:10px!important}
-body.app-page .record-sort-note{font-size:9px!important}
-body.app-page .list-search input{height:42px!important;width:min(390px,31vw)!important;font-size:12px!important}
-body.app-page .filters{padding:10px 21px!important}
-body.app-page .table-head{height:46px!important}
-body.app-page .row{height:84px!important;min-height:84px!important}
-body.app-page .row:hover{box-shadow:inset 3px 0 0 #2563eb,0 5px 16px rgba(25,43,75,.045)!important}
-@media(max-width:900px){body.app-page .smart-summary{grid-template-columns:1fr 1fr!important}.list-search input{width:100%!important}}
-</style>
-<script id="businessos-customers-v35-search-fix">
-(function(){
-  function wireCustomerSearch(){
-    const input=document.getElementById('search');
-    if(!input || input.dataset.v35Wired==='1') return;
-    input.dataset.v35Wired='1';
-    input.removeAttribute('oninput');
-    input.addEventListener('input',function(){
-      try { render(); } catch(err) { console.error('Customer search render failed:',err); }
-    });
-    input.addEventListener('keydown',function(e){
-      if(e.key==='Enter'){e.preventDefault();try{render()}catch(err){console.error(err)}}
-      if(e.key==='Escape'){input.value='';try{render()}catch(err){console.error(err)}}
-    });
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wireCustomerSearch);
-  else wireCustomerSearch();
-  setTimeout(wireCustomerSearch,500);
-})();
+<script id="bos-nav-badges">
+(function(){var nav=document.querySelector('.bos-nav');if(!nav)return;function sync(){nav.querySelectorAll('.bos-count').forEach(function(el){el.classList.toggle('is-zero',!(Number(el.textContent)>0))})}
+if('MutationObserver' in window)new MutationObserver(sync).observe(nav,{childList:true,characterData:true,subtree:true});sync();
+function closeMenus(except){document.querySelectorAll('.bos-more[open],.bos-account[open]').forEach(function(d){if(d!==except)d.removeAttribute('open')})}
+document.addEventListener('click',function(e){closeMenus(e.target.closest&&e.target.closest('details.bos-more,details.bos-account'))});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenus()});})();
 </script>
-
 </body></html>
-
-<style id="business-os-v24-cinematic-comfort">
-/* V24 — Premium cinematic workspace: clarity, depth, eye comfort. */
-:root{
-  --bos-ink:#10203a;
-  --bos-muted:#66758b;
-  --bos-line:#dfe7f1;
-  --bos-blue:#3568f4;
-  --bos-blue-soft:#eef4ff;
-  --bos-green:#0b9b6b;
-  --bos-amber:#c58a18;
-  --bos-purple:#7657e8;
-}
-html,body{min-height:100%;overflow-x:hidden!important;overflow-y:auto!important}
-body.app-page{background:
-  radial-gradient(circle at 92% 8%,rgba(82,115,245,.09),transparent 28%),
-  radial-gradient(circle at 8% 30%,rgba(52,185,145,.055),transparent 24%),
-  #f5f8fc!important;color:var(--bos-ink)!important}
-.customers-shell{min-height:auto!important;padding:30px 28px 72px!important}
-.customers-page{max-width:1540px!important}
-.page-head{padding:4px 10px 22px!important}
-.page-head h1{font-size:40px!important;font-weight:900!important;letter-spacing:-1.35px!important;color:#10203a!important}
-.page-head p{font-size:15px!important;color:#6b7a90!important;max-width:680px}
-.top-actions{gap:11px!important}
-.top-actions button{height:48px!important;border-radius:13px!important;padding:0 19px!important;font-size:13px!important;box-shadow:0 7px 20px rgba(20,40,70,.06)!important}
-.top-actions .primary{background:linear-gradient(135deg,#0b9b6b,#087f68)!important;box-shadow:0 10px 24px rgba(11,155,107,.18)!important}
-.smart-summary{min-height:70px!important;border-radius:15px!important;background:rgba(255,255,255,.88)!important;box-shadow:0 12px 35px rgba(31,53,88,.055)!important;border-color:#e0e8f2!important}
-.list-card{border-radius:22px!important;background:rgba(255,255,255,.96)!important;box-shadow:0 24px 70px rgba(26,49,82,.085)!important;border-color:#dce5f0!important;overflow:visible!important}
-.list-head{min-height:112px!important;padding:0 30px!important;border-radius:22px 22px 0 0!important}
-.list-head b{font-size:27px!important;font-weight:900!important;color:#10203a!important}
-.list-head small{font-size:13px!important;color:#73829a!important}
-.list-search input{height:54px!important;width:min(560px,42vw)!important;border-radius:14px!important;font-size:15px!important;background:#fbfdff!important}
-.filters{padding:20px 30px!important;gap:12px!important;background:#fbfcff!important}
-.filters input,.filters select{height:50px!important;border-radius:13px!important;font-size:13px!important;color:#25354d!important;background:#fff!important}
-.reset-filter{height:44px!important;border-radius:12px!important;font-size:12px!important;background:#fff!important}
-.table-scroll{overflow-x:auto!important;overflow-y:visible!important;-webkit-overflow-scrolling:touch}
-.table-head,.row{grid-template-columns:36px minmax(285px,2.25fr) minmax(115px,.85fr) minmax(155px,1.1fr) minmax(115px,.75fr) minmax(120px,.85fr) minmax(165px,1.15fr) minmax(220px,1.45fr)!important;min-width:1190px!important}
-.table-head{height:56px!important;padding:0 28px!important;background:linear-gradient(180deg,#fbfdff,#f6f9fd)!important;color:#718198!important;font-size:10px!important;letter-spacing:.11em!important;border-bottom-color:#dfe7f1!important}
-.row{height:116px!important;min-height:116px!important;padding:0 28px!important;background:rgba(255,255,255,.97)!important;border-bottom:1px solid #e8eef5!important;transition:transform .16s ease,box-shadow .16s ease,background .16s ease!important}
-.row:hover{background:#fbfdff!important;box-shadow:inset 4px 0 0 var(--bos-blue),0 10px 26px rgba(31,53,88,.055)!important;transform:translateY(-1px)!important}
-.avatar{width:58px!important;height:58px!important;border-radius:17px!important;font-size:13px!important;background:linear-gradient(145deg,#e9f0ff,#dfe9ff)!important;color:#2f61dc!important;box-shadow:inset 0 0 0 1px rgba(53,104,244,.08),0 8px 20px rgba(53,104,244,.09)!important}
-.contact-cell{gap:17px!important}
-.contact-main b{font-size:19px!important;line-height:1.28!important;color:#10203a!important;font-weight:900!important}
-.contact-main small{font-size:12.5px!important;color:#78879c!important;margin-top:6px!important}
-.type-pill{padding:8px 12px!important;font-size:11px!important;border-radius:999px!important;box-shadow:0 4px 12px rgba(49,93,246,.06)!important}
-.data-cell{font-size:14px!important;color:#30415a!important;line-height:1.5!important}
-.data-cell b{font-size:14px!important;color:#20324c!important;font-weight:800!important}
-.data-cell small{font-size:11.5px!important;color:#8593a6!important}
-.source-cell{font-size:13px!important;color:#52657e!important}
-.status{padding:9px 13px!important;font-size:11.5px!important;box-shadow:0 4px 12px rgba(20,40,70,.045)!important}
-.follow-cell b{font-size:14px!important;color:#263a55!important;font-weight:850!important}
-.follow-cell small{font-size:11.5px!important;color:#8795a8!important}
-.actions{gap:9px!important}
-.actions button{height:44px!important;padding:0 14px!important;border-radius:12px!important;font-size:12px!important;font-weight:900!important;box-shadow:0 5px 14px rgba(20,40,70,.045)!important}
-.actions .wa{background:#e9faf3!important;color:#087f5b!important;border-color:#c8ecdc!important}
-.actions .view{background:#10203a!important;color:#fff!important;border-color:#10203a!important;box-shadow:0 8px 18px rgba(16,32,58,.15)!important}
-.actions button:hover{transform:translateY(-2px)!important;box-shadow:0 10px 22px rgba(20,40,70,.11)!important}
-.empty-state{padding:100px 20px!important;font-size:13px!important}
-.empty-state b{font-size:17px!important}
-
-/* Keep the list usable on common laptop widths: remove low-priority Source column. */
-@media(max-width:1350px){
-  .table-head,.row{grid-template-columns:36px minmax(290px,2.4fr) minmax(115px,.9fr) minmax(155px,1.15fr) minmax(125px,.9fr) minmax(165px,1.2fr) minmax(215px,1.45fr)!important;min-width:1120px!important}
-  .table-head>div:nth-child(5),.row>.source-cell{display:none!important}
-}
-@media(max-width:1050px){
-  .customers-shell{padding:24px 18px 60px!important}
-  .page-head h1{font-size:34px!important}
-  .list-head{padding:22px!important;align-items:flex-start!important;flex-direction:column!important}
-  .list-search{width:100%!important;flex-direction:column!important;align-items:stretch!important}
-  .list-search input{width:100%!important}
-  .filters{grid-template-columns:1fr 1fr!important;padding:16px 22px!important}
-}
-@media(max-width:900px){
-  .table-scroll{overflow:visible!important}
-  .table-head{display:none!important}
-  .row{display:grid!important;grid-template-columns:40px 1fr!important;grid-template-rows:auto auto auto auto auto!important;gap:11px 14px!important;min-width:0!important;height:auto!important;padding:22px!important}
-  .row>.check{grid-row:1/6;align-self:start;padding-top:7px}
-  .row>.contact-cell{grid-column:2;grid-row:1}
-  .row>.type-pill,.row>div:nth-child(3){grid-column:2;grid-row:2}
-  .row>div:nth-child(4){grid-column:2;grid-row:3}
-  .row>div:nth-child(5){grid-column:2;grid-row:4}
-  .row>div:nth-child(6){grid-column:2;grid-row:2}
-  .row>div:nth-child(7){grid-column:2;grid-row:3}
-  .row>.actions{grid-column:2;grid-row:5;display:flex!important;flex-wrap:wrap!important}
-  .contact-main b{font-size:20px!important}
-  .actions button{height:46px!important;font-size:12.5px!important}
-}
-@media(max-width:560px){
-  .customers-shell{padding:18px 12px 50px!important}
-  .page-head h1{font-size:31px!important}
-  .filters{grid-template-columns:1fr!important}
-  .top-actions{width:100%!important;flex-wrap:wrap!important}
-}
-</style>
-
-<style id="business-os-v27-record-workspace">
-/* V27 — action-first record workspace: latest-first, no hunting, full-width scan */
-.record-quickbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 14px;padding:10px 12px;background:rgba(255,255,255,.88);border:1px solid #dfe7f2;border-radius:14px;box-shadow:0 10px 28px rgba(18,38,75,.055)}
-.record-quickbar .quick-label{font-size:10px;font-weight:900;letter-spacing:.12em;color:#8a97ab;margin:0 3px 0 2px;text-transform:uppercase}
-.record-quickbar button{height:40px;border:1px solid #dce5f0;background:#fff;color:#24324a;border-radius:10px;padding:0 13px;font-size:11px;font-weight:900;display:inline-flex;align-items:center;gap:7px;cursor:pointer}
-.record-quickbar button:hover{border-color:#b9c9ef;background:#f7f9ff;color:#2457d6;box-shadow:0 6px 16px rgba(37,87,214,.08)}
-.record-quickbar .quick-primary{background:linear-gradient(135deg,#315df6,#4d6dff);border-color:#315df6;color:#fff;box-shadow:0 8px 18px rgba(49,93,246,.18)}
-.record-quickbar .quick-primary:hover{color:#fff;filter:brightness(1.04)}
-.record-quickbar .quick-green{background:#eaf9f3;border-color:#cbeadf;color:#087f68}
-.record-quickbar .quick-count{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#edf2ff;color:#315df6;display:inline-flex;align-items:center;justify-content:center;font-size:9px}
-.list-head .list-title-wrap{display:flex;align-items:center;gap:10px;min-width:0}
-.latest-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;background:#eef4ff;color:#315df6;border:1px solid #dce6ff;font-size:9px;font-weight:900;white-space:nowrap}
-.record-sort-note{font-size:10px!important;color:#7b8799!important;margin-top:5px!important}
-.row.is-new{background:linear-gradient(90deg,#f0f6ff 0%,#fff 46%);box-shadow:inset 4px 0 0 #315df6,0 8px 24px rgba(49,93,246,.08);animation:newRecordGlow 2.2s ease both}
-@keyframes newRecordGlow{0%{background:#e8f0ff}100%{background:linear-gradient(90deg,#f0f6ff 0%,#fff 46%)}}
-@media(min-width:981px){
-  /* The app already has a sidebar; the record table must fit the remaining workspace instead of creating a second horizontal world. */
-  body.app-page .table-scroll{overflow-x:hidden!important}
-  body.app-page .table-head,body.app-page .row{min-width:0!important;width:100%!important;grid-template-columns:28px minmax(190px,2.15fr) minmax(105px,1.15fr) minmax(90px,1fr) minmax(125px,1.25fr) minmax(105px,1fr) minmax(78px,.78fr) minmax(160px,1.45fr)!important}
-  body.app-page .table-head{padding:0 16px!important}
-  body.app-page .row{padding:0 16px!important}
-  body.app-page .contact-cell{gap:10px!important}
-  body.app-page .avatar{width:44px!important;height:44px!important;border-radius:12px!important}
-  body.app-page .contact-main b{font-size:14px!important}
-  body.app-page .contact-main small{font-size:9px!important}
-  body.app-page .data-cell b{font-size:11px!important}
-  body.app-page .data-cell small{font-size:9px!important}
-  body.app-page .actions{gap:5px!important}
-  body.app-page .actions button{height:34px!important;padding:0 8px!important;font-size:9px!important}
-  body.app-page .actions .email{display:none}
-}
-@media(max-width:1100px) and (min-width:981px){
-  body.app-page .table-head,body.app-page .row{grid-template-columns:26px minmax(180px,2fr) minmax(95px,1fr) minmax(80px,.9fr) minmax(110px,1.1fr) minmax(90px,.9fr) minmax(76px,.75fr) minmax(125px,1.25fr)!important}
-  body.app-page .actions .email{display:none}
-  body.app-page .actions .view{display:none}
-}
-@media(max-width:900px){.record-quickbar{padding:10px;gap:7px}.record-quickbar .quick-label{width:100%;margin-bottom:1px}.record-quickbar button{height:42px;font-size:11px}.list-head .list-title-wrap{align-items:flex-start;flex-direction:column;gap:7px}}
-</style>
-<script>
-(function(){
-  const quick=`<div class="record-quickbar" id="recordQuickbar">
-    <span class="quick-label">Quick actions</span>
-    <button type="button" class="quick-primary" onclick="openCustomerModal()">＋ Add Customer</button>
-    <button type="button" onclick="osNav(document.querySelector('.os-side-link[href=\"#customerList\"]'),'followups')">◷ Today's Follow-ups <span class="quick-count" id="quickFollowCount">0</span></button>
-    <button type="button" onclick="osNav(document.querySelector('.os-side-link[href=\"#websiteLeads\"]'),'website')">↗ Website Leads <span class="quick-count" id="quickLeadCount">0</span></button>
-    <button type="button" class="quick-green" onclick="osNav(document.querySelector('.os-side-link[href=\"#whatsappCenter\"]'),'whatsapp')">💬 WhatsApp</button>
-    <button type="button" onclick="osNav(document.querySelector('.os-side-link[href=\"#businessFinder\"]'),'finder')">⌕ Find Prospects</button>
-  </div>`;
-  function mountQuick(){
-    const head=document.querySelector('.page-head'), bar=document.getElementById('recordQuickbar');
-    if(head && !bar) head.insertAdjacentHTML('afterend',quick);
-  }
-  mountQuick();
-  const obs=new MutationObserver(mountQuick); obs.observe(document.body,{childList:true,subtree:true});
-  window.updateRecordQuickCounts=function(){
-    const f=document.getElementById('quickFollowCount'),w=document.getElementById('quickLeadCount');
-    if(f){const x=document.getElementById('sideFollowCount');f.textContent=x?.textContent||'0';}
-    if(w){const x=document.getElementById('sideWebLeadCount');w.textContent=x?.textContent||'0';}
-  };
-})();
-</script>
-<style id="businessos-customers-v31-premium">
-/* V31 — Dedicated Customer Workspace. UI-only; Firebase/business logic untouched. */
-:root{--bo-bg:#f3f6fb;--bo-card:#fff;--bo-ink:#14213d;--bo-muted:#6b7890;--bo-line:#e3e9f2;--bo-blue:#2f63e8;--bo-blue-soft:#edf3ff;--bo-green:#07875d}
-body.app-page{background:var(--bo-bg)!important;color:var(--bo-ink)!important}
-body.app-page .customers-shell{padding:24px 24px 48px!important;min-height:calc(100vh - 78px)!important}
-body.app-page .customers-page{max-width:none!important;width:100%!important}
-body.app-page .os-layout{display:grid!important;grid-template-columns:238px minmax(0,1fr)!important;gap:22px!important;max-width:none!important}
-body.app-page .os-sidebar{position:sticky!important;top:94px!important;height:calc(100vh - 118px)!important;border:1px solid var(--bo-line)!important;border-radius:20px!important;background:rgba(255,255,255,.94)!important;box-shadow:0 18px 55px rgba(20,33,61,.07)!important;padding:18px 12px!important}
-body.app-page .os-content{min-width:0!important;width:100%!important}
-body.app-page .page-head{padding:4px 2px 20px!important;align-items:center!important}
-body.app-page .page-head h1{font-size:34px!important;letter-spacing:-1.1px!important;color:#101c34!important}
-body.app-page .page-head p{font-size:13px!important;color:var(--bo-muted)!important;margin-top:7px!important}
-body.app-page .top-actions{gap:9px!important}
-body.app-page .top-actions .session{display:none!important}
-body.app-page .top-actions button{height:44px!important;border-radius:12px!important;padding:0 17px!important;font-size:12px!important;background:#fff!important;border-color:#dce4ef!important}
-body.app-page .top-actions .primary{background:linear-gradient(135deg,#1769e8,#2f63e8)!important;border-color:#2f63e8!important;box-shadow:0 10px 24px rgba(47,99,232,.20)!important}
-/* This page is the customer workspace, not an all-in-one dashboard. */
-body.app-page #dashboardV2{display:none!important}
-body.app-page #followupCenter,body.app-page #websiteLeadCenter,body.app-page #businessFinderView{display:none!important}
-body.app-page .smart-summary{height:auto!important;min-height:72px!important;padding:13px 18px!important;margin:0 0 14px!important;border:1px solid var(--bo-line)!important;border-radius:16px!important;box-shadow:0 10px 30px rgba(20,33,61,.045)!important;background:#fff!important;gap:18px!important}
-body.app-page .smart-summary span{display:flex!important;align-items:baseline!important;gap:7px!important;font-size:11px!important;color:#718098!important}
-body.app-page .smart-summary b{font-size:22px!important;color:#172541!important}
-body.app-page .smart-summary i{height:26px!important;background:#e5eaf2!important}
-body.app-page .list-card{border:1px solid #dce5f0!important;border-radius:20px!important;box-shadow:0 18px 55px rgba(20,33,61,.07)!important;overflow:hidden!important;background:#fff!important}
-body.app-page .list-head{min-height:104px!important;padding:20px 24px!important;background:linear-gradient(180deg,#fff 0%,#fbfdff 100%)!important}
-body.app-page .list-title-wrap{display:flex!important;align-items:center!important;gap:14px!important;min-width:0!important}
-body.app-page .list-head b{font-size:23px!important;letter-spacing:-.5px!important;color:#15223b!important}
-body.app-page .list-head small{font-size:12px!important;color:#718098!important;line-height:1.4!important}
-body.app-page .record-sort-note{color:#2f63e8!important;font-weight:800!important}
-body.app-page .latest-badge{display:inline-flex!important;align-items:center!important;height:30px!important;padding:0 11px!important;border-radius:999px!important;background:#edf8f3!important;color:#087b56!important;font-size:10px!important;font-weight:900!important;white-space:nowrap!important;border:1px solid #d3eee2!important}
-body.app-page .list-search{margin-left:auto!important}
-body.app-page .list-search input{width:min(430px,34vw)!important;height:48px!important;border-radius:13px!important;border:1px solid #d7e0ec!important;background:#f9fbfe!important;padding:0 15px!important;font-size:13px!important}
-body.app-page .list-search input:focus{background:#fff!important;border-color:#8eacf0!important;box-shadow:0 0 0 4px rgba(47,99,232,.08)!important}
-body.app-page .list-search span{font-size:11px!important;color:#68768c!important}
-body.app-page .filters{grid-template-columns:repeat(5,minmax(130px,1fr)) 92px!important;gap:10px!important;padding:14px 24px!important;background:#f8fafd!important;border-top:1px solid #eef2f7!important;border-bottom:1px solid #e1e8f1!important}
-body.app-page .filters select{height:44px!important;border-radius:11px!important;font-size:11px!important;color:#4d5d76!important;background:#fff!important;border-color:#d9e2ee!important;padding:0 12px!important}
-body.app-page .reset-filter{height:44px!important;border-radius:11px!important;background:#fff!important;font-size:11px!important}
-body.app-page .table-scroll{overflow-x:auto!important}
-body.app-page .table-head,body.app-page .row{grid-template-columns:34px minmax(270px,2.25fr) minmax(150px,1.15fr) minmax(150px,1.1fr) minmax(175px,1.35fr) minmax(145px,1fr) minmax(120px,.9fr) minmax(250px,1.6fr)!important;min-width:0!important;width:100%!important;padding-left:24px!important;padding-right:24px!important}
-body.app-page .table-head{height:52px!important;position:static!important;background:#f7f9fc!important;color:#7a879c!important;font-size:10px!important;letter-spacing:.1em!important;border-bottom:1px solid #e2e8f0!important}
-body.app-page .row{height:96px!important;min-height:96px!important;background:#fff!important;border-bottom:1px solid #edf1f6!important;transition:transform .16s ease,background .16s ease,box-shadow .16s ease!important}
-body.app-page .row:hover{background:#fbfdff!important;box-shadow:inset 4px 0 0 var(--bo-blue),0 7px 18px rgba(20,33,61,.045)!important;transform:none!important}
-body.app-page .avatar{width:48px!important;height:48px!important;border-radius:15px!important;background:linear-gradient(145deg,#e8efff,#f3f6ff)!important;color:#2f63e8!important;font-size:12px!important;box-shadow:inset 0 0 0 1px #d8e3fb!important}
-body.app-page .contact-cell{gap:12px!important}
-body.app-page .contact-main b{font-size:15px!important;color:#15233e!important}
-body.app-page .contact-main small{font-size:11px!important;color:#7c899d!important;margin-top:5px!important}
-body.app-page .type-pill{padding:5px 9px!important;font-size:9px!important}
-body.app-page .data-cell{font-size:12px!important;color:#40516b!important}
-body.app-page .data-cell b{font-size:12px!important;color:#24344f!important}
-body.app-page .data-cell small{font-size:10px!important;color:#8a96a8!important}
-body.app-page .status{padding:7px 10px!important;font-size:10px!important}
-body.app-page .follow-cell b{font-size:12px!important;color:#2d3d58!important}
-body.app-page .follow-cell small{font-size:10px!important}
-body.app-page .actions{gap:6px!important;justify-content:flex-start!important}
-body.app-page .actions button{height:38px!important;padding:0 10px!important;border-radius:10px!important;font-size:10px!important;border-color:#dce4ee!important;background:#fff!important}
-body.app-page .actions .wa{background:#edf9f4!important;color:#087b56!important;border-color:#cfece0!important}
-body.app-page .actions .view{background:#15233e!important;color:#fff!important;border-color:#15233e!important}
-body.app-page .empty-state{padding:90px 20px!important;font-size:12px!important}
-body.app-page .empty-state b{font-size:16px!important}
-/* Keep the full list visible without the old embedded multi-module panels. */
-body.app-page .workspace{display:block!important}
-@media(max-width:1200px){body.app-page .os-layout{grid-template-columns:220px minmax(0,1fr)!important}.filters{grid-template-columns:repeat(3,1fr)!important}.table-head,.row{grid-template-columns:34px minmax(250px,2fr) minmax(135px,1fr) minmax(140px,1fr) minmax(155px,1.15fr) minmax(120px,.9fr) minmax(115px,.85fr) minmax(220px,1.4fr)!important}}
-@media(max-width:900px){body.app-page .customers-shell{padding:16px 10px 36px!important}body.app-page .os-layout{display:block!important}body.app-page .os-sidebar{position:static!important;height:auto!important;margin-bottom:14px!important}.filters{grid-template-columns:1fr 1fr!important}.list-head{flex-direction:column!important;align-items:stretch!important}.list-search{margin-left:0!important}.list-search input{width:100%!important}.table-head{display:none!important}.row{display:grid!important;grid-template-columns:28px minmax(0,1fr)!important;grid-template-rows:auto auto auto auto!important;height:auto!important;min-height:0!important;padding:18px!important;gap:10px 12px!important}.row>.check{grid-row:1/6!important;align-self:start!important}.row>.contact-cell{grid-column:2!important;grid-row:1!important}.row>div:nth-child(3){grid-column:2!important;grid-row:2!important}.row>div:nth-child(4){grid-column:2!important;grid-row:3!important}.row>div:nth-child(5){grid-column:2!important;grid-row:4!important}.row>div:nth-child(6){grid-column:2!important;grid-row:2!important}.row>div:nth-child(7){grid-column:2!important;grid-row:3!important}.row>.actions{grid-column:2!important;grid-row:5!important;flex-wrap:wrap!important}.smart-summary{overflow:auto!important}}
-</style>
-<style id="businessos-customers-v33-powerbi-shell">
-/* V33 — Full-width Power BI inspired customer workspace. Logic/data untouched. */
-:root{--v33-bg:#f4f7fb;--v33-ink:#14213d;--v33-muted:#6d7b91;--v33-line:#dfe6f0;--v33-blue:#2563eb;--v33-blue2:#4f7cff;--v33-soft:#eef4ff;}
-body.app-page{background:linear-gradient(180deg,#f3f6fb 0%,#f7f9fc 100%)!important}
-body.app-page .customers-shell{padding:18px 22px 48px!important}
-body.app-page .os-layout{display:block!important;max-width:none!important}
-body.app-page .os-sidebar{display:none!important}
-body.app-page .os-content{width:100%!important;max-width:1500px!important;margin:0 auto!important}
-body.app-page .record-quickbar{display:none!important}
-
-/* Premium top navigation */
-.v33-topbar{display:flex;align-items:center;gap:22px;min-height:72px;padding:10px 14px 10px 16px;margin:0 0 18px;background:rgba(255,255,255,.94);border:1px solid var(--v33-line);border-radius:18px;box-shadow:0 12px 35px rgba(25,43,75,.07);backdrop-filter:blur(12px)}
-.v33-brand{display:flex;align-items:center;gap:11px;min-width:190px;text-decoration:none;color:var(--v33-ink)}
-.v33-brand-mark{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-size:18px;font-weight:950;background:linear-gradient(145deg,#1d4ed8,#4f7cff);box-shadow:0 9px 20px rgba(37,99,235,.24);position:relative;overflow:hidden}
-.v33-brand-mark:after{content:"";position:absolute;width:20px;height:20px;border:2px solid rgba(255,255,255,.42);border-radius:50%;top:-7px;right:-7px}
-.v33-brand-copy b{display:block;font-size:17px;letter-spacing:-.4px;line-height:1}
-.v33-brand-copy span{display:block;font-size:8px;letter-spacing:.15em;font-weight:900;color:#8a96aa;margin-top:5px;text-transform:uppercase}
-.v33-nav{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
-.v33-nav::-webkit-scrollbar{display:none}
-.v33-nav button{height:40px;padding:0 13px;border:1px solid transparent;background:transparent;border-radius:10px;color:#617087;font-size:10px;font-weight:900;white-space:nowrap;cursor:pointer;transition:.16s ease}
-.v33-nav button:hover{background:#f5f8fd;color:#234aab}
-.v33-nav button.active{background:var(--v33-soft);border-color:#d8e5ff;color:#1f5bd7;box-shadow:inset 0 -2px 0 #2563eb}
-.v33-nav button .nav-count{display:inline-flex;min-width:18px;height:18px;padding:0 5px;margin-left:5px;align-items:center;justify-content:center;border-radius:999px;background:#e9eef7;color:#68778e;font-size:8px}
-.v33-nav button.active .nav-count{background:#dce8ff;color:#2563eb}
-.v33-nav-divider{height:30px;width:1px;background:#e7ecf3;flex:none}
-.v33-nav-action{display:flex;gap:7px;flex:none}
-.v33-nav-action button{height:40px;border-radius:10px;padding:0 12px;font-size:10px;font-weight:900;border:1px solid #dce5f0;background:#fff;color:#35445d;cursor:pointer}
-.v33-nav-action .add{background:linear-gradient(135deg,#2563eb,#4f7cff);border-color:#2563eb;color:#fff;box-shadow:0 8px 18px rgba(37,99,235,.2)}
-
-/* Page title becomes a clean report header */
-body.app-page .page-head{padding:3px 6px 15px!important;min-height:58px!important}
-body.app-page .page-head h1{font-size:30px!important;letter-spacing:-1px!important}
-body.app-page .page-head p{font-size:12px!important}
-body.app-page .page-head .top-actions{display:flex!important;gap:7px!important}
-body.app-page .page-head .top-actions button{height:38px!important;border-radius:10px!important;font-size:10px!important;padding:0 13px!important}
-body.app-page .page-head .top-actions .primary{display:none!important}
-
-/* KPI strip — Power BI style */
-body.app-page .smart-summary{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:10px!important;padding:0!important;margin:0 0 14px!important;background:transparent!important;border:0!important;box-shadow:none!important;min-height:0!important}
-body.app-page .smart-summary span{position:relative;display:flex!important;align-items:flex-end!important;gap:8px!important;min-height:72px!important;padding:13px 17px!important;background:#fff!important;border:1px solid var(--v33-line)!important;border-radius:14px!important;box-shadow:0 8px 24px rgba(25,43,75,.045)!important}
-body.app-page .smart-summary span:before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 4px 4px 0;background:#2563eb}
-body.app-page .smart-summary span:nth-of-type(2):before{background:#f59e0b}
-body.app-page .smart-summary span:nth-of-type(3):before{background:#8b5cf6}
-body.app-page .smart-summary span:nth-of-type(4):before{background:#ef4444}
-body.app-page .smart-summary b{font-size:25px!important;line-height:1!important;color:#15233e!important}
-body.app-page .smart-summary span{font-size:10px!important;font-weight:800!important;color:#7a879b!important}
-body.app-page .smart-summary i{display:none!important}
-
-/* List/report container */
-body.app-page .list-card{border-radius:18px!important;border:1px solid #dce4ef!important;box-shadow:0 15px 45px rgba(20,33,61,.065)!important}
-body.app-page .list-head{min-height:94px!important;padding:18px 22px!important}
-body.app-page .list-head b{font-size:22px!important}
-body.app-page .list-head small{font-size:11px!important}
-body.app-page .record-sort-note{font-size:10px!important}
-body.app-page .list-search input{height:44px!important;width:min(390px,31vw)!important;border-radius:11px!important;font-size:12px!important}
-body.app-page .filters{grid-template-columns:repeat(5,minmax(120px,1fr)) 84px!important;padding:12px 22px!important;gap:8px!important}
-body.app-page .filters select,body.app-page .reset-filter{height:40px!important;border-radius:10px!important;font-size:10px!important}
-
-/* Fix the old 8-column grid bug: rows actually contain 9 columns. */
-body.app-page .table-head,body.app-page .row{grid-template-columns:32px minmax(250px,2.2fr) minmax(145px,1.05fr) minmax(130px,.95fr) minmax(160px,1.2fr) minmax(130px,.95fr) minmax(105px,.75fr) minmax(145px,1fr) minmax(205px,1.45fr)!important}
-body.app-page .table-head{height:48px!important;padding-left:22px!important;padding-right:22px!important;background:#f5f8fc!important;color:#7c899d!important;font-size:9px!important;letter-spacing:.11em!important}
-body.app-page .row{height:88px!important;min-height:88px!important;padding-left:22px!important;padding-right:22px!important}
-body.app-page .row:hover{box-shadow:inset 3px 0 0 #2563eb,0 8px 22px rgba(25,43,75,.06)!important;background:#fbfdff!important}
-body.app-page .contact-main b{font-size:14px!important}
-body.app-page .contact-main small{font-size:10px!important}
-body.app-page .data-cell b{font-size:11px!important}
-body.app-page .data-cell small,.follow-cell small{font-size:9px!important}
-body.app-page .status{font-size:9px!important;padding:6px 9px!important}
-body.app-page .actions{gap:5px!important;align-items:center!important;flex-wrap:nowrap!important}
-body.app-page .actions button{height:32px!important;padding:0 9px!important;font-size:9px!important;white-space:nowrap!important}
-body.app-page .actions .wa{font-size:0!important;width:34px!important;padding:0!important}
-body.app-page .actions .wa:after{content:"◉";font-size:12px}
-body.app-page .actions button:nth-child(2){font-size:0!important;width:34px!important;padding:0!important}
-body.app-page .actions button:nth-child(2):after{content:"✉";font-size:12px}
-body.app-page .actions .view{font-size:9px!important;width:auto!important;padding:0 10px!important}
-
-/* Hide unused embedded overview sections even if a legacy script toggles them later. */
-body.app-page #dashboardV2,body.app-page #followupCenter,body.app-page #websiteLeadCenter,body.app-page #businessFinderView{display:none!important}
-
-@media(max-width:1100px){.v33-brand{min-width:155px}.v33-nav button{padding:0 10px}.v33-nav-action{display:none}body.app-page .smart-summary{grid-template-columns:repeat(2,1fr)!important}.list-search input{width:280px!important}}
-@media(max-width:900px){body.app-page .customers-shell{padding:12px 10px 32px!important}.v33-topbar{gap:10px;padding:9px}.v33-brand{min-width:auto}.v33-brand-copy{display:none}.v33-nav{order:3;width:100%;flex-basis:100%}.v33-topbar{flex-wrap:wrap}.v33-nav-divider{display:none}body.app-page .smart-summary{grid-template-columns:1fr 1fr!important}.list-head{flex-direction:column!important;align-items:stretch!important}.list-search{margin-left:0!important}.list-search input{width:100%!important}.table-head{display:none!important}.row{display:grid!important;grid-template-columns:28px minmax(0,1fr)!important;grid-template-rows:auto auto auto auto!important;height:auto!important;min-height:0!important;padding:17px!important;gap:9px 12px!important}.row>.check{grid-row:1/6!important;align-self:start!important}.row>.contact-cell{grid-column:2!important;grid-row:1!important}.row>div:nth-child(3){grid-column:2!important;grid-row:2!important}.row>div:nth-child(4){grid-column:2!important;grid-row:3!important}.row>div:nth-child(5){grid-column:2!important;grid-row:4!important}.row>div:nth-child(6){grid-column:2!important;grid-row:2!important}.row>div:nth-child(7){grid-column:2!important;grid-row:3!important}.row>div:nth-child(8){grid-column:2!important;grid-row:4!important}.row>.actions{grid-column:2!important;grid-row:5!important;flex-wrap:wrap!important}.actions button{width:auto!important;font-size:10px!important}.actions .wa,.actions button:nth-child(2){font-size:10px!important;width:auto!important;padding:0 10px!important}.actions .wa:after,.actions button:nth-child(2):after{content:none!important}}
-</style>
-<script id="businessos-customers-v33-nav">
-(function(){
-  function buildV33(){
-    if(document.querySelector('.v33-topbar')) return;
-    const head=document.querySelector('.page-head'); if(!head) return;
-    const bar=document.createElement('div');
-    bar.className='v33-topbar';
-    bar.innerHTML=`
-      <a class="v33-brand" href="customers.html" onclick="return osNav(this,'overview')">
-        <span class="v33-brand-mark">B</span><span class="v33-brand-copy"><b>BusinessOS</b><span>Business Intelligence</span></span>
-      </a>
-      <div class="v33-nav" aria-label="Business OS navigation">
-        <button onclick="return osNav(null,'overview')">⌂ Overview</button>
-        <button class="active" onclick="return osNav(null,'customers')">▦ Customers</button>
-        <button onclick="return osNav(null,'followups')">◷ Follow-ups <span class="nav-count" id="v33Follow">0</span></button>
-        <button onclick="return osNav(null,'deals')">✓ Deals <span class="nav-count" id="v33Deals">0</span></button>
-        <button onclick="return osNav(null,'website')">↗ Leads <span class="nav-count" id="v33Leads">0</span></button>
-        <button onclick="return osNav(null,'whatsapp')">◉ WhatsApp <span class="nav-count" id="v33WA">0</span></button>
-        <button onclick="return osNav(null,'finder')">⌕ Finder</button>
-        <span class="v33-nav-divider"></span>
-        <button onclick="return osNav(null,'reports')">▥ Reports</button>
-      </div>
-      <div class="v33-nav-action">
-        <button onclick="document.getElementById('csvFile').click()">↑ Import</button>
-        <button onclick="exportCSV()">↓ Export</button>
-        <button class="add" onclick="openCustomerModal()">＋ Add Customer</button>
-      </div>`;
-    head.parentNode.insertBefore(bar,head);
-  }
-  function syncCounts(){
-    const map=[['v33Follow','sideFollowCount'],['v33Deals','sideDealCount'],['v33Leads','sideWebLeadCount'],['v33WA','sideWaCount']];
-    map.forEach(([a,b])=>{const x=document.getElementById(a),y=document.getElementById(b);if(x&&y)x.textContent=y.textContent||'0'});
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{buildV33();syncCounts()});
-  else {buildV33();syncCounts()}
-  setInterval(syncCounts,1200);
-})();
-// Direct input binding inside this module avoids scope issues with inline handlers.
-const customerSearchInput=document.getElementById("search");
-if(customerSearchInput){
-  customerSearchInput.addEventListener("input",()=>render());
-  customerSearchInput.addEventListener("keydown",event=>{
-    if(event.key==="Escape"){customerSearchInput.value="";render();}
-  });
-}
-
-</script>
