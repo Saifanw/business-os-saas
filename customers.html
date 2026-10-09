@@ -484,6 +484,48 @@ body.app-page #customerList .actions .view{max-width:42px!important;overflow:hid
 .bulk-customer-toolbar b{color:#334155!important}
 .bulk-delete-button{padding:7px 11px!important;font-size:11px!important;background:#fff7f7!important;color:#dc6262!important;border-color:#fbd5d5!important}
 </style>
+<style id="business-os-overview-polish-v1">
+/* Scoped Overview-only polish. Customer table, list, filters and data logic are intentionally untouched. */
+body.app-page .overview-command-center{
+  position:relative!important; isolation:isolate; overflow:hidden!important;
+  margin:18px 22px 16px!important; padding:25px 26px 22px!important;
+  border:1px solid #dce5f2!important; border-radius:22px!important;
+  background:radial-gradient(ellipse at 100% 0%,rgba(72,119,255,.075),transparent 36%),linear-gradient(145deg,#fff 0%,#f9fbff 100%)!important;
+  box-shadow:0 12px 32px rgba(25,49,87,.065)!important;
+}
+body.app-page .overview-command-center .ov-hero{align-items:center!important;gap:22px!important;padding:0 0 21px!important;border-bottom:1px solid #e9eef6;margin-bottom:17px!important}
+body.app-page .overview-command-center .ov-kicker{display:flex;align-items:center;gap:8px;font-size:10px!important;letter-spacing:1.65px!important;color:#3468e8!important;font-weight:900!important;margin-bottom:8px!important}
+body.app-page .overview-command-center .ov-kicker:before{content:"";display:inline-block;width:19px;height:3px;border-radius:9px;background:#3468e8}
+body.app-page .overview-command-center .ov-hero h1{font-size:clamp(25px,2.2vw,32px)!important;line-height:1.12!important;letter-spacing:-.8px!important;font-weight:850!important;color:#172746!important}
+body.app-page .overview-command-center .ov-hero p{max-width:650px;margin-top:8px!important;font-size:12px!important;line-height:1.6!important;color:#71809a!important}
+body.app-page .overview-command-center .ov-date{min-width:158px!important;padding:13px 16px!important;border-radius:14px!important;background:rgba(248,250,255,.92)!important;border-color:#e0e8f4!important;text-align:right!important}
+body.app-page .overview-command-center .ov-date b{font-size:15px!important;color:#172746!important;font-weight:850!important}
+body.app-page .overview-command-center .ov-date small{font-size:9px!important;letter-spacing:.15px}
+body.app-page .overview-command-center .ov-kpis{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:11px!important}
+body.app-page .overview-command-center .ov-kpi{min-height:105px!important;padding:14px 15px 13px!important;border-radius:15px!important;border-color:#e0e7f1!important;box-shadow:0 4px 13px rgba(22,43,75,.035)!important;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease!important}
+body.app-page .overview-command-center .ov-kpi:hover{transform:translateY(-2px)!important;box-shadow:0 9px 20px rgba(22,43,75,.075)!important;border-color:#cbd9f1!important}
+body.app-page .overview-command-center .ov-kpi:focus-visible{outline:3px solid rgba(52,104,232,.25)!important;outline-offset:2px}
+body.app-page .overview-command-center .ov-kpi small{font-size:10px!important;letter-spacing:.1px!important}
+body.app-page .overview-command-center .ov-kpi-top i{width:28px!important;height:28px!important;border-radius:9px!important;font-size:13px!important}
+body.app-page .overview-command-center .ov-kpi b{font-size:27px!important;line-height:1!important;margin-top:11px!important;color:#101b30!important;font-variant-numeric:tabular-nums}
+body.app-page .overview-command-center .ov-kpi em{font-size:9px!important;line-height:1.4!important;white-space:normal!important;color:#8190a7!important}
+body.app-page .overview-command-center .ov-flow-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:20px 0 10px!important}
+body.app-page .overview-command-center .ov-flow-head span{font-size:9px!important;letter-spacing:1.5px!important;color:#8190a7!important;font-weight:900!important}
+body.app-page .overview-command-center .ov-flow-head b{display:block;margin-top:5px!important;font-size:14px!important;letter-spacing:-.2px!important;color:#1c2c49!important}
+body.app-page .overview-command-center .ov-flow-head em{font-size:10px!important;color:#6f7f99!important;font-style:normal!important;font-weight:800!important}
+body.app-page .overview-command-center .ov-flow{gap:9px!important}
+body.app-page .overview-command-center .ov-flow .dash-stage{border-radius:13px!important;min-height:74px!important;padding:12px!important;transition:border-color .16s ease,transform .16s ease,box-shadow .16s ease!important}
+body.app-page .overview-command-center .ov-flow .dash-stage:hover{box-shadow:0 5px 14px rgba(25,49,87,.055)!important}
+body.app-page .overview-command-center .ov-insight-grid{gap:13px!important;margin-top:14px!important}
+body.app-page .overview-command-center .ov-panel{border-radius:16px!important;padding:17px!important;box-shadow:0 3px 12px rgba(25,49,87,.025)!important}
+body.app-page .overview-command-center .ov-panel-head h3{font-size:16px!important;letter-spacing:-.25px!important;color:#1b2a45!important}
+body.app-page .overview-command-center .ov-panel-head p{font-size:10px!important;line-height:1.5!important}
+body.app-page .overview-command-center .ov-panel-head button{border-radius:8px;padding:7px 9px!important;background:#f1f5ff!important}
+@media(max-width:1100px){body.app-page .overview-command-center{margin:14px 14px 14px!important;padding:20px!important}body.app-page .overview-command-center .ov-kpis{grid-template-columns:repeat(3,minmax(0,1fr))!important}body.app-page .overview-command-center .ov-flow{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+@media(max-width:680px){body.app-page .overview-command-center{margin:10px 10px 12px!important;padding:16px!important;border-radius:17px!important}body.app-page .overview-command-center .ov-hero{align-items:flex-start!important;flex-direction:column!important;padding-bottom:15px!important;margin-bottom:13px!important;gap:12px!important}body.app-page .overview-command-center .ov-date{width:100%;text-align:left!important;min-width:0!important;padding:10px 12px!important}body.app-page .overview-command-center .ov-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}body.app-page .overview-command-center .ov-kpi{min-height:96px!important;padding:12px!important}body.app-page .overview-command-center .ov-kpi b{font-size:24px!important}body.app-page .overview-command-center .ov-flow-head{align-items:flex-start!important;flex-direction:column!important;margin-top:17px!important}body.app-page .overview-command-center .ov-flow{grid-template-columns:repeat(2,minmax(0,1fr))!important}body.app-page .overview-command-center .ov-insight-grid{grid-template-columns:minmax(0,1fr)!important}body.app-page .overview-command-center .ov-panel{padding:14px!important}}
+@media(prefers-reduced-motion:reduce){body.app-page .overview-command-center .ov-kpi,body.app-page .overview-command-center .ov-flow .dash-stage{transition:none!important}}
+</style>
+
 </head>
 <body class="app-page">
 <header class="bos-app-topnav">
