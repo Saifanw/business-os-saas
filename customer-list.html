@@ -325,6 +325,16 @@ body.module-page .os-content{min-width:0!important}
  #customerList .actions{justify-content:flex-start}
 }
 </style>
+<style id="business-os-role-single-field-header-align">
+#customerModal .legacy-contact-type-field{display:none!important}
+#customerList .record-badges{display:flex;align-items:center;gap:0;min-width:0;flex-wrap:nowrap}
+#customerList .subcategory-text{display:inline-block;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#d14343;font-size:10px;font-weight:750;line-height:1.2}
+#customerList .subcategory-pill,#customerList .record-badges .type-pill{display:none!important}
+#customerList .table-head,#customerList #rows>.row{grid-template-columns:34px minmax(205px,1.3fr) minmax(125px,.8fr) minmax(155px,1fr) minmax(105px,.7fr) minmax(145px,.9fr) minmax(250px,1.35fr)!important;min-width:1120px!important;width:100%!important;box-sizing:border-box}
+#customerList .table-head>div:last-child{text-align:left!important;padding-left:12px}
+#customerList #rows>.row .actions{justify-content:flex-start!important;padding-left:12px;gap:6px!important;white-space:nowrap}
+#customerList #rows>.row .actions button{flex:0 0 auto!important}
+</style>
 </head>
 <body class="app-page">
 <header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
@@ -806,12 +816,12 @@ const SUBCATEGORY_DEFAULTS={
  "Investor":["Individual Investor","Investor Group"]
 };
 function updateSubcategoryOptions(){
- const cat=$("fType"),sel=$("fSubcategory");if(!cat||!sel)return;
- const category=cat.value||"Customer",previous=sel.value;
- const vals=new Set([...(SUBCATEGORY_DEFAULTS[category]||[]),"Customer","Broker","Seller","Prospect","Agent","Partner","Group / Team","Builder / Developer","Investor","Buyer","Tenant","Landlord","Residential Buyer","Commercial Buyer","Plot Buyer"]);
- if(Array.isArray(customers))customers.filter(c=>String(c.type||"Customer")===category&&c.subcategory).forEach(c=>vals.add(String(c.subcategory)));
- const options=[...vals].sort();
- sel.innerHTML='<option value="">Select subcategory</option>'+options.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('')+'<option value="__custom__">＋ Add a subcategory…</option>';
+ const sel=$("fSubcategory");if(!sel)return;
+ const previous=sel.value;
+ const vals=new Set(["Broker","Agent","Customer","Seller","Buyer","Investor","Builder / Developer","Partner","Group / Team","Tenant","Landlord","Prospect","Residential Buyer","Commercial Buyer","Plot Buyer"]);
+ if(Array.isArray(customers))customers.forEach(c=>{if(c.subcategory)vals.add(String(c.subcategory));if(c.type&&["Broker","Agent","Seller","Buyer","Investor","Partner","Group / Team","Builder / Developer","Tenant","Landlord","Prospect","Customer"].includes(String(c.type)))vals.add(String(c.type));});
+ const options=[...vals].sort((a,b)=>a.localeCompare(b));
+ sel.innerHTML='<option value="">Select category / role</option>'+options.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('')+'<option value="__custom__">＋ Add a category / role…</option>';
  if(previous&&[...sel.options].some(o=>o.value===previous))sel.value=previous;else sel.value="";
  toggleCustomSubcategory();
 }
@@ -829,7 +839,7 @@ function render(){
  arr.sort((a,b)=>{const av=Number(a.createdAt?.seconds||0)||Number(a.updatedAt?.seconds||0)||0;const bv=Number(b.createdAt?.seconds||0)||Number(b.updatedAt?.seconds||0)||0;return bv-av;});
  const fs=followStats();
  $("total").textContent=customers.length;$("today").textContent=fs.today;$("hot").textContent=customers.filter(c=>["Interested","Follow-up","Site Visit","Negotiation"].includes(c.status)).length;$("overdue").textContent=fs.overdue;$("count").textContent=arr.length+" records";
- $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b title="${esc(c.name)}">${esc(c.name)}</b><div class="record-badges"><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span>${c.subcategory?`<span class="subcategory-text" title="${esc(c.subcategory)}">${esc(c.subcategory)}</span>`:""}</div></div><small class="customer-secondary">${esc(c.businessName||'')}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small class="contact-secondary"></small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div class="status-cell"><button type="button" class="status status-action ${safeStatus(c.status)}" title="Click to view or change status" onclick="event.stopPropagation();selectCustomer('${c.id}')">${esc(c.status||"New")} <span class="status-edit-mark">⌄</span></button></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
+ $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b title="${esc(c.name)}">${esc(c.name)}</b><div class="record-badges">${(c.subcategory||c.type)?`<span class="subcategory-text" title="${esc(c.subcategory||c.type)}">${esc(c.subcategory||c.type)}</span>`:""}</div></div><small class="customer-secondary">${esc(c.businessName||'')}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small class="contact-secondary"></small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div class="status-cell"><button type="button" class="status status-action ${safeStatus(c.status)}" title="Click to view or change status" onclick="event.stopPropagation();selectCustomer('${c.id}')">${esc(c.status||"New")} <span class="status-edit-mark">⌄</span></button></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
   renderDashboard(); updateSideCounts(); window.updateRecordQuickCounts?.();
 }
 async function selectCustomer(id){selectedId=id;const c=customers.find(x=>x.id===id);if(!c)return;renderProfile(c);$("profileOverlay").classList.add("show")}
@@ -911,8 +921,8 @@ async function saveCustomer(){
   const d=$("fDate").value,t=$("fTime").value;
   const chosenSubcategory=$("fSubcategory").value==="__custom__"?$("fCustomSubcategory").value.trim():$("fSubcategory").value;
   if($("fSubcategory").value==="__custom__"&&!chosenSubcategory){toast("Enter a subcategory name",true);$("fCustomSubcategory").focus();return}
-  const roleTypes=["Customer","Broker","Seller","Prospect","Agent","Partner","Group / Team","Builder / Developer","Investor"];
-  const chosenType=roleTypes.includes(chosenSubcategory)?chosenSubcategory:$("fType").value;
+  const roleTypes=["Customer","Broker","Seller","Prospect","Agent","Partner","Group / Team","Builder / Developer","Investor","Buyer","Tenant","Landlord","Residential Buyer","Commercial Buyer","Plot Buyer"];
+  const chosenType=chosenSubcategory&&!roleTypes.includes(chosenSubcategory)?$("fType").value:(chosenSubcategory||$("fType").value);
   const patch={name,phone,phoneNormalized:norm,email,businessName:"",businessType:$("fBusinessType").value,type:chosenType,subcategory:chosenSubcategory,requirement:$("fReq").value.trim(),req:$("fReq").value.trim(),city:$("fCity").value.trim()||"Jaipur",area:$("fArea").value.trim()||"",budget:$("fBudget").value.trim(),status:$("fStatus").value,source:$("fSource").value,note:$("fNotes").value.trim(),notes:$("fNotes").value.trim(),updatedAt:serverTimestamp()};
   if(d) patch.next=dateText(d,t);
   try{
