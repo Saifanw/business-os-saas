@@ -353,6 +353,41 @@ body.app-page #customerList .actions .view{max-width:42px!important;overflow:hid
 #profileModalContent .pipeline-control select{min-width:0;min-height:42px;border-radius:9px}
 @media(max-width:600px){#profileModalContent .pipeline-control{grid-template-columns:1fr}#profileModalContent .profile-status-heading{align-items:flex-start}}
 </style>
+<style id="business-os-customer-list-simplify">
+/* Main list: show only the information needed to act quickly. */
+.table-head,.row{
+  grid-template-columns:34px minmax(205px,1.55fr) minmax(125px,.95fr) minmax(140px,1.1fr) minmax(105px,.8fr) minmax(135px,1fr) minmax(195px,1.35fr)!important;
+  min-width:1050px!important;
+}
+.table-head>div:nth-child(4),.row>div:nth-child(4),
+.table-head>div:nth-child(6),.row>div:nth-child(6){display:none!important}
+.row{height:76px!important;min-height:76px!important;padding:0 20px!important}
+.contact-cell{gap:11px!important}
+.contact-cell .avatar{width:40px!important;height:40px!important;flex:0 0 40px!important}
+#customerList .contact-main{min-width:0;width:100%}
+#customerList .record-title-line{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;width:100%}
+#customerList .record-title-line>b{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px!important;line-height:1.25}
+#customerList .record-badges{display:flex;align-items:center;gap:5px;flex-wrap:wrap;max-width:100%}
+#customerList .record-badges .type-pill,#customerList .subcategory-pill{padding:3px 7px!important;font-size:9px!important;line-height:1.15!important;max-width:115px!important}
+#customerList .customer-secondary,#customerList .contact-secondary{display:none!important}
+#customerList .contact-data small{display:none!important}
+#customerList .actions{gap:5px!important}
+#customerList .actions button{padding:7px 9px!important;font-size:10px!important}
+.profile-tabs{display:flex;gap:8px;padding:12px 20px;border-bottom:1px solid #e8edf4;background:#fbfcff;position:sticky;top:0;z-index:3}
+.profile-tab{border:1px solid #dce4f0;background:#fff;color:#53627b;border-radius:9px;padding:10px 14px;font-size:12px;font-weight:800;cursor:pointer;transition:.15s}
+.profile-tab:hover{border-color:#b9caff;color:#245cf5}
+.profile-tab.active{background:#245cf5;color:#fff;border-color:#245cf5;box-shadow:0 4px 10px #245cf51f}
+#profileModalContent .profile-status-section{margin:16px 20px;border-radius:14px;padding:18px;background:linear-gradient(120deg,#f4f7ff,#fff);border:1px solid #dce6ff}
+#profileModalContent .profile-status-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+#profileModalContent .profile-status-heading h3{margin:0;color:#315fe8;font-size:10px;letter-spacing:.12em}
+#profileModalContent .profile-status-heading p{margin:4px 0 0;color:#73819a;font-size:11px}
+#profileModalContent .profile-update-stage{background:#245cf5!important;color:#fff!important;border:1px solid #245cf5!important;border-radius:9px!important;padding:0 16px!important;min-height:42px!important;font-weight:800!important;box-shadow:0 6px 14px rgba(36,92,245,.18)}
+#profileModalContent .profile-update-stage:hover{background:#1748d8!important}
+#profileModalContent .profile-update-stage span{margin-left:8px}
+#profileModalContent .pipeline-control{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+#profileModalContent .pipeline-control select{min-width:0;min-height:42px;border-radius:9px}
+@media(max-width:700px){.profile-tabs{padding:10px 14px}.profile-tab{flex:1;padding:10px 8px;font-size:11px}#profileModalContent .pipeline-control{grid-template-columns:1fr}#profileModalContent .profile-status-heading{align-items:flex-start}}
+</style>
 </head>
 <body class="app-page">
 <header class="bos-app-topnav">
@@ -837,7 +872,7 @@ function render(){
  arr.sort((a,b)=>{const av=Number(a.createdAt?.seconds||0)||Number(a.updatedAt?.seconds||0)||0;const bv=Number(b.createdAt?.seconds||0)||Number(b.updatedAt?.seconds||0)||0;return bv-av;});
  const fs=followStats();
  $("total").textContent=customers.length;$("today").textContent=fs.today;$("hot").textContent=customers.filter(c=>["Interested","Follow-up","Site Visit","Negotiation"].includes(c.status)).length;$("overdue").textContent=fs.overdue;$("count").textContent=arr.length+" records";
- $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b title="${esc(c.name)}">${esc(c.name)}</b><div class="record-badges"><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span>${c.subcategory?`<span class="subcategory-pill" title="${esc(c.subcategory)}">${esc(c.subcategory)}</span>`:""}</div></div><small>${esc(c.businessName||source)}${c.email?' · '+esc(c.email):''}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small>${esc(c.source||"Manual Entry")}</small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div class="status-cell"><button type="button" class="status status-action ${safeStatus(c.status)}" title="Click to view or change status" onclick="event.stopPropagation();selectCustomer('${c.id}')">${esc(c.status||"New")} <span class="status-edit-mark">⌄</span></button></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
+ $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b title="${esc(c.name)}">${esc(c.name)}</b><div class="record-badges"><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span>${c.subcategory?`<span class="subcategory-pill" title="${esc(c.subcategory)}">${esc(c.subcategory)}</span>`:""}</div></div><small class="customer-secondary">${esc(c.businessName||'')}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small class="contact-secondary"></small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div class="status-cell"><button type="button" class="status status-action ${safeStatus(c.status)}" title="Click to view or change status" onclick="event.stopPropagation();selectCustomer('${c.id}')">${esc(c.status||"New")} <span class="status-edit-mark">⌄</span></button></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
   renderDashboard(); updateSideCounts(); window.updateRecordQuickCounts?.();
 }
 async function selectCustomer(id){selectedId=id;const c=customers.find(x=>x.id===id);if(!c)return;renderProfile(c);$("profileOverlay").classList.add("show")}
@@ -861,7 +896,11 @@ function renderProfile(c){
           <button type="button" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button>
         </div>
       </div>
-      <div class="profile-section"><h3>CUSTOMER DETAILS</h3><div class="facts">
+      <div class="profile-tabs" role="tablist" aria-label="Customer panel">
+        <button type="button" class="profile-tab active" data-profile-tab="details" onclick="setProfileTab('details')">▤ Full Details</button>
+        <button type="button" class="profile-tab" data-profile-tab="status" onclick="setProfileTab('status')">⇄ Status & Follow-up</button>
+      </div>
+      <div class="profile-section detail-tab-section"><h3>CUSTOMER DETAILS</h3><div class="facts">
         <div class="fact"><small>Mobile</small><b>${esc(c.phone||'Not added')}</b></div>
         <div class="fact"><small>Requirement</small><b>${esc(c.req||'Not specified')}</b></div>
         <div class="fact"><small>Budget / Value</small><b>${esc(c.budget||'Not specified')}</b></div>
@@ -871,30 +910,38 @@ function renderProfile(c){
         <div class="fact"><small>Source</small><b>${esc(c.source||'Other')}</b></div>
         <div class="fact"><small>Last Contact</small><b>${esc(c.last||'—')}</b></div>
       </div></div>
-      <div class="profile-section profile-status-section">
+      <div class="profile-section profile-status-section status-tab-section" style="display:none">
         <div class="profile-status-heading"><div><h3>CURRENT STATUS</h3><p>Update this customer's stage</p></div><span class="status ${safeStatus(c.status)}">${esc(c.status||'New')}</span></div>
         <div class="pipeline-control"><select id="profileStageSelect" aria-label="Choose customer status">${stageOptions}</select><button class="profile-update-stage" onclick="changeStage()">Update Status <span>→</span></button></div>
         ${dealBadge}
       </div>
-      <div class="profile-section"><h3>NEXT ACTION</h3>
+      <div class="profile-section detail-tab-section"><h3>NEXT ACTION</h3>
         <div class="next"><b>${c.status==='Overdue'?'🔴':'📅'} ${esc(c.next||'Not set')}</b><small>Next step for this customer</small>
           <div class="next-actions"><button onclick="wa('${c.id}')">WhatsApp</button><button class="done" onclick="markDone()">✓ Mark done</button></div>
         </div>
         <button class="add-activity" onclick="openActivityModal()">＋ Add Activity</button>
       </div>
-      <div class="profile-section"><h3>RECENT CONTACT</h3>
+      <div class="profile-section detail-tab-section"><h3>RECENT CONTACT</h3>
         <div class="next"><b>🕒 ${esc(c.last||'No contact')}</b><small>${esc(lastEvent)}</small>
           <div class="next-actions"><button onclick="openActivityModal()">＋ Add note</button><button onclick="openActivityModal()">＋ Activity</button></div>
         </div>
       </div>
-      <div class="profile-section"><h3>IMPORTANT NOTE</h3>
+      <div class="profile-section detail-tab-section"><h3>IMPORTANT NOTE</h3>
         <div class="next" style="background:#f8f7ff;border-color:#ded8ff"><b>📝 Keep for next follow-up</b><small>${esc(c.note||'No important note added yet.')}</small></div>
       </div>
-      <div class="profile-section" style="display:flex;justify-content:flex-end;gap:8px">
+      <div class="profile-section detail-tab-section" style="display:flex;justify-content:flex-end;gap:8px">
         <button onclick="editCustomer()" style="border:1px solid #dfe4eb;background:#fff;border-radius:8px;padding:9px 13px;font-size:9px;font-weight:800">✎ Edit</button>
         <button onclick="deleteCustomer()" style="border:1px solid #ffd1cf;background:#fff4f3;color:#c33b34;border-radius:8px;padding:9px 13px;font-size:9px;font-weight:800">Delete Customer</button>
       </div>
     </div>`;
+  setProfileTab("details");
+}
+function setProfileTab(tab){
+  const root=$("profileModalContent");if(!root)return;
+  root.querySelectorAll(".detail-tab-section").forEach(el=>el.style.display=tab==="details"?"":"none");
+  root.querySelectorAll(".status-tab-section").forEach(el=>el.style.display=tab==="status"?"":"none");
+  root.querySelectorAll("[data-profile-tab]").forEach(btn=>btn.classList.toggle("active",btn.dataset.profileTab===tab));
+  const card=root.querySelector(".profile-card");if(card)card.dataset.activeTab=tab;
 }
 function closeProfile(){$("profileOverlay").classList.remove("show")}
 function openCustomerModal(){$("customerModal").dataset.editId="";applyTemplateUI();["fName","fPhone","fEmail","fReq","fBudget","fArea","fNotes"].forEach(id=>$(id).value="");$("fCity").value=businessProfile?.city||"Jaipur";$("fStatus").value=currentTemplate().stages[0]||"New";$("fType").value=currentTemplate().contactTypes?.[0]||"Customer";window.updateSubcategoryOptions&&window.updateSubcategoryOptions();$("fSubcategory").value="";$("fCustomSubcategory").value="";$("fBusinessType").value=businessProfile?.businessType||currentTemplate().businessTypes?.[0]||"Other";$("fSource").value="Manual Entry";$("fDate").value=todayISO();$("fTime").value="15:30";$("customerModal").classList.add("show")}
