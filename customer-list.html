@@ -387,6 +387,13 @@ body.module-page .os-content{min-width:0!important}
 .bulk-customer-toolbar b{color:#334155!important}
 .bulk-delete-button{padding:7px 11px!important;font-size:11px!important;background:#fff7f7!important;color:#dc6262!important;border-color:#fbd5d5!important}
 </style>
+<style id="businessos-email-final-polish">
+.email-delivery-note{margin:0 0 12px;padding:10px 12px;border:1px solid #dbeafe;background:#f5f9ff;color:#52647e;border-radius:10px;font-size:11px;line-height:1.45}
+.email-compose-field select:focus,.email-compose-field input:focus,.email-compose-field textarea:focus{border-color:#8eabff;box-shadow:0 0 0 3px #315df615}
+.email-compose-foot .email-send{min-width:150px}
+.email-compose-foot .email-send:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:600px){.email-compose{padding:10px}.email-compose-card{width:100%;max-height:94vh}.email-compose-head,.email-compose-body{padding-left:15px;padding-right:15px}.email-compose-foot{padding-left:15px;padding-right:15px}.email-compose-field textarea{min-height:150px}}
+</style>
 </head>
 <body class="app-page">
 <header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
@@ -561,15 +568,16 @@ body.module-page .os-content{min-width:0!important}
 </div></div>
 
 <div class="email-compose" id="emailCompose" onclick="if(event.target===this)closeEmailComposer()"><div class="email-compose-card">
-  <div class="email-compose-head"><div><h2>✉ Email Message</h2><p>Review the email before opening your mail app.</p></div><button class="email-compose-close" onclick="closeEmailComposer()">×</button></div>
+  <div class="email-compose-head"><div><h2>✉ Email Message</h2><p>Review the message, then open it in your email app to send.</p></div><button class="email-compose-close" onclick="closeEmailComposer()">×</button></div>
   <div class="email-compose-body">
+    <div class="email-delivery-note">BusinessOS prepares the draft. Your email app handles final sending.</div>
     <div class="email-compose-meta"><div class="email-compose-avatar" id="emailComposeAvatar">?</div><div><b id="emailComposeName">Customer</b><small id="emailComposeAddress">No email address</small></div></div>
     <div class="email-compose-field"><label>Email template</label><select id="emailTemplate" onchange="applyEmailTemplate()"><option value="new">New Enquiry</option><option value="followup">Requirement Follow-up</option><option value="details">Property / Product Details</option><option value="meeting">Meeting / Demo Follow-up</option><option value="payment">Payment / Deal Follow-up</option><option value="custom">Custom Email</option></select></div>
     <div class="email-compose-field"><label>Subject</label><input id="emailSubject" placeholder="Email subject"></div>
     <div class="email-compose-field"><label>Message</label><textarea id="emailBody" oninput="updateEmailChar()"></textarea><div class="email-char" id="emailChar">0 characters</div></div>
     <div id="emailMissing" class="email-missing" style="display:none">Email address not available for this customer.</div>
   </div>
-  <div class="email-compose-foot"><button onclick="closeEmailComposer()">Cancel</button><button class="email-send" id="emailOpenButton" onclick="sendEmailComposer()">Open Email</button></div>
+  <div class="email-compose-foot"><button onclick="closeEmailComposer()">Cancel</button><button class="email-send" id="emailOpenButton" onclick="sendEmailComposer()">Open Email App ↗</button></div>
 </div></div>
 <div id="toast" class="save-state hidden"></div>
 
@@ -1180,11 +1188,12 @@ function applyEmailTemplate(){if(!emailComposeCustomer)return;const t=emailTempl
 function updateEmailChar(){const e=$("emailBody"),c=$("emailChar");if(e&&c)c.textContent=e.value.length+' characters'}
 async function sendEmailComposer(){
   const c=emailComposeCustomer;if(!c)return;const address=String(c.email||'').trim();if(!address){toast('Email address not available',true);return;}
-  const subject=$("emailSubject").value.trim(),body=$("emailBody").value.trim();if(!subject){toast('Subject cannot be empty',true);return;}if(!body){toast('Email message cannot be empty',true);return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)){toast('Please correct this customer email address first.',true);return;}
+  const subject=$("emailSubject").value.trim(),body=$("emailBody").value.trim();if(!subject){toast('Subject cannot be empty',true);$("emailSubject").focus();return;}if(!body){toast('Email message cannot be empty',true);$("emailBody").focus();return;}
   const url='mailto:'+encodeURIComponent(address)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);window.location.href=url;
-  const events=Array.isArray(c.events)?[...c.events]:[];const stamp=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · Now';events.push({date:stamp,type:'Email opened',note:'Email composer opened from Business OS.'});
+  const events=Array.isArray(c.events)?[...c.events]:[];const stamp=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · Now';events.push({date:stamp,type:'Email opened',note:'Email draft opened from BusinessOS; sending must be completed in the email app.'});
   try{await updateDoc(doc(db,'businesses',businessId,'contacts',c.id),{events,last:stamp,updatedAt:serverTimestamp()});const local=customers.find(x=>x.id===c.id);if(local){local.events=events;local.last=stamp;}render();}catch(e){console.warn('Email activity save failed',e)}
-  closeEmailComposer();toast('Email composer opened');
+  closeEmailComposer();toast('Draft opened in your email app. Send it there to complete delivery.');
 }
 function email(id){const c=customers.find(x=>x.id===id);if(!c)return;openEmailComposer(c)}
 function exportCSV(){const headers=["Name","Mobile","Business Type","Contact Type","City","Area","Requirement","Budget","Status","Source","Next Follow-up","Last Contact"];const lines=[headers.join(",")].concat(customers.map(c=>[c.name,c.phone,c.businessType,c.type,c.city,c.area,c.req,c.budget,c.status,c.source,c.next,c.last].map(v=>'"'+String(v??"").replaceAll('"','""')+'"').join(",")));const blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="business-os-customers.csv";a.click();URL.revokeObjectURL(a.href);toast("Export ready")}
