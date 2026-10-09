@@ -463,6 +463,27 @@ body.app-page #customerList .actions .view{max-width:42px!important;overflow:hid
 #customerList .table-head input[type=checkbox],#customerList #rows .customer-row-select{width:15px;height:15px;accent-color:#dc2626;cursor:pointer}
 #customerList #rows>.row .actions{gap:6px!important;flex-wrap:nowrap!important}
 </style>
+<style id="business-os-delete-polish-and-handler-fix" id="business-os-delete-polish-and-handler-fix">
+#customerList #rows>.row .contact-main b,
+#customerList #rows>.row .data-cell b,
+#customerList #rows>.row .follow-cell b,
+#customerList #rows>.row .status-cell .status{color:#334155!important}
+#customerList #rows>.row .contact-main small,
+#customerList #rows>.row .data-cell small,
+#customerList #rows>.row .follow-cell small{color:#8491a7!important}
+#customerList #rows>.row .actions .delete-one-customer{
+ width:24px!important;height:24px!important;min-width:24px!important;flex:0 0 24px!important;
+ padding:0!important;border-radius:7px!important;font-size:14px!important;font-weight:650!important;
+ line-height:1!important;background:#fff7f7!important;border-color:#fbd5d5!important;
+ color:#e87979!important;box-shadow:none!important
+}
+#customerList #rows>.row .actions .delete-one-customer:hover{
+ background:#fee2e2!important;border-color:#fca5a5!important;color:#dc2626!important
+}
+.bulk-customer-toolbar{padding:9px 14px!important;background:#fffafa!important}
+.bulk-customer-toolbar b{color:#334155!important}
+.bulk-delete-button{padding:7px 11px!important;font-size:11px!important;background:#fff7f7!important;color:#dc6262!important;border-color:#fbd5d5!important}
+</style>
 </head>
 <body class="app-page">
 <header class="bos-app-topnav">
@@ -1440,7 +1461,7 @@ await finishRedirect();
 onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();if(unsubPublicLeads)unsubPublicLeads();$("googleBtn").disabled=false;return}try{$("authMsg").textContent="Opening your workspace...";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");const emailEl=$("userEmail");if(emailEl)emailEl.textContent=u.email||"";subscribe();subscribePublicLeads();setTimeout(()=>navView(window.__BOS_DEFAULT_VIEW||"overview"),0)}catch(e){console.error("Workspace setup error",e);$("authMsg").textContent=e.message||"Workspace setup failed.";$("googleBtn").disabled=false;}});
 navView('overview');
 window.filterCustomersNow=filterCustomersNow;
-window.setFollowCenterTab=setFollowCenterTab;window.markDoneFor=markDoneFor;window.logout=logout;window.openCustomerModal=openCustomerModal;window.openWaComposer=openWaComposer;window.closeWaComposer=closeWaComposer;window.applyWaTemplate=applyWaTemplate;window.updateWaChar=updateWaChar;window.sendWaComposer=sendWaComposer;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.openEmailComposer=openEmailComposer;window.closeEmailComposer=closeEmailComposer;window.applyEmailTemplate=applyEmailTemplate;window.updateEmailChar=updateEmailChar;window.sendEmailComposer=sendEmailComposer;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;window.stagePick=stagePick;window.updatePipeline=updatePipeline;window.changeStage=changeStage;window.clearDashFilter=clearDashFilter;window.setStageFilter=setStageFilter;window.setFollowFilter=setFollowFilter;window.osNav=osNav;window.copyLeadFormLink=copyLeadFormLink;window.convertPublicLead=convertPublicLead;window.leadCall=leadCall;window.searchBusinessFinder=searchBusinessFinder;window.copyFinderSearch=copyFinderSearch;window.useFinderIdea=useFinderIdea;window.saveFinderProspect=saveFinderProspect;window.renderBusinessFinder=renderBusinessFinder;window.openFinderWebsite=openFinderWebsite;window.startFinderFollowup=startFinderFollowup;window.convertFinderProspect=convertFinderProspect;
+window.setFollowCenterTab=setFollowCenterTab;window.markDoneFor=markDoneFor;window.logout=logout;window.openCustomerModal=openCustomerModal;window.openWaComposer=openWaComposer;window.closeWaComposer=closeWaComposer;window.applyWaTemplate=applyWaTemplate;window.updateWaChar=updateWaChar;window.sendWaComposer=sendWaComposer;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.toggleSelectAllCustomers=toggleSelectAllCustomers;window.updateCustomerSelection=updateCustomerSelection;window.deleteCustomerRecord=deleteCustomerRecord;window.deleteSelectedCustomers=deleteSelectedCustomers;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.openEmailComposer=openEmailComposer;window.closeEmailComposer=closeEmailComposer;window.applyEmailTemplate=applyEmailTemplate;window.updateEmailChar=updateEmailChar;window.sendEmailComposer=sendEmailComposer;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;window.stagePick=stagePick;window.updatePipeline=updatePipeline;window.changeStage=changeStage;window.clearDashFilter=clearDashFilter;window.setStageFilter=setStageFilter;window.setFollowFilter=setFollowFilter;window.osNav=osNav;window.copyLeadFormLink=copyLeadFormLink;window.convertPublicLead=convertPublicLead;window.leadCall=leadCall;window.searchBusinessFinder=searchBusinessFinder;window.copyFinderSearch=copyFinderSearch;window.useFinderIdea=useFinderIdea;window.saveFinderProspect=saveFinderProspect;window.renderBusinessFinder=renderBusinessFinder;window.openFinderWebsite=openFinderWebsite;window.startFinderFollowup=startFinderFollowup;window.convertFinderProspect=convertFinderProspect;
 // Keep module-scoped helpers available to modal controls.
 window.updateSubcategoryOptions=updateSubcategoryOptions;
 window.toggleCustomSubcategory=toggleCustomSubcategory;
