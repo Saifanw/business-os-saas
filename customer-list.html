@@ -354,21 +354,17 @@ body.module-page .os-content{min-width:0!important}
   #customerList #rows>.row .actions{padding-right:92px!important}
 }
 </style>
-<style id="business-os-overview-only-action-heading">
-/* OVERVIEW ONLY: visually align ACTION label with the right-aligned button group.
-   The same customer table is reused elsewhere, so this rule is gated by module-page state. */
-body:not(.module-page) #customerList .table-head>div:nth-child(9){
-  position:relative!important;
-  left:250px!important;
-  text-align:left!important;
-  padding:0!important;
-  white-space:nowrap!important;
-}
-@media(max-width:1180px){
-  body:not(.module-page) #customerList .table-head>div:nth-child(9){
-    left:250px!important;
-  }
-}
+<style id="business-os-customer-bulk-delete">
+.bulk-customer-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 18px;margin:0;border-bottom:1px solid #e2e8f0;background:#fff7f7}
+.bulk-customer-toolbar[hidden]{display:none!important}
+.bulk-customer-toolbar>div{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bulk-customer-toolbar b{font-size:13px;color:#17243d}
+.bulk-customer-toolbar span{font-size:11px;color:#64748b}
+.bulk-delete-button,.delete-one-customer{display:inline-flex!important;align-items:center;justify-content:center;border:1px solid #fecaca!important;background:#fff1f2!important;color:#dc2626!important;font-weight:800!important;cursor:pointer!important}
+.bulk-delete-button{padding:9px 13px!important;border-radius:10px!important;font-size:12px!important}
+#customerList #rows>.row .actions .delete-one-customer{width:30px!important;height:30px!important;min-width:30px!important;padding:0!important;border-radius:9px!important;font-size:19px!important;line-height:1!important;box-shadow:none!important;flex:0 0 30px!important}
+#customerList .table-head input[type=checkbox],#customerList #rows .customer-row-select{width:15px;height:15px;accent-color:#dc2626;cursor:pointer}
+#customerList #rows>.row .actions{gap:6px!important;flex-wrap:nowrap!important}
 </style>
 </head>
 <body class="app-page">
@@ -511,7 +507,11 @@ body:not(.module-page) #customerList .table-head>div:nth-child(9){
 <div class="workspace"><section class="list-card" id="customerList">
 <div class="list-head"><div class="list-title-wrap"><div><b id="listTitle">All Customers / Leads</b><small id="listSubtitle">Manage your customers, requirements and follow-ups.</small><small class="record-sort-note">Newest records appear first · latest enquiry stays easy to find.</small></div><span class="latest-badge">● Latest first</span></div><div class="list-search"><input id="search" placeholder="Search name, mobile, company..." oninput="window.filterCustomersNow&&window.filterCustomersNow()"><span id="count">0 records</span></div></div>
 <div class="filters"><select id="type" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Categories</option><option>Customer</option><option>Broker</option><option>Seller</option><option>Prospect</option><option>Agent</option><option>Partner</option><option>Group / Team</option><option>Builder / Developer</option><option>Investor</option></select><select id="subcategoryFilter" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Subcategories</option></select><select id="area" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Cities / Areas</option></select><select id="statusFilter" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Statuses</option><option>New</option><option>Contacted</option><option>Interested</option><option>Follow-up</option><option>Demo</option><option>Site Visit</option><option>Negotiation</option><option>Won</option><option>Lost</option><option>Overdue</option></select><select id="sourceFilter" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Sources</option><option>Website</option><option>WhatsApp</option><option>Phone</option><option>Google</option><option>Facebook</option><option>Instagram</option><option>Referral</option><option>Business Finder</option><option>Walk-in</option><option>Other</option></select><select id="followFilter" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">Any Date</option><option value="today">Today</option><option value="overdue">Overdue</option><option value="upcoming">Upcoming</option></select><button class="reset-filter" onclick="window.resetCustomerFilters&&window.resetCustomerFilters()">Reset</button></div>
-<div class="table-scroll"><div class="table-head"><div>✓</div><div>Customer / Business</div><div>Contact</div><div id="tableLocationLabel">Location</div><div>Requirement</div><div>Budget / Value</div><div>Status</div><div>Next Action</div><div>Action</div></div><div id="rows"></div></div>
+<div id="bulkCustomerToolbar" class="bulk-customer-toolbar" hidden>
+  <div><b id="selectedCustomerCount">0 selected</b><span>Choose only the records you want to remove.</span></div>
+  <button type="button" class="bulk-delete-button" onclick="deleteSelectedCustomers()">✕ Delete selected</button>
+</div>
+<div class="table-scroll"><div class="table-head"><div><input type="checkbox" id="selectAllCustomers" aria-label="Select all visible customers" onchange="toggleSelectAllCustomers(this.checked)"></div><div>Customer / Business</div><div>Contact</div><div id="tableLocationLabel">Location</div><div>Requirement</div><div>Budget / Value</div><div>Status</div><div>Next Action</div><div>Action</div></div><div id="rows"></div></div>
 </section></div>
 </div><!-- /os-content -->
 </div><!-- /os-layout -->
@@ -874,8 +874,43 @@ function render(){
  arr.sort((a,b)=>{const av=Number(a.createdAt?.seconds||0)||Number(a.updatedAt?.seconds||0)||0;const bv=Number(b.createdAt?.seconds||0)||Number(b.updatedAt?.seconds||0)||0;return bv-av;});
  const fs=followStats();
  $("total").textContent=customers.length;$("today").textContent=fs.today;$("hot").textContent=customers.filter(c=>["Interested","Follow-up","Site Visit","Negotiation"].includes(c.status)).length;$("overdue").textContent=fs.overdue;$("count").textContent=arr.length+" records";
- $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b title="${esc(c.name)}">${esc(c.name)}</b><div class="record-badges">${(c.subcategory||c.type)?`<span class="subcategory-text" title="${esc(c.subcategory||c.type)}">${esc(c.subcategory||c.type)}</span>`:""}</div></div><small class="customer-secondary">${esc(c.businessName||'')}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small class="contact-secondary"></small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div class="status-cell"><button type="button" class="status status-action ${safeStatus(c.status)}" title="Click to view or change status" onclick="event.stopPropagation();selectCustomer('${c.id}')">${esc(c.status||"New")} <span class="status-edit-mark">⌄</span></button></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
+ $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" class="customer-row-select" data-customer-id="${esc(c.id)}" onclick="event.stopPropagation()" onchange="updateCustomerSelection()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b title="${esc(c.name)}">${esc(c.name)}</b><div class="record-badges">${(c.subcategory||c.type)?`<span class="subcategory-text" title="${esc(c.subcategory||c.type)}">${esc(c.subcategory||c.type)}</span>`:""}</div></div><small class="customer-secondary">${esc(c.businessName||'')}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small class="contact-secondary"></small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div class="status-cell"><button type="button" class="status status-action ${safeStatus(c.status)}" title="Click to view or change status" onclick="event.stopPropagation();selectCustomer('${c.id}')">${esc(c.status||"New")} <span class="status-edit-mark">⌄</span></button></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button><button type="button" class="delete-one-customer" title="Delete customer" aria-label="Delete ${esc(c.name)}" onclick="event.stopPropagation();deleteCustomerRecord('${c.id}')">×</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
   renderDashboard(); updateSideCounts(); window.updateRecordQuickCounts?.();
+}
+function selectedCustomerIds(){
+ return [...document.querySelectorAll("#rows .customer-row-select:checked")].map(el=>el.dataset.customerId).filter(Boolean);
+}
+function updateCustomerSelection(){
+ const ids=selectedCustomerIds(),bar=$("bulkCustomerToolbar"),count=$("selectedCustomerCount"),all=$("selectAllCustomers");
+ if(bar)bar.hidden=ids.length===0;
+ if(count)count.textContent=ids.length+" selected";
+ const boxes=[...document.querySelectorAll("#rows .customer-row-select")];
+ if(all){all.checked=boxes.length>0&&boxes.every(x=>x.checked);all.indeterminate=boxes.some(x=>x.checked)&&!all.checked;}
+}
+function toggleSelectAllCustomers(checked){
+ document.querySelectorAll("#rows .customer-row-select").forEach(el=>{el.checked=checked;});
+ updateCustomerSelection();
+}
+async function deleteCustomerRecord(id){
+ const c=customers.find(x=>x.id===id);if(!c)return;
+ if(!confirm(`Delete "${c.name||"this customer"}" permanently? This cannot be undone.`))return;
+ try{
+  await deleteDoc(doc(db,"businesses",businessId,"contacts",id));
+  toast("Customer deleted");
+ }catch(e){toast(e.message||"Could not delete customer",true);}
+}
+async function deleteSelectedCustomers(){
+ const ids=selectedCustomerIds();if(!ids.length)return;
+ if(!confirm(`Permanently delete ${ids.length} selected customer record(s)? This cannot be undone.`))return;
+ try{
+  // Firestore batches support up to 500 writes; chunk for larger selections.
+  for(let i=0;i<ids.length;i+=400){
+   const batch=writeBatch(db);
+   ids.slice(i,i+400).forEach(id=>batch.delete(doc(db,"businesses",businessId,"contacts",id)));
+   await batch.commit();
+  }
+  toast(`${ids.length} customer record(s) deleted`);
+ }catch(e){toast(e.message||"Could not delete selected records",true);}
 }
 async function selectCustomer(id){selectedId=id;const c=customers.find(x=>x.id===id);if(!c)return;renderProfile(c);$("profileOverlay").classList.add("show")}
 function renderProfile(c){
