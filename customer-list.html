@@ -78,6 +78,128 @@
 </style>
 <!-- BusinessOS shared design system (nav, header, KPI, filters, table, badges, buttons). Loaded last. -->
 <link rel="stylesheet" href="assets/bos-app.css">
+<style id="cw-top-v1">
+/* =========================================================================
+   Customer workspace — TOP SECTION  (cw-top-v1)
+   Scope: page header, KPI cards, list title + search, filters, quick chips,
+          stage strip spacing.  Table (.bx-*) is NOT styled here.
+   Uses the shared --bos-* tokens from assets/bos-app.css. Loaded after it.
+   ========================================================================= */
+
+/* ---------- Page header ---------- */
+body.bos-app .page-head.cw-head{display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;gap:12px;margin:0 0 14px;min-width:0}
+.cw-head-ico{flex:none;width:40px;height:40px;display:grid;place-items:center;border-radius:11px;background:var(--bos-brand-50);border:1px solid var(--bos-blue-200);color:var(--bos-brand)}
+.cw-head-ico svg.i{width:20px;height:20px}
+.cw-head-text{min-width:0;flex:1 1 auto}
+.page-head.cw-head .bos-eyebrow{margin:0 0 2px;font-size:10.5px;font-weight:800;letter-spacing:.12em;color:var(--bos-muted)}
+body.bos-app .page-head.cw-head h1{display:block;margin:0;font-size:21px;line-height:1.2;font-weight:800;letter-spacing:-.015em;color:var(--bos-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.page-head.cw-head h1 .workspace-badge{margin-left:8px;padding:2px 9px;gap:0;font-size:10.5px;font-weight:700;letter-spacing:.02em;vertical-align:3px}
+body.bos-app .page-head.cw-head p{margin:2px 0 0;max-width:none;font-size:13px;line-height:1.35;color:var(--bos-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- KPI cards ---------- */
+.cw-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 14px}
+.cw-kpi{display:flex;align-items:center;gap:12px;width:100%;min-width:0;min-height:68px;padding:12px 14px;border:1px solid var(--bos-line);border-radius:var(--bos-radius);background:var(--bos-surface);box-shadow:var(--bos-shadow-sm);text-align:left;font:inherit;color:inherit}
+button.cw-kpi{cursor:pointer;transition:border-color .15s,box-shadow .15s}
+button.cw-kpi:hover{border-color:var(--cw-c-200);box-shadow:var(--bos-shadow)}
+.cw-kpi-ico{flex:none;width:38px;height:38px;display:grid;place-items:center;border-radius:10px;background:var(--cw-c-50);color:var(--cw-c)}
+.cw-kpi-ico svg.i{width:18px;height:18px}
+.cw-kpi-body{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 auto}
+.cw-kpi-label{font-size:12px;font-weight:700;line-height:1.2;color:var(--bos-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cw-kpi-row{display:flex;align-items:baseline;gap:8px;min-width:0}
+.cw-kpi b{flex:none;font-size:24px;line-height:1.1;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--bos-ink)}
+.cw-kpi-hint{min-width:0;font-size:11.5px;line-height:1.2;color:var(--bos-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cw-blue{--cw-c:var(--bos-brand);--cw-c-50:var(--bos-brand-50);--cw-c-200:var(--bos-blue-200)}
+.cw-amber{--cw-c:var(--bos-amber);--cw-c-50:var(--bos-amber-50);--cw-c-200:var(--bos-amber-200)}
+.cw-purple{--cw-c:var(--bos-purple);--cw-c-50:var(--bos-purple-50);--cw-c-200:var(--bos-purple-200)}
+.cw-red{--cw-c:var(--bos-red);--cw-c-50:var(--bos-red-50);--cw-c-200:var(--bos-red-200)}
+
+/* ---------- Stage strip (JS-rendered buttons; spacing/look only) ---------- */
+body.bos-app #templatePipeline{display:flex;gap:6px;margin:0;padding:0 0 12px;overflow-x:auto;scrollbar-width:none}
+body.bos-app #templatePipeline::-webkit-scrollbar{display:none}
+body.bos-app #templatePipeline .stage{flex:none;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px 0 6px;border:1px solid var(--bos-line);border-radius:999px;background:var(--bos-surface);box-shadow:none;transform:none;font-size:12px;font-weight:700;color:var(--bos-text);white-space:nowrap}
+body.bos-app #templatePipeline .stage:hover{transform:none;box-shadow:none;border-color:#c5cfdf;background:var(--bos-surface-2)}
+body.bos-app #templatePipeline .stage b{display:inline-grid;place-items:center;width:18px;height:18px;margin:0;border-radius:50%;background:var(--bos-line-soft);color:var(--bos-muted);font-size:10.5px;font-weight:800}
+body.bos-app #templatePipeline .stage em{margin:0;font-size:11px;font-weight:800;color:var(--bos-muted)}
+body.bos-app #templatePipeline .stage.active{border-color:var(--bos-blue-200);background:var(--bos-brand-50);color:var(--bos-brand-700);box-shadow:none}
+body.bos-app #templatePipeline .stage.active b{background:var(--bos-brand);color:#fff}
+body.bos-app #templatePipeline .stage.active em{color:var(--bos-brand-700)}
+
+/* ---------- List title + search ---------- */
+.cw-listhead{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 20px;padding:16px 20px 14px}
+.cw-listtitle{min-width:0}
+.cw-listtitle b{display:block;font-size:16px;line-height:1.25;font-weight:800;letter-spacing:-.01em;color:var(--bos-ink)}
+.cw-listtitle small{display:block;margin-top:2px;font-size:12.5px;color:var(--bos-muted)}
+.cw-search{display:flex;align-items:center;justify-content:flex-end;gap:14px;flex:1 1 420px;max-width:620px;min-width:0}
+.cw-search-box{position:relative;flex:1 1 auto;min-width:0}
+.cw-search-box>svg.i{position:absolute;left:12px;top:50%;width:16px;height:16px;transform:translateY(-50%);color:var(--bos-faint);pointer-events:none}
+body.bos-app .cw-search-box input{display:block;width:100%;height:40px;padding:0 38px;border:1px solid var(--bos-line);border-radius:10px;background:var(--bos-surface-2);color:var(--bos-ink);font-size:14px;-webkit-appearance:none;appearance:none;transition:border-color .15s,box-shadow .15s,background .15s}
+body.bos-app .cw-search-box input::placeholder{color:var(--bos-faint)}
+body.bos-app .cw-search-box input::-webkit-search-cancel-button,body.bos-app .cw-search-box input::-webkit-search-decoration{-webkit-appearance:none;appearance:none;display:none}
+body.bos-app .cw-search-box input:hover{border-color:#cbd5e4}
+body.bos-app .cw-search-box input:focus{outline:0;background:#fff;border-color:var(--bos-brand);box-shadow:var(--bos-ring)}
+.cw-search-clear{position:absolute;right:6px;top:50%;width:28px;height:28px;display:grid;place-items:center;transform:translateY(-50%);border:0;border-radius:7px;background:transparent;color:var(--bos-faint);cursor:pointer}
+.cw-search-clear:hover{background:var(--bos-line-soft);color:var(--bos-ink)}
+.cw-search-clear svg.i{width:14px;height:14px}
+.cw-search-box input:placeholder-shown~.cw-search-clear{display:none}
+.cw-meta{flex:none;font-size:12px;font-weight:600;color:var(--bos-muted);white-space:nowrap}
+.cw-meta #count{font-weight:800;color:var(--bos-ink)}
+
+/* ---------- Advanced filters ---------- */
+.cw-filters{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;padding:0 20px 14px}
+.cw-f{display:flex;flex-direction:column;gap:4px;flex:1 1 150px;min-width:0}
+.cw-f-l{font-size:10.5px;font-weight:700;line-height:1;letter-spacing:.06em;text-transform:uppercase;color:var(--bos-muted)}
+.cw-filters select,.cw-filters .cw-range input{display:block;width:100%;min-width:0;height:36px;border:1px solid var(--bos-line);border-radius:9px;background-color:var(--bos-surface);color:var(--bos-text);font-size:13px;font-weight:600;transition:border-color .15s,box-shadow .15s}
+.cw-filters select{padding:0 30px 0 11px;cursor:pointer;text-overflow:ellipsis;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%2364748b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-size:12px}
+.cw-filters .cw-range input{padding:0 9px}
+.cw-filters select:hover,.cw-filters .cw-range input:hover{border-color:#cbd5e4}
+.cw-filters select:focus,.cw-filters .cw-range input:focus{outline:0;border-color:var(--bos-brand);box-shadow:var(--bos-ring)}
+/* progressive enhancement: highlight a control that has a non-default value */
+.cw-filters select:has(option:checked:not([value=""])){border-color:var(--bos-blue-200);background-color:var(--bos-brand-50);color:var(--bos-brand-700)}
+.cw-range{flex:2 1 300px;min-width:0;align-self:flex-end}
+.cw-range-l{flex:none;font-size:12px;font-weight:700;color:var(--bos-muted)}
+.cw-reset{flex:none;height:36px;padding:0 14px;border:1px solid var(--bos-line);border-radius:9px;background:var(--bos-surface-2);color:var(--bos-muted);font-size:13px;font-weight:700;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.cw-reset:hover{background:#fff;border-color:#cbd5e4;color:var(--bos-ink)}
+
+/* ---------- Quick-filter chips (.on / .n / .has toggled by existing JS) ---------- */
+.cw-chips{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 20px;border-top:1px solid var(--bos-line-soft)}
+.cw-chips-l{margin-right:4px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--bos-muted)}
+.cw-chips button{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 8px 0 12px;border:1px solid var(--bos-line);border-radius:999px;background:var(--bos-surface);color:var(--bos-text);font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s,color .15s}
+.cw-chips button:hover{border-color:#c5cfdf;background:var(--bos-surface-2)}
+.cw-chips button svg.i{width:14px;height:14px;color:var(--bos-muted)}
+.cw-chips button .n{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--bos-line-soft);color:var(--bos-muted);font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}
+.cw-chips button.on{background:var(--bos-brand-50);border-color:var(--bos-blue-200);color:var(--bos-brand-700)}
+.cw-chips button.on svg.i{color:var(--bos-brand)}
+.cw-chips button.on .n{background:var(--bos-brand);color:#fff}
+.cw-chips button[data-k=overdue] .n.has{background:var(--bos-red-50);color:var(--bos-red)}
+.cw-chips button[data-k=overdue].on .n.has{background:var(--bos-red);color:#fff}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1000px){
+  .cw-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+}
+@media (max-width:900px){
+  body.bos-app .page-head.cw-head h1{font-size:19px}
+  .cw-listhead{padding:14px 16px 12px}
+  .cw-search{flex:1 1 100%;max-width:none;flex-wrap:wrap;justify-content:flex-start;gap:8px}
+  .cw-search-box{flex:1 1 100%}
+  .cw-meta{flex:1 1 100%}
+  .cw-filters{padding:0 16px 12px}
+  .cw-f{flex:1 1 calc(50% - 5px)}
+  .cw-range{flex:1 1 100%}
+  .cw-reset{flex:1 1 100%}
+  .cw-chips{flex-wrap:nowrap;overflow-x:auto;padding:10px 16px;scrollbar-width:none}
+  .cw-chips::-webkit-scrollbar{display:none}
+  .cw-chips button{flex:none}
+  .cw-chips-l{display:none}
+}
+@media (max-width:420px){
+  .cw-kpi{padding:11px 12px;min-height:62px}
+  .cw-kpi-ico{display:none}
+  .cw-kpi b{font-size:22px}
+  .cw-kpi-hint{display:none}
+  .cw-head-ico{width:36px;height:36px}
+}
+</style>
 </head>
 <body class="app-page bos-app">
 <a class="bos-skip" href="#main">Skip to content</a>
@@ -124,7 +246,7 @@
 </header>
 <div class="customers-page" id="main">
 <div class="os-layout"><div class="os-content">
-<div class="page-head"><div><div class="bos-eyebrow">Customer workspace</div><h1>Customers</h1><p>Track every customer's journey in one place.</p></div></div>
+<div class="page-head cw-head"><span class="cw-head-ico" aria-hidden="true"><svg class="i"><use href="#i-users"/></svg></span><div class="cw-head-text"><div class="bos-eyebrow">Customer workspace</div><h1>Customers</h1><p>Track every customer's journey in one place.</p></div></div>
 <section class="dashboard-v2 view-hidden" id="dashboardV2">
   <div class="dash-head">
     <div>
@@ -235,28 +357,29 @@
   </div>
 </section>
 
-<div id="summary" class="bos-kpis" aria-label="Customer summary">
-  <button type="button" class="bos-kpi k-blue" onclick="clearDashFilter()"><b id="total">0</b><span>Contacts</span></button>
-  <button type="button" class="bos-kpi k-amber" onclick="setFollowFilter('today')"><b id="today">0</b><span>Follow-ups today</span></button>
-  <div class="bos-kpi k-purple"><b id="hot">0</b><span>Hot leads</span></div>
-  <button type="button" class="bos-kpi k-red" onclick="setFollowFilter('overdue')"><b id="overdue">0</b><span>Overdue</span></button>
+<div id="summary" class="cw-kpis" role="group" aria-label="Customer summary">
+  <button type="button" class="cw-kpi cw-blue" onclick="clearDashFilter()" title="Show all records"><span class="cw-kpi-ico" aria-hidden="true"><svg class="i"><use href="#i-users"/></svg></span><span class="cw-kpi-body"><span class="cw-kpi-label">Total contacts</span><span class="cw-kpi-row"><b id="total">0</b><span class="cw-kpi-hint">All records</span></span></span></button>
+  <button type="button" class="cw-kpi cw-amber" onclick="setFollowFilter('today')" title="Show follow-ups due today"><span class="cw-kpi-ico" aria-hidden="true"><svg class="i"><use href="#i-clock"/></svg></span><span class="cw-kpi-body"><span class="cw-kpi-label">Follow-ups today</span><span class="cw-kpi-row"><b id="today">0</b><span class="cw-kpi-hint">Open, due today</span></span></span></button>
+  <div class="cw-kpi cw-purple" title="Interested, Follow-up, Site Visit and Negotiation"><span class="cw-kpi-ico" aria-hidden="true"><svg class="i"><use href="#i-flame"/></svg></span><span class="cw-kpi-body"><span class="cw-kpi-label">Hot leads</span><span class="cw-kpi-row"><b id="hot">0</b><span class="cw-kpi-hint">Active opportunities</span></span></span></div>
+  <button type="button" class="cw-kpi cw-red" onclick="setFollowFilter('overdue')" title="Show overdue follow-ups"><span class="cw-kpi-ico" aria-hidden="true"><svg class="i"><use href="#i-alert"/></svg></span><span class="cw-kpi-body"><span class="cw-kpi-label">Overdue</span><span class="cw-kpi-row"><b id="overdue">0</b><span class="cw-kpi-hint">Past due date</span></span></span></button>
 </div>
 <div id="templatePipeline" class="template-pipeline"></div>
 <div class="workspace"><section class="list-card" id="customerList" aria-label="Customers and leads">
-<div class="bos-listhead">
-  <div class="bos-listtitle"><b id="listTitle">All Customers / Leads</b><small id="listSubtitle">Manage customers, requirements and follow-ups.</small></div>
-  <div class="bos-search">
-    <label><svg class="i" aria-hidden="true"><use href="#i-search"/></svg><span class="bos-sr">Search customers</span><input id="search" type="search" placeholder="Search name, mobile, company…" oninput="window.filterCustomersNow && window.filterCustomersNow()" onkeydown="if(event.key==='Escape'){this.value='';window.filterCustomersNow && window.filterCustomersNow()}" autocomplete="off"></label>
-    <span class="bos-meta"><span id="count">0 records</span> · newest first</span>
+<div class="cw-listhead">
+  <div class="cw-listtitle"><b id="listTitle">All Customers / Leads</b><small id="listSubtitle">Manage customers, requirements and follow-ups.</small></div>
+  <div class="cw-search">
+    <div class="cw-search-box"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg><label class="bos-sr" for="search">Search customers</label><input id="search" type="search" placeholder="Search name, mobile, company…" oninput="window.filterCustomersNow && window.filterCustomersNow()" onkeydown="if(event.key==='Escape'){this.value='';window.filterCustomersNow && window.filterCustomersNow()}" autocomplete="off"><button type="button" class="cw-search-clear" aria-label="Clear search" title="Clear search" onclick="var i=document.getElementById('search');i.value='';i.focus();window.filterCustomersNow&&window.filterCustomersNow()"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+    <span class="cw-meta"><span id="count">0 records</span> · newest first</span>
   </div>
 </div>
-<div class="bos-filters" role="group" aria-label="Filter customers"><select id="type" aria-label="Category" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Categories</option><option>Customer</option><option>Broker</option><option>Seller</option><option>Prospect</option><option>Agent</option><option>Partner</option><option>Group / Team</option><option>Builder / Developer</option><option>Investor</option></select><select id="subcategoryFilter" aria-label="Subcategory" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Subcategories</option></select><select id="area" aria-label="City or area" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Cities / Areas</option></select><select id="statusFilter" aria-label="Status" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Statuses</option><option>New</option><option>Contacted</option><option>Interested</option><option>Follow-up</option><option>Demo</option><option>Site Visit</option><option>Negotiation</option><option>Won</option><option>Lost</option><option>Overdue</option></select><select id="sourceFilter" aria-label="Source" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Sources</option><option>Website</option><option>WhatsApp</option><option>Phone</option><option>Google</option><option>Facebook</option><option>Instagram</option><option>Referral</option><option>Business Finder</option><option>Walk-in</option><option>Other</option></select><select id="followFilter" aria-label="Follow-up date" onchange="window.toggleCustomFollowDates&&window.toggleCustomFollowDates();window.filterCustomersNow&&window.filterCustomersNow()"><option value="">Any Date</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="thisweek">This Week</option><option value="lastweek">Last Week</option><option value="thismonth">This Month</option><option value="lastmonth">Last Month</option><option value="overdue">Overdue</option><option value="upcoming">Upcoming</option><option value="custom">Custom Date Range</option></select><span id="customFollowDates" style="display:none;gap:6px;align-items:center"><input type="date" id="followDateFrom" aria-label="Follow-up from date" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><input type="date" id="followDateTo" aria-label="Follow-up to date" onchange="window.filterCustomersNow&&window.filterCustomersNow()"></span><button class="bos-reset" onclick="window.resetCustomerFilters&&window.resetCustomerFilters()">Reset</button></div>
+<div class="cw-filters" role="group" aria-label="Filter customers"><label class="cw-f"><span class="cw-f-l">Category</span><select id="type" aria-label="Category" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Categories</option><option>Customer</option><option>Broker</option><option>Seller</option><option>Prospect</option><option>Agent</option><option>Partner</option><option>Group / Team</option><option>Builder / Developer</option><option>Investor</option></select></label><label class="cw-f"><span class="cw-f-l">Subcategory</span><select id="subcategoryFilter" aria-label="Subcategory" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Subcategories</option></select></label><label class="cw-f"><span class="cw-f-l">City / Area</span><select id="area" aria-label="City or area" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Cities / Areas</option></select></label><label class="cw-f"><span class="cw-f-l">Status</span><select id="statusFilter" aria-label="Status" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Statuses</option><option>New</option><option>Contacted</option><option>Interested</option><option>Follow-up</option><option>Demo</option><option>Site Visit</option><option>Negotiation</option><option>Won</option><option>Lost</option><option>Overdue</option></select></label><label class="cw-f"><span class="cw-f-l">Source</span><select id="sourceFilter" aria-label="Source" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><option value="">All Sources</option><option>Website</option><option>WhatsApp</option><option>Phone</option><option>Google</option><option>Facebook</option><option>Instagram</option><option>Referral</option><option>Business Finder</option><option>Walk-in</option><option>Other</option></select></label><label class="cw-f"><span class="cw-f-l">Follow-up date</span><select id="followFilter" aria-label="Follow-up date" onchange="window.toggleCustomFollowDates&&window.toggleCustomFollowDates();window.filterCustomersNow&&window.filterCustomersNow()"><option value="">Any Date</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="thisweek">This Week</option><option value="lastweek">Last Week</option><option value="thismonth">This Month</option><option value="lastmonth">Last Month</option><option value="overdue">Overdue</option><option value="upcoming">Upcoming</option><option value="custom">Custom Date Range</option></select></label><span id="customFollowDates" class="cw-range" style="display:none;gap:6px;align-items:center"><span class="cw-range-l">From</span><input type="date" id="followDateFrom" aria-label="Follow-up from date" onchange="window.filterCustomersNow&&window.filterCustomersNow()"><span class="cw-range-l">To</span><input type="date" id="followDateTo" aria-label="Follow-up to date" onchange="window.filterCustomersNow&&window.filterCustomersNow()"></span><button type="button" class="cw-reset" title="Reset all filters" onclick="window.resetCustomerFilters&&window.resetCustomerFilters()">Reset</button></div>
 <div id="bulkCustomerToolbar" class="bulk-customer-toolbar" hidden>
   <div><b id="selectedCustomerCount">0 selected</b><span>Choose only the records you want to remove.</span></div>
   <div><button type="button" class="bos-btn ghost" onclick="toggleSelectAllCustomers(false)">Clear selection</button><button type="button" class="bos-btn danger bulk-delete-button" onclick="deleteSelectedCustomers()"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg>Delete selected</button></div>
 </div>
-<div class="bx-chips" id="bxChips" role="group" aria-label="Quick filters">
-  <button type="button" data-k="" class="on" onclick="bxChip('')">All <span class="n">0</span></button>
+<div class="cw-chips" id="bxChips" role="group" aria-label="Quick filters">
+  <span class="cw-chips-l">Quick filters</span>
+  <button type="button" data-k="" class="on" onclick="bxChip('')"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg>All <span class="n">0</span></button>
   <button type="button" data-k="Interested" onclick="bxChip('Interested')"><svg class="i" aria-hidden="true"><use href="#i-flame"/></svg>Interested <span class="n">0</span></button>
   <button type="button" data-k="overdue" onclick="bxChip('overdue')"><svg class="i" aria-hidden="true"><use href="#i-alert"/></svg>Overdue <span class="n">0</span></button>
   <button type="button" data-k="Won" onclick="bxChip('Won')"><svg class="i" aria-hidden="true"><use href="#i-trophy"/></svg>Won <span class="n">0</span></button>
