@@ -1,0 +1,19 @@
+BUSINESSOS — GMAIL DIRECT SEND SETUP
+
+This patch sends email directly using Gmail API from the authenticated Google account. It does not open a mailto: draft.
+
+ONE-TIME GOOGLE CLOUD SETUP
+1. Open Google Cloud Console and select Firebase project: business-os-saas-traking.
+2. APIs & Services → Library → enable Gmail API.
+3. APIs & Services → OAuth consent screen. Ensure the OAuth consent screen is configured for the same project and add/allow the Gmail send scope:
+   https://www.googleapis.com/auth/gmail.send
+4. If the OAuth app is in Testing mode, add the Gmail account you will send from as a test user.
+5. Deploy the updated customers.html and customer-list.html. Keep the existing Firebase Google sign-in configuration.
+6. Sign in to BusinessOS, open a customer with a valid email address, compose the message and click “Send with Gmail”. On first use, approve the Gmail permission popup. Gmail API must be enabled for actual sending.
+7. Test only with an email address you control first.
+
+NOTES
+- The app asks for Gmail permission on first send (and again when its short-lived access token expires/page reloads). This is required by Google; it is not a mail draft.
+- Email is logged as “Email sent” only after Gmail API returns success.
+- If Google blocks the requested scope, the OAuth consent screen or API enablement needs attention. Do not remove Firebase auth or change Firestore rules to fix this.
+- This is a browser-only direct-send implementation. For production SaaS with multiple businesses, a secure backend sending service is generally preferable so each workspace's sender identity and audit trail can be controlled centrally.
