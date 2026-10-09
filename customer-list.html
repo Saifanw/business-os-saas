@@ -232,12 +232,12 @@ body.bos-app .cw-search-box input:focus{outline:0;background:#fff;border-color:v
     <a class="bos-nav-extra" href="notifications.html"><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg>Notifications</a>
   </nav>
   <div class="bos-actions">
+    <button type="button" class="bos-btn" onclick="document.getElementById('csvFile').click()" title="Import customers from CSV or Excel"><svg class="i" aria-hidden="true"><use href="#i-upload"/></svg><span class="t">Import</span></button>
+    <button type="button" class="bos-btn" onclick="exportCSV()" title="Export current workspace customers to CSV"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span class="t">Export</span></button>
     <button type="button" class="bos-btn primary" onclick="openCustomerModal()"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg><span class="t">Add Customer</span></button>
     <details class="bos-account"><summary aria-label="Account menu"><span class="bos-avatar"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg></span></summary>
       <div class="bos-menu right">
         <div class="bos-menu-head"><small>Signed in as</small><span id="userEmail" title="Signed-in account"></span></div>
-        <button type="button" onclick="document.getElementById('csvFile').click()"><svg class="i" aria-hidden="true"><use href="#i-upload"/></svg>Import customers (CSV / Excel)</button>
-        <button type="button" onclick="exportCSV()"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg>Export customers (CSV)</button>
         <button type="button" class="out" onclick="logout()"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg>Log out</button>
       </div>
     </details>
