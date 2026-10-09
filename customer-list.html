@@ -1084,6 +1084,15 @@ window.setFollowCenterTab=setFollowCenterTab;window.markDoneFor=markDoneFor;wind
 window.updateSubcategoryOptions=updateSubcategoryOptions;
 window.toggleCustomSubcategory=toggleCustomSubcategory;
 window.filterCustomersNow=()=>{try{render();}catch(e){console.error("Customer search/filter failed:",e);}};
+// Bind search directly inside the module scope so input events call the real render().
+const customerSearchInput=document.getElementById("search");
+if(customerSearchInput){
+  customerSearchInput.addEventListener("input",()=>render());
+  customerSearchInput.addEventListener("keydown",event=>{
+    if(event.key==="Escape"){customerSearchInput.value="";render();}
+  });
+}
+
 window.resetCustomerFilters=()=>{try{resetFilters();}catch(e){console.error("Customer filter reset failed:",e);}};
 </script>
 
