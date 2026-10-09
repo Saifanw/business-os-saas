@@ -1,0 +1,19 @@
+BUSINESSOS DIRECT EMAIL SETUP (EmailJS)
+
+1. Create an EmailJS account and connect the sender email service.
+2. Create an EmailJS email template with these fields:
+   - To Email: {{to_email}}
+   - Subject: {{subject}}
+   - Message/body: {{message}}
+   - Optional greeting/name: {{to_name}}
+   - Optional sender/business label: {{business_name}}
+   - Optional Reply-To: {{reply_to}}
+3. Copy the Service ID, Template ID, and Public Key into email-config.js.
+4. Deploy the three files together: customers.html, customer-list.html, email-config.js.
+5. Test using a customer record with an email address you control before using real customer addresses.
+
+Important:
+- EmailJS credentials are placeholders in email-config.js until you add your own IDs.
+- The browser-side Public Key is intended for client use; do not add private server/API secrets.
+- Configure allowed domains/rate limits in EmailJS to reduce abuse.
+- Activity is recorded as Email sent only after EmailJS reports success. Delivery to the recipient inbox can still depend on the email provider.
