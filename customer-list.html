@@ -224,6 +224,12 @@ body.module-page .os-content{min-width:0!important}
 @media(max-width:1200px){.bos36-brand{min-width:190px!important}.bos36-nav a{padding:0 10px!important;font-size:10px!important}}
 @media(max-width:980px){.bos36-brand{min-width:auto!important}.bos36-brandcopy{display:none!important}.bos36-nav a{padding:0 9px!important}}
 </style>
+<style id="business-os-subcategory-chip">
+.subcategory-pill{display:inline-flex;align-items:center;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:1px solid #dbe6f7;background:#f7faff;color:#526581;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;line-height:1.2;flex:0 1 auto}
+.record-title-line{display:flex;align-items:center;gap:6px;min-width:0}
+.record-title-line>b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.record-title-line .type-pill{flex:0 0 auto}
+</style>
 </head>
 <body class="app-page">
 <header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
@@ -720,7 +726,7 @@ function render(){
  arr.sort((a,b)=>{const av=Number(a.createdAt?.seconds||0)||Number(a.updatedAt?.seconds||0)||0;const bv=Number(b.createdAt?.seconds||0)||Number(b.updatedAt?.seconds||0)||0;return bv-av;});
  const fs=followStats();
  $("total").textContent=customers.length;$("today").textContent=fs.today;$("hot").textContent=customers.filter(c=>["Interested","Follow-up","Site Visit","Negotiation"].includes(c.status)).length;$("overdue").textContent=fs.overdue;$("count").textContent=arr.length+" records";
- $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b>${esc(c.name)}</b><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span></div><small>${esc(c.businessName||source)}${c.email?' · '+esc(c.email):''}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small>${esc(c.source||"Manual Entry")}</small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div><span class="status ${safeStatus(c.status)}">${esc(c.status||"New")}</span></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
+ $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" onclick="event.stopPropagation()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b>${esc(c.name)}</b><span class="type-pill ${String(c.type||"Customer").toLowerCase()}">${esc(c.type||"Customer")}</span>${c.subcategory?`<span class="subcategory-pill">${esc(c.subcategory)}</span>`:""}</div><small>${esc(c.businessName||source)}${c.email?' · '+esc(c.email):''}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small>${esc(c.source||"Manual Entry")}</small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div><span class="status ${safeStatus(c.status)}">${esc(c.status||"New")}</span></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button type="button" title="Email" onclick="event.preventDefault();event.stopPropagation();email('${c.id}')">✉ Email</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
   renderDashboard(); updateSideCounts(); window.updateRecordQuickCounts?.();
 }
 async function selectCustomer(id){selectedId=id;const c=customers.find(x=>x.id===id);if(!c)return;renderProfile(c);$("profileOverlay").classList.add("show")}
@@ -784,7 +790,9 @@ async function saveCustomer(){
   const phone=$("fPhone").value.trim(),email=$("fEmail").value.trim(),norm=normalizePhone(phone),editId=$("customerModal").dataset.editId||"";
   if(norm&&customers.some(c=>c.id!==editId&&normalizePhone(c.phone)===norm)){toast("Customer already exists with this mobile",true);return}
   const d=$("fDate").value,t=$("fTime").value;
-  const patch={name,phone,phoneNormalized:norm,email,businessName:"",businessType:$("fBusinessType").value,type:$("fType").value,subcategory:($("fSubcategory").value==="__custom__"?$("fCustomSubcategory").value.trim():$("fSubcategory").value),requirement:$("fReq").value.trim(),req:$("fReq").value.trim(),city:$("fCity").value.trim()||"Jaipur",area:$("fArea").value.trim()||"",budget:$("fBudget").value.trim(),status:$("fStatus").value,source:$("fSource").value,note:$("fNotes").value.trim(),notes:$("fNotes").value.trim(),updatedAt:serverTimestamp()};
+  const chosenSubcategory=$("fSubcategory").value==="__custom__"?$("fCustomSubcategory").value.trim():$("fSubcategory").value;
+  if($("fSubcategory").value==="__custom__"&&!chosenSubcategory){toast("Enter a subcategory name",true);$("fCustomSubcategory").focus();return}
+  const patch={name,phone,phoneNormalized:norm,email,businessName:"",businessType:$("fBusinessType").value,type:$("fType").value,subcategory:chosenSubcategory,requirement:$("fReq").value.trim(),req:$("fReq").value.trim(),city:$("fCity").value.trim()||"Jaipur",area:$("fArea").value.trim()||"",budget:$("fBudget").value.trim(),status:$("fStatus").value,source:$("fSource").value,note:$("fNotes").value.trim(),notes:$("fNotes").value.trim(),updatedAt:serverTimestamp()};
   if(d) patch.next=dateText(d,t);
   try{
     if(editId){await updateDoc(doc(db,"businesses",businessId,"contacts",editId),patch);$("customerModal").dataset.editId="";closeCustomerModal();toast("Customer updated");await selectCustomer(editId);}
@@ -1080,20 +1088,6 @@ await finishRedirect();
 onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();if(unsubPublicLeads)unsubPublicLeads();$("googleBtn").disabled=false;return}try{$("authMsg").textContent="Opening your workspace...";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");$("userEmail").textContent=u.email||"";subscribe();subscribePublicLeads();setTimeout(()=>navView(window.__BOS_DEFAULT_VIEW||"overview"),0)}catch(e){console.error("Workspace setup error",e);$("authMsg").textContent=e.message||"Workspace setup failed.";$("googleBtn").disabled=false;}});
 navView('overview');
 window.setFollowCenterTab=setFollowCenterTab;window.markDoneFor=markDoneFor;window.logout=logout;window.openCustomerModal=openCustomerModal;window.openWaComposer=openWaComposer;window.closeWaComposer=closeWaComposer;window.applyWaTemplate=applyWaTemplate;window.updateWaChar=updateWaChar;window.sendWaComposer=sendWaComposer;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.openEmailComposer=openEmailComposer;window.closeEmailComposer=closeEmailComposer;window.applyEmailTemplate=applyEmailTemplate;window.updateEmailChar=updateEmailChar;window.sendEmailComposer=sendEmailComposer;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;window.stagePick=stagePick;window.updatePipeline=updatePipeline;window.changeStage=changeStage;window.clearDashFilter=clearDashFilter;window.setStageFilter=setStageFilter;window.setFollowFilter=setFollowFilter;window.osNav=osNav;window.copyLeadFormLink=copyLeadFormLink;window.convertPublicLead=convertPublicLead;window.leadCall=leadCall;window.searchBusinessFinder=searchBusinessFinder;window.copyFinderSearch=copyFinderSearch;window.useFinderIdea=useFinderIdea;window.saveFinderProspect=saveFinderProspect;window.renderBusinessFinder=renderBusinessFinder;window.openFinderWebsite=openFinderWebsite;window.startFinderFollowup=startFinderFollowup;window.convertFinderProspect=convertFinderProspect;
-// Expose module-scoped customer search/filter handlers to inline controls.
-window.updateSubcategoryOptions=updateSubcategoryOptions;
-window.toggleCustomSubcategory=toggleCustomSubcategory;
-window.filterCustomersNow=()=>{try{render();}catch(e){console.error("Customer search/filter failed:",e);}};
-// Bind search directly inside the module scope so input events call the real render().
-const customerSearchInput=document.getElementById("search");
-if(customerSearchInput){
-  customerSearchInput.addEventListener("input",()=>render());
-  customerSearchInput.addEventListener("keydown",event=>{
-    if(event.key==="Escape"){customerSearchInput.value="";render();}
-  });
-}
-
-window.resetCustomerFilters=()=>{try{resetFilters();}catch(e){console.error("Customer filter reset failed:",e);}};
 </script>
 
 <div class="modal" id="onboardingModal" style="display:none;position:fixed;inset:0;background:rgba(9,16,29,.72);backdrop-filter:blur(8px);z-index:9999;place-items:center;padding:18px">
@@ -1786,5 +1780,13 @@ body.app-page #dashboardV2,body.app-page #followupCenter,body.app-page #websiteL
   else {buildV33();syncCounts()}
   setInterval(syncCounts,1200);
 })();
+window.updateSubcategoryOptions=updateSubcategoryOptions;window.toggleCustomSubcategory=toggleCustomSubcategory;window.filterCustomersNow=()=>{try{render()}catch(e){console.error(e);}};window.resetCustomerFilters=()=>{try{resetFilters()}catch(e){console.error(e);}};// Direct input binding inside this module avoids scope issues with inline handlers.
+const customerSearchInput=document.getElementById("search");
+if(customerSearchInput){
+  customerSearchInput.addEventListener("input",()=>render());
+  customerSearchInput.addEventListener("keydown",event=>{
+    if(event.key==="Escape"){customerSearchInput.value="";render();}
+  });
+}
 
 </script>
