@@ -611,7 +611,7 @@ body.app-page #customerList .actions .view{max-width:42px!important;overflow:hid
   <div><b id="selectedCustomerCount">0 selected</b><span>Choose only the records you want to remove.</span></div>
   <button type="button" class="bulk-delete-button" onclick="deleteSelectedCustomers()">✕ Delete selected</button>
 </div>
-<div class="table-scroll"><div class="table-head"><div><input type="checkbox" id="selectAllCustomers" aria-label="Select all visible customers" onchange="toggleSelectAllCustomers(this.checked)"></div><div>Customer / Business</div><div>Contact</div><div id="tableLocationLabel">Location</div><div>Requirement</div><div>Budget / Value</div><div>Status</div><div>Next Action</div><div>Action</div></div><div id="rows"></div></div>
+<div class="bx-chips" id="bxChips"><button type="button" data-k="" class="on" onclick="bxChip('')">All</button><button type="button" data-k="Interested" onclick="bxChip('Interested')">🔥 Interested</button><button type="button" data-k="overdue" onclick="bxChip('overdue')">⚠️ Overdue</button><button type="button" data-k="Won" onclick="bxChip('Won')">🏆 Won</button><button type="button" data-k="Lost" onclick="bxChip('Lost')">✕ Lost</button></div><div class="table-scroll bx-scroll"><div class="bx-head"><div><input type="checkbox" id="selectAllCustomers" aria-label="Select all visible customers" onchange="toggleSelectAllCustomers(this.checked)"></div><div>Customer</div><div>Requirement</div><div>Status</div><div>Next action</div><div style="text-align:right">Actions</div></div><span id="tableLocationLabel" hidden>Location</span><div id="rows"></div></div>
 </section></div>
 </div><!-- /os-content -->
 </div><!-- /os-layout -->
@@ -970,6 +970,49 @@ function buildSubcategoryFilters(){
  sel.innerHTML='<option value="">All Subcategories</option>'+vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');
  sel.value=vals.includes(current)?current:"";
 }
+
+const bxClean=v=>{const s=String(v??"").trim();return /^[\s"'`“”‘’.,;:\-–—_\\\/|]*$/.test(s)?"":s};
+const BX_ICON={"new":"✨","contacted":"📞","interested":"🔥","follow-up":"⏰","demo":"📅","site-visit":"📍","negotiation":"🤝","won":"🏆","paid":"💰","lost":"✕","overdue":"⚠️"};
+function bxNext(c){
+ const st=String(c.status||"New"),raw=bxClean(c.next),parts=raw?raw.split(" · "):[];
+ if(st==="Won"||st==="Paid")return{cls:"won",t:"Deal closed",s:st==="Paid"?"Payment received":"Ask for a referral"};
+ if(st==="Lost")return{cls:"lost",t:"Closed as lost",s:"Reopen when ready"};
+ if(!raw||/not set/i.test(raw))return st==="Overdue"?{cls:"late",t:"Overdue",s:"Set a new date",btn:"Set follow-up"}:{btn:"Set follow-up"};
+ if(/completed/i.test(raw))return{cls:"done",t:"Follow-up done",s:"Plan the next step",btn:"Set next"};
+ const d=parseNextDate(raw),note=parts.slice(1).join(" · ");
+ if(!d)return{cls:st==="Overdue"?"late":"",t:parts[0],s:note};
+ const n=new Date(),t0=new Date(n.getFullYear(),n.getMonth(),n.getDate()),diff=Math.round((d-t0)/86400000);
+ if(diff<0)return{cls:"late",t:(-diff)+(diff===-1?" day":" days")+" overdue",s:parts.join(" · ")};
+ if(diff===0)return{cls:"today",t:"Today",s:note||"Due today"};
+ if(diff===1)return{cls:"soon",t:"Tomorrow",s:note};
+ return{cls:"",t:parts[0],s:note};
+}
+function bxRow(c){
+ const st=String(c.status||"New"),key=safeStatus(st),won=st==="Won"||st==="Paid",hot=["Interested","Site Visit","Negotiation"].includes(st),n=bxNext(c);
+ const phone=bxClean(c.phone),biz=bxClean(c.businessName),area=bxClean(c.area||c.city),tag=bxClean(c.subcategory||c.type);
+ const req=bxClean(c.req||c.requirement),budget=bxClean(c.budget),btype=bxClean(c.businessType);
+ const sub=[biz?esc(biz):"",phone?esc(phone):'<span class="bx-miss">Add phone number</span>',area?esc(area):""].filter(Boolean).join(" · ");
+ const cls=["bx-row",won?"bx-won":"",hot&&n.cls!=="late"?"bx-hot":"",n.cls==="late"?"bx-late":"",newRecordId===c.id?"bx-new":""].filter(Boolean).join(" ");
+ const wa=phone?`wa('${c.id}')`:`toast('Add a phone number first',true)`;
+ return `<div class="${cls}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="bx-c"><input type="checkbox" class="customer-row-select" data-customer-id="${esc(c.id)}" onclick="event.stopPropagation()" onchange="updateCustomerSelection()" aria-label="Select ${esc(c.name)}"></div>`
+ +`<div class="bx-cust"><div class="bx-av">${esc(ini(c.name))}${won?'<span class="bx-trophy" aria-hidden="true">🏆</span>':''}</div><div class="bx-cm"><div class="bx-nm"><b title="${esc(c.name)}">${esc(c.name||"Unnamed")}</b>${tag?`<span class="bx-tag">${esc(tag)}</span>`:""}</div><small>${sub}</small></div></div>`
+ +`<div class="bx-req"><b>${req?esc(req):'<span class="bx-miss">Not added</span>'}</b><small>${esc(budget||btype||"")}</small></div>`
+ +`<div><button type="button" class="bx-st bx-st-${esc(key)}" title="View or change status" onclick="event.stopPropagation();selectCustomer('${c.id}')"><span aria-hidden="true">${BX_ICON[key]||"•"}</span>${esc(st)}</button></div>`
+ +`<div class="bx-next ${n.cls||""}">${n.t?`<b>${esc(n.t)}</b>`:""}${n.s?`<small>${esc(n.s)}</small>`:""}${n.btn?`<button type="button" class="bx-setfu" onclick="event.stopPropagation();selectCustomer('${c.id}')">+ ${esc(n.btn)}</button>`:""}</div>`
+ +`<div class="bx-act"><button type="button" class="bx-wa${phone?"":" bx-off"}" title="WhatsApp" onclick="event.stopPropagation();${wa}">💬 WhatsApp</button><button type="button" class="bx-view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button><button type="button" class="bx-del" title="Delete customer" aria-label="Delete ${esc(c.name)}" onclick="event.stopPropagation();deleteCustomerRecord('${c.id}')">×</button></div></div>`;
+}
+function bxEmpty(){return '<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list. Clear the filters if you expected to see records here.</div>'}
+function bxSyncChips(){
+ const sf=$("statusFilter")?.value||"",ff=$("followFilter")?.value||"";
+ const k=ff==="overdue"?"overdue":(ff?"__other":sf);
+ document.querySelectorAll("#bxChips button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
+}
+window.bxChip=function(k){
+ const s=$("statusFilter"),f=$("followFilter");if(!s||!f)return;
+ s.value=k==="overdue"?"":k;f.value=k==="overdue"?"overdue":"";
+ if(window.toggleCustomFollowDates)window.toggleCustomFollowDates();
+ (window.filterCustomersNow||render)();
+};
 function render(){
  buildAreas();updatePipeline();buildSubcategoryFilters();const rawQ=String($("search")?.value||"").trim().toLowerCase(),q=rawQ.replace(/[^a-z0-9]/g,""),ar=$("area")?.value||"",tp=$("type")?.value||"",subf=$("subcategoryFilter")?.value||"",sf=$("statusFilter")?.value||"",src=$("sourceFilter")?.value||"",ff=$("followFilter")?.value||"";
  const now=new Date(),dayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate());
@@ -977,7 +1020,7 @@ function render(){
  arr.sort((a,b)=>{const av=Number(a.createdAt?.seconds||0)||Number(a.updatedAt?.seconds||0)||0;const bv=Number(b.createdAt?.seconds||0)||Number(b.updatedAt?.seconds||0)||0;return bv-av;});
  const fs=followStats();
  $("total").textContent=customers.length;$("today").textContent=fs.today;$("hot").textContent=customers.filter(c=>["Interested","Follow-up","Site Visit","Negotiation"].includes(c.status)).length;$("overdue").textContent=fs.overdue;$("count").textContent=arr.length+" records";
- $("rows").innerHTML=arr.length?arr.map(c=>{const overdue=c.status==="Overdue",businessType=c.businessType||"Other",source=c.source||"Other",follow=String(c.next||"Not set"),parts=follow.split(" · ");return `<div class="row ${newRecordId===c.id?"is-new":""}" data-record-id="${esc(c.id)}" onclick="selectCustomer('${c.id}')"><div class="check"><input type="checkbox" class="customer-row-select" data-customer-id="${esc(c.id)}" onclick="event.stopPropagation()" onchange="updateCustomerSelection()" aria-label="Select ${esc(c.name)}"></div><div class="contact-cell"><div class="avatar">${ini(c.name)}</div><div class="contact-main"><div class="record-title-line"><b title="${esc(c.name)}">${esc(c.name)}</b><div class="record-badges">${(c.subcategory||c.type)?`<span class="subcategory-text" title="${esc(c.subcategory||c.type)}">${esc(c.subcategory||c.type)}</span>`:""}</div></div><small class="customer-secondary">${esc(c.businessName||'')}</small></div></div><div class="data-cell contact-data"><b>${esc(c.phone||"No mobile")}</b><small class="contact-secondary"></small></div><div class="data-cell"><b>${esc(c.area||"—")}</b><small>${esc(c.city||"—")}</small></div><div class="data-cell requirement-data"><b>${esc(c.req||c.requirement||"No requirement")}</b><small>${esc(c.businessType||"General")}</small></div><div class="data-cell budget-data"><b>${esc(c.budget||"Not specified")}</b><small>Budget / Value</small></div><div class="status-cell"><button type="button" class="status status-action ${safeStatus(c.status)}" title="Click to view or change status" onclick="event.stopPropagation();selectCustomer('${c.id}')">${esc(c.status||"New")} <span class="status-edit-mark">⌄</span></button></div><div class="follow-cell ${overdue?"overdue":""}"><b>${esc(parts[0]||"—")}</b><small>${esc(parts.slice(1).join(" · ")||"Set follow-up")}</small></div><div class="actions"><button class="wa" title="WhatsApp" onclick="event.stopPropagation();wa('${c.id}')">💬 WhatsApp</button><button class="view" title="View customer" onclick="event.stopPropagation();selectCustomer('${c.id}')">View</button><button type="button" class="delete-one-customer" title="Delete customer" aria-label="Delete ${esc(c.name)}" onclick="event.stopPropagation();deleteCustomerRecord('${c.id}')">×</button></div></div>`}).join(""):'<div class="empty-state"><b>No customers found</b>Add your first customer or import your existing CSV/Excel list.</div>';
+ $("rows").innerHTML=arr.length?arr.map(bxRow).join(""):bxEmpty();bxSyncChips();
   renderDashboard(); updateSideCounts(); window.updateRecordQuickCounts?.();
 }
 function selectedCustomerIds(){
@@ -1584,6 +1627,67 @@ body.app-page #customerList .table-head>div:nth-child(5),body.app-page #customer
 </style>
 <script id="business-os-customer-search-fix-v2">document.addEventListener("DOMContentLoaded",()=>{const input=document.getElementById("search");if(input){input.addEventListener("input",()=>window.filterCustomersNow?.());input.addEventListener("keydown",e=>{if(e.key==="Escape"){input.value="";window.filterCustomersNow?.();}});}});</script>
 
+<style id="bx-customers-ui">
+#customerList .bx-chips{display:flex;gap:8px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid #e8edf2;background:#fff}
+#customerList .bx-chips button{height:32px;padding:0 14px;border-radius:999px;border:1px solid #dce3eb;background:#fff;color:#44536b;font:700 12px inherit;font-family:inherit;cursor:pointer}
+#customerList .bx-chips button:hover{border-color:#b9c6da}
+#customerList .bx-chips button.on{background:#172033;color:#fff;border-color:#172033}
+#customerList .bx-scroll{overflow-x:auto}
+.bx-head,.bx-row{display:grid;grid-template-columns:36px minmax(240px,2.3fr) minmax(150px,1.3fr) minmax(125px,.9fr) minmax(165px,1.1fr) 215px;align-items:center;gap:12px;padding:0 20px;box-sizing:border-box;min-width:1000px}
+.bx-head{height:44px;background:#f8fafc;border-bottom:1px solid #e4e9f0;color:#6b778c;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.bx-head input,.bx-c input{width:15px;height:15px;accent-color:#2f5fe3}
+.bx-row{min-height:74px;padding-top:8px;padding-bottom:8px;border-bottom:1px solid #edf0f4;background:#fff;cursor:pointer;transition:background .15s ease;box-shadow:inset 3px 0 0 transparent}
+.bx-row:hover{background:#f7f9fe}
+.bx-row.bx-won{background:#f7fcf9;box-shadow:inset 3px 0 0 #16a36a}
+.bx-row.bx-hot{box-shadow:inset 3px 0 0 #7c5ce6}
+.bx-row.bx-late{box-shadow:inset 3px 0 0 #dc3b34}
+.bx-row.bx-new{animation:bxnew 2.4s ease}
+@keyframes bxnew{0%{background:#e8f0ff}100%{background:#fff}}
+.bx-cust{display:flex;align-items:center;gap:12px;min-width:0}
+.bx-av{position:relative;flex:none;width:40px;height:40px;border-radius:50%;background:#e9efff;color:#3160dc;display:grid;place-items:center;font-size:12px;font-weight:800}
+.bx-won .bx-av{background:#e0f5ea;color:#11774c}
+.bx-trophy{position:absolute;right:-5px;bottom:-5px;width:19px;height:19px;border-radius:50%;background:#fff3d1;border:2px solid #fff;display:grid;place-items:center;font-size:10px;animation:bxpulse 2.4s ease-in-out infinite}
+@keyframes bxpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+.bx-cm{min-width:0}
+.bx-nm{display:flex;align-items:center;gap:7px;min-width:0}
+.bx-nm b{font-size:14px;color:#172033;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bx-tag{flex:none;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;background:#f1f4f8;color:#5b677a}
+.bx-cm small,.bx-req small,.bx-next small{display:block;margin-top:3px;font-size:12px;color:#7b8698;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bx-req{min-width:0}
+.bx-req b{display:block;font-size:13px;font-weight:600;color:#2a374d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bx-miss{color:#b7791f;font-weight:600;font-style:italic}
+.bx-st{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:1px solid #dfe7f1;background:#f1f5fa;color:#52627a;font-family:inherit;font-size:12px;font-weight:800;white-space:nowrap;cursor:pointer}
+.bx-st-contacted{background:#eaf3ff;color:#2f68b3;border-color:#d6e6fb}
+.bx-st-interested,.bx-st-site-visit{background:#f1ecff;color:#6a45d1;border-color:#e0d6ff}
+.bx-st-follow-up{background:#fff4dc;color:#9a6500;border-color:#f5e2b0}
+.bx-st-demo{background:#eaf2ff;color:#2c5fb0;border-color:#d5e3fb}
+.bx-st-negotiation{background:#fff0e4;color:#b05314;border-color:#f8dcc5}
+.bx-st-won,.bx-st-paid{background:#e4f7ee;color:#11774c;border-color:#c9ecdb}
+.bx-st-lost{background:#fdeceb;color:#b83a34;border-color:#f6d2cf}
+.bx-st-overdue{background:#fdeceb;color:#c43c35;border-color:#ffd1ce}
+.bx-next{min-width:0}
+.bx-next b{display:block;font-size:13px;font-weight:800;color:#2a374d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bx-next.late b{color:#c43c35}.bx-next.today b{color:#b26a00}.bx-next.soon b{color:#2f68b3}.bx-next.won b{color:#11774c}.bx-next.lost b,.bx-next.done b{color:#7b8698}
+.bx-setfu{height:30px;padding:0 12px;margin-top:4px;border-radius:8px;border:1px dashed #aeb9cc;background:#fff;color:#3463cf;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.bx-next b+small+.bx-setfu{margin-top:6px}
+.bx-setfu:hover{background:#eef3ff;border-color:#3463cf}
+.bx-act{display:flex;gap:6px;justify-content:flex-end;align-items:center}
+.bx-act button{height:34px;border-radius:9px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}
+.bx-wa{padding:0 11px;border:1px solid #cfeee0;background:#edfbf5;color:#087e52}
+.bx-wa.bx-off{opacity:.45}
+.bx-view{padding:0 14px;border:1px solid #172033;background:#172033;color:#fff}
+.bx-del{width:32px;padding:0;border:1px solid #e8ecf2;background:#fff;color:#9aa5b6;font-size:18px}
+.bx-del:hover{background:#fff0ef;border-color:#ffd1ce;color:#c43c35}
+.bx-act button:hover{filter:brightness(.97)}
+@media(max-width:760px){
+ .bx-head{display:none}
+ #customerList .bx-scroll{overflow:visible}
+ .bx-row{grid-template-columns:28px 1fr;min-width:0;gap:10px 10px;padding:14px;align-items:start}
+ .bx-row>.bx-c{grid-row:1/6}
+ .bx-row>div:not(.bx-c){grid-column:2}
+ .bx-act{justify-content:flex-start}
+}
+</style>
 </body></html>
 
 <style id="business-os-v24-cinematic-comfort">
