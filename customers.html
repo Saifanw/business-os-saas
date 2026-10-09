@@ -413,7 +413,7 @@ body.app-page #summary,body.app-page #templatePipeline{display:none!important}bo
 </section>
 <div id="summary" class="smart-summary"><span><b id="total">0</b> contacts</span><i></i><span><b id="today">0</b> follow-ups today</span><i></i><span><b id="hot">0</b> hot leads</span><i></i><span><b id="overdue">0</b> overdue</span></div><div id="templatePipeline" class="template-pipeline"></div>
 <div class="workspace"><section class="list-card" id="customerList">
-<div class="list-head"><div class="list-title-wrap"><div><b id="listTitle">All Customers / Leads</b><small id="listSubtitle">Manage your customers, requirements and follow-ups.</small><small class="record-sort-note">Newest records appear first · latest enquiry stays easy to find.</small></div><span class="latest-badge">● Latest first</span></div><div class="list-search"><input id="search" placeholder="Search name, mobile, company..." oninput="render()"><span id="count">0 records</span></div></div>
+<div class="list-head"><div class="list-title-wrap"><div><b id="listTitle">All Customers / Leads</b><small id="listSubtitle">Manage your customers, requirements and follow-ups.</small><small class="record-sort-note">Newest records appear first · latest enquiry stays easy to find.</small></div><span class="latest-badge">● Latest first</span></div><div class="list-search"><input id="search" placeholder="Search name, mobile, company..." oninput="window.filterCustomersNow && window.filterCustomersNow()" onkeydown="if(event.key==='Escape'){this.value='';window.filterCustomersNow && window.filterCustomersNow()}" autocomplete="off"><span id="count">0 records</span></div></div>
 <div class="filters"><select id="type" onchange="render()"><option value="">All Business Types</option><option>Customer</option><option>Broker</option><option>Seller</option><option>Prospect</option></select><select id="area" onchange="render()"><option value="">All Cities / Areas</option></select><select id="statusFilter" onchange="render()"><option value="">All Statuses</option><option>New</option><option>Contacted</option><option>Interested</option><option>Follow-up</option><option>Demo</option><option>Site Visit</option><option>Negotiation</option><option>Won</option><option>Lost</option><option>Overdue</option></select><select id="sourceFilter" onchange="render()"><option value="">All Sources</option><option>Website</option><option>WhatsApp</option><option>Phone</option><option>Google</option><option>Facebook</option><option>Instagram</option><option>Referral</option><option>Business Finder</option><option>Walk-in</option><option>Other</option></select><select id="followFilter" onchange="render()"><option value="">Any Date</option><option value="today">Today</option><option value="overdue">Overdue</option><option value="upcoming">Upcoming</option></select><button class="reset-filter" onclick="resetFilters()">Reset</button></div>
 <div class="table-scroll"><div class="table-head"><div>✓</div><div>Customer / Business</div><div>Contact</div><div id="tableLocationLabel">Location</div><div>Requirement</div><div>Budget / Value</div><div>Status</div><div>Next Action</div><div>Action</div></div><div id="rows"></div></div>
 </section></div>
@@ -467,6 +467,7 @@ function safeStatus(s){return String(s||"New").toLowerCase().replace(/\s+/g,"-")
 function resetFilters(){["search"].forEach(id=>$(id).value="");["area","type","statusFilter","sourceFilter","followFilter"].forEach(id=>$(id).value="");render()}
 function buildAreas(){const sel=$("area"),current=sel.value;const vals=[...new Set(customers.map(c=>c.area).filter(Boolean))].sort();sel.innerHTML='<option value="">All Cities / Areas</option>'+vals.map(v=>`<option>${esc(v)}</option>`).join("");sel.value=vals.includes(current)?current:""}
 function currentTemplate(){return getBusinessTemplate((businessProfile&&businessProfile.templateId)||'general')}
+function filterCustomersNow(){try{render()}catch(e){console.error("Customer search failed",e);const count=$("count");if(count)count.textContent="Search error";}}
 function navView(section){
   const dash=document.getElementById('dashboardV2');
   const summary=document.getElementById('summary');
@@ -737,9 +738,9 @@ function renderDashboard(){
 
 function setSourceFilter(source){const el=$("sourceFilter");if(el){el.value=source;el.dispatchEvent(new Event('change'));}document.querySelector('.list-card')?.scrollIntoView({behavior:'smooth'});}
 function render(){
- buildAreas();updatePipeline();const q=$("search").value.toLowerCase(),ar=$("area").value,tp=$("type").value,sf=$("statusFilter").value,src=$("sourceFilter").value,ff=$("followFilter").value;
+ buildAreas();updatePipeline();const rawQ=String($("search")?.value||"").trim().toLowerCase(),q=rawQ.replace(/[^a-z0-9]/g,""),ar=$("area")?.value||"",tp=$("type")?.value||"",sf=$("statusFilter")?.value||"",src=$("sourceFilter")?.value||"",ff=$("followFilter")?.value||"";
  const now=new Date(),dayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate());
- let arr=customers.filter(c=>{const hay=[c.name,c.phone,c.businessName,c.area,c.city,c.req,c.detail,c.budget,c.status,c.note,c.source,c.businessType].join(" ").toLowerCase();const d=parseNextDate(c.next);if(q&&!hay.includes(q))return false;if(ar&&c.area!==ar)return false;if(tp&&String(c.type||"Customer")!==tp)return false;if(sf&&c.status!==sf)return false;if(src&&String(c.source||"Other")!==src)return false;if(ff==="today"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||dateKey(d)!==dateKey(now)))return false;if(ff==="overdue"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||d>=dayStart)&&c.status!=="Overdue")return false;if(ff==="upcoming"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||d<=dayStart))return false;return true});
+ let arr=customers.filter(c=>{const rawHay=[c.name,c.phone,c.email,c.businessName,c.area,c.city,c.req,c.requirement,c.detail,c.budget,c.status,c.note,c.notes,c.source,c.businessType,c.type].join(" ").toLowerCase();const hay=rawHay.replace(/[^a-z0-9]/g,"");const d=parseNextDate(c.next);if(rawQ&&!rawHay.includes(rawQ)&&!hay.includes(q))return false;if(ar&&c.area!==ar)return false;if(tp&&String(c.type||"Customer")!==tp)return false;if(sf&&c.status!==sf)return false;if(src&&String(c.source||"Other")!==src)return false;if(ff==="today"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||dateKey(d)!==dateKey(now)))return false;if(ff==="overdue"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||d>=dayStart)&&c.status!=="Overdue")return false;if(ff==="upcoming"&&(isTerminal(c)||isCompletedFollowUp(c)||!d||d<=dayStart))return false;return true});
  arr.sort((a,b)=>{const av=Number(a.createdAt?.seconds||0)||Number(a.updatedAt?.seconds||0)||0;const bv=Number(b.createdAt?.seconds||0)||Number(b.updatedAt?.seconds||0)||0;return bv-av;});
  const fs=followStats();
  $("total").textContent=customers.length;$("today").textContent=fs.today;$("hot").textContent=customers.filter(c=>["Interested","Follow-up","Site Visit","Negotiation"].includes(c.status)).length;$("overdue").textContent=fs.overdue;$("count").textContent=arr.length+" records";
@@ -1173,6 +1174,7 @@ await finishRedirect();
 
 onAuthStateChanged(auth,async u=>{currentUser=u;if(!u){$("authScreen").classList.remove("hidden");$("app").classList.add("hidden");if(unsub)unsub();if(unsubPublicLeads)unsubPublicLeads();$("googleBtn").disabled=false;return}try{$("authMsg").textContent="Opening your workspace...";await ensureWorkspace(u);$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");const emailEl=$("userEmail");if(emailEl)emailEl.textContent=u.email||"";subscribe();subscribePublicLeads();setTimeout(()=>navView(window.__BOS_DEFAULT_VIEW||"overview"),0)}catch(e){console.error("Workspace setup error",e);$("authMsg").textContent=e.message||"Workspace setup failed.";$("googleBtn").disabled=false;}});
 navView('overview');
+window.filterCustomersNow=filterCustomersNow;
 window.setFollowCenterTab=setFollowCenterTab;window.markDoneFor=markDoneFor;window.logout=logout;window.openCustomerModal=openCustomerModal;window.openWaComposer=openWaComposer;window.closeWaComposer=closeWaComposer;window.applyWaTemplate=applyWaTemplate;window.updateWaChar=updateWaChar;window.sendWaComposer=sendWaComposer;window.closeCustomerModal=closeCustomerModal;window.saveCustomer=saveCustomer;window.selectCustomer=selectCustomer;window.closeProfile=closeProfile;window.editCustomer=editCustomer;window.deleteCustomer=deleteCustomer;window.openActivityModal=openActivityModal;window.closeModal=closeModal;window.typePick=typePick;window.saveActivity=saveActivity;window.markDone=markDone;window.call=call;window.wa=wa;window.email=email;window.openEmailComposer=openEmailComposer;window.closeEmailComposer=closeEmailComposer;window.applyEmailTemplate=applyEmailTemplate;window.updateEmailChar=updateEmailChar;window.sendEmailComposer=sendEmailComposer;window.exportCSV=exportCSV;window.importCSV=importCSV;window.resetFilters=resetFilters;window.stagePick=stagePick;window.updatePipeline=updatePipeline;window.changeStage=changeStage;window.clearDashFilter=clearDashFilter;window.setStageFilter=setStageFilter;window.setFollowFilter=setFollowFilter;window.osNav=osNav;window.copyLeadFormLink=copyLeadFormLink;window.convertPublicLead=convertPublicLead;window.leadCall=leadCall;window.searchBusinessFinder=searchBusinessFinder;window.copyFinderSearch=copyFinderSearch;window.useFinderIdea=useFinderIdea;window.saveFinderProspect=saveFinderProspect;window.renderBusinessFinder=renderBusinessFinder;window.openFinderWebsite=openFinderWebsite;window.startFinderFollowup=startFinderFollowup;window.convertFinderProspect=convertFinderProspect;
 </script>
 
@@ -1197,6 +1199,28 @@ window.setFollowCenterTab=setFollowCenterTab;window.markDoneFor=markDoneFor;wind
     </div>
   </div>
 </div>
+
+<style id="business-os-customer-table-search-fix-v1">
+/* Customer list: align all nine header/data cells and keep actions on one line. */
+body.app-page #customerList .table-scroll{overflow-x:auto!important;overflow-y:visible!important;scrollbar-width:thin;}
+body.app-page #customerList .table-head,body.app-page #customerList .row{
+  display:grid!important;
+  grid-template-columns:30px minmax(205px,2fr) minmax(115px,1.05fr) minmax(105px,.95fr) minmax(125px,1.1fr) minmax(112px,.9fr) minmax(82px,.72fr) minmax(145px,1.15fr) minmax(205px,1.5fr)!important;
+  min-width:1320px!important;width:100%!important;align-items:center!important;
+}
+body.app-page #customerList .table-head{height:54px!important;padding:0 18px!important;white-space:nowrap!important;}
+body.app-page #customerList .row{min-height:66px!important;height:66px!important;padding:7px 14px!important;gap:8px!important;}
+body.app-page #customerList .contact-cell{min-width:0!important;gap:10px!important;}
+body.app-page #customerList .contact-main{min-width:0!important;}
+body.app-page #customerList .contact-main b,body.app-page #customerList .contact-main small,body.app-page #customerList .data-cell b,body.app-page #customerList .data-cell small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+body.app-page #customerList .actions{display:flex!important;flex-flow:row nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:5px!important;min-width:0!important;white-space:nowrap!important;}
+body.app-page #customerList .actions button{display:inline-flex!important;align-items:center!important;justify-content:center!important;height:34px!important;min-width:0!important;padding:0 8px!important;font-size:10px!important;white-space:nowrap!important;flex:0 0 auto!important;}
+body.app-page #customerList .table-head>div{min-width:0;overflow:hidden;text-overflow:ellipsis;}
+body.app-page #customerList .table-head>div:nth-child(5),body.app-page #customerList .row>.source-cell{display:block!important;}
+@media(max-width:900px){body.app-page #customerList .table-scroll{overflow-x:auto!important;}body.app-page #customerList .table-head,body.app-page #customerList .row{min-width:1320px!important;grid-template-columns:30px minmax(205px,2fr) minmax(115px,1.05fr) minmax(105px,.95fr) minmax(125px,1.1fr) minmax(112px,.9fr) minmax(82px,.72fr) minmax(145px,1.15fr) minmax(205px,1.5fr)!important;}body.app-page #customerList .table-head{display:grid!important;}body.app-page #customerList .row{display:grid!important;}}
+</style>
+<script id="business-os-customer-search-fix-v2">document.addEventListener("DOMContentLoaded",()=>{const input=document.getElementById("search");if(input){input.addEventListener("input",()=>window.filterCustomersNow?.());input.addEventListener("keydown",e=>{if(e.key==="Escape"){input.value="";window.filterCustomersNow?.();}});}});</script>
+
 </body></html>
 
 <style id="business-os-v24-cinematic-comfort">
@@ -1356,3 +1380,24 @@ body.app-page{background:
 })();
 </script>
 
+
+<style id="business-os-overview-compact-list-v2">
+body.app-page #customerList .list-head{min-height:70px!important;padding:12px 18px!important;gap:16px!important}
+body.app-page #customerList .list-title-wrap b{font-size:18px!important}
+body.app-page #customerList .list-title-wrap small{font-size:10px!important;line-height:1.3!important}
+body.app-page #customerList .list-search input{height:42px!important;font-size:13px!important}
+body.app-page #customerList .filters{padding:10px 16px!important;gap:8px!important}
+body.app-page #customerList .filters select{height:38px!important;font-size:11px!important}
+body.app-page #customerList .table-head{height:42px!important;padding:0 14px!important;font-size:9px!important}
+body.app-page #customerList .row{min-height:66px!important;height:66px!important;padding:7px 14px!important;gap:8px!important}
+body.app-page #customerList .avatar{width:36px!important;height:36px!important;border-radius:10px!important;font-size:10px!important}
+body.app-page #customerList .contact-cell{gap:9px!important}
+body.app-page #customerList .contact-main b{font-size:12px!important;line-height:1.2!important}
+body.app-page #customerList .contact-main small,body.app-page #customerList .data-cell small,body.app-page #customerList .follow-cell small{font-size:9px!important;margin-top:2px!important}
+body.app-page #customerList .data-cell,body.app-page #customerList .data-cell b,body.app-page #customerList .follow-cell b{font-size:11px!important;line-height:1.25!important}
+body.app-page #customerList .type-pill,body.app-page #customerList .status{padding:5px 7px!important;font-size:9px!important}
+body.app-page #customerList .actions{gap:4px!important}
+body.app-page #customerList .actions button{height:29px!important;padding:0 7px!important;font-size:9px!important}
+body.app-page #customerList .list-search input:focus{outline:0!important;border-color:#7196ff!important;box-shadow:0 0 0 3px #3568f420!important}
+@media(max-width:900px){body.app-page #customerList .row{height:66px!important;min-height:66px!important}}
+</style>
