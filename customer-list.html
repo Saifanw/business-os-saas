@@ -36,12 +36,12 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 .chip b{background:#eef2f8;border-radius:99px;padding:0 8px;font-size:11px;line-height:20px;color:var(--mut)}
 .chip.on{background:var(--ink);border-color:var(--ink);color:#fff}.chip.on b{background:#ffffff26;color:#fff}
 .tool{padding:16px;margin-bottom:14px}
-.search{position:relative;margin-bottom:12px}.search input{width:100%;border:1px solid var(--line);background:#f8faff;border-radius:11px;padding:11px 14px 11px 38px}.search:before{content:"⌕";position:absolute;left:14px;top:9px;color:var(--mut);font-size:16px}
+.search{position:relative;margin-bottom:12px}.search input[type=text]{width:100%;padding-left:38px;border:1px solid var(--line);background:#f8faff;border-radius:11px;padding:11px 14px 11px 38px}.search:before{content:"⌕";position:absolute;left:14px;top:9px;color:var(--mut);font-size:16px}
 .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr)) auto;gap:10px;align-items:end}
 .filters label{display:grid;gap:4px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
 select,input[type=text],input[type=date],input[type=time],textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 10px;font-size:13px;text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink)}
 .bulk{display:flex;justify-content:space-between;align-items:center;background:#eaf0ff;color:var(--blue2);border-radius:12px;padding:10px 16px;margin-bottom:12px;font-weight:600}
-.list{overflow:hidden}
+.list{overflow:clip}
 .row{display:grid;grid-template-columns:40px minmax(0,2.3fr) minmax(0,1.4fr) 130px minmax(0,1.3fr) 210px;gap:12px;align-items:center;padding:13px 18px;border-top:1px solid var(--line)}
 .row.head{border-top:0;background:#f8faff;font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--mut);text-transform:uppercase;position:sticky;top:64px;z-index:5;padding:11px 18px}
 .row:not(.head):hover{background:#fafcff}
@@ -73,8 +73,8 @@ select,input[type=text],input[type=date],input[type=time],textarea{width:100%;bo
 <header class="top"><div class="top-in">
   <a class="brand" href="overview.html"><span class="logo">B</span>BusinessOS</a>
   <nav class="nav"><a href="overview.html">Overview</a><a class="on" href="customer-list.html">Customers</a><a href="followups.html">Follow-ups <span class="pill hidden" id="navFu">0</span></a><a href="deals.html">Deals</a><a href="website-leads.html">Leads</a><a href="whatsapp-center.html">WhatsApp</a><a href="business-finder-app.html">Finder</a><a href="reports.html">Reports</a></nav>
-  <div class="acts"><a class="btn" href="import-export.html#import-section">↑ Import</a><button class="btn" id="exp">↓ Export</button><button class="btn p" id="add">＋ Add Customer</button>
-    <div class="menu"><button class="avatar" id="avBtn" aria-label="Account">?</button><div class="dd hidden" id="dd"><div class="em" id="ddEm"></div><a href="team-settings.html">Settings</a><a href="subscription.html">Plan &amp; billing</a><button id="out">Logout</button></div></div></div>
+  <div class="acts"><button class="btn p" id="add">＋ Add Customer</button>
+    <div class="menu"><button class="avatar" id="avBtn" aria-label="Account">?</button><div class="dd hidden" id="dd"><div class="em" id="ddEm"></div><a href="import-export.html#import-section">↑ Import customers</a><button id="exp">↓ Export (filtered list)</button><a href="team-settings.html">Settings</a><a href="subscription.html">Plan &amp; billing</a><button id="out">Logout</button></div></div></div>
 </div></header>
 <main>
   <div id="auth" class="auth hidden"><div class="card"><div class="logo" style="margin:auto;width:46px;height:46px;font-size:20px">B</div><h2>Welcome to BusinessOS</h2><p>Sign in to manage your customers and follow-ups.</p><button class="btn p" id="gbtn" style="width:100%;justify-content:center">Continue with Google</button><p id="aerr" style="color:var(--red);font-size:12px;margin-top:12px"></p></div></div>
