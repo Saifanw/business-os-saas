@@ -1,73 +1,134 @@
 <!doctype html>
-<html lang="hi">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Business OS — अपने Customers को Track करो</title>
-<meta name="description" content="Indian customer-driven businesses ke liye customers, enquiries, follow-ups aur deals manage karne ka simple Business OS.">
-<link rel="stylesheet" href="assets/style.css">
-  <link rel="stylesheet" href="assets/luxury.css">
-</head>
-<body>
-<header class="nav">
-<a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a>
-<nav><a href="how-it-works.html">कैसे काम करता है</a><a href="customers.html">Customer Login</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav>
-<a class="btn" href="customers.html">Customer Login</a>
-</header>
-
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BusinessOS — Never lose a customer to a missed follow-up</title>
+<meta name="description" content="BusinessOS keeps every enquiry, follow-up, WhatsApp message and deal in one place, so your team knows who to call today. Built for Indian local businesses. Start free.">
+<meta property="og:title" content="BusinessOS — Never lose a customer to a missed follow-up"><meta property="og:description" content="Customers, follow-ups, deals and payments in one simple workspace for Indian businesses."><meta property="og:type" content="website"><meta name="theme-color" content="#2f5bff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%232f5bff'/%3E%3Ctext x='16' y='23' font-size='20' font-weight='800' text-anchor='middle' fill='white' font-family='Arial'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f172a;--mut:#64748b;--line:#e6eaf2;--bg:#f5f7fb;--blue:#2f5bff;--blue2:#1e40e0;--green:#0f9d6a;--amber:#d98a00;--red:#e0483f;--purple:#7c4dff;--r:16px}
+*{box-sizing:border-box;margin:0}html{scroll-behavior:smooth;scroll-padding-top:76px}html,body{overflow-x:hidden}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;color:var(--ink);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:6px}
+.w{max-width:1200px;margin:0 auto;padding:0 24px}
+header{position:sticky;top:0;z-index:20;background:#ffffffee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.hin{display:flex;align-items:center;gap:24px;height:68px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.02em}
+.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#4f7bff,#2446e0);color:#fff;display:grid;place-items:center;font-weight:800}
+nav{display:flex;gap:4px;flex:1}nav a{padding:8px 12px;border-radius:9px;color:var(--mut);font-weight:600;font-size:14px}nav a:hover{background:#f1f4fa;color:var(--ink)}
+.hacts{display:flex;gap:10px;align-items:center}.lnk{font-weight:600;font-size:14px;color:var(--mut);padding:8px 10px}.lnk:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px 20px;font-weight:700;font-size:15px;transition:.15s}
+.btn:hover{border-color:#c9d3e6;background:#f8faff}.btn.p{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 8px 20px #2f5bff33}.btn.p:hover{background:var(--blue2)}.btn.s{padding:9px 16px;font-size:14px}
+.hero{padding:64px 0 72px;background:linear-gradient(#f5f7fb,#fff)}
+.hg{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center}.hg>*{min-width:0}
+h1{font-size:clamp(36px,5vw,58px);line-height:1.04;letter-spacing:-.04em;font-weight:800}
+.lead{font-size:19px;color:#475569;margin:20px 0 28px;max-width:520px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}.fine{font-size:13px;color:var(--mut);margin-top:14px}
+.app{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 30px 70px #0f172a1f;overflow:hidden}
+.ab{display:flex;align-items:center;gap:8px;padding:12px 18px;border-bottom:1px solid var(--line);background:#fafbfe}.ab i{width:10px;height:10px;border-radius:50%;background:#dfe5f1}.ab span{margin-left:8px;font-size:12px;font-weight:600;color:var(--mut)}
+.ap{padding:20px}.ap h3{font-size:18px;letter-spacing:-.02em}.ap .sm{font-size:13px;color:var(--mut)}
+.st{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.st div{border:1px solid var(--line);border-radius:12px;padding:10px 12px}.st b{display:block;font-size:22px;letter-spacing:-.02em}.st span{font-size:12px;color:var(--mut)}
+.tl{list-style:none;padding:0}.tl li{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line);animation:in .5s both}
+.tl li:nth-child(2){animation-delay:.12s}.tl li:nth-child(3){animation-delay:.24s}.tl li:nth-child(4){animation-delay:.36s}@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.tl button{width:26px;height:26px;border-radius:50%;border:2px solid #cbd5e6;background:#fff;flex:none;display:grid;place-items:center;padding:0;cursor:pointer;color:#fff}
+.tl li.done button{background:var(--green);border-color:var(--green)}.tl li.done .t{opacity:.45;text-decoration:line-through}
+.t{flex:1;min-width:0}.t b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.t span{font-size:12.5px;color:var(--mut);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}.tag.r{background:#fde9e7;color:var(--red)}.tag.a{background:#fff3dc;color:#a96b00}.tag.g{background:#e6f6ef;color:var(--green)}
+.wa{font-size:12px;font-weight:700;background:#e6f6ef;color:var(--green);border-radius:8px;padding:5px 9px;white-space:nowrap}
+.cap{font-size:12px;color:var(--mut);text-align:center;margin-top:12px}
+section{padding:84px 0}.alt{background:var(--bg)}
+h2{font-size:clamp(28px,3.6vw,40px);line-height:1.12;letter-spacing:-.035em;font-weight:800;max-width:720px}
+.sub{color:#475569;font-size:18px;max-width:620px;margin:14px 0 40px}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:20px}.ba>*{min-width:0}
+.box{border:1px solid var(--line);border-radius:var(--r);padding:28px;background:#fff}.box h3{font-size:20px;margin-bottom:14px;letter-spacing:-.02em}
+.box ul{list-style:none;padding:0;display:grid;gap:10px}.box li{display:flex;gap:10px;color:#475569}.box li:before{content:"✕";color:var(--red);font-weight:800}
+.box.good{border-color:#bfe6d4;background:#f4fbf8}.box.good li:before{content:"✓";color:var(--green)}
+.fg{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.fg>*{min-width:0}
+.f{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:26px}.f svg{width:40px;height:40px;padding:9px;border-radius:12px;background:#eaf0ff;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-bottom:16px}
+.f h3{font-size:18px;letter-spacing:-.02em;margin-bottom:6px}.f p{color:#475569;font-size:15px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:s}.steps>*{min-width:0}
+.step{border-top:3px solid var(--blue);padding-top:18px;counter-increment:s}.step:before{content:counter(s);display:block;font-size:34px;font-weight:800;color:var(--blue);letter-spacing:-.03em}.step h3{font-size:19px;margin:4px 0 6px}.step p{color:#475569}
+.who{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.who>*{min-width:0}.who .f h3{margin-bottom:8px}.flow{font-size:13px;color:var(--mut);margin-top:10px}
+.pg{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.pg>*{min-width:0}
+.pc{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px;display:flex;flex-direction:column}.pc.ft{border:2px solid var(--blue);box-shadow:0 18px 40px #2f5bff1a}
+.pc h3{font-size:16px}.pr{font-size:34px;font-weight:800;letter-spacing:-.03em;margin:8px 0 14px}.pr small{font-size:14px;font-weight:600;color:var(--mut)}
+.pc ul{list-style:none;padding:0;display:grid;gap:8px;font-size:14.5px;color:#475569;margin-bottom:22px}.pc li:before{content:"✓ ";color:var(--green);font-weight:800}.pc .btn{margin-top:auto}
+.pn{font-size:13px;color:var(--mut);margin-top:18px}
+details{border-bottom:1px solid var(--line);padding:18px 0;max-width:820px}summary{cursor:pointer;font-weight:700;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:16px}summary::-webkit-details-marker{display:none}summary:after{content:"+";color:var(--blue);font-size:22px;line-height:1}details[open] summary:after{content:"−"}details p{color:#475569;margin-top:10px}
+.fin{background:var(--ink);color:#fff;text-align:center;padding:84px 0}.fin h2{margin:0 auto 14px;color:#fff}.fin p{color:#cbd5e1;font-size:18px;margin-bottom:28px}
+footer{padding:30px 0;border-top:1px solid var(--line);font-size:14px;color:var(--mut)}footer .w{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}footer a:hover{color:var(--ink)}.fl{display:flex;gap:20px}
+@media(max-width:960px){.hg,.ba,.who,.steps{grid-template-columns:1fr}.fg{grid-template-columns:1fr 1fr}.pg{grid-template-columns:1fr 1fr}nav{display:none}.hin{justify-content:space-between}.hero{padding:40px 0 56px}section{padding:60px 0}}
+@media(max-width:600px){.w{padding:0 18px}.fg,.pg{grid-template-columns:1fr}.cta .btn{width:100%}.lead{font-size:17px}.lnk{display:none}.wa{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i1" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 010 7M21 20c0-2.6-1.6-4.8-4-5.6"/></symbol>
+<symbol id="i2" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18M9 15l2 2 4-4"/></symbol>
+<symbol id="i3" viewBox="0 0 24 24"><path d="M4 7h16v11a2 2 0 01-2 2H6a2 2 0 01-2-2zM4 7l2-3h12l2 3M9 13h6"/></symbol>
+<symbol id="i4" viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></symbol>
+<symbol id="i5" viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-11.8 7L4 20l1.1-4.6A8 8 0 1121 12z"/></symbol>
+<symbol id="i6" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol></defs></svg>
+<header><div class="w hin"><a class="brand" href="index.html"><span class="logo">B</span>BusinessOS</a>
+<nav aria-label="Main"><a href="#features">Features</a><a href="#how">How it works</a><a href="#who">Who it's for</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
+<div class="hacts"><a class="lnk" href="customers.html">Log in</a><a class="btn p s" href="customers.html">Start free</a></div></div></header>
 <main>
-<section class="hero">
-<div class="hero-copy">
-<div class="eyebrow">BUSINESS OS · FOR INDIAN BUSINESSES</div>
-<div class="india-note">🇮🇳 <b>India-first customer management</b></div>
-<h1>अपने Customers को<br><em>Track करो।</em></h1>
-<p class="subline">हर Follow-up. हर बातचीत. हर Deal — एक जगह।</p>
-<p class="mutedline">WhatsApp, Calls, Enquiries और Follow-ups को एक simple workspace में manage करें — ताकि कोई customer और कोई opportunity छूटे नहीं।</p>
-<div class="actions">
-<a class="btn" href="customers.html">🔐 Customer Login</a>
-<a href="how-it-works.html">कैसे काम करता है →</a>
-</div>
-<div class="trust-row">
-<span class="trust-pill">👥 Customers</span><span class="trust-pill">📅 Follow-ups</span><span class="trust-pill">💬 WhatsApp</span><span class="trust-pill">📊 Sales</span>
-</div>
-</div>
+<section class="hero"><div class="w hg">
+<div><h1>Never lose a customer to a missed follow-up.</h1>
+<p class="lead">BusinessOS keeps every enquiry, follow-up, WhatsApp message and deal in one place, so your team always knows who to call today.</p>
+<div class="cta"><a class="btn p" href="customers.html">Start free</a><a class="btn" href="demo.html">Try the live demo</a></div>
+<p class="fine">The free plan includes 10 records. Works in any browser, on phone or computer.</p></div>
+<div><div class="app" role="img" aria-label="Sample screen showing today's follow-ups"><div class="ab"><i></i><i></i><i></i><span>BusinessOS · Follow-ups</span></div>
+<div class="ap"><h3>Today's list</h3><div class="sm">Tap the circle when a follow-up is done.</div>
+<div class="st"><div><b style="color:var(--red)">2</b><span>Overdue</span></div><div><b style="color:var(--amber)">3</b><span>Due today</span></div><div><b style="color:var(--green)">₹1.2L</b><span>Payments pending</span></div></div>
+<ul class="tl">
+<li><button aria-label="Mark done" aria-pressed="false"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></button><div class="t"><b>Rahul Sharma</b><span>Plot enquiry · called 2 days ago</span></div><span class="tag r">Overdue</span><span class="wa">WhatsApp</span></li>
+<li><button aria-label="Mark done" aria-pressed="false"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></button><div class="t"><b>Priya Nair</b><span>Admission · demo class at 4:00 PM</span></div><span class="tag a">Today</span><span class="wa">WhatsApp</span></li>
+<li><button aria-label="Mark done" aria-pressed="false"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></button><div class="t"><b>Imran Khan</b><span>Bridal package · send quote</span></div><span class="tag a">Today</span><span class="wa">WhatsApp</span></li>
+<li><button aria-label="Mark done" aria-pressed="false"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></button><div class="t"><b>Neha Gupta</b><span>2BHK · site visit confirmed</span></div><span class="tag g">Tomorrow</span><span class="wa">WhatsApp</span></li></ul></div></div>
+<p class="cap">Sample data. Try ticking one off.</p></div></div></section>
 
-<div class="hero-visual">
-<div class="india-float"><strong>आज का काम</strong>7 Follow-ups · 2 Hot Leads</div>
-<div class="glow"></div>
-<div class="dashboard">
-<div class="dash-top"><span class="mini-brand">Business OS</span><span class="search">⌕ Search customer...</span><span class="avatar">SA</span></div>
-<div class="dash-body">
-<aside><div class="side-active">▦ Overview</div><div>◉ Customers</div><div>◌ Follow-ups</div><div>◇ Deals</div><div>▣ Reports</div></aside>
-<div class="dash-main">
-<div class="dash-head"><div><small>05 October 2026 · Jaipur</small><h3>Good morning, Saif</h3></div><button class="tiny-btn">+ Add Customer</button></div>
-<div class="metrics"><div><small>Active Customers</small><strong>128</strong><span class="up">↑ 18%</span></div><div><small>आज के Follow-ups</small><strong>12</strong><span>4 overdue</span></div><div><small>Sales Pipeline</small><strong>₹24.8L</strong><span class="up">↑ 12%</span></div></div>
-<div class="dash-grid">
-<div class="panel"><div class="panel-title">आज किसे Follow-up करना है? <span>View all</span></div>
-<div class="lead-row"><b>Rahul Sharma</b><small>Jhotwara · Plot · ₹35L</small><label class="hot">HOT</label></div>
-<div class="lead-row"><b>Neha Gupta</b><small>Mansarovar · 2BHK · ₹48L</small><label class="today">TODAY</label></div>
-<div class="lead-row"><b>Amit Verma</b><small>Vaishali Nagar · House · ₹62L</small><label>FOLLOW-UP</label></div></div>
-<div class="panel pipeline"><div class="panel-title">Sales Progress <span>₹24.8L</span></div><div class="bars"><i style="width:88%"></i><i style="width:68%"></i><i style="width:49%"></i><i style="width:30%"></i></div><div class="pipeline-labels"><span>New</span><span>Interested</span><span>Visit</span><span>Deal</span></div></div>
-</div>
-</div></div></div>
-</div>
-</section>
+<section class="alt"><div class="w"><h2>Customers don't get lost on purpose. They get lost between WhatsApp, a diary and an Excel sheet.</h2>
+<p class="sub">When details live in five places, follow-ups depend on memory. BusinessOS puts them in one place and shows what to do next.</p>
+<div class="ba"><div class="box"><h3>Without BusinessOS</h3><ul><li>Enquiries sit in WhatsApp chats and call logs</li><li>Follow-ups live in a diary or in someone's head</li><li>You can't say how much payment is still pending</li><li>When a team member leaves, their customers leave too</li></ul></div>
+<div class="box good"><h3>With BusinessOS</h3><ul><li>Every customer has one profile with notes and history</li><li>A daily list shows who is overdue and who is due today</li><li>Deals show money received and money pending</li><li>Your whole team works from the same customer list</li></ul></div></div></div></section>
 
-<section class="section intro">
-<div class="section-kicker">BUSINESS की असली PROBLEM</div>
-<h2>Customer आपके पास आता है।<br><span>लेकिन उसके बाद क्या होता है?</span></h2>
-<p>WhatsApp में message, phone में number, diary में note और Excel में list — Business OS इन सबको एक clear customer journey में जोड़ता है।</p>
-</section>
+<section id="features"><div class="w"><h2>Everything you need to follow up and close, nothing you don't.</h2><p class="sub">Six tools that work together, built around how Indian local businesses actually sell.</p>
+<div class="fg">
+<div class="f"><svg><use href="#i1"/></svg><h3>Customers</h3><p>Name, phone, requirement, budget, source and notes in one profile. Import your existing list from a spreadsheet.</p></div>
+<div class="f"><svg><use href="#i2"/></svg><h3>Follow-ups</h3><p>See overdue, today and upcoming at a glance, and spot customers who have no next step planned.</p></div>
+<div class="f"><svg><use href="#i3"/></svg><h3>Deals and payments</h3><p>Record each won deal, add payments as they arrive, and see what is received and what is pending.</p></div>
+<div class="f"><svg><use href="#i4"/></svg><h3>Website enquiry form</h3><p>Share one link. Enquiries land in your Leads page and become customers in a click.</p></div>
+<div class="f"><svg><use href="#i5"/></svg><h3>WhatsApp messages</h3><p>Ready templates fill in the customer's name and requirement, then open the chat. You press send.</p></div>
+<div class="f"><svg><use href="#i6"/></svg><h3>Reports</h3><p>Pipeline, lead sources and monthly deals and collection, with CSV export for your accountant.</p></div></div></div></section>
 
-<section class="story-grid">
-<div class="story-card dark"><small>01 / CUSTOMER</small><h3>हर enquiry का पूरा record.</h3><p>Name, phone, requirement, budget, source और notes — सब एक customer profile में.</p><a href="lead-management.html">Customers देखें →</a></div>
-<div class="story-card light"><small>02 / FOLLOW-UP</small><h3>आज किसे call करना है?</h3><p>Overdue, Today और Upcoming follow-ups साफ दिखाई दें.</p><a href="whatsapp.html">Follow-ups देखें →</a></div>
-<div class="story-card accent"><small>03 / DEAL</small><h3>Customer कहाँ तक पहुँचा?</h3><p>New → Contacted → Interested → Visit → Negotiation → Closed.</p><a href="features.html">Sales Progress देखें →</a></div>
-</section>
+<section id="how" class="alt"><div class="w"><h2>Up and running in an afternoon.</h2><p class="sub">No installation and no training sessions.</p>
+<div class="steps"><div class="step"><h3>Add your customers</h3><p>Sign in with Google, then add customers one by one or import your spreadsheet.</p></div>
+<div class="step"><h3>Follow up every day</h3><p>Open Follow-ups each morning. Call, send a WhatsApp message and set the next step.</p></div>
+<div class="step"><h3>Close and track payment</h3><p>Mark the deal won, add payments as they come in, and check Reports to see what works.</p></div></div></div></section>
 
-<section class="cta">
-<div><small>खुद करके देखिए</small><h2>सिर्फ Demo मत देखिए।<br><em>खुद इस्तेमाल कीजिए।</em></h2></div>
-<a class="btn light-btn" href="customers.html">🔐 Customer Login</a>
-</section>
+<section id="who"><div class="w"><h2>Ready-made workflows for the way you sell.</h2><p class="sub">Pick a template and your stages are set up for you.</p>
+<div class="who">
+<div class="f"><h3>Property</h3><p>For consultants and brokers who run on site visits and negotiations.</p><p class="flow">Enquiry → Contacted → Interested → Site visit → Negotiation → Won</p></div>
+<div class="f"><h3>Coaching</h3><p>For institutes and trainers who convert enquiries into admissions.</p><p class="flow">Enquiry → Counselling → Demo class → Admission</p></div>
+<div class="f"><h3>General business</h3><p>For automobile, solar, agencies and other local businesses.</p><p class="flow">New → Contacted → Interested → Follow-up → Visit or demo → Won</p></div></div></div></section>
+
+<section id="pricing" class="alt"><div class="w"><h2>Start free. Upgrade when you grow.</h2><p class="sub">Simple monthly plans. No setup fee.</p>
+<div class="pg">
+<div class="pc"><h3>Free</h3><div class="pr">₹0</div><ul><li>10 customer and lead records</li><li>Follow-ups, deals and reports</li><li>1 owner</li></ul><a class="btn" href="customers.html">Start free</a></div>
+<div class="pc"><h3>Starter</h3><div class="pr">₹499 <small>/ month</small></div><ul><li>500 customers</li><li>250 prospects</li><li>3 team members</li><li>250 deals</li></ul><a class="btn" href="contact.html">Talk to us</a></div>
+<div class="pc ft"><h3>Growth</h3><div class="pr">₹999 <small>/ month</small></div><ul><li>2,000 customers</li><li>1,000 prospects</li><li>10 team members</li><li>2,000 deals</li></ul><a class="btn p" href="contact.html">Talk to us</a></div>
+<div class="pc"><h3>Business</h3><div class="pr">Custom</div><ul><li>10,000 customers</li><li>5,000 prospects</li><li>25 team members</li><li>10,000 deals</li></ul><a class="btn" href="contact.html">Talk to us</a></div></div>
+<p class="pn">Paid plans are activated by our team after you contact us. <a href="pricing.html" style="color:var(--blue);font-weight:600">See full pricing</a></p></div></section>
+
+<section id="faq"><div class="w"><h2>Questions owners ask first.</h2><div style="margin-top:30px">
+<details><summary>Is my customer data safe?</summary><p>Your data is stored in Google Firebase, and only people who sign in to your workspace can open it.</p></details>
+<details><summary>Does WhatsApp send messages automatically?</summary><p>No. BusinessOS opens the chat with your message already written. You review it and press send.</p></details>
+<details><summary>Can I try it before I sign up?</summary><p>Yes. The live demo lets you click through a sample workspace with no sign-up.</p></details>
+<details><summary>Can my team use it?</summary><p>Yes. Starter includes 3 team members and Growth includes 10.</p></details>
+<details><summary>What happens when I reach the free limit?</summary><p>The free plan holds 10 combined customer and lead records. To add more, move to a paid plan.</p></details></div></div></section>
+
+<section class="fin"><div class="w"><h2>Your next follow-up is already waiting.</h2><p>Start free and add your first customers today.</p><div class="cta" style="justify-content:center"><a class="btn p" href="customers.html">Start free</a><a class="btn" href="demo.html" style="color:var(--ink)">Try the live demo</a></div></div></section>
 </main>
-<footer><div class="brand"><i>B</i>Business<span>OS</span></div><p>Indian customer-driven businesses ke liye.</p><div class="footlinks"><a href="privacy.html">Privacy</a><a href="contact.html">Contact</a><a href="customers.html">Customer Login</a></div></footer>
+<footer><div class="w"><a class="brand" href="index.html"><span class="logo">B</span>BusinessOS</a><div class="fl"><a href="features.html">Features</a><a href="pricing.html">Pricing</a><a href="contact.html">Contact</a><a href="customers.html">Log in</a></div><span>Made for Indian businesses.</span></div></footer>
+<script>document.querySelectorAll(".tl li").forEach(function(li){var b=li.querySelector("button");b.addEventListener("click",function(){var d=li.classList.toggle("done");b.setAttribute("aria-pressed",d)})})</script>
 </body></html>
