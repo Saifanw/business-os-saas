@@ -1,141 +1,242 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Business OS — Private Admin</title>
-<link rel="stylesheet" href="assets/style.css">
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin · BusinessOS</title><meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#101827;--muted:#718096;--line:#e4e9f0;--bg:#f4f6f9;--card:#fff;--purple:#644cff;--green:#0b9b63;--navy:#111a2b;--orange:#f59e0b;--red:#df4b43}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.hidden{display:none!important}
-.top{height:74px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 38px;position:sticky;top:0;z-index:20}.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px;color:var(--ink);text-decoration:none}.brand i{width:34px;height:34px;border-radius:10px;background:var(--navy);color:#fff;display:grid;place-items:center;font-style:normal}.brand span{color:var(--purple)}.userbox{display:flex;align-items:center;gap:12px}.userbox small{display:block;color:var(--muted);font-size:9px}.userbox b{font-size:11px}.userbox button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 12px;font-size:9px;font-weight:800;cursor:pointer}
-.login{min-height:calc(100vh - 74px);display:grid;place-items:center;padding:30px;background:radial-gradient(circle at 75% 25%,#e9e4ff 0,transparent 32%),radial-gradient(circle at 15% 80%,#e0f6ed 0,transparent 30%),var(--bg)}.login-card{width:min(470px,94vw);background:#fff;border:1px solid var(--line);border-radius:24px;padding:38px;box-shadow:0 25px 80px rgba(15,24,39,.12);text-align:center}.lock{width:58px;height:58px;margin:0 auto 18px;border-radius:17px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:24px}.login-card h1{font-size:30px;letter-spacing:-1px;margin:0 0 8px}.login-card p{color:var(--muted);font-size:12px;line-height:1.6;margin:0 auto 24px;max-width:350px}.google{width:100%;height:48px;border:1px solid #d8dee7;background:#fff;border-radius:11px;font-weight:900;font-size:12px;cursor:pointer}.google:hover{background:#fafbfc}.login-msg{font-size:10px;margin-top:12px;color:var(--red)}
-.app{display:grid;grid-template-columns:225px minmax(0,1fr);min-height:calc(100vh - 74px)}.side{background:var(--navy);color:#d9dfeb;padding:25px 15px;position:sticky;top:74px;height:calc(100vh - 74px)}.side-title{font-size:9px;letter-spacing:.16em;font-weight:900;color:#8e9bb1;padding:0 11px 12px}.side a{display:flex;align-items:center;gap:10px;padding:12px 11px;border-radius:10px;color:#cbd3e0;text-decoration:none;font-size:11px;font-weight:700;margin:3px 0}.side a.active,.side a:hover{background:#202b41;color:#fff}.side .bottom{position:absolute;left:15px;right:15px;bottom:20px;border:1px solid #2c3950;border-radius:13px;padding:13px}.side .bottom b{font-size:10px}.side .bottom p{font-size:8px;line-height:1.5;color:#8f9bb0;margin:6px 0 0}
-main{padding:35px 38px 65px;min-width:0;max-width:1550px;width:100%}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:22px}.eyebrow{font-size:9px;letter-spacing:.17em;font-weight:900;color:#738096}.hero h1{font-size:42px;line-height:1;letter-spacing:-1.7px;margin:8px 0}.hero p{color:var(--muted);font-size:12px;margin:0}.hero-actions{display:flex;gap:8px;flex-wrap:wrap}.hero-actions button{height:42px;padding:0 15px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:10px;font-weight:900;cursor:pointer}.hero-actions .green{background:var(--green);border-color:var(--green);color:#fff}.hero-actions .purple{background:var(--purple);border-color:var(--purple);color:#fff}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}.stat{background:#fff;border:1px solid var(--line);border-radius:15px;padding:17px;position:relative;overflow:hidden}.stat:after{content:"";position:absolute;right:-25px;bottom:-25px;width:70px;height:70px;border-radius:50%;background:#f5f7fa}.stat small{font-size:9px;color:#818da1}.stat strong{display:block;font-size:28px;letter-spacing:-1px;margin:6px 0}.stat em{font-size:8px;font-style:normal;color:var(--green);font-weight:800}.stat.real{background:linear-gradient(135deg,#fff,#f6f3ff)}.stat.hot{background:linear-gradient(135deg,#fff,#fff7e9)}.stat.won{background:linear-gradient(135deg,#fff,#effbf5)}
-.grid2{display:grid;grid-template-columns:1.65fr 1fr;gap:14px;margin-bottom:14px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.card-head h3{font-size:12px;margin:0}.card-head span{font-size:8px;color:var(--muted)}.chart-wrap{height:190px}.source-list{display:grid;gap:10px}.source-row{display:grid;grid-template-columns:110px 1fr 35px;gap:8px;align-items:center;font-size:9px}.bar{height:7px;background:#eef1f5;border-radius:20px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#6a52ff,#9c8cff);border-radius:20px}
-.filter-card{background:#fff;border:1px solid var(--line);border-radius:16px;margin-bottom:14px;overflow:hidden}.filter-top{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap}.filter-top input,.filter-top select{height:39px;border:1px solid #dfe5ec;border-radius:9px;background:#fff;padding:0 10px;font-size:9px;color:#5f6b7d;outline:none}.filter-top input{flex:1;min-width:220px}.filter-top button{height:39px;border:1px solid #dfe5ec;border-radius:9px;background:#fff;padding:0 12px;font-size:9px;font-weight:900;cursor:pointer}.filter-top .reset{background:var(--navy);border-color:var(--navy);color:#fff}.filter-info{padding:9px 18px;background:#fafbfc;color:#7b8697;font-size:9px;display:flex;justify-content:space-between}.bulk{display:none;padding:10px 18px;background:#eefaf5;border-bottom:1px solid #ccebdd;align-items:center;justify-content:space-between;font-size:9px}.bulk.show{display:flex}.bulk button{border:0;border-radius:8px;padding:8px 11px;background:var(--green);color:#fff;font-size:9px;font-weight:900;cursor:pointer}
-.table{overflow:auto}.th,.tr{min-width:1080px;display:grid;grid-template-columns:30px 1.7fr 1.05fr 1.05fr .9fr 1fr 1.1fr 110px;gap:13px;align-items:center}.th{padding:11px 18px;background:#fafbfc;border-bottom:1px solid var(--line);font-size:8px;color:#8993a3;text-transform:uppercase;letter-spacing:.08em;font-weight:900}.tr{padding:14px 18px;border-bottom:1px solid #edf0f4;min-height:66px}.tr:hover{background:#fcfbff}.avatar{width:34px;height:34px;border-radius:10px;background:#eeeaff;color:#5e48dc;display:grid;place-items:center;font-size:9px;font-weight:900}.person{display:flex;gap:10px;align-items:center}.person b{font-size:10px}.person small,.cell small{display:block;color:#8a95a5;font-size:8px;margin-top:3px}.cell{font-size:9px;color:#445064}.tag{display:inline-block;padding:5px 7px;border-radius:6px;font-size:8px;font-weight:900;background:#edf1f6;color:#606c7d}.tag.real{background:#eeeaff;color:#5d46dc}.tag.edu{background:#eaf5ff;color:#3172a8}.tag.hot{background:#fff0cd;color:#956800}.tag.follow{background:#e8f1ff;color:#3567a7}.tag.won{background:#e2f7eb;color:#168052}.actions-cell{display:flex;gap:5px}.actions-cell button{width:29px;height:29px;border:1px solid #dfe4eb;border-radius:7px;background:#fff;cursor:pointer}.check{width:16px;height:16px}.empty{text-align:center;padding:60px;color:#8993a3;font-size:11px}
-.drawer-bg{display:none;position:fixed;inset:0;background:rgba(10,16,28,.38);backdrop-filter:blur(4px);z-index:50}.drawer-bg.show{display:block}.drawer{position:absolute;right:0;top:0;height:100%;width:min(520px,94vw);background:#fff;overflow:auto;box-shadow:-20px 0 70px rgba(0,0,0,.18);padding:25px}.drawer h2{margin:0;font-size:25px}.drawer .close{float:right;border:1px solid var(--line);background:#fff;border-radius:8px;width:34px;height:34px;cursor:pointer}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.form-grid label{font-size:8px;font-weight:900;color:#7a8596}.form-grid input,.form-grid select,.form-grid textarea{width:100%;margin-top:5px;border:1px solid #dfe4eb;border-radius:8px;padding:10px;font-size:10px}.form-grid textarea{min-height:90px;resize:vertical}.full{grid-column:1/-1}.save-btn{margin-top:15px;width:100%;height:44px;border:0;border-radius:9px;background:var(--green);color:#fff;font-size:10px;font-weight:900;cursor:pointer}
-
-/* ADMIN CRM DETAIL MODAL */
-.tr{cursor:pointer}
-.tr:hover{background:#f8faff!important;box-shadow:inset 3px 0 0 var(--purple)}
-.actions-cell .view-btn{width:auto!important;padding:0 9px!important;font-size:8px;font-weight:900;color:#405069}
-.admin-detail-bg{display:none;position:fixed;inset:0;background:rgba(9,16,29,.62);backdrop-filter:blur(7px);z-index:100;place-items:center;padding:20px}
-.admin-detail-bg.show{display:grid}
-.admin-detail{width:min(820px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;border:1px solid #e3e8f0;box-shadow:0 35px 110px rgba(0,0,0,.28)}
-.admin-detail-head{padding:22px 24px 18px;border-bottom:1px solid #edf0f4}
-.admin-profile{display:flex;align-items:center;gap:14px}.admin-avatar{width:56px;height:56px;border-radius:16px;background:#eeeaff;color:#5e48dc;display:grid;place-items:center;font-size:16px;font-weight:900}
-.admin-title{flex:1;min-width:0}.admin-title h2{margin:0;font-size:22px;letter-spacing:-.5px}.admin-title p{margin:4px 0 0;color:#778398;font-size:11px}
-.admin-close{width:36px;height:36px;border:1px solid #dce3ed;background:#fff;border-radius:10px;font-size:18px;color:#667085;cursor:pointer}
-.admin-detail-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:17px}.admin-detail-actions button{height:39px;border:1px solid #dce4ee;background:#fff;border-radius:9px;font-size:10px;font-weight:900;color:#344155;cursor:pointer}.admin-detail-actions .wa{color:#087e52;background:#edfbf4;border-color:#c5ecd9}
-.admin-detail-body{padding:0 24px 22px}.admin-section{padding:18px 0;border-bottom:1px solid #edf0f4}.admin-section:last-child{border-bottom:0}.admin-section h3{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#7b8799;margin:0 0 10px}
-.admin-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.admin-fact{background:#f7f9fc;border:1px solid #e9edf3;border-radius:10px;padding:10px}.admin-fact span{display:block;font-size:8px;color:#8a94a4}.admin-fact b{display:block;font-size:11px;margin-top:3px;word-break:break-word}
-.admin-note{background:#f7f9fc;border:1px solid #e9edf3;border-radius:11px;padding:12px;color:#59667b;font-size:10px;line-height:1.6}
-.admin-detail-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.admin-detail-footer button{height:38px;padding:0 14px;border-radius:9px;border:1px solid #dce3ed;background:#fff;font-size:10px;font-weight:850}.admin-detail-footer .primary{background:var(--navy);color:#fff;border-color:var(--navy)}
-@media(max-width:700px){.admin-facts{grid-template-columns:1fr 1fr}.admin-detail-body{padding:0 18px 18px}.admin-detail-head{padding:18px}.admin-detail-actions{grid-template-columns:1fr 1fr}}
-@media(max-width:1050px){.app{grid-template-columns:75px 1fr}.side a span,.side-title,.side .bottom{display:none}.side a{justify-content:center}.stats{grid-template-columns:repeat(3,1fr)}.grid2{grid-template-columns:1fr}}@media(max-width:700px){.top{padding:0 15px}.app{grid-template-columns:1fr}.side{display:none}main{padding:25px 14px}.hero{display:block}.hero-actions{margin-top:15px}.stats{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}}
-
-.account-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 20px 16px}.account-heading h2{margin:0;font-size:18px;letter-spacing:-.5px}.account-heading p{margin:5px 0 0;color:#7b8697;font-size:11px}.privacy-pill{white-space:nowrap;padding:8px 11px;border-radius:999px;background:#edf9f3;color:#14794f;font-size:9px;font-weight:800}.account-filters input{min-width:260px}.account-table .th,.account-row{min-width:1040px;grid-template-columns:1.8fr 1fr .9fr .85fr .95fr .85fr 130px}.account-row{display:grid;gap:13px;align-items:center;padding:13px 18px;border-bottom:1px solid #edf0f4;min-height:74px;background:#fff}.account-row:hover{background:#fafaff;box-shadow:inset 3px 0 0 var(--purple)}.account-primary{display:flex;align-items:center;gap:11px;min-width:0}.account-avatar{width:38px;height:38px;flex:0 0 auto;border-radius:11px;background:#eeeaff;color:#5e48dc;display:grid;place-items:center;font-size:11px;font-weight:900}.account-name{min-width:0}.account-name b{display:block;font-size:11px;overflow-wrap:anywhere}.account-name small,.account-cell small{display:block;margin-top:4px;color:#8490a1;font-size:9px;overflow-wrap:anywhere}.account-cell{font-size:10px;color:#445064;min-width:0}.account-cell select{max-width:100%;height:31px;border:1px solid #dfe5ec;border-radius:8px;padding:0 7px;background:white;font-size:10px}.account-actions{display:flex;gap:5px}.account-actions button{border:1px solid #dfe4eb;border-radius:8px;background:white;padding:8px 9px;font-size:9px;font-weight:800;cursor:pointer}.account-actions button:hover{border-color:#a99cff;color:#5e48dc}.tag.lost{background:#ffe9e8;color:#b33c36}.account-stats{grid-template-columns:repeat(5,minmax(0,1fr))}
-.quota-alert-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.58);z-index:1000;display:none;align-items:center;justify-content:center;padding:18px}.quota-alert-backdrop.show{display:flex}.quota-alert{width:min(680px,100%);max-height:82vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 28px 90px #11182755;padding:22px}.quota-alert h2{margin:0 0 6px;font-size:20px}.quota-alert p{font-size:12px;color:#667085;line-height:1.6}.quota-alert-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #edf0f4}.quota-alert-item b{display:block;font-size:12px}.quota-alert-item small{display:block;color:#7b8697;font-size:10px;margin-top:4px}.quota-alert-item button{border:0;border-radius:8px;padding:9px 11px;background:#fee2e2;color:#991b1b;font-weight:800;font-size:10px;cursor:pointer}.quota-alert-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.quota-alert-footer button{border:1px solid #dfe4eb;background:#fff;border-radius:8px;padding:10px 13px;font-weight:800;cursor:pointer}.quota-alert-footer .primary{background:#5d46dc;color:#fff;border-color:#5d46dc}
-@media(max-width:900px){.app{grid-template-columns:1fr}.side{position:relative;top:0;height:auto;display:flex;gap:4px;overflow:auto;padding:10px}.side-title,.side .bottom{display:none}.side a{white-space:nowrap}.main{padding:20px}.stats.account-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{align-items:flex-start;flex-direction:column}.hero h1{font-size:32px}.account-heading{align-items:flex-start;flex-direction:column}}
-
-</style>
-  <link rel="stylesheet" href="assets/luxury.css">
-<style>
-/* =========================================================
-   BUSINESS OS — ADMIN FULL-WIDTH V5
-   Remove the large navigation rail so the data workspace
-   uses the entire screen. Admin remains premium and usable.
-   ========================================================= */
-body{
-  overflow-x:hidden!important;
-}
-.app{
-  grid-template-columns:1fr!important;
-  width:100%!important;
-}
-.app > .side,
-.app > aside.side,
-.app .side{
-  display:none!important;
-}
-main{
-  width:100%!important;
-  max-width:none!important;
-  margin:0!important;
-  padding-left:18px!important;
-  padding-right:18px!important;
-}
-.top{
-  padding-left:24px!important;
-  padding-right:24px!important;
-}
-.hero,.stats,.grid2,.filter-card{
-  width:100%!important;
-  max-width:none!important;
-}
-.filter-card{
-  margin-left:0!important;
-  margin-right:0!important;
-}
-@media(max-width:800px){
-  main{padding-left:10px!important;padding-right:10px!important}
-  .top{padding-left:14px!important;padding-right:14px!important}
-}
-</style>
-</head>
-<body>
-<header class="top"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><div class="userbox hidden" id="userbox"><div><b id="userName">Admin</b><small id="userEmail"></small></div><button id="logoutBtn">Sign out</button></div></header>
-<section class="login" id="loginView"><div class="login-card"><div class="lock">🔐</div><h1>Private Admin</h1><p>Sign in with the authorized administrator account to manage BusinessOS customer workspaces and subscription access.</p><button class="google" id="googleBtn">Continue with Google</button><div class="login-msg" id="loginMsg"></div></div></section>
-<section class="app hidden" id="appView">
-<aside class="side"><div class="side-title">BUSINESS OS</div><a href="admin.html">▦ <span>Admin Overview</span></a><a class="active" href="#businesses">▦ <span>Accounts</span></a><a href="customers.html">◎ <span>Customer Workspace</span></a><a href="business-finder.html">⌕ <span>Find Businesses</span></a><a href="whatsapp.html">◉ <span>WhatsApp</span></a><div class="bottom"><b>Private workspace</b><p>Only authorized Google accounts can open this panel.</p></div></aside>
+:root{--ink:#0f172a;--mut:#64748b;--line:#e6eaf2;--bg:#f5f7fb;--card:#fff;--blue:#2f5bff;--blue2:#1e40e0;--green:#0f9d6a;--amber:#d98a00;--red:#e0483f;--purple:#7c4dff;--r:16px}
+*{box-sizing:border-box;margin:0}html,body{overflow-x:hidden}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}.hidden{display:none!important}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.top{position:sticky;top:0;z-index:30;background:#ffffffee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1320px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:18px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;letter-spacing:-.02em;white-space:nowrap}
+.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#4f7bff,#2446e0);color:#fff;display:grid;place-items:center;font-weight:800}
+.adm{background:#0f172a;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px}
+.nav{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}.nav a{padding:8px 13px;border-radius:9px;color:var(--mut);font-weight:600;font-size:13px;white-space:nowrap}
+.nav a:hover{background:#f1f4fa;color:var(--ink)}.nav a.on{background:#eaf0ff;color:var(--blue)}
+.acts{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:.15s}
+.btn:hover{border-color:#c9d3e6;background:#f8faff}.btn:disabled{opacity:.55;cursor:default}
+.btn.p{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 16px #2f5bff33}.btn.p:hover{background:var(--blue2)}
+.btn.d{color:var(--red);border-color:#f5c9c6}
+main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.hero h1{font-size:28px;letter-spacing:-.03em;font-weight:800;margin-bottom:4px}.hero p{color:var(--mut);font-size:15px}.hero p b{color:var(--ink)}
+.grid{display:grid;gap:16px}.grid>*{min-width:0}.kpis{grid-template-columns:repeat(5,1fr);margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:0 1px 2px #0f172a08;margin-bottom:16px}
+.kpi{position:relative;overflow:hidden;margin:0}.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.kpi .l{color:var(--mut);font-weight:600;font-size:12px}.kpi .n{font-size:32px;font-weight:800;letter-spacing:-.03em;margin:6px 0 2px}.kpi .s{font-size:12px;color:var(--mut)}
+.h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}.h h2{font-size:15px;font-weight:700}.sub{color:var(--mut);font-size:12px;margin:-8px 0 12px}
+.att{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap}.att:first-of-type{border-top:0}
+.att .tag{min-width:96px;text-align:center}.att .t{flex:1;min-width:200px}.att .t b{display:block;font-size:13.5px}.att .t span{color:var(--mut);font-size:12px}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:#eef2f8;color:var(--mut);white-space:nowrap}
+.tag.g{background:#e6f6ef;color:var(--green)}.tag.b{background:#eaf0ff;color:var(--blue)}.tag.a{background:#fff3dc;color:#a96b00}.tag.r{background:#fde9e7;color:var(--red)}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.srch{flex:1;min-width:220px;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 13px;font-size:12.5px;font-weight:600;color:var(--mut)}
+.chip b{margin-left:5px;color:var(--ink)}.chip.on{background:#eaf0ff;border-color:#c9d6ff;color:var(--blue)}
+.row{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1.4fr) 170px 150px 240px;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.row.hd{border-top:0;padding:0 0 8px;color:var(--mut);font-size:12px;font-weight:600}.row>*{min-width:0}
+.who{display:flex;gap:11px;align-items:center;min-width:0}.av{width:38px;height:38px;border-radius:50%;background:#eaf0ff;color:var(--blue);display:grid;place-items:center;font-weight:700;font-size:12px;flex:none}
+.t b,.c b{display:block;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t span,.c span,.sm{display:block;color:var(--mut);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ra{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700}.mini:hover{background:#f3f6fc}
+.mini.wa{background:#e6f6ef;color:var(--green);border-color:#c7ead9}.mini.k{background:var(--ink);color:#fff;border-color:var(--ink)}
+.empty{padding:34px 10px;text-align:center;color:var(--mut)}.empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+.err{background:#fde9e7;border:1px solid #f5c9c6;color:#b3261e;border-radius:12px;padding:12px 16px;margin-bottom:16px;font-weight:600;font-size:13px;word-break:break-word}
+.sk{position:relative;overflow:hidden;background:#eef2f8;border-radius:8px;color:transparent!important;min-height:16px}
+.sk:after,.skr:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,#fff9,transparent);transform:translateX(-100%);animation:sh 1.2s infinite}
+.skr{position:relative;overflow:hidden;height:52px;background:#eef2f8;border-radius:10px;margin:10px 0}@keyframes sh{to{transform:translateX(100%)}}
+.auth{max-width:400px;margin:70px auto;text-align:center}.auth h2{margin:14px 0 6px}.auth p{color:var(--mut);margin-bottom:16px}
+.dr{position:fixed;inset:0;background:#0f172a66;z-index:50;display:flex;justify-content:flex-end}
+.dr form{background:#fff;width:520px;max-width:100%;height:100%;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:12px}
+.dr h2{font-size:18px}.f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.f2>*{min-width:0}
+label{display:block;font-size:12px;font-weight:600;color:var(--mut)}label input,label select,label textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:#fff;font-weight:500;color:var(--ink)}
+fieldset{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:10px}legend{font-size:12px;font-weight:700;padding:0 6px}
+.note{font-size:12px;color:var(--mut);background:#f8faff;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:12px;padding:11px 16px;z-index:80;display:flex;gap:14px;align-items:center;font-weight:600;font-size:13px;max-width:92vw}
+.toast.bad{background:#b3261e}.toast button{background:none;border:0;color:#9db6ff;font-weight:700}
+@media(max-width:1100px){.row{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 150px 140px}.row .ra{grid-column:1/-1;justify-content:flex-start}.row.hd{display:none}}
+@media(max-width:820px){.top-in{padding:0 14px;gap:10px}main{padding:20px 14px 50px}.kpis{grid-template-columns:1fr 1fr}.kpis>:last-child{grid-column:1/-1}.row{grid-template-columns:1fr;gap:8px}.hero h1{font-size:24px}.bn,#who{display:none}.nav a{padding:8px 9px}.f2{grid-template-columns:1fr}.btn{padding:9px 11px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<header class="top"><div class="top-in">
+<a class="brand" href="customers.html"><span class="logo">B</span><span class="bn">BusinessOS</span> <span class="adm">Admin</span></a>
+<nav class="nav"><a class="on" href="admin.html">Accounts</a><a href="customers.html">Open app</a></nav>
+<div class="acts"><span id="who" class="sm" style="max-width:200px"></span><button class="btn hidden" id="out">Logout</button></div>
+</div></header>
 <main>
-<div class="hero"><div><div class="eyebrow">BUSINESS OS · ADMIN CONTROL CENTER</div><h1>Accounts</h1><p>Manage customer workspaces, ownership, plans and account status. Customer records remain inside each business workspace.</p></div><div class="hero-actions"><button class="purple" onclick="openCreateBusiness()">＋ Create Account</button></div></div>
-<section class="stats account-stats"><div class="stat"><small>Total Accounts</small><strong id="sAccounts">0</strong><em>Registered workspaces</em></div><div class="stat real"><small>Active</small><strong id="sActive">0</strong><em>Access enabled</em></div><div class="stat hot"><small>Trial / Pending</small><strong id="sTrial">0</strong><em>Needs onboarding</em></div><div class="stat won"><small>Premium Accounts</small><strong id="sPaid">0</strong><em>Paid access assigned</em></div><div class="stat"><small>Suspended</small><strong id="sSuspended">0</strong><em>Access paused</em></div></section>
-<section class="filter-card" id="businesses"><div class="account-heading"><div><h2>Customer accounts</h2><p>Account-level management only. Customer contacts and leads are not shown here.</p></div><span class="privacy-pill">🔒 Workspace privacy</span></div><div class="filter-top account-filters"><input id="accountQ" placeholder="Search business, owner email, city…" oninput="renderBusinesses()"><select id="accountPlan" onchange="renderBusinesses()"><option value="">All plans</option><option value="free">Free</option><option value="premium">Premium</option><option value="trial">Trial / Legacy</option></select><select id="accountStatus" onchange="renderBusinesses()"><option value="">All statuses</option><option value="active">Active</option><option value="trial">Trial</option><option value="suspended">Suspended</option><option value="pending">Owner pending</option></select><select id="accountType" onchange="renderBusinesses()"><option value="">All business types</option><option>Real Estate</option><option>Education</option><option>Coaching</option><option>Consultancy</option><option>Agency</option><option>Automobile</option><option>Solar</option><option>Healthcare</option><option>Retail</option><option>IT / Software</option><option>Services</option><option>Other</option></select><button class="reset" onclick="resetAccountFilters()">Reset</button></div><div class="filter-info"><span><b id="accountShowing">0</b> accounts shown</span><span>Manage plan, expiry and capacity — quota enforcement is a separate backend step</span></div><div class="table account-table"><div class="th"><div>Business / Owner</div><div>Business type</div><div>Location</div><div>Plan & capacity</div><div>Account status</div><div>Owner link</div><div>Actions</div></div><div id="businessList"></div></div></section>
-</main></section>
-<div class="drawer-bg" id="businessDrawerBg"><aside class="drawer"><button class="close" onclick="closeCreateBusiness()">×</button><div class="eyebrow" id="businessFormEyebrow">CUSTOMER ACCOUNT</div><h2 id="businessFormTitle">Create Account</h2><input type="hidden" id="editingBusinessId" value=""><p style="color:#7b8697;font-size:10px;line-height:1.5">Create or edit a customer workspace. The owner email is used to link the account during onboarding.</p><form id="businessForm"><div class="form-grid"><label>Business Name*<input id="bName" required placeholder="Sharma Properties"></label><label>Owner Name<input id="bOwner" placeholder="Rahul Sharma"></label><label>Owner Email*<input id="bEmail" type="email" required placeholder="owner@gmail.com"></label><label>Mobile / WhatsApp<input id="bPhone" placeholder="9876543210"></label><label>City<input id="bCity" value="Jaipur"></label><label>Area<input id="bArea" placeholder="Jhotwara"></label><label>Business Type<select id="bType"><option>Real Estate</option><option>Education</option><option>Coaching</option><option>Consultancy</option><option>Agency</option><option>Automobile</option><option>Solar</option><option>Healthcare</option><option>Retail</option><option>IT / Software</option><option>Services</option><option>Other</option></select></label><label>Template<select id="bTemplate"><option value="property">🏠 Property</option><option value="coaching">🎓 Coaching</option><option value="general" selected>🏪 General Business</option></select></label><label>Plan<select id="bPlan"><option value="free">Free</option><option value="premium">Premium</option><option value="trial">Trial / Legacy</option></select></label><label>Status<select id="bStatus"><option value="trial">Trial</option><option value="active">Active</option><option value="suspended">Suspended</option></select></label><label>Record Capacity<input id="bRecordLimit" type="number" min="1" step="1" value="10" required></label><label>Subscription Expiry<input id="bExpiry" type="date"></label><label>Top-up Records<input id="bTopup" type="number" min="0" step="1" value="0"></label><label>Prospect Capacity<input id="bProspectLimit" type="number" min="0" step="1" value="0"></label><label>Prospect Top-up<input id="bProspectTopup" type="number" min="0" step="1" value="0"></label><label>Team Member Capacity<input id="bTeamLimit" type="number" min="1" step="1" value="1"></label><label>Team Member Top-up<input id="bTeamTopup" type="number" min="0" step="1" value="0"></label><label>Deal Capacity<input id="bDealLimit" type="number" min="0" step="1" value="10"></label><label>Deal Top-up<input id="bDealTopup" type="number" min="0" step="1" value="0"></label><label>Last Payment (₹)<input id="bPaymentAmount" type="number" min="0" step="1" placeholder="e.g. 999"></label><label>Payment Reference<input id="bPaymentRef" placeholder="UPI reference / note"></label><label class="full">Description<textarea id="bDescription" placeholder="What does this business sell or provide?"></textarea></label></div><button class="save-btn" id="businessSaveBtn">Save Account</button><div id="businessMsg" style="font-size:9px;margin-top:9px"></div></form></aside></div>
-<div class="quota-alert-backdrop" id="quotaAlertBg" role="dialog" aria-modal="true" aria-labelledby="quotaAlertTitle"><section class="quota-alert"><div class="eyebrow">FREE PLAN MONITOR</div><h2 id="quotaAlertTitle">Free accounts over the limit</h2><p>These workspaces have more than 10 customer records while on Free/Trial. This screen checks record counts only; it does not open or display their customer details. Review each account and suspend only if appropriate.</p><div id="quotaAlertList"></div><div class="quota-alert-footer"><button onclick="closeQuotaAlert()">Review later</button><button class="primary" onclick="closeQuotaAlert()">Done</button></div></section></div>
+<div id="auth" class="auth hidden"><div class="card"><div class="logo" style="margin:auto;width:46px;height:46px;font-size:20px">B</div><h2 id="aT">Admin sign-in</h2><p id="aP">Only BusinessOS administrators can open this console.</p><button class="btn p" id="gbtn" style="width:100%;justify-content:center">Continue with Google</button><button class="btn hidden" id="swap" style="width:100%;justify-content:center;margin-top:8px">Sign in with another account</button><p id="aerr" style="color:var(--red);font-size:12px;margin:12px 0 0"></p></div></div>
+<div id="app" class="hidden">
+<div id="err" class="err hidden" role="alert"></div>
+<section class="hero"><div><h1>Customer accounts</h1><p id="summary" class="sk">Loading account summary…</p></div>
+<div class="acts"><button class="btn" id="refresh">↻ Refresh</button><button class="btn" id="csv">↓ Export CSV</button><button class="btn p" id="add">＋ Create account</button></div></section>
+<section class="grid kpis" id="kpis"></section>
+<section class="card" id="attCard"><div class="h"><h2>Needs your action</h2><button class="btn" id="usageBtn">Check free-plan usage</button></div><div class="sub">Renewals, unlinked owners and free accounts over the 10-record limit.</div><div id="att"><div class="skr"></div><div class="skr"></div></div></section>
+<section class="card"><div class="h"><h2>All accounts</h2><span class="sm" id="showing"></span></div>
+<div class="tools"><input class="srch" id="q" type="search" placeholder="Search business, owner, email, phone, city" aria-label="Search accounts"></div>
+<div class="chips" id="chips" role="tablist"></div>
+<div class="row hd" id="hd"><div>Business</div><div>Owner</div><div>Plan</div><div>Status</div><div></div></div>
+<div id="list"><div class="skr"></div><div class="skr"></div><div class="skr"></div></div></section>
+</div></main>
+<div class="dr hidden" id="dr"><form id="f" aria-labelledby="fT">
+<div class="h"><h2 id="fT">Manage account</h2><button type="button" class="btn" id="x" aria-label="Close">✕</button></div>
+<input type="hidden" id="fid"><div id="fmsg" class="err hidden" role="alert"></div>
+<label>Business name *<input id="bName" required maxlength="80"></label>
+<div class="f2"><label>Owner name<input id="bOwner" maxlength="60"></label><label>Owner email * (Google account)<input id="bEmail" type="email" required></label></div>
+<div class="f2"><label>Phone / WhatsApp<input id="bPhone" inputmode="tel"></label><label>Business type<input id="bType" list="types" placeholder="Real Estate"></label></div>
+<datalist id="types"><option>Real Estate</option><option>Coaching</option><option>Clinic</option><option>Salon</option><option>Retail</option><option>Other</option></datalist>
+<div class="f2"><label>City<input id="bCity"></label><label>Area<input id="bArea"></label></div>
+<fieldset><legend>Plan &amp; access</legend>
+<div class="f2"><label>Plan<select id="bPlan"><option value="free">Free</option><option value="trial">Trial</option><option value="starter">Starter · ₹499</option><option value="growth">Growth · ₹999</option><option value="business">Business · custom</option><option value="custom">Custom</option><option value="premium">Premium (legacy)</option></select></label>
+<label>Status<select id="bStatus"><option value="trial">Trial</option><option value="active">Active</option><option value="suspended">Suspended</option></select></label></div>
+<div class="f2"><label>Customer limit<input id="bRec" type="number" min="1"></label><label>Extra customers (top-up)<input id="bRecT" type="number" min="0"></label>
+<label>Prospect limit<input id="bPro" type="number" min="0"></label><label>Extra prospects<input id="bProT" type="number" min="0"></label>
+<label>Team limit<input id="bTeam" type="number" min="1"></label><label>Extra team seats<input id="bTeamT" type="number" min="0"></label>
+<label>Deal limit<input id="bDeal" type="number" min="0"></label><label>Extra deals<input id="bDealT" type="number" min="0"></label></div>
+<div class="f2"><label>Plan ends on<input id="bEnd" type="date"></label><div style="display:flex;align-items:flex-end"><button type="button" class="btn" id="d30" style="width:100%;justify-content:center">Set 30 days from today</button></div></div>
+<div class="note">Top-ups are added on top of the limit, the same way the subscription page counts them.</div></fieldset>
+<fieldset><legend>Last payment</legend><div class="f2"><label>Amount (₹)<input id="bPay" type="number" min="0"></label><label>UPI / reference<input id="bRef" maxlength="80"></label></div></fieldset>
+<label>Internal note<textarea id="bNote" rows="2" maxlength="300"></textarea></label>
+<div class="acts" style="margin-top:auto"><button class="btn p" id="save" type="submit">Save changes</button><button type="button" class="btn" id="cancel">Cancel</button></div>
+</form></div>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,getDocs,getCountFromServer,doc,setDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,collection,getDocs,getDoc,getCountFromServer,doc,setDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const cfg={apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80",measurementId:"G-85D45ENBLK"};
 const ADMIN_EMAILS=["saif.anwar1618@gmail.com"];
-const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
-const $=id=>document.getElementById(id);let businesses=[];
-const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-function admin(u){return !!u?.email&&ADMIN_EMAILS.includes(u.email.toLowerCase())}
-function norm(v){return String(v??"").toLowerCase().trim()}
-$("googleBtn").onclick=async()=>{$("loginMsg").textContent="Opening Google sign-in…";try{await signInWithPopup(auth,provider)}catch(e){$("loginMsg").textContent=e.message||"Google sign-in failed."}};
-$("logoutBtn").onclick=()=>signOut(auth);
-onAuthStateChanged(auth,u=>{if(!u){$("loginView").classList.remove("hidden");$("appView").classList.add("hidden");$("userbox").classList.add("hidden");return}if(!admin(u)){$("loginMsg").textContent=`Access denied for ${u.email}.`;signOut(auth);return}$("loginView").classList.add("hidden");$("appView").classList.remove("hidden");$("userbox").classList.remove("hidden");$("userEmail").textContent=u.email;$("userName").textContent=u.displayName||"Admin";loadAccounts()});
-async function loadAccounts(){try{const snap=await getDocs(collection(db,"businesses"));businesses=snap.docs.map(d=>({id:d.id,...d.data()}));renderBusinesses();await checkFreeQuotaBreaches()}catch(e){console.error(e);$("businessList").innerHTML=`<div class="empty">Could not load accounts. Check administrator Firestore permissions. ${esc(e.message||"")}</div>`}}
-async function checkFreeQuotaBreaches(){
-  // Privacy-preserving check: retrieve aggregate counts only, never customer documents.
-  const candidates=businesses.filter(b=>["free","trial",""].includes(norm(b.plan||"trial"))&&norm(b.status||"active")!=="suspended");
-  const breached=[];
-  for(const b of candidates){try{const snap=await getCountFromServer(collection(db,"businesses",b.id,"contacts"));const count=snap.data().count;if(count>10)breached.push({...b,_contactCount:count})}catch(e){console.warn("Quota count unavailable for workspace",b.id,e?.code||e?.message||e)}}
-  if(!breached.length)return;
-  $("quotaAlertList").innerHTML=breached.map(b=>`<div class="quota-alert-item"><div><b>${esc(b.name||"Unnamed business")}</b><small>${esc(b.ownerEmail||"No owner email")} · ${b._contactCount} records / 10 allowed</small></div><button onclick="suspendQuotaBreacher('${esc(b.id)}')">Suspend account</button></div>`).join("");
-  $("quotaAlertBg").classList.add("show");
-}
-window.closeQuotaAlert=()=>$("quotaAlertBg").classList.remove("show");
-window.suspendQuotaBreacher=async id=>{const b=businesses.find(x=>x.id===id);if(!b)return;if(!confirm(`Suspend ${b.name||"this account"}? This changes workspace status only; it does not delete data.`))return;try{await updateDoc(doc(db,"businesses",id),{status:"suspended",suspendedReason:"free-plan-record-limit-exceeded",suspendedAt:serverTimestamp(),updatedAt:serverTimestamp()});b.status="suspended";renderBusinesses();const row=document.querySelector(`[onclick="suspendQuotaBreacher('${id}')"]`)?.closest(".quota-alert-item");if(row)row.remove();if(!$("quotaAlertList").children.length)closeQuotaAlert();alert("Account suspended. Note: status-based access blocking must also be enforced by app checks and Firestore Rules; this action alone does not revoke Firebase Auth login.")}catch(e){alert("Could not suspend account: "+(e.message||e))}};
-function updateStats(){const active=businesses.filter(b=>(b.status||"trial")==="active").length;const pending=businesses.filter(b=>!b.ownerUid||(b.status||"")==="trial").length;const paid=businesses.filter(b=>norm(b.plan)==="premium"||["starter","growth","custom"].includes(norm(b.plan))).length;const suspended=businesses.filter(b=>norm(b.status)==="suspended").length;$("sAccounts").textContent=businesses.length;$("sActive").textContent=active;$("sTrial").textContent=pending;$("sPaid").textContent=paid;$("sSuspended").textContent=suspended}
-window.renderBusinesses=()=>{const q=norm($("accountQ").value),plan=$("accountPlan").value,status=$("accountStatus").value,type=$("accountType").value;const arr=businesses.filter(b=>{const hay=norm(`${b.name||""} ${b.ownerName||""} ${b.ownerEmail||""} ${b.city||""} ${b.area||""} ${b.phone||""}`);if(q&&!hay.includes(q))return false;if(plan&&norm(b.plan||"trial")!==plan)return false;if(status==="pending"&&b.ownerUid)return false;if(status&&status!=="pending"&&norm(b.status||"trial")!==status)return false;if(type&&String(b.businessType||"")!==type)return false;return true});$("accountShowing").textContent=arr.length;updateStats();const el=$("businessList");if(!arr.length){el.innerHTML='<div class="empty">No accounts match these filters.</div>';return}el.innerHTML=arr.map(b=>{const pending=!b.ownerUid,status=norm(b.status||"trial"),plan=norm(b.plan||"trial");return `<div class="account-row"><div class="account-primary"><div class="account-avatar">${esc((b.name||"B").trim().split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase())}</div><div class="account-name"><b>${esc(b.name||"Unnamed business")}</b><small>${esc(b.ownerName||"Owner not provided")} · ${esc(b.ownerEmail||"No owner email")}</small></div></div><div class="account-cell">${esc(b.businessType||"Other")}<small>${esc(b.templateId||"general")} template</small></div><div class="account-cell">${esc(b.area||"—")}<small>${esc(b.city||"—")}</small></div><div class="account-cell"><span class="tag ${plan==="premium"||["starter","growth","custom"].includes(plan)?"won":""}">${esc(plan==="trial"?"Free / Trial":plan.toUpperCase())}</span><small>${Number(b.recordLimit||((plan==="premium")?1000:10)).toLocaleString()} CRM capacity</small><small>${Number(b.prospectLimit??(plan==="premium"?250:0))+Number(b.prospectTopup||0)} prospects · ${Number(b.teamLimit??(plan==="premium"?3:1))+Number(b.teamTopup||0)} team · ${Number(b.dealLimit??(plan==="premium"?250:10))+Number(b.dealTopup||0)} deals</small><small>${b.subscriptionEndsAt?`Until ${esc(b.subscriptionEndsAt)}`:(plan==="premium"?"Expiry not set":"No expiry")}</small><button style="margin-top:6px;border:1px solid #dfe4eb;border-radius:7px;background:#fff;padding:5px 7px;font-size:8px;font-weight:800;cursor:pointer" onclick="editBusiness('${esc(b.id)}')">Manage plan</button></div><div class="account-cell"><span class="tag ${status==="active"?"won":status==="suspended"?"lost": "hot"}">${esc(b.status||"trial")}</span><small>${pending?"Owner pending":"Workspace created"}</small></div><div class="account-cell"><span class="tag ${pending?"hot":"won"}">${pending?"Not linked":"Linked"}</span></div><div class="account-actions"><button title="Edit account" onclick="editBusiness('${esc(b.id)}')">Edit</button>${plan!=="premium"?`<button title="Activate Premium" onclick="activatePremium('${esc(b.id)}')">Premium</button>`:`<button title="Add record capacity" onclick="addTopup('${esc(b.id)}')">Top-up</button>`}<button title="Pause or activate account" onclick="toggleAccountStatus('${esc(b.id)}')">${status==="suspended"?"Activate":"Suspend"}</button></div></div>`}).join("")};
-window.resetAccountFilters=()=>{["accountQ","accountPlan","accountStatus","accountType"].forEach(id=>$(id).value="");renderBusinesses()};
-window.openCreateBusiness=()=>{$("editingBusinessId").value="";$("businessForm").reset();$("bCity").value="Jaipur";$("bPlan").value="free";$("bRecordLimit").value=10;$("bTopup").value=0;$("bProspectLimit").value=0;$("bProspectTopup").value=0;$("bTeamLimit").value=1;$("bTeamTopup").value=0;$("bDealLimit").value=10;$("bDealTopup").value=0;$("businessFormTitle").textContent="Create Account";$("businessFormEyebrow").textContent="NEW CUSTOMER ACCOUNT";$("businessSaveBtn").textContent="Create Account";$("businessMsg").textContent="";$("businessDrawerBg").classList.add("show");$("bName").focus()};
-window.closeCreateBusiness=()=>$("businessDrawerBg").classList.remove("show");
-window.editBusiness=id=>{const b=businesses.find(x=>x.id===id);if(!b)return;$("editingBusinessId").value=id;$("bName").value=b.name||"";$("bOwner").value=b.ownerName||"";$("bEmail").value=b.ownerEmail||"";$("bPhone").value=b.phone||b.whatsapp||"";$("bCity").value=b.city||"Jaipur";$("bArea").value=b.area||"";$("bType").value=b.businessType||"Other";$("bTemplate").value=b.templateId||"general";$("bPlan").value=b.plan||"free";$("bStatus").value=b.status||"trial";$("bRecordLimit").value=Number(b.recordLimit||((b.plan==="premium")?1000:10));$("bExpiry").value=b.subscriptionEndsAt||"";$("bTopup").value=Number(b.topupRecords||0);$("bProspectLimit").value=Number(b.prospectLimit??(b.plan==="premium"?250:0));$("bProspectTopup").value=Number(b.prospectTopup||0);$("bTeamLimit").value=Number(b.teamLimit??(b.plan==="premium"?3:1));$("bTeamTopup").value=Number(b.teamTopup||0);$("bDealLimit").value=Number(b.dealLimit??(b.plan==="premium"?250:10));$("bDealTopup").value=Number(b.dealTopup||0);$("bPaymentAmount").value=b.lastPaymentAmount??"";$("bPaymentRef").value=b.lastPaymentRef||"";$("bDescription").value=b.description||"";$("businessFormTitle").textContent="Edit Account";$("businessFormEyebrow").textContent="ACCOUNT SETTINGS";$("businessSaveBtn").textContent="Save Changes";$("businessMsg").textContent="";$("businessDrawerBg").classList.add("show")};
-$("businessForm").onsubmit=async e=>{e.preventDefault();const btn=$("businessSaveBtn"),id=$("editingBusinessId").value;btn.disabled=true;btn.textContent="Saving…";$("businessMsg").textContent="";try{const data={name:$("bName").value.trim(),ownerEmail:$("bEmail").value.trim().toLowerCase(),ownerName:$("bOwner").value.trim(),phone:$("bPhone").value.trim(),whatsapp:$("bPhone").value.trim(),city:$("bCity").value.trim()||"Jaipur",area:$("bArea").value.trim(),businessType:$("bType").value,templateId:$("bTemplate").value,plan:$("bPlan").value,status:$("bStatus").value,recordLimit:Math.max(1,Number($("bRecordLimit").value||10)),topupRecords:Math.max(0,Number($("bTopup").value||0)),prospectLimit:Math.max(0,Number($("bProspectLimit").value||0)),prospectTopup:Math.max(0,Number($("bProspectTopup").value||0)),teamLimit:Math.max(1,Number($("bTeamLimit").value||1)),teamTopup:Math.max(0,Number($("bTeamTopup").value||0)),dealLimit:Math.max(0,Number($("bDealLimit").value||0)),dealTopup:Math.max(0,Number($("bDealTopup").value||0)),subscriptionEndsAt:$("bExpiry").value||"",lastPaymentAmount:Number($("bPaymentAmount").value||0),lastPaymentRef:$("bPaymentRef").value.trim(),description:$("bDescription").value.trim(),updatedAt:serverTimestamp()};if(id){await updateDoc(doc(db,"businesses",id),data);businesses=businesses.map(b=>b.id===id?{...b,...data}:b);$("businessMsg").textContent="Account updated."}else{const ref=doc(collection(db,"businesses"));await setDoc(ref,{...data,ownerUid:"",onboardingStatus:"pending",createdAt:serverTimestamp()});businesses.push({id:ref.id,...data,ownerUid:"",onboardingStatus:"pending"});$("businessMsg").textContent="Account created. Owner can sign in with the specified email."}renderBusinesses();setTimeout(closeCreateBusiness,700)}catch(err){$("businessMsg").textContent=err.message||"Could not save account."}finally{btn.disabled=false;btn.textContent=id?"Save Changes":"Create Account"}};
-window.changeBusinessPlan=async(id,plan)=>{const b=businesses.find(x=>x.id===id);if(!b)return;try{await updateDoc(doc(db,"businesses",id),{plan,planUpdatedAt:serverTimestamp(),updatedAt:serverTimestamp()});b.plan=plan;renderBusinesses()}catch(e){alert("Plan update failed: "+(e.message||e));renderBusinesses()}};
-$("bPlan").addEventListener("change",()=>{if($("bPlan").value==="premium"&&Number($("bRecordLimit").value)<=10)$("bRecordLimit").value=1000;if($("bPlan").value==="free")$("bRecordLimit").value=10});
-window.activatePremium=async id=>{const b=businesses.find(x=>x.id===id);if(!b)return;if(!confirm(`Activate 30-day Premium for ${b.name||"this account"} with 1,000 records?`))return;const start=new Date(),end=new Date(start);end.setDate(end.getDate()+30);const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;try{const data={plan:"premium",status:"active",recordLimit:1000,topupRecords:0,prospectLimit:250,prospectTopup:0,teamLimit:3,teamTopup:0,dealLimit:250,dealTopup:0,subscriptionStartsAt:iso(start),subscriptionEndsAt:iso(end),planUpdatedAt:serverTimestamp(),updatedAt:serverTimestamp()};await updateDoc(doc(db,"businesses",id),data);Object.assign(b,data);renderBusinesses();alert(`Premium activated until ${iso(end)}. Remember: record quota is stored here, but backend enforcement still needs implementation.`)}catch(e){alert("Premium activation failed: "+(e.message||e))}};
-window.addTopup=async id=>{const b=businesses.find(x=>x.id===id);if(!b)return;const extra=Number(prompt("How many extra records to add?", "500"));if(!Number.isInteger(extra)||extra<1){alert("Enter a whole number greater than zero.");return}const current=Number(b.recordLimit||((b.plan==="premium")?1000:10));const next=current+extra;if(!confirm(`Add ${extra} records to ${b.name||"this account"}? Capacity will become ${next}.`))return;const amount=Number(prompt("Payment received (₹). Enter 0 if not yet received:","0"));if(!Number.isFinite(amount)||amount<0){alert("Invalid payment amount.");return}const ref=prompt("Payment reference (UPI/reference/note):","")||"";try{const data={recordLimit:next,topupRecords:Number(b.topupRecords||0)+extra,lastPaymentAmount:amount,lastPaymentRef:ref,lastPaymentAt:serverTimestamp(),updatedAt:serverTimestamp()};await updateDoc(doc(db,"businesses",id),data);Object.assign(b,data);renderBusinesses();alert(`Top-up saved. New configured capacity: ${next}. Backend quota enforcement still needs implementation.`)}catch(e){alert("Top-up failed: "+(e.message||e))}};
-window.toggleAccountStatus=async id=>{const b=businesses.find(x=>x.id===id);if(!b)return;const next=norm(b.status)==="suspended"?"active":"suspended";if(!confirm(`${next==="suspended"?"Suspend":"Activate"} ${b.name||"this account"}?`))return;try{await updateDoc(doc(db,"businesses",id),{status:next,updatedAt:serverTimestamp()});b.status=next;renderBusinesses()}catch(e){alert("Status update failed: "+(e.message||e))}};
-$("businessDrawerBg").addEventListener("click",e=>{if(e.target.id==="businessDrawerBg")closeCreateBusiness()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeCreateBusiness()});
+const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
+const $=id=>document.getElementById(id);
+const clean=v=>String(v??"").replace(/["'`]/g,"").trim();
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const norm=v=>String(v??"").toLowerCase().trim();
+const phone=v=>{let d=String(v??"").replace(/\D/g,"");if(d.length>10&&d.startsWith("91"))d=d.slice(2);return d.slice(-10)};
+const PLANS={free:{n:"Free",rec:10,pro:0,team:1,deal:10,price:0},trial:{n:"Trial",rec:10,pro:0,team:1,deal:10,price:0},starter:{n:"Starter",rec:500,pro:250,team:3,deal:250,price:499},growth:{n:"Growth",rec:2000,pro:1000,team:10,deal:2000,price:999},business:{n:"Business",rec:10000,pro:5000,team:25,deal:10000,price:0},custom:{n:"Custom",rec:10000,pro:5000,team:25,deal:10000,price:0},premium:{n:"Premium (legacy)",rec:1000,pro:250,team:3,deal:250,price:0}};
+const isoDay=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const fmtD=iso=>{const d=new Date(iso+"T00:00:00");return isNaN(d)?"":d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})};
+let biz=[],usage={},filter="all",toastT,lastFocus;
+function show(id,on){$(id).classList.toggle("hidden",!on)}
+function showErr(e,ctx){console.error(ctx,e);const el=$("err");el.textContent=`${ctx}: ${e?.code||"error"} — ${e?.message||e}`;el.classList.remove("hidden")}
+function toast(msg,undo,bad){clearTimeout(toastT);document.querySelector(".toast")?.remove();const t=document.createElement("div");t.className="toast"+(bad?" bad":"");t.setAttribute("role","status");t.textContent=msg;if(undo){const b=document.createElement("button");b.textContent="Undo";b.onclick=()=>{t.remove();undo()};t.appendChild(b)}document.body.appendChild(t);toastT=setTimeout(()=>t.remove(),undo?7000:3500)}
+/* derive */
+function info(b){const plan=PLANS[norm(b.plan)]?norm(b.plan):(norm(b.plan)||"trial"),P=PLANS[plan]||PLANS.free,paid=!["free","trial"].includes(plan);
+ const status=norm(b.status)||"trial",ends=clean(b.subscriptionEndsAt),days=ends?Math.round((new Date(ends+"T00:00:00")-new Date(isoDay(new Date())+"T00:00:00"))/864e5):null;
+ const cap=Number(b.recordLimit??P.rec)+Number(b.topupRecords||0),flags=[];
+ if(paid&&status!=="suspended"){if(!ends)flags.push("noend");else if(days<0)flags.push("expired");else if(days<=7)flags.push("soon")}
+ if(!b.ownerUid)flags.push("unlinked");
+ if(!paid&&status!=="suspended"&&usage[b.id]!=null&&usage[b.id]>cap)flags.push("over");
+ return{plan,P,paid,status,ends,days,cap,flags}}
+const name=b=>clean(b.name)||"Unnamed business";
+const initials=b=>name(b).split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase();
+function stats(){const a=biz.map(info),pay=a.filter(i=>i.paid&&i.status!=="suspended"),mrr=pay.reduce((s,i)=>s+i.P.price,0),custom=pay.filter(i=>!i.P.price).length;
+ return{n:biz.length,paid:pay.length,free:a.filter(i=>!i.paid&&i.status!=="suspended").length,susp:a.filter(i=>i.status==="suspended").length,mrr,custom,attn:a.filter(i=>i.flags.length).length,unl:a.filter(i=>i.flags.includes("unlinked")).length}}
+function counts(){const a=biz.map(info);return{all:a.length,attn:a.filter(i=>i.flags.length).length,paid:a.filter(i=>i.paid&&i.status!=="suspended").length,free:a.filter(i=>!i.paid&&i.status!=="suspended").length,susp:a.filter(i=>i.status==="suspended").length,unl:a.filter(i=>i.flags.includes("unlinked")).length}}
+function render(){const s=stats(),c=counts();
+ $("summary").classList.remove("sk");$("summary").innerHTML=`<b>${s.n}</b> accounts · <b>${s.paid}</b> paying · <b>${s.attn}</b> need attention`;
+ const K=[["Accounts",s.n,"all workspaces","var(--blue)"],["Paying",s.paid,"active paid plans","var(--green)"],["Free / trial",s.free,"not yet paying","var(--amber)"],["Suspended",s.susp,"status set to suspended","var(--red)"],["Est. monthly revenue","₹"+s.mrr.toLocaleString("en-IN"),s.custom?`${s.custom} custom/legacy plan${s.custom>1?"s":""} not priced`:"from Starter and Growth","var(--purple)"]];
+ $("kpis").innerHTML=K.map(k=>`<div class="card kpi" style="--c:${k[3]}"><div class="l">${k[0]}</div><div class="n">${k[1]}</div><div class="s">${k[2]}</div></div>`).join("");
+ const CH=[["all","All"],["attn","Needs attention"],["paid","Paid"],["free","Free / trial"],["susp","Suspended"],["unl","Owner not linked"]];
+ $("chips").innerHTML=CH.map(([k,l])=>`<button class="chip ${filter===k?"on":""}" data-f="${k}" role="tab" aria-selected="${filter===k}">${l}<b>${c[k]}</b></button>`).join("");
+ renderAtt();renderList()}
+function waLink(b,msg){const p=phone(b.phone||b.whatsapp);return p?`https://wa.me/91${p}?text=${encodeURIComponent(msg)}`:""}
+function msgFor(b,i,kind){const o=clean(b.ownerName)||"there",loginUrl=new URL("login.html",location.href).href;
+ if(kind==="unlinked")return`Hi ${o}, your BusinessOS workspace for ${name(b)} is ready. Please sign in with Google using ${clean(b.ownerEmail)} here: ${loginUrl}`;
+ if(kind==="expired")return`Hi ${o}, your ${i.P.n} plan for ${name(b)} ended on ${fmtD(i.ends)}. Reply here and I will renew it so your team keeps access.`;
+ return`Hi ${o}, your ${i.P.n} plan for ${name(b)} ends on ${fmtD(i.ends)}. Reply here to renew and avoid any break.`}
+function renderAtt(){const items=[];
+ biz.forEach(b=>{const i=info(b);
+  if(i.flags.includes("expired"))items.push({o:0,b,t:"r",tag:"Expired",txt:`${i.P.n} ended ${fmtD(i.ends)} (${-i.days} day${i.days===-1?"":"s"} ago)`,kind:"expired",i});
+  else if(i.flags.includes("soon"))items.push({o:1,b,t:"a",tag:"Renews soon",txt:`${i.P.n} ends ${fmtD(i.ends)} (${i.days===0?"today":"in "+i.days+" day"+(i.days===1?"":"s")})`,kind:"soon",i});
+  if(i.flags.includes("over"))items.push({o:2,b,t:"r",tag:"Over limit",txt:`${usage[b.id]} records on a ${i.cap}-record free plan`,kind:"over",i});
+  if(i.flags.includes("noend"))items.push({o:3,b,t:"a",tag:"No end date",txt:`${i.P.n} plan has no expiry set`,kind:"noend",i});
+  if(i.flags.includes("unlinked"))items.push({o:4,b,t:"b",tag:"Not linked",txt:"Owner has not signed in yet",kind:"unlinked",i})});
+ items.sort((a,b)=>a.o-b.o);
+ if(!items.length){$("att").innerHTML=`<div class="empty"><b>Nothing needs action right now</b>No expiring plans, unlinked owners or known over-limit accounts. Use "Check free-plan usage" to scan free accounts.</div>`;return}
+ const sh=items.slice(0,8);
+ $("att").innerHTML=sh.map(x=>{const w=x.kind==="over"?"":waLink(x.b,msgFor(x.b,x.i,x.kind));
+  return`<div class="att"><span class="tag ${x.t}">${x.tag}</span><div class="t"><b>${esc(name(x.b))}</b><span>${esc(x.txt)}</span></div>${w?`<a class="mini wa" href="${esc(w)}" target="_blank" rel="noopener" aria-label="WhatsApp owner of ${esc(name(x.b))}">WhatsApp owner</a>`:(x.kind==="over"?"":'<span class="sm">No phone</span>')}<button class="mini k" data-a="edit" data-id="${esc(x.b.id)}">Manage</button></div>`}).join("")+(items.length>8?`<div class="sub" style="margin:10px 0 0">${items.length-8} more — use the "Needs attention" filter below.</div>`:"")}
+function renderList(){const q=norm($("q").value);
+ const arr=biz.map(b=>({b,i:info(b)})).filter(({b,i})=>{
+  if(q&&!norm([b.name,b.ownerName,b.ownerEmail,b.city,b.area,b.phone,b.businessType].map(clean).join(" ")).includes(q))return false;
+  if(filter==="attn")return i.flags.length>0;if(filter==="paid")return i.paid&&i.status!=="suspended";if(filter==="free")return !i.paid&&i.status!=="suspended";if(filter==="susp")return i.status==="suspended";if(filter==="unl")return i.flags.includes("unlinked");return true});
+ arr.sort((x,y)=>y.i.flags.length-x.i.flags.length||(y.b.createdAt?.toMillis?.()||0)-(x.b.createdAt?.toMillis?.()||0));
+ $("showing").textContent=`Showing ${arr.length} of ${biz.length}`;show("hd",arr.length>0);
+ if(!arr.length){const m={attn:["All clear","No account needs attention."],susp:["No suspended accounts","Every workspace is currently allowed."],unl:["Every owner is linked","All owners have signed in at least once."]}[filter];
+  $("list").innerHTML=biz.length?`<div class="empty"><b>${m?m[0]:"No accounts match"}</b>${m?m[1]:"Try a different search or filter."}</div>`:`<div class="empty"><b>No accounts yet</b>Create the first customer account to get started.</div>`;return}
+ $("list").innerHTML=arr.map(({b,i})=>{const sTag=i.status==="suspended"?["r","Suspended"]:i.status==="active"?["g","Active"]:["a","Trial"];
+  const end=i.paid?(i.ends?(i.days<0?`Ended ${fmtD(i.ends)}`:`Until ${fmtD(i.ends)}`):"Expiry not set"):"No expiry";
+  const u=usage[b.id]!=null&&!i.paid?`${usage[b.id]} of ${i.cap} used`:`${i.cap.toLocaleString("en-IN")} customers`;
+  const w=waLink(b,`Hi ${clean(b.ownerName)||"there"}, this is BusinessOS support regarding ${name(b)}.`);
+  return`<div class="row"><div class="who"><span class="av">${esc(initials(b))}</span><div class="t" style="min-width:0"><b>${esc(name(b))}</b><span>${esc([clean(b.businessType),clean(b.area),clean(b.city)].filter(Boolean).join(" · ")||"No details")}</span></div></div>
+<div class="c"><b>${esc(clean(b.ownerName)||"No owner name")}</b><span>${esc(clean(b.ownerEmail)||"No owner email")}</span><span>${esc(clean(b.phone||b.whatsapp)||"No mobile")}</span></div>
+<div><span class="tag ${i.paid?"b":""}">${esc(i.P.n)}</span><span class="sm">${esc(u)}</span></div>
+<div><span class="tag ${sTag[0]}">${sTag[1]}</span><span class="sm">${esc(end)}</span><span class="sm">${b.ownerUid?"Owner linked":"Owner not linked"}</span></div>
+<div class="ra">${w?`<a class="mini wa" href="${esc(w)}" target="_blank" rel="noopener" aria-label="WhatsApp ${esc(name(b))}">WhatsApp</a>`:""}<button class="mini k" data-a="edit" data-id="${esc(b.id)}" aria-label="Manage ${esc(name(b))}">Manage</button><button class="mini" data-a="tog" data-id="${esc(b.id)}" aria-label="${i.status==="suspended"?"Activate":"Suspend"} ${esc(name(b))}">${i.status==="suspended"?"Activate":"Suspend"}</button></div></div>`}).join("")}
+/* load — listener first, cosmetics after */
+async function load(){show("app",true);try{const snap=await getDocs(collection(db,"businesses"));biz=snap.docs.map(d=>({id:d.id,...d.data()}));$("err").classList.add("hidden");render()}catch(e){showErr(e,"Could not load accounts");$("summary").classList.remove("sk");$("summary").textContent="Accounts could not be loaded.";$("att").innerHTML="";$("list").innerHTML=`<div class="empty"><b>No data</b>Fix the error above, then press Refresh.</div>`}}
+async function checkUsage(){const btn=$("usageBtn"),list=biz.filter(b=>{const i=info(b);return !i.paid&&i.status!=="suspended"});
+ if(!list.length){toast("No free or trial accounts to check.");return}
+ btn.disabled=true;let done=0,fail=0;
+ for(let k=0;k<list.length;k+=6){await Promise.all(list.slice(k,k+6).map(async b=>{try{usage[b.id]=(await getCountFromServer(collection(db,"businesses",b.id,"contacts"))).data().count}catch(e){fail++;console.error("usage",b.id,e)}done++;btn.textContent=`Checking ${done}/${list.length}…`}))}
+ btn.disabled=false;btn.textContent="Check free-plan usage";render();const over=biz.filter(b=>info(b).flags.includes("over")).length;
+ toast(fail?`Checked with ${fail} error${fail>1?"s":""} (see console). ${over} over limit.`:`${over} account${over===1?"":"s"} over the free limit.`,null,!!fail)}
+/* edit */
+const F={bName:"name",bOwner:"ownerName",bEmail:"ownerEmail",bPhone:"phone",bType:"businessType",bCity:"city",bArea:"area",bNote:"description",bRef:"lastPaymentRef"};
+function fillLimits(p,keep){const P=PLANS[p]||PLANS.free;if(!keep){$("bRec").value=P.rec;$("bPro").value=P.pro;$("bTeam").value=P.team;$("bDeal").value=P.deal}}
+function openForm(id){lastFocus=document.activeElement;const b=id?biz.find(x=>x.id===id):null;if(id&&!b)return;
+ $("f").reset();$("fid").value=id||"";$("fmsg").classList.add("hidden");$("fT").textContent=b?"Manage account":"Create account";$("save").textContent=b?"Save changes":"Create account";
+ const i=b?info(b):null,P=i?i.P:PLANS.free;
+ Object.entries(F).forEach(([el,k])=>{$(el).value=b?clean(b[k]):""});if(!b)$("bCity").value="Jaipur";
+ $("bPlan").value=b?i.plan:"free";if(!PLANS[$("bPlan").value]){const o=new Option(String($("bPlan").value),b.plan);$("bPlan").add(o);$("bPlan").value=b.plan}
+ $("bStatus").value=b?i.status:"trial";
+ $("bRec").value=b?(b.recordLimit??P.rec):P.rec;$("bRecT").value=Number(b?.topupRecords||0);$("bPro").value=b?(b.prospectLimit??P.pro):P.pro;$("bProT").value=Number(b?.prospectTopup||0);
+ $("bTeam").value=b?(b.teamLimit??P.team):P.team;$("bTeamT").value=Number(b?.teamTopup||0);$("bDeal").value=b?(b.dealLimit??P.deal):P.deal;$("bDealT").value=Number(b?.dealTopup||0);
+ $("bEnd").value=b?i.ends:"";$("bPay").value=b?.lastPaymentAmount||"";
+ show("dr",true);$("bName").focus()}
+function closeForm(){show("dr",false);lastFocus?.focus?.()}
+$("bPlan").addEventListener("change",()=>{const p=$("bPlan").value;fillLimits(p);if(["starter","growth","business","custom","premium"].includes(p)){if($("bStatus").value==="trial")$("bStatus").value="active";if(!$("bEnd").value)$("d30").click()}else if($("bStatus").value==="active")$("bStatus").value="trial"});
+$("d30").onclick=()=>{const d=new Date();d.setDate(d.getDate()+30);$("bEnd").value=isoDay(d)};
+const n=(id,min)=>Math.max(min,Math.floor(Number($(id).value)||0));
+$("f").onsubmit=async e=>{e.preventDefault();const id=$("fid").value,btn=$("save"),msg=$("fmsg");msg.classList.add("hidden");
+ const email=$("bEmail").value.trim().toLowerCase(),plan=$("bPlan").value,old=id?biz.find(x=>x.id===id):null;
+ if(!id&&biz.some(b=>norm(b.ownerEmail)===email)&&!confirm("Another account already uses this owner email. Create anyway?"))return;
+ if(PLANS[plan]?.price>=0&&!["free","trial"].includes(plan)&&!$("bEnd").value&&!confirm("This paid plan has no end date, so it never expires. Save anyway?"))return;
+ if($("bStatus").value==="suspended"&&old&&info(old).status!=="suspended"&&!confirm("Suspend this account? Data is kept, but app pages must enforce the block."))return;
+ const data={name:$("bName").value.trim(),ownerName:$("bOwner").value.trim(),ownerEmail:email,phone:$("bPhone").value.trim(),whatsapp:$("bPhone").value.trim(),businessType:$("bType").value.trim()||"Other",city:$("bCity").value.trim(),area:$("bArea").value.trim(),
+  plan,status:$("bStatus").value,recordLimit:n("bRec",1),topupRecords:n("bRecT",0),prospectLimit:n("bPro",0),prospectTopup:n("bProT",0),teamLimit:n("bTeam",1),teamTopup:n("bTeamT",0),dealLimit:n("bDeal",0),dealTopup:n("bDealT",0),
+  subscriptionEndsAt:$("bEnd").value||"",description:$("bNote").value.trim(),lastPaymentRef:$("bRef").value.trim(),updatedAt:serverTimestamp()};
+ const amt=Number($("bPay").value)||0;data.lastPaymentAmount=amt;if(amt>0&&(!old||Number(old.lastPaymentAmount||0)!==amt||(old.lastPaymentRef||"")!==data.lastPaymentRef))data.lastPaymentAt=serverTimestamp();
+ if(old&&norm(old.plan)!==plan)data.planUpdatedAt=serverTimestamp();
+ if(!["free","trial"].includes(plan)&&!(old&&old.subscriptionStartsAt))data.subscriptionStartsAt=isoDay(new Date());
+ btn.disabled=true;btn.textContent="Saving…";
+ try{if(id){await updateDoc(doc(db,"businesses",id),data);Object.assign(old,data,{updatedAt:new Date()});toast("Account updated")}
+  else{const ref=doc(collection(db,"businesses"));await setDoc(ref,{...data,templateId:"general",ownerUid:"",onboardingStatus:"pending",createdAt:serverTimestamp()});biz.push({id:ref.id,...data,templateId:"general",ownerUid:"",onboardingStatus:"pending"});toast("Account created. Owner can sign in with that email.")}
+  delete usage[id];closeForm();render()}
+ catch(err){console.error(err);msg.textContent=`${err?.code||"error"} — ${err?.message||err}`;msg.classList.remove("hidden")}
+ finally{btn.disabled=false;btn.textContent=id?"Save changes":"Create account"}};
+async function toggle(id){const b=biz.find(x=>x.id===id);if(!b)return;const prev=info(b).status,next=prev==="suspended"?"active":"suspended";
+ if(!confirm(`${next==="suspended"?"Suspend":"Activate"} ${name(b)}?${next==="suspended"?" Data is kept, but app pages must enforce the block.":""}`))return;
+ const set=async s=>{try{await updateDoc(doc(db,"businesses",id),s==="suspended"?{status:s,suspendedReason:"admin",suspendedAt:serverTimestamp(),updatedAt:serverTimestamp()}:{status:s,updatedAt:serverTimestamp()});b.status=s;render();return true}catch(e){showErr(e,"Status update failed");toast("Status update failed",null,true);return false}};
+ if(await set(next))toast(`${name(b)} ${next==="suspended"?"suspended":"activated"}`,()=>set(prev))}
+function exportCsv(){const H=["Business","Owner","Email","Phone","City","Area","Type","Plan","Status","Plan ends","Customer capacity","Linked","Last payment (INR)"];
+ const q=v=>`"${String(v??"").replace(/"/g,'""')}"`,rows=biz.map(b=>{const i=info(b);return[name(b),b.ownerName,b.ownerEmail,b.phone,b.city,b.area,b.businessType,i.P.n,i.status,i.ends,i.cap,b.ownerUid?"yes":"no",b.lastPaymentAmount||0].map(clean).map(q).join(",")});
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+[H.map(q).join(","),...rows].join("\n")],{type:"text/csv"}));a.download=`businessos-accounts-${isoDay(new Date())}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast(`Exported ${rows.length} accounts`)}
+/* events */
+$("chips").onclick=e=>{const c=e.target.closest("[data-f]");if(c){filter=c.dataset.f;render()}};
+document.body.addEventListener("click",e=>{const a=e.target.closest("[data-a]");if(!a)return;if(a.dataset.a==="edit")openForm(a.dataset.id);if(a.dataset.a==="tog")toggle(a.dataset.id)});
+$("q").addEventListener("input",renderList);$("add").onclick=()=>openForm();$("refresh").onclick=load;$("csv").onclick=exportCsv;$("usageBtn").onclick=checkUsage;
+$("x").onclick=$("cancel").onclick=closeForm;$("dr").addEventListener("mousedown",e=>{if(e.target.id==="dr")closeForm()});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("dr").classList.contains("hidden"))closeForm()});
+$("gbtn").onclick=async()=>{$("aerr").textContent="";try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){console.error(e);$("aerr").textContent=`${e?.code||"error"} — ${e?.message||"Google sign-in failed."}`}};
+$("out").onclick=$("swap").onclick=()=>signOut(auth);
+onAuthStateChanged(auth,async u=>{
+ if(!u){show("app",false);show("auth",true);show("out",false);$("who").textContent="";$("aT").textContent="Admin sign-in";$("aP").textContent="Only BusinessOS administrators can open this console.";show("gbtn",true);show("swap",false);return}
+ let ok=ADMIN_EMAILS.includes(norm(u.email));
+ if(!ok){try{ok=(await getDoc(doc(db,"admins",u.uid))).exists()}catch(e){console.error("admin check",e)}}
+ if(!ok){show("app",false);show("auth",true);show("gbtn",false);show("swap",true);show("out",false);$("aT").textContent="Access denied";$("aP").textContent=`${u.email||"This account"} is not an administrator.`;return}
+ show("auth",false);load();
+ show("out",true);if($("who"))$("who").textContent=u.email||""});
 </script></body></html>
