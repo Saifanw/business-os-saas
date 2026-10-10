@@ -13,13 +13,25 @@ service cloud.firestore {
         ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.businessId
         : null;
     }
-    function ownsBusiness(businessId) {
-      return signedIn() && (
-        request.auth.uid == businessId ||
-        userBusinessId() == businessId
-      );
+    // Invitation document id is the lower-cased email (see team-settings.html invite()).
+    function inviteExists(businessId) {
+      return signedIn() && request.auth.token.email != null
+        && exists(/databases/$(database)/documents/businesses/$(businessId)/teamInvites/$(request.auth.token.email.lower()));
     }
-    function isBusinessManager(businessId) {
+    function invite(businessId) {
+      return get(/databases/$(database)/documents/businesses/$(businessId)/teamInvites/$(request.auth.token.email.lower())).data;
+    }
+    // Team member access requires ALL of: users/{uid} linked to this business (doc id = auth uid),
+    // the linked profile email equals the signed-in token email, and an ACTIVE invitation for that email.
+    // Disabling or deleting the invitation therefore revokes Firestore access immediately.
+    function isActiveTeamMember(businessId) {
+      return signedIn()
+        && userBusinessId() == businessId
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.email == request.auth.token.email
+        && inviteExists(businessId)
+        && invite(businessId).status == 'active';
+    }
+    function isOwnerOfBusiness(businessId) {
       return signedIn() && (
         request.auth.uid == businessId ||
         (
@@ -27,11 +39,16 @@ service cloud.firestore {
           get(/databases/$(database)/documents/businesses/$(businessId)).data.ownerUid == request.auth.uid
         ) ||
         (
-          exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.businessId == businessId &&
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['owner','admin']
+          userBusinessId() == businessId &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'owner'
         )
       );
+    }
+    function ownsBusiness(businessId) {
+      return isOwnerOfBusiness(businessId) || isActiveTeamMember(businessId);
+    }
+    function isBusinessManager(businessId) {
+      return isOwnerOfBusiness(businessId) || (isActiveTeamMember(businessId) && invite(businessId).role == 'admin');
     }
     function canClaimBusiness(businessId) {
       return signedIn()
@@ -60,9 +77,43 @@ service cloud.firestore {
         && request.resource.data.uid == uid
         && request.resource.data.email == request.auth.token.email
         && request.resource.data.businessId != null
-        && exists(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)/teamInvites/$(request.auth.token.email))
-        && get(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)/teamInvites/$(request.auth.token.email)).data.status == 'active'
-        && get(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)/teamInvites/$(request.auth.token.email)).data.role == request.resource.data.role;
+        && exists(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)/teamInvites/$(request.auth.token.email.lower()))
+        && get(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)/teamInvites/$(request.auth.token.email.lower())).data.status == 'active'
+        && get(/databases/$(database)/documents/businesses/$(request.resource.data.businessId)/teamInvites/$(request.auth.token.email.lower())).data.role == request.resource.data.role;
+    }
+
+    function canJoinByToken(uid) {
+      return signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.role == 'sales'
+        && request.resource.data.joinToken is string
+        && exists(/databases/$(database)/documents/teamJoinLinks/$(request.resource.data.joinToken))
+        && get(/databases/$(database)/documents/teamJoinLinks/$(request.resource.data.joinToken)).data.status == 'active'
+        && get(/databases/$(database)/documents/teamJoinLinks/$(request.resource.data.joinToken)).data.role == 'sales'
+        && get(/databases/$(database)/documents/teamJoinLinks/$(request.resource.data.joinToken)).data.businessId == request.resource.data.businessId
+        && exists(/databases/$(database)/documents/businesses/$(request.resource.data.businessId));
+    }
+
+    match /teamJoinLinks/{token} {
+      allow read: if signedIn() && (resource.data.status == 'active' || isOwnerOfBusiness(resource.data.businessId) || isBusinessManager(resource.data.businessId));
+      allow create: if signedIn() && request.resource.data.keys().hasOnly(['businessId','role','status','createdBy','createdAt','updatedAt'])
+        && request.resource.data.role == 'sales' && request.resource.data.status == 'active'
+        && request.resource.data.createdBy == request.auth.uid
+        && exists(/databases/$(database)/documents/businesses/$(request.resource.data.businessId))
+        && (isOwnerOfBusiness(request.resource.data.businessId) || isBusinessManager(request.resource.data.businessId));
+      allow update: if signedIn() && (isOwnerOfBusiness(resource.data.businessId) || isBusinessManager(resource.data.businessId))
+        && request.resource.data.businessId == resource.data.businessId
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','updatedAt']);
+      allow delete: if signedIn() && (isOwnerOfBusiness(resource.data.businessId) || isBusinessManager(resource.data.businessId));
+    }
+
+    // Collection-group query on teamInvites (invite lookup at first sign-in). A person can only
+    // list invitations addressed to their own signed-in email; write access stays manager-only below.
+    match /{path=**}/teamInvites/{inviteId} {
+      allow read: if signedIn() && resource.data.email == request.auth.token.email;
     }
 
     match /salesContacts/{contactId} {
@@ -76,7 +127,7 @@ service cloud.firestore {
 
     match /users/{uid} {
       allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
-      allow create: if isAdmin() || canCreateLegacyUser(uid) || canLinkClaimedUser(uid) || canJoinInvitedUser(uid);
+      allow create: if isAdmin() || canCreateLegacyUser(uid) || canLinkClaimedUser(uid) || canJoinInvitedUser(uid) || canJoinByToken(uid);
       allow update: if isAdmin() || canUpdateUserProfile(uid) || canLinkClaimedUser(uid);
       allow delete: if isAdmin();
     }
@@ -130,7 +181,24 @@ service cloud.firestore {
       }
       match /teamInvites/{email} {
         allow read: if isAdmin() || isBusinessManager(businessId) || (signedIn() && resource.data.email == request.auth.token.email);
-        allow create, update, delete: if isAdmin() || isBusinessManager(businessId);
+        // Doc id must equal the invited (lower-case) email, and only the two supported roles can be granted.
+        allow create: if (isAdmin() || isBusinessManager(businessId) || (signedIn()
+          && email == request.auth.token.email.lower()
+          && request.resource.data.email == email
+          && request.resource.data.businessId == businessId
+          && request.resource.data.role == 'sales'
+          && request.resource.data.status == 'active'
+          && request.resource.data.joinedVia == 'join-link'
+          && request.resource.data.joinToken is string
+          && exists(/databases/$(database)/documents/teamJoinLinks/$(request.resource.data.joinToken))
+          && get(/databases/$(database)/documents/teamJoinLinks/$(request.resource.data.joinToken)).data.status == 'active'
+          && get(/databases/$(database)/documents/teamJoinLinks/$(request.resource.data.joinToken)).data.businessId == businessId))
+          && request.resource.data.email == email
+          && request.resource.data.role in ['sales','admin'];
+        allow update: if (isAdmin() || isBusinessManager(businessId))
+          && request.resource.data.email == email
+          && request.resource.data.role in ['sales','admin'];
+        allow delete: if isAdmin() || isBusinessManager(businessId);
       }
     }
   }
