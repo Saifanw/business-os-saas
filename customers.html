@@ -61,6 +61,7 @@ a.kpi{display:block;transition:.15s;position:relative;overflow:hidden}a.kpi:hove
 .empty{text-align:center;padding:26px 10px;color:var(--mut)}.empty b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}
 .plan{background:linear-gradient(145deg,#1b2a6b,#2f5bff);color:#fff;border:0}.plan .l{opacity:.75;font-size:12px;font-weight:600}.plan .n{font-size:24px;font-weight:800;margin:4px 0 6px}.plan p{opacity:.8;font-size:12.5px;margin-bottom:14px}.plan .btn{background:#fff;color:var(--blue2);border:0}
 .err{background:#fff4f2;border:1px solid #f3c1bb;color:#9b2c22;border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:13px}
+.nudge{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;background:#fff8e6;border:1px solid #f6e1a8;border-radius:12px;color:#7a5200;font-size:13px}.nudge:hover{background:#fff3d2}.nudge b{color:#5c3d00}.nudge em{font-style:normal;font-weight:700;color:var(--blue);white-space:nowrap}
 .sk{background:linear-gradient(90deg,#eef2f8,#f8faff,#eef2f8);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:8px;color:transparent!important}@keyframes sk{to{background-position:-200% 0}}
 /* auth */
 .auth{min-height:70vh;display:grid;place-items:center}.auth .card{max-width:380px;text-align:center;padding:34px}.auth h2{font-size:22px;margin:10px 0 6px}.auth p{color:var(--mut);margin-bottom:18px}
@@ -160,10 +161,10 @@ function render(){
   due.sort((a,b)=>b.diff-a.diff);
   const od=due.filter(x=>x.diff>0).length,td=due.length-od;
   const won=customers.filter(c=>c.status==="Won"||c.status==="Paid").length,hot=customers.filter(c=>HOT.includes(c.status)).length,total=customers.length;
-  const conv=total?Math.round(won/total*100):0;
+  const un=open.filter(c=>!nextDate(c)).length;const conv=total?Math.round(won/total*100):0;
 
   $("summary").classList.remove("sk");
-  $("summary").innerHTML=!total?"Your workspace is ready — add or import your first customers to get started.":(od+td?`You have <b>${td} follow-up${td===1?"":"s"} today</b>${od?` and <b style="color:var(--red)">${od} overdue</b>`:""}. Let's clear them.`:`You're all caught up. <b>${hot}</b> hot opportunit${hot===1?"y is":"ies are"} worth a nudge.`);
+  $("summary").innerHTML=!total?"Your workspace is ready — add or import your first customers to get started.":(od+td?`You have <b>${td} follow-up${td===1?"":"s"} today</b>${od?` and <b style="color:var(--red)">${od} overdue</b>`:""}. Let's clear them.`:`You're all caught up. <b>${hot}</b> hot opportunit${hot===1?"y is":"ies are"} worth a nudge.${un?` <b>${un}</b> customer${un===1?" has":"s have"} no next step.`:""}`);
   $("navFu").textContent=od+td;$("navFu").classList.toggle("hidden",!(od+td));
 
   const K=[["Total customers",total,"All active records","#2f5bff","customer-list.html"],["Due today",td,"Follow-ups scheduled","#d98a00","followups.html"],["Overdue",od,od?"Needs attention now":"Nothing pending","#e0483f","followups.html"],["Hot opportunities",hot,"Interested · visit · negotiation","#7c4dff","customer-list.html"],["Won",won,conv+"% conversion","#0f9d6a","deals.html"]];
@@ -171,8 +172,9 @@ function render(){
 
   $("prio").innerHTML=due.length?due.slice(0,6).map(({c,diff})=>{const ph=String(c.phone||"").replace(/\D/g,""),wa=ph.length>=10?"https://wa.me/"+(ph.length===10?"91"+ph:ph):"",tm=String(c.next).split(" · ").slice(1).join(" · ");
     return `<div class="item"><div class="av">${esc(ini(c.name))}</div><div class="t"><b>${esc(clean(c.name)||"Unnamed")}</b><span>${esc(clean(c.req||c.requirement)||"No requirement")}${tm?" · "+esc(tm):""}</span></div><span class="tag ${diff>0?"od":"td"}">${diff>0?diff+"d overdue":"Today"}</span>${wa?`<a class="mini wa" target="_blank" rel="noopener" href="${wa}">WhatsApp</a>`:""}<a class="mini v" href="customer-list.html">View</a></div>`}).join("")+(due.length>6?`<div style="padding-top:12px;text-align:center"><a class="mini" href="followups.html">+${due.length-6} more</a></div>`:"")
-    :`<div class="empty"><b>${total?"🎉 You're all caught up":"No customers yet"}</b>${total?"No follow-ups are due. Schedule the next ones to keep your pipeline moving.":"Import your list or add a customer to see priorities here."}<div style="margin-top:14px"><a class="btn p" href="${total?"customer-list.html":"import-export.html#import-section"}">${total?"Schedule follow-ups":"Import customers"}</a></div></div>`;
+    :`<div class="empty"><b>${total?"🎉 You're all caught up":"No customers yet"}</b>${total?"No follow-ups are due. Schedule the next ones to keep your pipeline moving.":"Import your list or add a customer to see priorities here."}<div style="margin-top:14px"><a class="btn p" href="${total?(un?"followups.html?tab=un":"customer-list.html"):"import-export.html#import-section"}">${total?"Schedule follow-ups":"Import customers"}</a></div></div>`;
 
+  if(un)$("prio").innerHTML+=`<a class="nudge" href="followups.html?tab=un"><span>📌 <b>${un} customer${un===1?" has":"s have"} no next step</b> — nobody is waiting for a call unless you schedule one.</span><em>Schedule →</em></a>`;
   const order=["New","Contacted","Qualified","Interested","Follow-up","Site Visit","Negotiation","Won","Paid","Lost"],col={New:"#94a3b8",Contacted:"#38bdf8",Qualified:"#06b6d4",Interested:"#7c4dff","Follow-up":"#d98a00","Site Visit":"#f97316",Negotiation:"#ec4899",Won:"#0f9d6a",Paid:"#16a34a",Lost:"#e0483f"};
   const cnt={};customers.forEach(c=>{const s=clean(c.status)||"New";cnt[s]=(cnt[s]||0)+1});
   const keys=Object.keys(cnt).sort((a,b)=>(order.indexOf(a)<0?99:order.indexOf(a))-(order.indexOf(b)<0?99:order.indexOf(b)));
