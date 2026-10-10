@@ -147,7 +147,7 @@ function rowH(c){const ph=normP(c.phone),wa=ph.length>=10?"https://wa.me/91"+ph.
   <div class="who"><div class="av">${esc(ini(nm))}</div><div style="min-width:0"><b>${esc(nm)}${clean(c.type)?`<span class="tag" style="display:inline">${esc(clean(c.type))}</span>`:""}${c._dup?'<span class="tag dup" style="display:inline">Duplicate</span>':""}</b><span>${esc(clean(c.phone)||"No mobile")}${clean(c.area)?" · "+esc(clean(c.area)):""}</span></div></div>
   <div class="cell"><b>${esc(clean(c.req||c.requirement)||"No requirement")}</b><span>${esc(clean(c.budget)||"—")}</span></div>
   <div><span class="st ${sc.replace(/\s+/g,"-")}">${esc(sc)}</span></div><div>${nx(c)}</div>
-  <div class="ra">${wa?`<a class="mini wa" target="_blank" rel="noopener" href="${wa}">WhatsApp</a>`:""}<button class="mini v" data-act="edit" data-id="${c.id}">View</button><button class="mini x" data-act="del" data-id="${c.id}" aria-label="Delete ${esc(nm)}" title="Delete">🗑</button></div></div>`}
+  <div class="ra">${wa?`<a class="mini wa" target="_blank" rel="noopener" href="${wa}">WhatsApp</a>`:""}<button class="mini v" data-act="profile" data-id="${c.id}">View</button><button class="mini x" data-act="del" data-id="${c.id}" aria-label="Delete ${esc(nm)}" title="Delete">🗑</button></div></div>`}
 function render(){
   chips();$("sub").textContent=`${view.length} of ${all.length} records · latest first`;
   if(!loaded){$("rows").innerHTML=Array(6).fill('<div class="row"><div></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div></div></div>').join("");return}
@@ -201,7 +201,7 @@ $("chips").addEventListener("click",e=>{const b=e.target.closest("[data-chip]");
 $("all").addEventListener("change",e=>{view.slice(0,shown).forEach(c=>e.target.checked?sel.add(c.id):sel.delete(c.id));render()});
 $("bdel").onclick=()=>del([...sel]);
 document.addEventListener("click",e=>{const t=e.target;if(t.id==="lm"){shown+=50;render();return}if(t.id==="rst2"){reset();return}if(t.id==="add2"){openM();return}
-  const a=t.closest("[data-act]");if(a){a.dataset.act==="del"?del([a.dataset.id]):openM(a.dataset.id);return}
+  const a=t.closest("[data-act]");if(a){if(a.dataset.act==="del")del([a.dataset.id]);else if(a.dataset.act==="profile")location.href="customer-profile.html?id="+encodeURIComponent(a.dataset.id);else openM(a.dataset.id);return}
   const s=t.closest("[data-sel]");if(s){s.checked?sel.add(s.dataset.sel):sel.delete(s.dataset.sel);bulk();$("all").checked=view.slice(0,shown).every(c=>sel.has(c.id));return}
   const r=t.closest(".row[data-id]");if(r&&!t.closest("a,button,input"))openM(r.dataset.id)});
 </script>
