@@ -117,7 +117,7 @@ const clean=v=>String(v??"").replace(/["'`]+/g,"").trim();
 const ini=n=>clean(n||"?").split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"?";
 const M={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11},TERM=["Won","Paid","Lost"];
 /* "12 Oct · 3:45 PM" (adds year if not current; full=true always adds year). Only createdAt, never updatedAt. */
-const fmtAdded=(t,full)=>{const s=t&&(t.seconds??(t.toMillis?t.toMillis()/1e3:0));if(!s)return"";const d=new Date(s*1e3),o={day:"numeric",month:"short"};if(full||d.getFullYear()!==new Date().getFullYear())o.year="numeric";return(d.toLocaleDateString("en-GB",o)+" · "+d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",hour12:true})).replace(/\u202f/g," ")};
+const fmtAdded=(t,full)=>{const s=t&&(t.seconds??(t.toMillis?t.toMillis()/1e3:0));if(!s)return"";const d=new Date(s*1e3),y=full||d.getFullYear()!==new Date().getFullYear();return d.getDate()+" "+["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]+(y?" "+d.getFullYear():"")+" · "+(d.getHours()%12||12)+":"+String(d.getMinutes()).padStart(2,"0")+" "+(d.getHours()<12?"AM":"PM")};
 const ts=c=>Number(c.createdAt?.seconds||c.updatedAt?.seconds||0),normP=v=>String(v||"").replace(/\D/g,"").replace(/^91(?=\d{10}$)/,"");
 let user,bizId,unsub,all=[],view=[],shown=50,chip="",sel=new Set(),editId="",loaded=false;
 function toast(m,bad){const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),2600)}

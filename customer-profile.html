@@ -1,71 +1,352 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Customer Profile — BusinessOS</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Customer — BusinessOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#111827;--mut:#64748b;--line:#e5eaf2;--bg:#f4f6fb;--card:#fff;--blue:#315bff;--green:#07865e;--amber:#a96500;--red:#c24141;--r:16px}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);font:14px Inter,system-ui,sans-serif;color:var(--ink)}button,input,textarea,select{font:inherit}button{cursor:pointer}.top{height:64px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:5}.brand{font-weight:800;font-size:16px}.top a{color:#475569;text-decoration:none}.wrap{max-width:1380px;margin:24px auto;padding:0 22px}.crumb{font-size:12px;color:var(--mut);margin-bottom:16px}.crumb a{color:var(--blue);text-decoration:none}.layout{display:grid;grid-template-columns:minmax(280px,350px) minmax(0,1fr);gap:20px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 4px 18px #17255408}.profile{padding:22px;position:sticky;top:84px}.avatar{width:58px;height:58px;border-radius:18px;background:#eaf0ff;color:#315bff;display:grid;place-items:center;font-size:20px;font-weight:800}.person{display:flex;gap:14px;align-items:center}.name{font-size:21px;font-weight:800;letter-spacing:-.4px;overflow-wrap:anywhere}.muted{color:var(--mut)}.pill{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:700;background:#eef2ff;color:#3447a6}.status{background:#fff3d9;color:#945a00}.actions{display:flex;gap:8px;margin:20px 0}.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;font-weight:700;color:#263247}.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.green{background:#e7f8f0;color:#08784f;border-color:#b8ead5}.btn:disabled{opacity:.45;cursor:not-allowed}.details{border-top:1px solid var(--line);margin-top:18px;padding-top:8px}.field{padding:11px 0;border-bottom:1px solid #f0f2f6}.field label{display:block;color:var(--mut);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}.field strong{font-weight:600;overflow-wrap:anywhere}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:20px 22px;border-bottom:1px solid var(--line)}h1,h2,h3,p{margin:0}.sectionhead h2{font-size:16px}.tabs{display:flex;gap:5px;padding:12px 18px;border-bottom:1px solid var(--line);overflow:auto}.tab{white-space:nowrap;border:0;background:transparent;color:var(--mut);font-weight:700;padding:10px 13px;border-radius:9px}.tab.active{background:#edf2ff;color:var(--blue)}.panel{padding:20px 22px}.compose{display:flex;gap:10px;align-items:flex-start;margin-bottom:18px}.compose textarea{width:100%;min-height:82px;resize:vertical;border:1px solid var(--line);border-radius:11px;padding:12px;outline-color:var(--blue)}.composefoot{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:8px}.timeline{display:flex;flex-direction:column}.event{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:15px 0;border-bottom:1px solid #f0f2f6}.dot{width:30px;height:30px;border-radius:10px;background:#edf2ff;color:var(--blue);display:grid;place-items:center;font-weight:800}.eventtitle{font-weight:700}.eventmeta{font-size:12px;color:var(--mut);margin-top:3px}.eventbody{margin-top:7px;white-space:pre-wrap;overflow-wrap:anywhere;color:#344054}.empty{padding:30px 12px;text-align:center;color:var(--mut)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff}.formrow label{display:block;font-size:12px;color:var(--mut);font-weight:700;margin-bottom:6px}.formrow{margin-bottom:13px}.notice{padding:11px 13px;border-radius:10px;background:#f8fafc;border:1px solid var(--line);color:var(--mut);font-size:12px;line-height:1.5}.toast{position:fixed;bottom:20px;right:20px;background:#111827;color:#fff;padding:12px 16px;border-radius:10px;z-index:20;max-width:80vw}.hidden{display:none!important}
-@media(max-width:850px){.wrap{padding:0 12px;margin:14px auto}.layout{grid-template-columns:1fr}.profile{position:static}.top{padding:0 14px}.grid2{grid-template-columns:1fr}.actions{flex-wrap:wrap}.actions .btn{flex:1}}
-</style></head>
+:root{--ink:#0f172a;--mut:#64748b;--line:#e6eaf2;--bg:#f5f7fb;--blue:#2f5bff;--blue2:#1e40e0;--green:#0f9d6a;--amber:#d98a00;--red:#e0483f;--rt:#b3342c;--r:16px}
+*{box-sizing:border-box;margin:0}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.na{color:var(--mut);font-style:italic}.mu{color:var(--mut)}
+.top{position:sticky;top:0;z-index:30;background:#ffffffee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1320px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:18px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;letter-spacing:-.02em}
+.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#4f7bff,#2446e0);color:#fff;display:grid;place-items:center;font-weight:800}
+.crumb{display:flex;gap:8px;align-items:center;color:var(--mut);font-size:13px;min-width:0;flex:1}.crumb a:hover{color:var(--ink)}.crumb span{color:var(--ink);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:#c9d3e6;background:#f8faff}.btn.p{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 16px #2f5bff33}.btn.p:hover{background:var(--blue2)}
+.btn.wa{background:#e9f9f1;border-color:#c5ecd9;color:#0a7a50}.btn.d{color:var(--rt)}.btn[aria-disabled=true]{opacity:.5;cursor:not-allowed;pointer-events:none}
+main{max-width:1320px;margin:0 auto;padding:24px 24px 60px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:0 1px 2px #0f172a08}
+.err{background:#fff4f2;border:1px solid #f3c1bb;color:#9b2c22;border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:13px}
+.sk{background:linear-gradient(90deg,#eef2f8,#f8faff,#eef2f8);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:10px}@keyframes sk{to{background-position:-200% 0}}
+.auth,.state{min-height:55vh;display:grid;place-items:center}.auth .card,.state .card{max-width:420px;text-align:center;padding:34px}.auth h2,.state h2{font-size:21px;margin:10px 0 6px}.auth p,.state p{color:var(--mut);margin-bottom:18px}
+.nudge{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-radius:12px;padding:12px 16px;margin-bottom:16px;border:1px solid}
+.nudge.od{background:#fff4f2;border-color:#f3c1bb;color:#8f2a21}.nudge.ns{background:#f1f5ff;border-color:#cfdcff;color:#1e3a9f}
+.nudge b{font-weight:700}.nudge .nb{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.head{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.av{width:56px;height:56px;border-radius:50%;background:#eaf0ff;color:var(--blue2);display:grid;place-items:center;font-weight:700;font-size:17px;flex:none}
+.hm{min-width:0;flex:1 1 260px}.hm h1{font-size:24px;letter-spacing:-.03em;font-weight:800;overflow-wrap:anywhere}.hm p{color:var(--mut);margin-top:2px}
+.sel{height:38px;border:1px solid var(--line);border-radius:10px;padding:0 30px 0 12px;font-weight:700;font-size:13px;background:#fff;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;min-width:140px}
+.ha{display:flex;gap:8px;flex-wrap:wrap}
+.strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0 16px}
+.fact{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 14px;min-width:0}.fact small{display:block;color:var(--mut);font-size:12px;font-weight:600}.fact b{font-size:13.5px;overflow-wrap:anywhere}
+.fact.od b{color:var(--rt)}.fact.td b{color:#8a5a00}
+.layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px;align-items:start}
+h2{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.dl{display:grid;gap:0;margin-top:10px}.dl .r{padding:10px 0;border-top:1px solid var(--line)}.dl .r:first-child{border-top:0}
+.dl dt{color:var(--mut);font-size:12px;font-weight:600}.dl dd{margin:1px 0 0;font-size:13.5px;overflow-wrap:anywhere;white-space:pre-wrap}.dl a{color:var(--blue2)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin:-4px 0 16px}
+.tabs button{border:0;background:none;padding:10px 12px;font-weight:600;font-size:13px;color:var(--mut);border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;gap:7px;align-items:center}
+.tabs button[aria-selected=true]{color:var(--blue2);border-color:var(--blue)}
+.tabs b{background:#eef2f8;border-radius:99px;padding:0 8px;font-size:11px;line-height:19px;color:#475569}
+textarea,input,select.fld,.fld select{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 11px;font-size:13px}textarea{resize:vertical;min-height:76px;display:block}
+input:focus,textarea:focus,select.fld:focus,.fld select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2f5bff22;outline:0}
+.qc{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 13px;font-weight:600;font-size:13px}.chip[aria-pressed=true]{background:#eaf0ff;border-color:#c3d1ff;color:var(--blue2)}
+.rowf{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+.tl{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:0}
+.tl li{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line);min-width:0}.tl li:first-child{border-top:0}
+.ic{width:34px;height:34px;border-radius:50%;background:#f1f5ff;display:grid;place-items:center;flex:none;font-size:15px}
+.tb{min-width:0}.tb b{font-size:13.5px}.tb p{font-size:13px;color:#334155;overflow-wrap:anywhere;white-space:pre-wrap}.tb small{display:block;color:var(--mut);font-size:12px}
+.box{border:1px solid var(--line);border-radius:12px;padding:14px;background:#f8faff;margin-bottom:14px}.box h3{font-size:13px;margin-bottom:6px}
+.fld{display:grid;gap:10px}.fld label{font-size:12px;font-weight:600;color:var(--mut);display:grid;gap:4px;min-width:0}.g2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.empty{text-align:center;padding:30px 12px;color:var(--mut)}.empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:3px}.empty .btn{margin-top:12px}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:#eef2f8;color:#475569}.pill.g{background:#e3f7ee;color:#0a7a50}.pill.a{background:#fff3d6;color:#8a5a00}.pill.r{background:#fdecea;color:var(--rt)}
+.dg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.dg .fact{background:#f8faff}
+.more{display:block;margin:6px auto 0}
+.ov{position:fixed;inset:0;background:#0f172a80;backdrop-filter:blur(3px);z-index:60;display:none;place-items:center;padding:16px}.ov.show{display:grid}
+.modal{background:#fff;border-radius:18px;width:min(680px,100%);max-height:92vh;overflow:auto;padding:24px}.modal h2{font-size:19px}.modal>p{color:var(--mut);margin:2px 0 16px}
+.fg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.fg label{display:grid;gap:5px;font-size:12px;font-weight:600;color:var(--mut);min-width:0}.fg .full{grid-column:1/-1}
+.mf{display:flex;gap:10px;justify-content:space-between;margin-top:18px;flex-wrap:wrap}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 16px;border-radius:11px;font-weight:600;font-size:13px;z-index:90;display:flex;gap:14px;align-items:center;max-width:calc(100vw - 24px)}.toast.bad{background:var(--rt)}
+.toast button{border:0;background:none;color:#9db4ff;font-weight:700;text-decoration:underline;padding:0}
+@media(max-width:520px){.bt{display:none}}
+.hidden{display:none}
+@media(prefers-reduced-motion:reduce){.sk{animation:none}.btn{transition:none}}
+@media(max-width:900px){.layout{grid-template-columns:minmax(0,1fr)}.strip,.dg{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){.top-in{padding:0 14px;gap:10px}.crumb{display:none}.top-in .sp{flex:1}main{padding:16px 14px 50px}.ha .btn{flex:1}.g2{grid-template-columns:minmax(0,1fr)}.fg{grid-template-columns:minmax(0,1fr)}.modal{padding:18px}.nudge .nb{margin-left:0}.hm h1{font-size:21px}}
+</style>
+</head>
 <body>
-<header class="top"><div class="brand">BusinessOS <span class="muted" style="font-weight:500">/ Customer profile</span></div><div style="display:flex;gap:12px;align-items:center"><a href="customer-list.html">← Customers</a><button class="btn" id="logout">Sign out</button></div></header>
-<main class="wrap">
-<div class="crumb"><a href="customers.html">Overview</a> / <a href="customer-list.html">Customers</a> / <span id="crumbName">Customer</span></div>
-<div id="loading" class="card empty">Loading customer workspace…</div>
-<div id="app" class="layout hidden">
-<aside class="card profile">
-  <div class="person"><div class="avatar" id="avatar">C</div><div style="min-width:0"><div class="name" id="name">Customer</div><div class="muted" id="subtitle" style="margin-top:5px">—</div><div style="margin-top:8px"><span class="pill status" id="status">New</span></div></div></div>
-  <div class="actions"><button class="btn green" id="whatsapp">WhatsApp</button><button class="btn primary" id="edit">Edit details</button></div>
-  <button class="btn" style="width:100%" id="setFollow">＋ Set follow-up</button>
-  <div class="details" id="details"></div>
-  <div class="notice" style="margin-top:16px">Customer data is loaded from this business workspace. WhatsApp opens the existing conversation in WhatsApp; messages are not automatically synced unless a WhatsApp Business API integration is configured.</div>
-</aside>
-<section class="card">
-  <div class="sectionhead"><div><h2>Customer workspace</h2><div class="muted" style="margin-top:4px;font-size:12px">Communication, tasks and relationship history</div></div><span class="pill" id="activityCount">0 activities</span></div>
-  <nav class="tabs"><button class="tab active" data-tab="timeline">Activity timeline</button><button class="tab" data-tab="notes">Notes</button><button class="tab" data-tab="followups">Follow-ups</button><button class="tab" data-tab="deals">Deals & requirements</button></nav>
-  <div class="panel" id="tab-timeline">
-    <div class="compose"><div style="flex:1"><textarea id="activityText" placeholder="Log a call, WhatsApp conversation, meeting, or next step…"></textarea><div class="composefoot"><select id="activityType" class="input" style="max-width:190px"><option value="Note">Note</option><option value="Call">Call</option><option value="WhatsApp">WhatsApp</option><option value="Meeting">Meeting</option><option value="Email">Email</option><option value="Status change">Status change</option></select><button class="btn primary" id="logActivity">Log activity</button></div></div></div>
-    <div class="notice" style="margin-bottom:12px">Use this timeline to record conversations you have had. WhatsApp messages are not fetched automatically by this page.</div><div class="timeline" id="timeline"></div>
+<header class="top"><div class="top-in">
+  <a class="brand" href="customers.html"><span class="logo">B</span><span class="bt">BusinessOS</span></a>
+  <nav class="crumb" aria-label="Breadcrumb"><a href="customers.html">Overview</a><span aria-hidden="true" class="mu">/</span><a href="customer-list.html">Customers</a><span aria-hidden="true" class="mu">/</span><span id="crumbName">Customer</span></nav>
+  <div class="sp"></div><a class="btn" href="customer-list.html">← Customers</a><button class="btn" id="out" type="button">Sign out</button>
+</div></header>
+<main>
+  <div id="auth" class="auth hidden"><div class="card"><div class="logo" style="margin:auto;width:46px;height:46px;font-size:20px">B</div><h2>Sign in to view this customer</h2><p>Continue with Google to open your BusinessOS workspace.</p><button class="btn p" id="gbtn" type="button" style="width:100%">Continue with Google</button><p id="aerr" style="color:var(--rt);font-size:12px;margin:12px 0 0"></p></div></div>
+  <div id="fail" class="state hidden"><div class="card"><h2 id="failT">Customer not found</h2><div id="failE" class="err hidden" role="alert" style="text-align:left"></div><p id="failP"></p><a class="btn p" href="customer-list.html">Back to Customers</a></div></div>
+  <div id="load" class="hidden"><div class="sk" style="height:96px;margin-bottom:16px"></div><div class="sk" style="height:52px;margin-bottom:16px"></div><div class="sk" style="height:320px"></div></div>
+
+  <div id="app" class="hidden">
+    <div id="err" class="err hidden" role="alert"></div>
+    <div id="nudge" class="nudge hidden"></div>
+    <section class="card head">
+      <div class="av" id="av" aria-hidden="true">?</div>
+      <div class="hm"><h1 id="nm">Customer</h1><p id="sb"></p></div>
+      <div><label class="sr" for="stSel">Status</label><select class="sel" id="stSel"></select></div>
+      <div class="ha"><a class="btn wa" id="waB" target="_blank" rel="noopener">WhatsApp</a><a class="btn" id="callB">Call</a><button class="btn" id="editB" type="button">Edit</button><button class="btn p" id="fuB" type="button">＋ Set follow-up</button></div>
+    </section>
+    <section class="strip" id="strip" aria-label="Key facts"></section>
+    <div class="layout">
+      <aside class="card"><h2>Details</h2><dl class="dl" id="dl"></dl></aside>
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Customer workspace">
+          <button type="button" role="tab" id="t_timeline" data-tab="timeline" aria-selected="true">Timeline <b id="c_timeline">0</b></button>
+          <button type="button" role="tab" id="t_notes" data-tab="notes" aria-selected="false">Notes <b id="c_notes">0</b></button>
+          <button type="button" role="tab" id="t_followups" data-tab="followups" aria-selected="false">Follow-ups <b id="c_followups">0</b></button>
+          <button type="button" role="tab" id="t_deals" data-tab="deals" aria-selected="false">Deals &amp; payments <b id="c_deals">0</b></button>
+        </div>
+        <div id="p_timeline" role="tabpanel" aria-labelledby="t_timeline">
+          <div class="qc" id="qc" role="group" aria-label="Activity type"><button type="button" class="chip" data-t="Call" aria-pressed="true">Call</button><button type="button" class="chip" data-t="WhatsApp" aria-pressed="false">WhatsApp</button><button type="button" class="chip" data-t="Meeting" aria-pressed="false">Meeting</button><button type="button" class="chip" data-t="Email" aria-pressed="false">Email</button></div>
+          <label class="sr" for="actTx">Activity details</label><textarea id="actTx" placeholder="What happened? e.g. Discussed budget, will confirm by Friday"></textarea>
+          <div class="rowf"><button class="btn p" id="actB" type="button">Log activity</button></div>
+          <ul class="tl" id="tl"></ul><button class="btn more hidden" id="tlMore" type="button"></button>
+        </div>
+        <div id="p_notes" role="tabpanel" aria-labelledby="t_notes" class="hidden">
+          <div class="box"><h3>Current note</h3><p id="curNote"></p></div>
+          <label class="sr" for="noteTx">New note</label><textarea id="noteTx" placeholder="Write a note to keep for the next conversation…"></textarea>
+          <div class="rowf"><button class="btn p" id="noteB" type="button">Save note</button></div>
+          <ul class="tl" id="nl"></ul>
+        </div>
+        <div id="p_followups" role="tabpanel" aria-labelledby="t_followups" class="hidden">
+          <div class="box" id="fuCur"></div>
+          <div class="fld" id="fuForm"><h3 id="fuH" style="font-size:13px">Schedule follow-up</h3>
+            <div class="g2"><label>Date<input id="fuD" type="date"></label><label>Time<input id="fuT" type="time"></label><label>Type<select id="fuY"><option>Call</option><option>Meeting</option><option>Site visit</option><option>Demo</option></select></label></div>
+            <label>Note (optional)<textarea id="fuN" rows="2" placeholder="What should you cover?"></textarea></label>
+            <div class="rowf"><button class="btn p" id="fuS" type="button">Save follow-up</button></div></div>
+          <ul class="tl" id="fl"></ul>
+        </div>
+        <div id="p_deals" role="tabpanel" aria-labelledby="t_deals" class="hidden"><div id="dealBox"></div></div>
+      </section>
+    </div>
   </div>
-  <div class="panel hidden" id="tab-notes"><div class="compose"><div style="flex:1"><textarea id="noteText" placeholder="Add an internal note about this customer…"></textarea><div class="composefoot"><span class="muted" style="font-size:12px">Visible to authorized users in this workspace</span><button class="btn primary" id="saveNote">Save note</button></div></div></div><div class="timeline" id="notes"></div></div>
-  <div class="panel hidden" id="tab-followups">
-    <div class="grid2"><div class="formrow"><label for="fuDate">Follow-up date</label><input class="input" id="fuDate" type="date"></div><div class="formrow"><label for="fuTime">Time</label><input class="input" id="fuTime" type="time"></div></div>
-    <div class="formrow"><label for="fuTitle">Next action</label><input class="input" id="fuTitle" placeholder="e.g. Call to discuss CRM demo"></div><div class="formrow"><label for="fuNote">Details</label><textarea class="input" id="fuNote" rows="3" placeholder="What should be discussed?"></textarea></div>
-    <button class="btn primary" id="saveFollow">Save follow-up</button><div class="timeline" id="followList" style="margin-top:16px"></div>
-  </div>
-  <div class="panel hidden" id="tab-deals"><div id="dealSummary" class="notice">Loading related deals and requirements…</div><div class="timeline" id="deals"></div></div>
-</section></div></main><div class="toast hidden" id="toast"></div>
-<div id="editDialog" class="hidden" style="position:fixed;inset:0;background:#0f172a88;z-index:15;display:none;align-items:center;justify-content:center;padding:15px"><div class="card" style="width:min(620px,100%);max-height:90vh;overflow:auto;padding:22px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px"><h2>Edit customer details</h2><button class="btn" id="closeEdit">✕</button></div><form id="editForm"><div class="grid2" id="editFields"></div><button class="btn primary" type="submit">Save changes</button></form></div></div>
+</main>
+
+<div class="ov" id="eo"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="eT"><h2 id="eT">Edit customer</h2><p>Changes are saved to this customer and logged in the timeline.</p>
+<div class="fg">
+<label>Name *<input id="e_name" type="text"></label><label>Mobile<input id="e_phone" type="text" inputmode="tel"></label>
+<label>Email<input id="e_email" type="email"></label><label>Company<input id="e_biz" type="text"></label>
+<label>Category<select id="e_type" class="fld"><option>Customer</option><option>Broker</option><option>Seller</option><option>Prospect</option><option>Agent</option><option>Partner</option><option>Investor</option></select></label><label>Website<input id="e_web" type="text" placeholder="https://"></label>
+<label>Area<input id="e_area" type="text"></label><label>City<input id="e_city" type="text"></label>
+<label>Requirement<input id="e_req" type="text"></label><label>Budget / value<input id="e_budget" type="text"></label>
+<label>Source<select id="e_src" class="fld"><option>Manual Entry</option><option>Website</option><option>WhatsApp</option><option>Phone</option><option>Google</option><option>Facebook</option><option>Instagram</option><option>Referral</option><option>Walk-in</option><option>Other</option></select></label><span></span>
+<label>Next follow-up date<input id="e_fd" type="date"></label><div class="g2" style="grid-template-columns:1fr 1fr"><label>Time<input id="e_ft" type="time"></label><label>Type<select id="e_fy" class="fld"><option>Call</option><option>Meeting</option><option>Site visit</option><option>Demo</option></select></label></div>
+<label class="full">Notes<textarea id="e_note" rows="3"></textarea></label></div>
+<div class="mf"><button class="btn d" id="e_del" type="button">Delete customer</button><div style="display:flex;gap:8px"><button class="btn" id="e_cancel" type="button">Cancel</button><button class="btn p" id="e_save" type="button">Save changes</button></div></div></div></div>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,updateDoc,query,orderBy,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-const appFb=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
-const auth=getAuth(appFb),db=getFirestore(appFb),$=id=>document.getElementById(id),esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])),clean=v=>String(v??"").trim(),params=new URLSearchParams(location.search),contactId=params.get("id");
-let user=null,bizId=null,contact=null,unsubs=[];
-function toast(t){$("toast").textContent=t;$("toast").classList.remove("hidden");setTimeout(()=>$("toast").classList.add("hidden"),2600)}
-function initials(n){return clean(n).split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"C"}
-function val(...xs){return xs.find(x=>x!==undefined&&x!==null&&String(x).trim()!=="")||"—"}
-function dateFmt(v){if(!v)return"—";try{if(v.toDate)return v.toDate().toLocaleString();let d=new Date(v);return isNaN(d)?"—":d.toLocaleString()}catch{return"—"}}
-function safeLink(p){let n=clean(p).replace(/\D/g,"");if(n.length===10)n="91"+n;return n.length>=11?"https://wa.me/"+n:""}
-function renderContact(c){contact=c;$("loading").classList.add("hidden");$("app").classList.remove("hidden");const n=val(c.name,c.contactName);$("name").textContent=n;$("crumbName").textContent=n;$("avatar").textContent=initials(n);$("subtitle").textContent=[val(c.type,c.category),[c.area,c.city].filter(Boolean).join(", ")].filter(x=>x&&x!=="—").join(" · ");$("status").textContent=val(c.status,"New");const fields=[["Mobile",c.phone],["Email",c.email],["Company",c.company,c.businessName],["Category",c.type,c.category],["Area",c.area],["City",c.city],["Requirement",c.req,c.requirement],["Budget / value",c.budget,c.value],["Source",c.source],["Next follow-up",c.nextDate,c.followUpDate],["Notes",c.note,c.notes]];$("details").innerHTML=fields.map(([k,...vs])=>`<div class="field"><label>${esc(k)}</label><strong>${esc(val(...vs))}</strong></div>`).join("");const w=safeLink(c.phone);$("whatsapp").disabled=!w;$("whatsapp").onclick=()=>{if(w)window.open(w,"_blank","noopener")};renderDeals()}
-function renderItem(item,kind){const title=val(item.title,item.type,kind==="note"?"Note":"Activity");return`<div class="event"><div class="dot">${kind==="note"?"✎":kind==="follow"?"◷":"•"}</div><div><div class="eventtitle">${esc(title)}</div><div class="eventmeta">${esc(dateFmt(item.createdAt||item.updatedAt||item.date||item.scheduledAt))}${item.createdByName?" · "+esc(item.createdByName):""}</div><div class="eventbody">${esc(item.body||item.text||item.note||item.description||"")}</div>${item.status?`<div class="eventmeta">Status: ${esc(item.status)}</div>`:""}</div></div>`}
-function sub(path){return collection(db,"businesses",bizId,...path)}
-function watch(path,cb){const u=onSnapshot(sub(path),snap=>cb(snap.docs.map(x=>({id:x.id,...x.data()})).sort((a,b)=>timestamp(b.createdAt||b.date)-timestamp(a.createdAt||a.date))),e=>toast("Could not load "+path[0]+": "+(e.code||e.message)));unsubs.push(u)}
-function timestamp(v){try{return v?.toDate?v.toDate().getTime():new Date(v||0).getTime()||0}catch{return 0}}
-function renderDeals(){if(!contact)return;const req=val(contact.req,contact.requirement);$("dealSummary").textContent=`Requirement: ${req} · Budget/value: ${val(contact.budget,contact.value)}`;}
-function editForm(){const defs=[["name","Name",contact.name||contact.contactName||""],["phone","Mobile",contact.phone||""],["company","Company",contact.company||contact.businessName||""],["type","Category",contact.type||contact.category||""],["area","Area",contact.area||""],["city","City",contact.city||""],["req","Requirement",contact.req||contact.requirement||""],["budget","Budget / value",contact.budget||contact.value||""],["status","Status",contact.status||"New"],["source","Source",contact.source||"Manual Entry"]];$("editFields").innerHTML=defs.map(([id,label,v])=>`<div class="formrow"><label for="ed_${id}">${esc(label)}</label><input class="input" id="ed_${id}" value="${esc(v)}"></div>`).join("");}
-function openEdit(){$("editDialog").classList.remove("hidden");$("editDialog").style.display="flex";editForm()}
-function closeEdit(){$("editDialog").classList.add("hidden");$("editDialog").style.display="none"}
-$("edit").onclick=openEdit;$("closeEdit").onclick=closeEdit;$("editDialog").onclick=e=>{if(e.target.id==="editDialog")closeEdit()};
-$("editForm").onsubmit=async e=>{e.preventDefault();try{const patch={};["name","phone","company","type","area","city","req","budget","status","source"].forEach(k=>patch[k]=$("ed_"+k).value.trim());patch.updatedAt=serverTimestamp();await updateDoc(doc(db,"businesses",bizId,"contacts",contactId),patch);await addDoc(sub(["activities"]),{contactId,contactName:contact.name||contact.contactName||"",type:"Contact updated",title:"Customer details updated",body:"Updated customer profile details.",createdAt:serverTimestamp(),createdBy:user.uid});closeEdit();toast("Customer updated")}catch(e){toast("Save failed: "+(e.code||e.message))}};
-$("logActivity").onclick=async()=>{const body=$("activityText").value.trim();if(!body)return toast("Write an activity first");try{await addDoc(sub(["activities"]),{contactId,contactName:contact.name||contact.contactName||"",type:$("activityType").value,title:$("activityType").value,body,createdAt:serverTimestamp(),createdBy:user.uid});$("activityText").value="";toast("Activity logged")}catch(e){toast("Could not save activity: "+(e.code||e.message))}};
-$("saveNote").onclick=async()=>{const body=$("noteText").value.trim();if(!body)return toast("Write a note first");try{await addDoc(sub(["notes"]),{contactId,contactName:contact.name||contact.contactName||"",title:"Internal note",body,text:body,createdAt:serverTimestamp(),createdBy:user.uid});await addDoc(sub(["activities"]),{contactId,type:"Note",title:"Note added",body,createdAt:serverTimestamp(),createdBy:user.uid});$("noteText").value="";toast("Note saved")}catch(e){toast("Could not save note: "+(e.code||e.message))}};
-$("saveFollow").onclick=async()=>{const date=$("fuDate").value,time=$("fuTime").value,title=$("fuTitle").value.trim(),note=$("fuNote").value.trim();if(!date||!title)return toast("Choose a date and next action");try{await addDoc(sub(["followups"]),{contactId,contactName:contact.name||contact.contactName||"",date,scheduledAt:date+(time?"T"+time:""),time,title,description:note,note,status:"Pending",createdAt:serverTimestamp(),createdBy:user.uid});await updateDoc(doc(db,"businesses",bizId,"contacts",contactId),{nextDate:date,nextTime:time,next:title,updatedAt:serverTimestamp()});await addDoc(sub(["activities"]),{contactId,type:"Follow-up scheduled",title,body:[date,time,note].filter(Boolean).join(" · "),createdAt:serverTimestamp(),createdBy:user.uid});$("fuTitle").value="";$("fuNote").value="";toast("Follow-up saved")}catch(e){toast("Could not save follow-up: "+(e.code||e.message))}};
-$("setFollow").onclick=()=>{document.querySelector('[data-tab="followups"]').click();$("fuDate").focus()};
-document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));["timeline","notes","followups","deals"].forEach(k=>$("tab-"+k).classList.toggle("hidden",k!==b.dataset.tab))});
-$("logout").onclick=()=>signOut(auth);
-onAuthStateChanged(auth,async u=>{user=u;if(!u){location.href="customer-list.html";return}if(!contactId){$("loading").textContent="Missing customer ID. Return to Customers and select View.";return}try{const us=await getDoc(doc(db,"users",u.uid));bizId=us.exists()&&us.data().businessId||u.uid;const snap=await getDoc(doc(db,"businesses",bizId,"contacts",contactId));if(!snap.exists()){throw new Error("Customer not found in this workspace")}renderContact(snap.data());watch(["activities"],items=>{const mine=items.filter(x=>x.contactId===contactId);$("timeline").innerHTML=mine.length?mine.map(x=>renderItem(x,"activity")).join(""):'<div class="empty">No activity logged yet. Log your first call, message or meeting above.</div>';$("activityCount").textContent=mine.length+" activities"});watch(["notes"],items=>{const mine=items.filter(x=>x.contactId===contactId);$("notes").innerHTML=mine.length?mine.map(x=>renderItem(x,"note")).join(""):'<div class="empty">No internal notes yet.</div>'});watch(["followups"],items=>{const mine=items.filter(x=>x.contactId===contactId);$("followList").innerHTML=mine.length?mine.map(x=>renderItem(x,"follow")).join(""):'<div class="empty">No follow-ups scheduled yet.</div>'});watch(["deals"],items=>{const mine=items.filter(x=>x.contactId===contactId||x.customerId===contactId);$("deals").innerHTML=mine.length?mine.map(x=>renderItem(x,"deal")).join(""):'<div class="empty">No linked deals found. Current requirement and budget are shown above.</div>'})}catch(e){$("loading").textContent="Could not open customer: "+(e.code||e.message);console.error(e)}});
-</script></body></html>
+import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import{getFirestore,collection,doc,getDoc,onSnapshot,updateDoc,writeBatch,serverTimestamp,arrayUnion,arrayRemove}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
+const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+
+/* ---------- helpers ---------- */
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const clean=v=>String(v??"").replace(/["'`\u201C\u201D\u2018\u2019]+/g,"").trim();
+const ini=n=>clean(n||"?").split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"?";
+const na=v=>clean(v)?esc(clean(v)):'<i class="na">Not added</i>';
+const normP=v=>String(v||"").replace(/\D/g,"").replace(/^91(?=\d{10}$)/,"");
+const TERM=["Won","Paid","Lost"],STAGES=["New","Contacted","Qualified","Interested","Follow-up","Site Visit","Negotiation","Won","Paid","Lost"];
+const MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],MI=Object.fromEntries(MN.map((m,i)=>[m.toLowerCase(),i]));
+const d2=n=>String(n).padStart(2,"0"),dstr=d=>d2(d.getDate())+" "+MN[d.getMonth()]+" "+d.getFullYear();
+const t12=v=>{if(!v)return"—";const[h,m]=v.split(":").map(Number);return d2(h%12||12)+":"+d2(m)+" "+(h<12?"AM":"PM")};
+const stamp=()=>dstr(new Date())+" · Now",dtStr=d=>dstr(d)+" · "+t12(d2(d.getHours())+":"+d2(d.getMinutes()));
+/* same output as the list page helper: "12 Oct · 3:45 PM" (year added if not current or full=true) */
+const fmtAdded=(t,full)=>{const s=t&&(t.seconds??(t.toMillis?t.toMillis()/1e3:0));if(!s)return"";const d=new Date(s*1e3),y=full||d.getFullYear()!==new Date().getFullYear();return d.getDate()+" "+MN[d.getMonth()]+(y?" "+d.getFullYear():"")+" · "+(d.getHours()%12||12)+":"+d2(d.getMinutes())+" "+(d.getHours()<12?"AM":"PM")};
+const pd=s=>{const m=String(s||"").match(/(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})/);if(!m)return null;const mo=MI[m[2].slice(0,3).toLowerCase()];return mo==null?null:new Date(+m[3],mo,+m[1])};
+const mid=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate()),dayDiff=d=>Math.round((mid(new Date())-mid(d))/864e5);
+function rel(d){const n=dayDiff(d);if(n===0)return"today";if(n===1)return"yesterday";if(n===-1)return"tomorrow";if(n<0)return"in "+(-n)+" days";if(n<30)return n+" days ago";if(n<365){const m=Math.floor(n/30);return m+" month"+(m>1?"s":"")+" ago"}const y=Math.floor(n/365);return y+" year"+(y>1?"s":"")+" ago"}
+const inr=n=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n||0);
+const safeUrl=u=>/^https?:\/\//i.test(u)?u:"";
+function nextOf(c){
+  const st=clean(c.status)||"New",raw=clean(c.next);
+  if(TERM.includes(st))return{k:"closed"};if(!raw||/^not set$/i.test(raw))return{k:"none"};if(/completed/i.test(raw))return{k:"done"};
+  const d=pd(raw);if(!d)return{k:"raw",t:raw};const diff=dayDiff(d),rest=raw.split("·").slice(1).map(s=>s.trim()).filter(x=>x&&x!=="—").join(" · ");
+  return{k:diff>0?"od":diff===0?"td":"fu",d,diff,rest,label:d.getDate()+" "+MN[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?" "+d.getFullYear():"")};
+}
+const CT=/^(call|whatsapp|meeting|email)/i;
+function lastContact(c){let best=pd(c.last);for(const e of evs(c)){if(e&&e.ts&&CT.test(String(e.type||""))){const d=new Date(+e.ts);if(!best||d>best)best=d}}return best}
+const evs=c=>Array.isArray(c.events)?c.events:[];
+
+/* ---------- state ---------- */
+const cid=new URLSearchParams(location.search).get("id")||"";
+let user=null,bizId=null,contact=null,deal=null,dealLoaded=false,fuLog=[],unsubs=[],shownTl=30,qType="Call",first=true;
+const cref=()=>doc(db,"businesses",bizId,"contacts",cid);
+function toast(m,o={}){const t=$("toast");t.className="toast"+(o.bad?" bad":"");t.textContent=m;if(o.undo){const b=document.createElement("button");b.type="button";b.textContent="Undo";b.onclick=async()=>{t.classList.add("hidden");try{await o.undo();toast("Undone")}catch(e){fail("Undo failed",e)}};t.append(b)}clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),o.undo?7000:3200)}
+function fail(m,e){console.error(m,e);toast(m+(e?": "+(e.code||e.message):""),{bad:true})}
+function showErr(m,e){if(e)console.error(m,e);const b=$("err");b.textContent=m;b.classList.remove("hidden")}
+function show(id){["auth","fail","load","app"].forEach(x=>$(x).classList.toggle("hidden",x!==id))}
+function showFail(t,p,code){$("failT").textContent=t;$("failP").textContent=p||"";const e=$("failE");e.classList.toggle("hidden",!code);e.textContent=code?"Error code: "+code:"";show("fail")}
+
+/* ---------- render ---------- */
+function render(){try{rHead();rStrip();rNudge();rDetails();rTabs()}catch(e){showErr("Could not display this customer: "+(e.message||e),e)}}
+function rHead(){
+  const c=contact,name=clean(c.name)||"Unnamed",st=clean(c.status)||"New",cat=clean(c.type||c.subcategory),loc=[clean(c.area),clean(c.city)].filter(Boolean).join(", ");
+  $("crumbName").textContent=name;document.title=name+" — BusinessOS";$("av").textContent=ini(name);$("nm").textContent=name;
+  $("sb").innerHTML=cat||loc?esc([cat,loc].filter(Boolean).join(" · ")):'<i class="na">No category or location added</i>';
+  const list=[...STAGES];if(!list.includes(st))list.push(st);$("stSel").innerHTML=list.map(s=>`<option${s===st?" selected":""}>${esc(s)}</option>`).join("");
+  const ph=normP(c.phone),ok=ph.length===10,w=$("waB"),k=$("callB");
+  [w,k].forEach(a=>{a.setAttribute("aria-disabled",String(!ok));a.title=ok?"":"No valid 10-digit mobile number"});
+  if(ok){w.href="https://wa.me/91"+ph;k.href="tel:+91"+ph}else{w.removeAttribute("href");k.removeAttribute("href")}
+  w.setAttribute("aria-label","WhatsApp "+name);k.setAttribute("aria-label","Call "+name);
+}
+function rStrip(){
+  const c=contact,a=fmtAdded(c.createdAt,1),lc=lastContact(c),n=nextOf(c);let nt,cls="";
+  if(n.k==="closed")nt="Closed";else if(n.k==="none")nt="Not scheduled";else if(n.k==="done")nt="Completed";else if(n.k==="raw")nt=esc(n.t);
+  else if(n.k==="td"){nt="Today"+(n.rest?" · "+esc(n.rest):"");cls="td"}else if(n.k==="od"){nt="Overdue by "+n.diff+" day"+(n.diff>1?"s":"")+" · "+n.label;cls="od"}else nt=n.label+" · "+rel(n.d);
+  $("strip").innerHTML=`<div class="fact"><small>Added</small><b>${a?esc(a):'<i class="na">Date not recorded</i>'}</b></div><div class="fact"><small>Last contacted</small><b>${lc?rel(lc)[0].toUpperCase()+rel(lc).slice(1):'<i class="na">Not contacted yet</i>'}</b></div><div class="fact ${cls}"><small>Next follow-up</small><b>${nt}</b></div>`;
+}
+function rNudge(){
+  const n=nextOf(contact),b=$("nudge"),ph=normP(contact.phone);
+  if(n.k==="od"){b.className="nudge od";b.innerHTML=`<b>Follow-up overdue by ${n.diff} day${n.diff>1?"s":""}</b><span>Was due ${esc(n.label)}${n.rest?" · "+esc(n.rest):""}</span><div class="nb">${ph.length===10?`<a class="btn" href="tel:+91${ph}">Call</a>`:""}<button class="btn" type="button" data-a="resched">Reschedule</button></div>`}
+  else if(n.k==="none"||n.k==="done"){b.className="nudge ns";b.innerHTML=`<b>No next step set</b><span>Schedule the next follow-up so this customer doesn't go quiet.</span><div class="nb"><button class="btn p" type="button" data-a="setfu">Set follow-up</button></div>`}
+  else{b.className="nudge hidden";b.innerHTML=""}
+}
+function rDetails(){
+  const c=contact,ph=normP(c.phone),em=clean(c.email),web=clean(c.website);
+  const R=[["Mobile",ph.length===10?esc(ph.slice(0,5)+" "+ph.slice(5)):na(c.phone)],["Email",em?`<a href="mailto:${esc(em)}">${esc(em)}</a>`:na()],["Company",na(c.businessName||c.company)],["Category",na([clean(c.type),clean(c.subcategory)].filter(Boolean).join(" · "))],["Area",na(c.area)],["City",na(c.city)],["Requirement",na(c.req||c.requirement)],["Budget",na(c.budget)],["Source",na(c.source)],["Website",web?(safeUrl(web)?`<a href="${esc(web)}" target="_blank" rel="noopener">${esc(web)}</a>`:esc(web)):na()],["Notes",na(c.note||c.notes)]];
+  $("dl").innerHTML=R.map(([k,v])=>`<div class="r"><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+}
+const ICO={call:"📞",whatsapp:"💬",meeting:"🤝",email:"✉️",note:"📝",follow:"⏰",status:"🔄"};
+const icoOf=t=>{const l=String(t||"").toLowerCase();return ICO[Object.keys(ICO).find(k=>l.includes(k))]||"•"};
+function evTime(e){if(e.ts){const d=new Date(+e.ts);return fmtAdded({seconds:e.ts/1000})+" · "+rel(d)}const s=clean(e.date).replace(/\s*·\s*Now$/i,""),d=pd(s);return esc(s)+(d?" · "+rel(d):"")}
+const evLi=e=>`<li><span class="ic" aria-hidden="true">${icoOf(e.type)}</span><div class="tb"><b>${esc(clean(e.type)||"Activity")}</b>${clean(e.note)?`<p>${esc(clean(e.note))}</p>`:""}<small>${evTime(e)}</small></div></li>`;
+function rTabs(){
+  const c=contact,E=evs(c).map((e,i)=>[e||{},i]).sort((a,b)=>(+b[0].ts||0)-(+a[0].ts||0)||b[1]-a[1]).map(x=>x[0]),notes=E.filter(e=>/^note$/i.test(String(e&&e.type||""))),cur=clean(c.note||c.notes);
+  $("c_timeline").textContent=E.length;$("c_notes").textContent=notes.length;$("c_followups").textContent=fuLog.length;$("c_deals").textContent=deal?1:0;
+  $("tl").innerHTML=E.length?E.slice(0,shownTl).map(evLi).join(""):'<li style="display:block"><div class="empty"><b>No activity yet</b>Log your first call, WhatsApp or meeting above.</div></li>';
+  const m=$("tlMore");m.classList.toggle("hidden",E.length<=shownTl);m.textContent="Show older ("+(E.length-shownTl)+" more)";
+  $("curNote").innerHTML=cur?esc(cur):'<i class="na">No note added yet</i>';$("curNote").style.whiteSpace="pre-wrap";
+  $("nl").innerHTML=notes.length?notes.map(evLi).join(""):'<li style="display:block"><div class="empty"><b>No notes yet</b>Saved notes appear here with their date.</div></li>';
+  rFu();rDeal();
+}
+function rFu(){
+  const n=nextOf(contact);let h;
+  if(n.k==="closed")h='<h3>Next follow-up</h3><p class="mu">Closed — this customer is out of the follow-up list.</p>';
+  else if(n.k==="none"||n.k==="done")h=`<h3>Next follow-up</h3><p class="mu">${n.k==="done"?"The last follow-up is completed.":"Nothing scheduled."} Use the form below to set one.</p>`;
+  else if(n.k==="raw")h=`<h3>Next follow-up</h3><p>${esc(n.t)}</p><div class="rowf" style="justify-content:flex-start"><button class="btn" type="button" data-a="resched">Reschedule</button></div>`;
+  else h=`<h3>Next follow-up</h3><p><b>${n.k==="td"?"Today":esc(n.label)}</b>${n.rest?" · "+esc(n.rest):""} <span class="pill ${n.k==="od"?"r":n.k==="td"?"a":""}">${n.k==="od"?"Overdue "+n.diff+"d":n.k==="td"?"Today":rel(n.d)}</span></p><div class="rowf" style="justify-content:flex-start"><button class="btn p" type="button" data-a="done">✓ Mark done</button><button class="btn" type="button" data-a="resched">Reschedule</button></div>`;
+  $("fuCur").innerHTML=h;
+  $("fl").innerHTML=fuLog.length?fuLog.map(x=>`<li><span class="ic" aria-hidden="true">${x.kind==="done"?"✅":"⏰"}</span><div class="tb"><b>${x.kind==="done"?"Completed":x.kind==="rescheduled"?"Rescheduled":"Scheduled"}</b><p>${esc(clean(x.due))}${clean(x.note)?" — "+esc(clean(x.note)):""}</p><small>${x.createdAt?esc(fmtAdded(x.createdAt))+" · "+rel(new Date(x.createdAt.seconds*1e3)):""}</small></div></li>`).join(""):'<li style="display:block"><div class="empty"><b>No follow-up history</b>Scheduled and completed follow-ups are logged here.</div></li>';
+}
+function rDeal(){
+  const b=$("dealBox");
+  if(!dealLoaded){b.innerHTML='<div class="sk" style="height:90px"></div>';return}
+  if(!deal){b.innerHTML='<div class="empty"><b>No deal yet</b>A deal appears here once this customer is won.<br><a class="btn" href="deals.html">Open Deals</a></div>';return}
+  const amt=Number(deal.amount)||0,rec=Number(deal.received)||0,ps=clean(deal.paymentStatus)||"Pending",cd=pd(clean(deal.closedAtISO))||(deal.closedAtISO?new Date(deal.closedAtISO):null);
+  b.innerHTML=`<div class="dg"><div class="fact"><small>Deal</small><b>${na(deal.dealName)}</b></div><div class="fact"><small>Payment status</small><b><span class="pill ${/^paid$/i.test(ps)?"g":/part/i.test(ps)?"a":""}">${esc(ps)}</span></b></div><div class="fact"><small>Payment method</small><b>${clean(deal.paymentMethod)?esc(clean(deal.paymentMethod)):'<i class="na">Not recorded</i>'}</b></div><div class="fact"><small>Amount</small><b>${inr(amt)}</b></div><div class="fact"><small>Received</small><b>${inr(rec)}</b></div><div class="fact"><small>Pending</small><b>${inr(Math.max(0,amt-rec))}</b></div><div class="fact"><small>Closed on</small><b>${cd&&!isNaN(cd)?dstr(cd):'<i class="na">Not added</i>'}</b></div></div><p style="margin-top:12px"><a class="btn" href="deals.html">Manage in Deals</a></p>`;
+}
+
+/* ---------- writes ---------- */
+const ev=(type,note)=>({date:stamp(),type,note,ts:Date.now()});
+async function run(fn,ok,undo){try{await fn();toast(ok,{undo})}catch(e){fail("Could not save",e);render()}}
+async function logActivity(){
+  const note=$("actTx").value.trim()||qType+" logged",e=ev(qType,note),prev=contact.last;
+  await run(()=>updateDoc(cref(),{events:arrayUnion(e),last:dtStr(new Date()),updatedAt:serverTimestamp()}),qType+" logged",()=>updateDoc(cref(),{events:arrayRemove(e),last:prev??"",updatedAt:serverTimestamp()}));$("actTx").value=""
+}
+async function saveNote(){
+  const t=$("noteTx").value.trim();if(!t)return toast("Write a note first",{bad:true});const e=ev("Note",t),prev=contact.note??"";
+  await run(()=>updateDoc(cref(),{note:t,notes:t,events:arrayUnion(e),updatedAt:serverTimestamp()}),"Note saved",()=>updateDoc(cref(),{note:prev,notes:prev,events:arrayRemove(e),updatedAt:serverTimestamp()}));$("noteTx").value=""
+}
+async function changeStatus(){
+  const prev=clean(contact.status)||"New",next=$("stSel").value;if(next===prev)return;const e=ev("Status changed",prev+" → "+next);
+  await run(()=>updateDoc(cref(),{status:next,events:arrayUnion(e),updatedAt:serverTimestamp()}),"Status updated to "+next,()=>updateDoc(cref(),{status:prev,events:arrayRemove(e),updatedAt:serverTimestamp()}))
+}
+function logRef(){return doc(collection(db,"businesses",bizId,"contacts",cid,"followups"))}
+async function saveFollowup(){
+  const dv=$("fuD").value;if(!dv)return toast("Choose a follow-up date",{bad:true});
+  const type=$("fuY").value,note=$("fuN").value.trim(),next=dstr(new Date(dv+"T00:00:00"))+" · "+t12($("fuT").value)+" · "+type,re=$("fuForm").dataset.mode==="resched",prev=contact.next??"Not set";
+  const e=ev(re?"Follow-up rescheduled":"Follow-up scheduled",next+(note?" — "+note:"")),lr=logRef();
+  await run(async()=>{const b=writeBatch(db);b.update(cref(),{next,events:arrayUnion(e),updatedAt:serverTimestamp()});b.set(lr,{kind:re?"rescheduled":"scheduled",due:next,type,note,createdAt:serverTimestamp()});await b.commit()},re?"Follow-up rescheduled":"Follow-up scheduled",async()=>{const b=writeBatch(db);b.update(cref(),{next:prev,events:arrayRemove(e),updatedAt:serverTimestamp()});b.delete(lr);await b.commit()});
+  $("fuN").value="";openFu("new",true)
+}
+async function markDone(){
+  const prevN=contact.next??"Not set",prevL=contact.last??"",e=ev("Follow-up completed","Completed: "+clean(prevN)),lr=logRef();
+  await run(async()=>{const b=writeBatch(db);b.update(cref(),{next:"Completed",last:dtStr(new Date()),events:arrayUnion(e),updatedAt:serverTimestamp()});b.set(lr,{kind:"done",due:clean(prevN),type:"",note:"",createdAt:serverTimestamp()});await b.commit()},"Follow-up marked done",async()=>{const b=writeBatch(db);b.update(cref(),{next:prevN,last:prevL,events:arrayRemove(e),updatedAt:serverTimestamp()});b.delete(lr);await b.commit()})
+}
+function setTab(t){document.querySelectorAll("[data-tab]").forEach(b=>{const on=b.dataset.tab===t;b.setAttribute("aria-selected",on);$("p_"+b.dataset.tab).classList.toggle("hidden",!on)})}
+function openFu(mode,silent){
+  const f=$("fuForm");f.dataset.mode=mode;$("fuH").textContent=mode==="resched"?"Reschedule follow-up":"Schedule follow-up";$("fuS").textContent=mode==="resched"?"Save new date":"Save follow-up";
+  if(mode==="resched"){const n=nextOf(contact),d=n.d||pd(contact.next);if(d)$("fuD").value=d.getFullYear()+"-"+d2(d.getMonth()+1)+"-"+d2(d.getDate());const m=String(contact.next||"").match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);if(m){let h=+m[1]%12;if(/pm/i.test(m[3]))h+=12;$("fuT").value=d2(h)+":"+m[2]}const ty=String(contact.next||"").split("·").pop().trim();if([...$("fuY").options].some(o=>o.value===ty))$("fuY").value=ty}
+  else{$("fuD").value="";$("fuT").value=""}
+  if(!silent){setTab("followups");f.scrollIntoView({behavior:"smooth",block:"center"});$("fuD").focus()}
+}
+
+/* edit + delete */
+const EF={name:"e_name",phone:"e_phone",email:"e_email",businessName:"e_biz",type:"e_type",area:"e_area",city:"e_city",req:"e_req",budget:"e_budget",source:"e_src",website:"e_web",note:"e_note"};
+function openEdit(){
+  const c=contact;Object.entries(EF).forEach(([k,i])=>{const el=$(i),v=clean(k==="req"?c.req||c.requirement:k==="note"?c.note||c.notes:k==="businessName"?c.businessName||c.company:c[k]);if(el.tagName==="SELECT"&&v&&![...el.options].some(o=>o.value===v)){const o=document.createElement("option");o.textContent=v;el.append(o)}el.value=v||(el.tagName==="SELECT"?el.options[0].value:"")});
+  const d=nextOf(c).d,m=String(c.next||"").match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);$("e_fd").value=d?d.getFullYear()+"-"+d2(d.getMonth()+1)+"-"+d2(d.getDate()):"";let ft="";if(m){let h=+m[1]%12;if(/pm/i.test(m[3]))h+=12;ft=d2(h)+":"+m[2]}$("e_ft").value=ft;
+  const ty=String(c.next||"").split("·").pop().trim();$("e_fy").value=[...$("e_fy").options].some(o=>o.value===ty)?ty:"Call";
+  $("eo").classList.add("show");$("e_name").focus();
+}
+const closeEdit=()=>{$("eo").classList.remove("show");$("editB").focus()};
+async function saveEdit(){
+  const name=$("e_name").value.trim();if(!name)return toast("Customer name is required",{bad:true});
+  const ph=$("e_phone").value.trim(),np=normP(ph);if(ph&&np.length!==10)return toast("Mobile must be a 10-digit number",{bad:true});
+  const em=$("e_email").value.trim();if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return toast("Enter a valid email address",{bad:true});
+  const c=contact,patch={},changed=[],old={name:c.name,phone:c.phone,email:c.email,businessName:c.businessName||c.company,type:c.type,area:c.area,city:c.city,req:c.req||c.requirement,budget:c.budget,source:c.source,website:c.website,note:c.note||c.notes};
+  Object.entries(EF).forEach(([k,i])=>{const v=$(i).value.trim();if(v!==String(old[k]??"").trim()){patch[k]=v;changed.push(k==="businessName"?"company":k)}});
+  if(patch.phone!==undefined)patch.phoneNormalized=np;if(patch.req!==undefined)patch.requirement=patch.req;if(patch.note!==undefined)patch.notes=patch.note;
+  const fd=$("e_fd").value;if(fd){const nx=dstr(new Date(fd+"T00:00:00"))+" · "+t12($("e_ft").value)+" · "+$("e_fy").value;if(nx!==clean(c.next)){patch.next=nx;changed.push("next follow-up")}}
+  if(!changed.length){closeEdit();return toast("No changes to save")}
+  patch.events=arrayUnion(ev("Customer updated","Updated: "+changed.join(", ")));patch.updatedAt=serverTimestamp();
+  closeEdit();await run(()=>updateDoc(cref(),patch),"Customer updated")
+}
+async function deleteContact(){
+  if(!confirm(`Permanently delete "${clean(contact.name)||"this customer"}" and its follow-up history? This cannot be undone.`))return;
+  try{const b=writeBatch(db);fuLog.forEach(x=>b.delete(doc(db,"businesses",bizId,"contacts",cid,"followups",x.id)));b.delete(cref());deleting=true;await b.commit();location.href="customer-list.html"}catch(e){deleting=false;fail("Could not delete",e)}
+}
+let deleting=false;
+
+/* ---------- data (listener first, cosmetics after) ---------- */
+function stop(){unsubs.forEach(u=>u());unsubs=[]}
+function startContact(id,fell){
+  stop();bizId=id;dealLoaded=false;deal=null;fuLog=[];
+  unsubs.push(onSnapshot(cref(),snap=>{
+    if(!snap.exists()){
+      if(deleting)return;
+      if(!first){showFail("This customer was deleted","It no longer exists in your workspace.");return}
+      if(!fell&&id!==user.uid)return startContact(user.uid,true);
+      showFail("Customer not found","This customer doesn't exist in your workspace, or the link is incorrect.");return}
+    contact={id:snap.id,...snap.data({serverTimestamps:"estimate"})};$("err").classList.add("hidden");
+    if(first){first=false;show("app");listenSide()}
+    render();
+  },e=>{console.error("Customer listener failed",e);showFail("Could not load this customer","Refresh the page or check your permissions.",e.code||e.message)}));
+}
+function listenSide(){
+  unsubs.push(onSnapshot(doc(db,"businesses",bizId,"deals",cid),s=>{dealLoaded=true;deal=s.exists()?s.data({serverTimestamps:"estimate"}):null;if(contact)rTabs()},e=>{dealLoaded=true;showErr("Could not load deal details: "+(e.code||e.message),e);if(contact)rTabs()}));
+  unsubs.push(onSnapshot(collection(db,"businesses",bizId,"contacts",cid,"followups"),s=>{fuLog=s.docs.map(d=>({id:d.id,...d.data({serverTimestamps:"estimate"})})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));if(contact)rTabs()},e=>showErr("Could not load follow-up history: "+(e.code||e.message),e)));
+}
+onAuthStateChanged(auth,async u=>{
+  user=u;
+  if(!u){stop();first=true;contact=null;show("auth");return}
+  if(!/^[A-Za-z0-9_-]{1,128}$/.test(cid)){showFail(cid?"Invalid customer link":"No customer selected",cid?"This link has an invalid customer ID.":"Open a customer from the Customers list using the View button.");return}
+  show("load");let id=u.uid;
+  try{const s=await getDoc(doc(db,"users",u.uid));id=s.exists()&&s.data().businessId||u.uid}catch(e){console.warn("users doc unreadable, using uid",e)}
+  startContact(id,id===u.uid);
+});
+
+/* ---------- events ---------- */
+$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){console.error(e);$("aerr").textContent=(e.message||"Sign-in failed")+(e.code?" ["+e.code+"]":"")}};
+$("out").onclick=()=>signOut(auth);
+$("stSel").onchange=changeStatus;$("editB").onclick=openEdit;$("fuB").onclick=()=>openFu("new");
+$("actB").onclick=logActivity;$("noteB").onclick=saveNote;$("fuS").onclick=saveFollowup;$("tlMore").onclick=()=>{shownTl+=30;rTabs()};
+$("qc").onclick=e=>{const b=e.target.closest("[data-t]");if(!b)return;qType=b.dataset.t;document.querySelectorAll("#qc .chip").forEach(x=>x.setAttribute("aria-pressed",x===b))};
+document.querySelector(".tabs").onclick=e=>{const b=e.target.closest("[data-tab]");if(b)setTab(b.dataset.tab)};
+$("nudge").onclick=$("fuCur").onclick=e=>{const a=e.target.closest("[data-a]");if(!a)return;({resched:()=>openFu("resched"),setfu:()=>openFu("new"),done:markDone})[a.dataset.a]?.()};
+$("e_cancel").onclick=closeEdit;$("e_save").onclick=saveEdit;$("e_del").onclick=deleteContact;$("eo").addEventListener("click",e=>{if(e.target.id==="eo")closeEdit()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("eo").classList.contains("show"))closeEdit()});
+</script>
+</body>
+</html>
