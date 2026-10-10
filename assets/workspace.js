@@ -39,6 +39,9 @@ async function findInvite(db, email, hintBizId) {
     snap = await getDocs(query(collectionGroup(db, "teamInvites"), where("email", "==", email)));
   } catch (e) {
     console.warn("invite lookup", e);
+    // failed-precondition = the collection-group index on teamInvites.email is not created yet.
+    // Not fatal: the person can still join through a join link; otherwise they get the "no workspace" message below.
+    if (e && e.code === "failed-precondition") return null;
     throw new WorkspaceError("invite-lookup-failed",
       "Could not look up your invitation (" + (e.code || e.message) + "). Ask the owner to resend the invitation link, or contact support.");
   }
@@ -139,7 +142,7 @@ export async function resolveWorkspace(db, user, opts = {}) {
       return { bizId: uid, role: "owner", manager: true, biz: null, via: "legacy-self" };
     } else if (!bizId) {
       throw new WorkspaceError("no-workspace",
-        "No Business OS workspace is linked to " + (user.email || "this Google account") + ". Ask your business owner to invite this exact email, then sign in again.");
+        "No Business OS workspace is linked to " + (user.email || "this Google account") + ". Open the join link your owner shared with you (it opens join.html), or ask them to invite this exact email, then sign in again.");
     }
   }
 
