@@ -1,116 +1,142 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Plans & Limits — BusinessOS</title><link rel="stylesheet" href="assets/style.css"><link rel="stylesheet" href="assets/luxury.css">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plans &amp; billing — BusinessOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-.plan-wrap{max-width:1180px;margin:auto}.plan-hero{margin-bottom:18px}.plan-hero h1{margin:0;font-size:30px}.plan-hero p{color:#7d8797}.current{border:1px solid #dce5f2;border-radius:16px;padding:18px;background:#fff;margin-bottom:18px}.current-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.plan-badge{display:inline-flex;padding:6px 10px;border-radius:999px;background:#e9f8f2;color:#087e5f;font-weight:900;font-size:11px}.usage-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.usage{border:1px solid #e5eaf1;border-radius:12px;padding:12px}.usage small{display:block;color:#8a94a4}.usage b{font-size:20px}.bar{height:7px;background:#edf0f5;border-radius:99px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:#168d72;border-radius:99px}.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.pcard{background:#fff;border:1px solid #e3e8ef;border-radius:16px;padding:18px;position:relative}.pcard.featured{border-color:#168d72;box-shadow:0 10px 30px rgba(17,93,78,.09)}.pcard h3{margin:0}.price{font-size:25px;font-weight:950;margin:10px 0}.price span{font-size:11px;color:#8a94a4;font-weight:700}.pcard ul{padding-left:18px;color:#657082;font-size:11px;line-height:1.9}.pcard button{width:100%;padding:10px;border-radius:9px;border:1px solid #d9e1eb;background:#fff;font-weight:900;cursor:pointer}.pcard.featured button{background:#168d72;color:#fff;border-color:#168d72}.note{font-size:10px;color:#8993a3;margin-top:12px}.hidden{display:none!important}@media(max-width:900px){.plans,.usage-grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){.plans,.usage-grid{grid-template-columns:1fr}}
-</style><link rel="stylesheet" href="assets/premium-shell.css">
-
-<style id="businessos-v36-global">
-:root{--bos36-bg:#f4f7fb;--bos36-ink:#14213d;--bos36-muted:#6d7b91;--bos36-line:#dfe6f0;--bos36-blue:#2563eb;--bos36-soft:#eef4ff}
-body.app-page,body{background:linear-gradient(180deg,#f4f7fb 0%,#f8fafc 100%);color:var(--bos36-ink)}
-.bos36-topbar{display:flex;align-items:center;gap:20px;min-height:72px;padding:10px 14px 10px 16px;margin:0 0 18px;background:rgba(255,255,255,.96);border:1px solid var(--bos36-line);border-radius:18px;box-shadow:0 10px 30px rgba(18,37,68,.07);position:relative;z-index:10}
-.bos36-brand{display:flex;align-items:center;gap:10px;min-width:188px;text-decoration:none;color:var(--bos36-ink)}
-.bos36-mark{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-size:19px;font-weight:950;background:linear-gradient(145deg,#1d4ed8,#4f7cff);box-shadow:0 8px 18px rgba(37,99,235,.22);position:relative;overflow:hidden}
-.bos36-mark:after{content:"";position:absolute;width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-radius:50%;top:-7px;right:-7px}
-.bos36-brandcopy b{display:block;font-size:17px;letter-spacing:-.35px;line-height:1}.bos36-brandcopy small{display:block;font-size:7px;letter-spacing:.16em;font-weight:900;color:#8290a5;margin-top:5px}
-.bos36-nav{display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:auto;scrollbar-width:none}.bos36-nav::-webkit-scrollbar{display:none}
-.bos36-nav a{height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0 11px;border:1px solid transparent;border-radius:10px;color:#607089;font-size:10px;font-weight:900;white-space:nowrap;text-decoration:none;transition:.16s ease}.bos36-nav a:hover{background:#f5f8fd;color:#2356b8}.bos36-nav a.active{background:var(--bos36-soft);border-color:#d7e4ff;color:#1f5bd7;box-shadow:inset 0 -2px 0 #2563eb}
-.bos36-divider{height:30px;width:1px;background:#e5eaf2;flex:none;margin:0 3px}.bos36-actions{display:flex;gap:7px;flex:none}.bos36-actions a{height:40px;padding:0 12px;display:inline-flex;align-items:center;border:1px solid #dce5f0;border-radius:10px;background:#fff;color:#35445d;font-size:10px;font-weight:900;text-decoration:none}
-/* full-width application canvas */
-body.app-page .premium-sidebar,body.app-page .os-sidebar,body.app-page .ie-sidebar,body.app-page .side{display:none!important}
-body.app-page .app-shell-grid,body.app-page .layout,body.app-page .ie-layout{display:block!important;max-width:none!important;width:100%!important}
-body.app-page .app-main,body.app-page .content,body.app-page .ie-content{width:100%!important;max-width:1500px!important;margin:0 auto!important;min-width:0!important}
-body.app-page .shell,body.app-page .ie-shell{max-width:none!important;width:100%!important;padding:18px 22px 48px!important}
-body.app-page .top{padding:0 4px 13px;margin:0 0 12px!important;align-items:center!important}.top h1{letter-spacing:-.8px}.top p{color:#728097!important}
-body.app-page .kpis{gap:10px!important}.kpi.card{min-height:70px!important;padding:13px 16px!important;border-radius:14px!important;box-shadow:0 8px 24px rgba(25,43,75,.045)!important}.kpi b{font-size:24px!important}.kpi small{font-size:10px!important}.kpi em{font-size:9px!important}
-body.app-page .card{border-color:#dfe6ef!important;border-radius:16px!important;box-shadow:0 10px 28px rgba(20,33,61,.045)!important}
-body.app-page .btn{border-radius:10px!important;font-weight:900!important}.bos36-topbar+*{min-width:0}
-/* reports/deals content density */
-body.bos36-report .grid{grid-template-columns:minmax(0,1fr) 340px!important}.bos36-report .table{min-width:0!important}.bos36-report .card{padding:18px!important}
-/* import/export */
-body.bos36-import .ie-content{max-width:1500px!important}.bos36-import .ie-head{margin-bottom:14px!important}.bos36-import .ie-layout{display:block!important}.bos36-import .ie-content>.ie-layout>*{min-width:0}.bos36-import .card{border-radius:16px!important;box-shadow:0 10px 28px rgba(20,33,61,.045)!important}
-/* team/settings */
-body.bos36-settings .content{max-width:1500px!important}.bos36-settings .layout{display:block!important}.bos36-settings .head{margin-bottom:14px!important}.bos36-settings .card{border-radius:16px!important;box-shadow:0 10px 28px rgba(20,33,61,.045)!important}
-/* module pages copied from the customer workspace */
-body.bos36-module .customers-shell{padding:18px 22px 48px!important;min-height:calc(100vh - 72px)!important}.bos36-module .customers-page{max-width:1500px!important;width:100%!important;margin:0 auto!important}.bos36-module .os-layout{display:block!important;max-width:none!important}.bos36-module .os-content{width:100%!important;max-width:none!important}.bos36-module .record-quickbar{display:none!important}.bos36-module #dashboardV2,.bos36-module .source-panel,#websiteLeads{display:none!important}.bos36-module .followup-center,.bos36-module .website-lead-center,#businessFinder,.bos36-module #whatsappCenter{border:1px solid #dfe6ef!important;border-radius:18px!important;background:#fff!important;box-shadow:0 12px 35px rgba(20,33,61,.055)!important}
-.bos36-module .followup-center{padding:20px!important}.bos36-module .followup-head h2,.bos36-module .website-lead-center-head h2{font-size:24px!important;letter-spacing:-.5px!important}.bos36-module .followup-grid{gap:12px!important}.bos36-module .followup-column{border-radius:13px!important;background:#fbfcfe!important}.bos36-module .followup-item{border-radius:11px!important;transition:.16s ease}.bos36-module .followup-item:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(20,33,61,.06)}
-.bos36-module .website-lead-center{padding:20px!important}.bos36-module .website-lead-center-toolbar{border-radius:12px!important;background:#f7f9fc!important;padding:10px!important}.bos36-module .website-lead-center-list{margin-top:12px!important}
-.bos36-module #businessFinder{padding:0!important}.bos36-module .finder-shell{padding:0!important}.bos36-module .finder-hero{border-radius:18px 18px 0 0!important}.bos36-module .finder-search,.bos36-module .finder-stats,.bos36-module .finder-panels,.bos36-module .finder-add{margin-left:0!important;margin-right:0!important}
-.bos36-module #whatsappCenter{padding:20px!important}.bos36-module .wa-summary{gap:10px!important}.bos36-module .wa-summary span{border-radius:12px!important}
-@media(max-width:1100px){.bos36-brand{min-width:150px}.bos36-nav a{padding:0 9px}.bos36-actions{display:none}.bos36-report .grid{grid-template-columns:1fr!important}}
-@media(max-width:900px){.bos36-topbar{flex-wrap:wrap;gap:8px;padding:9px}.bos36-brand{min-width:auto}.bos36-brandcopy{display:none}.bos36-nav{order:3;flex-basis:100%;width:100%}.bos36-divider{display:none}body.app-page .shell,body.app-page .ie-shell{padding:12px 10px 32px!important}.bos36-module .customers-shell{padding:12px 10px 32px!important}.bos36-module .followup-grid{grid-template-columns:1fr!important}.bos36-module .website-lead-center-head{flex-direction:column!important;align-items:flex-start!important}}
+:root{--ink:#0f172a;--mut:#64748b;--line:#e6eaf2;--bg:#f5f7fb;--blue:#2f5bff;--blue2:#1e40e0;--green:#0f9d6a;--amber:#d98a00;--red:#e0483f}
+*{box-sizing:border-box;margin:0}html,body{overflow-x:hidden}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;cursor:pointer}.hidden{display:none!important}:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.top{position:sticky;top:0;z-index:30;background:#ffffffee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1320px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:22px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;letter-spacing:-.02em}.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#4f7bff,#2446e0);color:#fff;display:grid;place-items:center;font-weight:800}
+.nav{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}
+.nav a{padding:8px 13px;border-radius:9px;color:var(--mut);font-weight:600;font-size:13px;white-space:nowrap}.nav a:hover{background:#f1f4fa;color:var(--ink)}
+.acts{display:flex;gap:10px;align-items:center}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 16px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:.15s;white-space:nowrap}.btn:hover{border-color:#c9d3e6;background:#f8faff}
+.btn.p{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 16px #2f5bff33}.btn.p:hover{background:var(--blue2)}.btn:disabled{opacity:.55;cursor:default;box-shadow:none}.btn.w{width:100%}
+.menu{position:relative}.avatar{width:36px;height:36px;border-radius:50%;background:#e7edff;color:var(--blue);font-weight:700;display:grid;place-items:center;border:1px solid #d5defa}
+.dd{position:absolute;right:0;top:44px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 40px #0f172a1f;min-width:220px;padding:8px;z-index:40}.dd .em{padding:8px 10px;color:var(--mut);font-size:12px;border-bottom:1px solid var(--line);margin-bottom:6px;word-break:break-all}
+.dd a,.dd button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;font-size:13px;font-weight:600}.dd a:hover,.dd button:hover{background:#f3f6fc}
+main{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
+.hero{margin-bottom:20px}.hero h1{font-size:28px;letter-spacing:-.03em;font-weight:800}.hero p{color:var(--mut);margin-top:2px}.hero p b{color:var(--ink)}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px #0f172a08}.pad{padding:22px}
+.alert{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:16px 20px;border-radius:14px;margin-bottom:16px;background:#fff8e6;border:1px solid #f6e1a8;color:#7a5200}.alert.r{background:#fff1ef;border-color:#f3c1bb;color:#9b2c22}.alert b{color:inherit}.alert p{font-size:13px;margin-top:2px}
+.sec{font-size:16px;font-weight:700;margin-bottom:2px}.sub{color:var(--mut);font-size:12.5px;margin-bottom:16px}
+.cur{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}.cur .nm{font-size:22px;font-weight:800;letter-spacing:-.02em}.badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:#e3f7ee;color:#0a7a50;text-transform:capitalize}
+.use{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}
+.m{border:1px solid var(--line);border-radius:12px;padding:14px}.m .l{color:var(--mut);font-size:12px;font-weight:600}.m .n{font-size:22px;font-weight:800;margin:4px 0 2px;letter-spacing:-.02em}.m .n small{font-size:13px;color:var(--mut);font-weight:600}
+.tk{height:8px;border-radius:99px;background:#eef2f8;overflow:hidden;margin:8px 0 6px}.tk i{display:block;height:100%;border-radius:99px;background:var(--green)}.tk i.w{background:var(--amber)}.tk i.f{background:var(--red)}.m .h{font-size:11.5px;color:var(--mut)}
+.plans{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:22px}
+.pl{padding:22px;display:flex;flex-direction:column;position:relative}.pl.cu{border:2px solid var(--blue)}.pl.rec{border:2px solid var(--ink);box-shadow:0 14px 34px #0f172a14}
+.ribbon{position:absolute;top:-11px;left:20px;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:var(--ink);color:#fff}.ribbon.b{background:var(--blue)}
+.pl h3{font-size:16px;font-weight:700}.price{font-size:30px;font-weight:800;letter-spacing:-.03em;margin:8px 0 2px}.price small{font-size:13px;color:var(--mut);font-weight:600;letter-spacing:0}
+.pl ul{list-style:none;padding:0;margin:14px 0 20px;display:grid;gap:9px;flex:1}.pl li{font-size:13px;display:flex;gap:9px;color:#334155}.pl li:before{content:"✓";color:var(--green);font-weight:800}
+.steps{display:grid;gap:10px;margin:14px 0 18px}.steps div{display:flex;gap:12px;align-items:flex-start;font-size:13px}.steps b{width:24px;height:24px;border-radius:50%;background:#eaf0ff;color:var(--blue);display:grid;place-items:center;font-size:12px;flex:none}
+.faq details{border-top:1px solid var(--line);padding:14px 0}.faq details:first-of-type{border-top:0}.faq summary{font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between}.faq summary:after{content:"＋";color:var(--mut)}.faq details[open] summary:after{content:"－"}.faq p{color:var(--mut);font-size:13px;margin-top:8px;max-width:760px}
+.note{color:var(--mut);font-size:12.5px;text-align:center;margin-top:18px}
+.err{background:#fff4f2;border:1px solid #f3c1bb;color:#9b2c22;border-radius:12px;padding:12px 16px;margin-bottom:14px}
+.sk{height:18px;border-radius:8px;background:linear-gradient(90deg,#eef2f8,#f8faff,#eef2f8);background-size:200% 100%;animation:sk 1.2s infinite;margin:10px 0}@keyframes sk{to{background-position:-200% 0}}
+.ov{position:fixed;inset:0;background:#0f172a80;backdrop-filter:blur(3px);z-index:60;display:grid;place-items:center;padding:16px}
+.modal{background:#fff;border-radius:18px;width:min(480px,100%);max-height:92vh;overflow:auto;padding:24px}.modal h2{font-size:19px}.modal>p{color:var(--mut);margin:2px 0 14px}
+.sm{border:1px solid var(--line);background:#f8faff;border-radius:12px;padding:12px 14px;display:grid;gap:6px;font-size:13px}.sm div{display:flex;justify-content:space-between;gap:12px}.sm span{color:var(--mut)}.sm b{text-align:right;word-break:break-all}
+.mf{display:flex;gap:10px;flex-wrap:wrap}.mf .btn{flex:1;min-width:140px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:11px;font-weight:600;z-index:90}.toast.bad{background:var(--red)}
+.auth{min-height:70vh;display:grid;place-items:center}.auth .card{max-width:380px;text-align:center;padding:34px}.auth h2{font-size:22px;margin:10px 0 6px}.auth p{color:var(--mut);margin-bottom:18px}
+@media(max-width:1000px){.plans{grid-template-columns:repeat(2,minmax(0,1fr))}.use{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.top-in{padding:10px 14px 0;gap:10px;flex-wrap:wrap;height:auto}.nav{order:3;flex-basis:100%;padding-bottom:8px}.acts .btn{display:none}main{padding:18px 14px 50px}.hero h1{font-size:23px}.plans{grid-template-columns:1fr}.pad{padding:16px}}
 </style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="customers.html"><span class="logo">B</span>BusinessOS</a>
+  <nav class="nav"><a href="customers.html">Overview</a><a href="customer-list.html">Customers</a><a href="followups.html">Follow-ups</a><a href="deals.html">Deals</a><a href="website-leads.html">Leads</a><a href="whatsapp-center.html">WhatsApp</a><a href="business-finder-app.html">Finder</a><a href="reports.html">Reports</a></nav>
+  <div class="acts"><a class="btn p" href="customer-list.html?add=1">＋ Add Customer</a>
+    <div class="menu"><button class="avatar" id="avBtn" aria-label="Account">?</button><div class="dd hidden" id="dd"><div class="em" id="ddEm"></div><a href="import-export.html#import-section">↑ Import customers</a><a href="import-export.html#export-section">↓ Export data</a><a href="team-settings.html">⚙ Team &amp; settings</a><a href="subscription.html" style="color:var(--blue)">◇ Plan &amp; billing</a><button id="out">Logout</button></div></div></div>
+</div></header>
+<main>
+  <div id="auth" class="auth hidden"><div class="card"><div class="logo" style="margin:auto;width:46px;height:46px;font-size:20px">B</div><h2>Welcome to BusinessOS</h2><p>Sign in to see your plan and usage.</p><button class="btn p w" id="gbtn">Continue with Google</button><p id="aerr" style="color:var(--red);font-size:12px;margin-top:12px"></p></div></div>
+  <div id="app" class="hidden">
+    <div id="err" class="err hidden"></div>
+    <section class="hero"><h1>Plans &amp; billing</h1><p id="sub">Loading…</p></section>
+    <div id="alert"></div>
+    <section class="card pad" id="usage"><div class="sk" style="width:40%"></div><div class="sk"></div><div class="sk" style="width:80%"></div></section>
+    <h2 class="sec" style="margin:24px 0 2px">Choose your plan</h2><div class="sub">Simple monthly plans. Upgrade any time as your business grows.</div>
+    <section class="plans" id="plans"></section>
+    <section class="card pad faq"><h2 class="sec">Common questions</h2><div class="sub">Quick answers about billing and plans.</div>
+      <details><summary>How do I pay?</summary><p>Online payment is not available yet. Send a plan request and the BusinessOS team will share payment details. Your plan is activated after the payment is verified.</p></details>
+      <details><summary>What happens when I reach my limit?</summary><p>On the Free plan, adding new customers or leads stops at 10 records. Upgrade whenever you're ready — your existing customers and data stay exactly as they are.</p></details>
+      <details><summary>Can I change my plan later?</summary><p>Yes. Send a new request for the plan you want, or contact us for a custom Business plan with higher limits.</p></details>
+    </section>
+    <p class="note">Paid access is activated manually by the BusinessOS team after payment verification.</p>
+  </div>
+</main>
+<div id="mo" class="ov hidden"><div class="modal" role="dialog" aria-modal="true"><h2 id="mt">Request plan</h2><p>Send us your request — we'll reply with payment details.</p>
+  <div class="sm" id="msum"></div>
+  <div class="steps"><div><b>1</b><span id="s1">Send your request by email.</span></div><div><b>2</b><span>We share payment details and verify your payment.</span></div><div><b>3</b><span>Your plan is activated on your workspace.</span></div></div>
+  <div class="mf"><a class="btn p" id="mail">✉ Send request by email</a><a class="btn hidden" id="wa" target="_blank" rel="noopener">WhatsApp</a><button class="btn" id="cpy">Copy details</button></div>
+  <button class="btn w" id="mc" style="margin-top:10px;border:0;color:var(--mut)">Cancel</button></div></div>
+<div id="toast" class="toast hidden"></div>
 
-<style id="businessos-v38-nav-polish">
-/* V38 — larger, clearer BusinessOS navigation */
-.bos36-topbar{min-height:78px!important;height:auto!important;padding:10px 16px!important;gap:16px!important;border-radius:18px!important;}
-.bos36-brand{min-width:235px!important;gap:10px!important;}
-.bos36-mark{width:46px!important;height:46px!important;border-radius:13px!important;font-size:20px!important;}
-.bos36-brandcopy b{font-size:16px!important;line-height:1.1!important;}
-.bos36-brandcopy small{font-size:7px!important;letter-spacing:.14em!important;}
-.bos36-nav{gap:5px!important;}
-.bos36-nav a{height:44px!important;padding:0 14px!important;border-radius:11px!important;font-size:11px!important;font-weight:900!important;}
-.bos36-nav a.active{box-shadow:inset 0 -3px 0 #2563eb!important;}
-.bos36-actions a{height:44px!important;padding:0 16px!important;font-size:11px!important;border-radius:11px!important;}
-@media(max-width:1200px){.bos36-brand{min-width:190px!important}.bos36-nav a{padding:0 10px!important;font-size:10px!important}}
-@media(max-width:980px){.bos36-brand{min-width:auto!important}.bos36-brandcopy{display:none!important}.bos36-nav a{padding:0 9px!important}}
-</style>
-</head><body class="app-page">
-<header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="features.html">Features</a><a href="business-types.html">Business types</a><a href="pricing.html">Pricing</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
-<section id="auth" class="auth"><div class="auth-card"><div class="lock">◈</div><h1>Plans & Limits</h1><p>Sign in to see your workspace plan and usage.</p><button id="googleBtn" class="google">Continue with Google</button><div id="msg" class="msg"></div></div></section>
-<section id="app" class="hidden"><aside class="side"><div class="side-title">WORKSPACE</div><a href="customers.html">⌂ <span>Overview</span></a><a href="customers.html#customerList">👥 <span>Customers</span></a><a href="customers.html#customerList">◷ <span>Follow-ups</span></a><a href="deals.html">✓ <span>Deals</span></a><a href="customers.html#businessFinder">⌕ <span>Business Finder</span></a><div class="side-divider"></div><div class="side-title">MANAGE</div><a href="reports.html">▥ <span>Reports</span></a><a href="import-export.html">⇅ <span>Import / Export</span></a><a href="team-settings.html">⚙ <span>Team & Settings</span></a><a class="active" href="subscription.html">◇ <span>Plans & Limits</span></a></aside>
-<main class="content"><div class="head"><div><div class="eyebrow">BUSINESS OS · SUBSCRIPTION</div><h1 id="title">Plans & Limits</h1><p>Current plan, usage aur upgrade options ek jagah.</p></div><div class="session"><span id="email"></span><button onclick="logout()">Logout</button></div></div>
-<div class="plan-wrap"><div class="current"><div class="current-top"><div><div class="eyebrow">CURRENT PLAN</div><h2 id="currentPlan">Loading…</h2><p id="statusText">Workspace plan information.</p></div><span class="plan-badge" id="planBadge">—</span></div><div class="usage-grid"><div class="usage"><small>CRM Records</small><b id="uCustomers">0</b><div class="bar"><i id="bCustomers"></i></div><small id="lCustomers">—</small></div><div class="usage"><small>Prospects</small><b id="uProspects">0</b><div class="bar"><i id="bProspects"></i></div><small id="lProspects">—</small></div><div class="usage"><small>Team Members</small><b id="uTeam">0</b><div class="bar"><i id="bTeam"></i></div><small id="lTeam">—</small></div><div class="usage"><small>Deals</small><b id="uDeals">0</b><div class="bar"><i id="bDeals"></i></div><small id="lDeals">—</small></div></div><div class="note">Free access includes 10 combined customer/lead records. Paid access is activated manually by the BusinessOS admin after payment verification; no payment gateway is connected yet.</div></div>
-<div class="plans"><div class="pcard"><h3>Free</h3><div class="price">₹0 <span>/ free plan</span></div><ul><li>10 combined customer / lead records</li><li>Overview and core workflow access</li><li>Follow-ups, deals and reports</li><li>1 workspace owner</li></ul><button onclick="contactPlan('Free Upgrade')">Request paid access</button></div><div class="pcard"><h3>Starter</h3><div class="price">₹499 <span>/ month</span></div><ul><li>500 customers</li><li>250 prospects</li><li>3 team members</li><li>250 deals</li></ul><button onclick="contactPlan('Starter')">Choose Starter</button></div><div class="pcard featured"><h3>Growth</h3><div class="price">₹999 <span>/ month</span></div><ul><li>2,000 customers</li><li>1,000 prospects</li><li>10 team members</li><li>2,000 deals</li></ul><button onclick="contactPlan('Growth')">Choose Growth</button></div><div class="pcard"><h3>Business</h3><div class="price">Custom</div><ul><li>10,000 customers</li><li>5,000 prospects</li><li>25 team members</li><li>10,000 deals</li></ul><button onclick="contactPlan('Business')">Contact for Business</button></div></div></div>
-</main></section><div id="toast" class="toast hidden"></div>
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";import{getFirestore,doc,getDoc,collection,getDocs,query,where}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-const cfg={apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80",measurementId:"G-85D45ENBLK"};const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);const $=id=>document.getElementById(id);let user,businessId,business;
-const PLANS={trial:{name:'Free',customers:10,prospects:0,team:1,deals:10},free:{name:'Free',customers:10,prospects:0,team:1,deals:10},premium:{name:'Premium',customers:1000,prospects:250,team:3,deals:250},starter:{name:'Starter',customers:500,prospects:250,team:3,deals:250},growth:{name:'Growth',customers:2000,prospects:1000,team:10,deals:2000},business:{name:'Business',customers:10000,prospects:5000,team:25,deals:10000},custom:{name:'Business',customers:10000,prospects:5000,team:25,deals:10000}};
-function msg(t){$('msg').textContent=t||''} function toast(t){$('toast').textContent=t;$('toast').className='toast';setTimeout(()=>$('toast').classList.add('hidden'),2500)}
-async function resolve(u){let b=null;const us=await getDoc(doc(db,'users',u.uid));if(us.exists())b=us.data().businessId;if(!b){const q=await getDocs(query(collection(db,'businesses'),where('ownerUid','==',u.uid)));if(!q.empty)b=q.docs[0].id}if(!b)throw new Error('Workspace not found.');businessId=b;const bs=await getDoc(doc(db,'businesses',b));if(!bs.exists())throw new Error('Workspace not found.');business=bs.data();}
-async function load(){const key=String(business.plan||'trial').toLowerCase(),p=PLANS[key]||PLANS.trial;$('currentPlan').textContent=p.name;$('planBadge').textContent=p.name;$('statusText').textContent=(business.status||'active')+' workspace · plan managed by BusinessOS admin'+(business.subscriptionEndsAt?' · until '+business.subscriptionEndsAt:'');$('title').textContent=(business.name||'Business')+' · Plans & Limits';$('email').textContent=user.email||'';const[cs,ps,ds,ts,ls]=await Promise.all([getDocs(collection(db,'businesses',businessId,'contacts')),getDocs(collection(db,'businesses',businessId,'prospects')),getDocs(collection(db,'businesses',businessId,'deals')),getDocs(collection(db,'businesses',businessId,'teamInvites')),getDocs(query(collection(db,'publicLeads'),where('businessId','==',businessId)))]);const customers=cs.size+ls.docs.filter(d=>d.data()?.status!=='converted').length;const prospects=Math.max(ps.size,cs.docs.filter(d=>{const x=d.data();return x.type==='Prospect'||x.source==='Business Finder'}).length);const deals=ds.size;const team=1+ts.docs.filter(d=>d.data()?.status!=='disabled').length;const limits={customers:Math.max(1,Number(business.recordLimit??p.customers))+Math.max(0,Number(business.topupRecords||0)),prospects:Math.max(0,Number(business.prospectLimit??p.prospects))+Math.max(0,Number(business.prospectTopup||0)),team:Math.max(1,Number(business.teamLimit??p.team))+Math.max(0,Number(business.teamTopup||0)),deals:Math.max(0,Number(business.dealLimit??p.deals))+Math.max(0,Number(business.dealTopup||0))};setUsage('Customers',customers,limits.customers,'uCustomers','bCustomers','lCustomers');setUsage('Prospects',prospects,limits.prospects,'uProspects','bProspects','lProspects');setUsage('Team Members',team,limits.team,'uTeam','bTeam','lTeam');setUsage('Deals',deals,limits.deals,'uDeals','bDeals','lDeals')}
-function setUsage(label,n,limit,id,barId,limitId){$(id).textContent=n;$(limitId).textContent=`${n.toLocaleString()} / ${limit.toLocaleString()}`;$(barId).style.width=Math.min(100,(n/limit)*100)+'%';$(barId).style.background=n>=limit?'#d34b4b':'#168d72'}
-window.contactPlan=plan=>{const subject=encodeURIComponent('BusinessOS '+plan+' Plan Request');const body=encodeURIComponent(`Hello BusinessOS,\n\nI want to discuss the ${plan} plan for ${business?.name||'my business'}.\nWorkspace: ${businessId}\nEmail: ${user?.email||''}`);location.href=`mailto:saif.anwar1618@gmail.com?subject=${subject}&body=${body}`};window.logout=()=>signOut(auth);
-$('googleBtn').onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){try{await signInWithRedirect(auth,new GoogleAuthProvider())}catch(x){msg(x.message)}}};getRedirectResult(auth).catch(()=>{});onAuthStateChanged(auth,async u=>{if(!u){$('auth').classList.remove('hidden');$('app').classList.add('hidden');return}try{user=u;await resolve(u);$('auth').classList.add('hidden');$('app').classList.remove('hidden');await load()}catch(e){msg(e.message)}});
-</script><script id="businessos-v36-nav-script">
-(function(){
-  const PAGE='subscription';
-  const navHtml="<div class=\"bos36-topbar\" id=\"bos36Topbar\">\n  <a class=\"bos36-brand\" href=\"customer-list.html\"><span class=\"bos36-mark\">B</span><span class=\"bos36-brandcopy\"><b>BusinessOS</b><small>BUSINESS INTELLIGENCE</small></span></a>\n  <nav class=\"bos36-nav\" aria-label=\"BusinessOS navigation\">\n    <a data-page=\"overview\" href=\"customer-list.html\">\u2302 Overview</a>\n    <a data-page=\"customers\" href=\"customer-list.html\">\u25a6 Customers</a>\n    <a data-page=\"followups\" href=\"followups.html\">\u25f7 Follow-ups</a>\n    <a data-page=\"deals\" href=\"deals.html\">\u2713 Deals</a>\n    <a data-page=\"leads\" href=\"website-leads.html\">\u2197 Leads</a>\n    <a data-page=\"whatsapp\" href=\"whatsapp-center.html\">\u25c9 WhatsApp</a>\n    <a data-page=\"finder\" href=\"business-finder-app.html\">\u2315 Finder</a>\n    <span class=\"bos36-divider\"></span>\n    <a data-page=\"reports\" href=\"reports.html\">\u25a5 Reports</a>\n  </nav>\n  <div class=\"bos36-actions\"><a href=\"import-export.html\">\u2191 Import / Export</a></div>\n</div>";
-  function mount(){
-    if(document.getElementById('bos36Topbar')) return;
-    const app=document.getElementById('app'); if(!app) return;
-    const bar=document.createElement('div'); bar.id='bos36Topbar'; bar.className='bos36-topbar'; bar.innerHTML=navHtml;
-    const target=app.firstElementChild; if(target) app.insertBefore(bar,target); else app.prepend(bar);
-    bar.querySelectorAll('[data-page]').forEach(a=>{if(a.dataset.page===PAGE)a.classList.add('active')});
-  }
-  function applyPageClass(){document.body.classList.add('bos36-'+PAGE);}
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{mount();applyPageClass()}); else {mount();applyPageClass()}
-})();
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import{getFirestore,collection,doc,getDoc,getDocs,query,where,getCountFromServer}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
+const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+/* ===== EDIT HERE: prices, limits and contact. Keep in sync with pricing.html ===== */
+const CONTACT={email:"saif.anwar1618@gmail.com",whatsapp:""};/* whatsapp e.g. "919829012345" (digits only) */
+const PLANS=[
+ {key:"free",rank:0,name:"Free",price:"₹0",per:"free plan",lim:{customers:10,prospects:0,team:1,deals:10},feat:["10 combined customer / lead records","Overview and core workflow access","Follow-ups, deals and reports","1 workspace owner"]},
+ {key:"starter",rank:1,name:"Starter",price:"₹499",per:"/ month",lim:{customers:500,prospects:250,team:3,deals:250}},
+ {key:"growth",rank:2,name:"Growth",price:"₹999",per:"/ month",popular:true,lim:{customers:2000,prospects:1000,team:10,deals:2000}},
+ {key:"business",rank:3,name:"Business",price:"Custom",per:"talk to us",lim:{customers:10000,prospects:5000,team:25,deals:10000}}];
+const ALIAS={trial:"free",free:"free",starter:"starter",premium:"starter",growth:"growth",business:"business",custom:"business",paid:"starter"};
+const LEGACY={premium:{name:"Premium",lim:{customers:1000,prospects:250,team:3,deals:250}}};
+/* ================================================================================ */
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const clean=v=>String(v??"").replace(/["'`]+/g,"").trim(),ini=n=>clean(n||"?").split(/[\s@.]+/).filter(Boolean).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"?";
+const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),2600)};
+let user,bizId,biz={},role="sales",manager=false,usage=null,pending="";
+const lab={customers:["Customers","records incl. active enquiries"],prospects:["Prospects","from Business Finder"],team:["Team members","including you"],deals:["Deals","won deals"]};
+async function resolve(u){let id=null,r="sales";const us=await getDoc(doc(db,"users",u.uid));if(us.exists()&&us.data().businessId){id=us.data().businessId;r=String(us.data().role||"sales")}
+  if(!id){id=u.uid;r="owner"}const bs=await getDoc(doc(db,"businesses",id));if(!bs.exists())throw new Error("Workspace not found for this Google account.");
+  bizId=id;biz=bs.data();role=r;manager=["owner","admin"].includes(r)||biz.ownerUid===u.uid||id===u.uid}
+const curPlan=()=>{const raw=String(biz.plan||"trial").toLowerCase(),p=PLANS.find(x=>x.key===(ALIAS[raw]||"free"))||PLANS[0],lg=LEGACY[raw];return{raw,p,name:lg?.name||p.name,lim:lg?.lim||p.lim}};
+function limits(){const c=curPlan(),o=(k,a,b)=>Math.max(0,Number(biz[a]??c.lim[k]))+Math.max(0,Number(biz[b]||0));return{customers:Math.max(1,o("customers","recordLimit","topupRecords")),prospects:o("prospects","prospectLimit","prospectTopup"),team:Math.max(1,o("team","teamLimit","teamTopup")),deals:o("deals","dealLimit","dealTopup")}}
+async function loadUsage(){const bc=p=>getCountFromServer(p).then(s=>s.data().count);
+  try{const C=collection(db,"businesses",bizId,"contacts");
+    const[c,pr,d,pt,pf,inv,ld]=await Promise.all([bc(C),bc(collection(db,"businesses",bizId,"prospects")),bc(collection(db,"businesses",bizId,"deals")),bc(query(C,where("type","==","Prospect"))),bc(query(C,where("source","==","Business Finder"))),getDocs(collection(db,"businesses",bizId,"teamInvites")),getDocs(query(collection(db,"publicLeads"),where("businessId","==",bizId)))]);
+    usage={customers:c+ld.docs.filter(x=>x.data().status!=="converted").length,prospects:Math.max(pr,pt+pf),team:1+inv.docs.filter(x=>x.data().status!=="disabled").length,deals:d}}catch(e){console.warn("usage",e);usage=null}}
+function render(){const c=curPlan(),L=limits();
+  $("sub").innerHTML=`You're on the <b>${esc(c.name)}</b> plan${usage?` · <b>${usage.customers}</b> of ${L.customers.toLocaleString()} records used`:""}`;
+  const worst=usage?Object.keys(L).filter(k=>k==="team"?L[k]>1:L[k]>0).map(k=>[k,usage[k]/L[k]]).sort((a,b)=>b[1]-a[1])[0]:null,next=PLANS.find(p=>p.rank===c.p.rank+1);
+  $("alert").innerHTML=worst&&worst[1]>=.8&&next&&manager?`<div class="alert ${worst[1]>=1?"r":""}"><div><b>${worst[1]>=1?"You've reached your "+lab[worst[0]][0].toLowerCase()+" limit":"You're close to your "+lab[worst[0]][0].toLowerCase()+" limit"}</b><p>${usage[worst[0]]} of ${L[worst[0]].toLocaleString()} used. Upgrade to ${next.name} to get ${next.lim[worst[0]].toLocaleString()}.</p></div><button class="btn p" data-up="${next.key}">Upgrade to ${next.name}</button></div>`:"";
+  $("usage").innerHTML=`<div class="cur"><span class="nm">${esc(c.name)}</span><span class="badge">${esc(biz.status||"active")} workspace</span></div><div class="use">${Object.keys(L).map(k=>{const n=usage?usage[k]:null,lim=L[k],pct=n==null||!lim?0:Math.min(100,Math.round(n/lim*100));
+    return`<div class="m"><div class="l">${lab[k][0]}</div><div class="n">${n==null?"—":n.toLocaleString()} <small>/ ${lim?lim.toLocaleString():"Not included"}</small></div><div class="tk"><i class="${k==="team"&&lim<=1?(n>lim?"f":""):pct>=100?"f":pct>=80?"w":""}" style="width:${pct}%"></i></div><div class="h">${lab[k][1]}</div></div>`}).join("")}</div>
+    ${manager?"":'<div class="alert" style="margin:0"><div><b>Only the owner or an admin can change the plan.</b><p>Ask them to upgrade if you need more room.</p></div></div>'}`;
+  $("plans").innerHTML=PLANS.map(p=>{const cu=p.rank===c.p.rank,up=p.rank>c.p.rank,rec=up&&worst&&worst[1]>=.8&&p.rank===c.p.rank+1,L2=p.lim;
+    const feat=p.feat||[`${L2.customers.toLocaleString()} customers`,`${L2.prospects.toLocaleString()} prospects`,`${L2.team} team members`,`${L2.deals.toLocaleString()} deals`];
+    return`<div class="card pl${cu?" cu":rec?" rec":""}">${cu?'<span class="ribbon b">Current plan</span>':rec?'<span class="ribbon">Recommended</span>':p.popular&&up?'<span class="ribbon">Most popular</span>':""}<h3>${p.name}</h3><div class="price">${p.price} <small>${p.per}</small></div><ul>${feat.map(f=>`<li>${f}</li>`).join("")}</ul>
+    ${cu?'<button class="btn w" disabled>Your current plan</button>':up?(manager?`<button class="btn ${rec||p.popular?"p":""} w" data-up="${p.key}">${p.key==="business"?"Contact for Business":"Upgrade to "+p.name}</button>`:'<button class="btn w" disabled>Owner can upgrade</button>'):'<button class="btn w" disabled>Included in your plan</button>'}</div>`}).join("")}
+function openM(key){const p=PLANS.find(x=>x.key===key);if(!p)return;pending=key;const txt=`Hello BusinessOS,\n\nI want to upgrade to the ${p.name} plan (${p.price}${p.price==="Custom"?"":" "+p.per}).\nBusiness: ${clean(biz.name)||"-"}\nWorkspace: ${bizId}\nEmail: ${user.email||""}`;
+  $("mt").textContent="Request "+p.name+" plan";$("msum").innerHTML=`<div><span>Plan</span><b>${p.name}</b></div><div><span>Price</span><b>${p.price} ${p.price==="Custom"?"":p.per}</b></div><div><span>Business</span><b>${esc(clean(biz.name)||"—")}</b></div><div><span>Your email</span><b>${esc(user.email||"")}</b></div>`;
+  $("mail").href=`mailto:${CONTACT.email}?subject=${encodeURIComponent("BusinessOS "+p.name+" Plan Request")}&body=${encodeURIComponent(txt)}`;
+  $("wa").classList.toggle("hidden",!CONTACT.whatsapp);$("s1").textContent=CONTACT.whatsapp?"Send your request (email or WhatsApp).":"Send your request by email.";if(CONTACT.whatsapp)$("wa").href=`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(txt)}`;$("cpy").dataset.txt=txt;$("mo").classList.remove("hidden")}
+const closeM=()=>$("mo").classList.add("hidden");
+onAuthStateChanged(auth,async u=>{user=u;
+  if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}
+  $("auth").classList.add("hidden");$("app").classList.remove("hidden");$("avBtn").textContent=ini(u.displayName||u.email);$("ddEm").textContent=u.email||"";
+  try{await resolve(u);$("err").classList.add("hidden");render();await loadUsage();render()}catch(e){console.error(e);$("usage").innerHTML="";$("plans").innerHTML="";$("sub").textContent="";$("err").textContent=e.message||"Could not load your plan.";$("err").classList.remove("hidden")}});
+$("avBtn").onclick=e=>{e.stopPropagation();$("dd").classList.toggle("hidden")};document.addEventListener("click",()=>$("dd").classList.add("hidden"));
+$("out").onclick=()=>signOut(auth);$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message}};
+$("mc").onclick=closeM;$("mo").addEventListener("click",e=>{if(e.target.id==="mo")closeM()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeM()});
+$("cpy").onclick=async()=>{try{await navigator.clipboard.writeText($("cpy").dataset.txt);toast("Request details copied")}catch(e){toast("Copy failed",true)}};
+document.addEventListener("click",e=>{const b=e.target.closest("[data-up]");if(b)openM(b.dataset.up)});
 </script>
-<style id="businessos-v36-subscription">body.bos36-subscription .layout,body.bos36-subscription .content{max-width:1500px!important;width:100%!important;margin:0 auto!important}body.bos36-subscription .head h1{font-size:30px!important;letter-spacing:-.7px!important}</style></body></html>
-
-<style id="businessos-v37-module-fix">
-/* V37 — module workspace correction: one module per page, full-width canvas. */
-.view-hidden{display:none!important;}
-body.bos36-module #app{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;padding:0 22px 52px!important;margin:0!important;}
-body.bos36-module .customers-page{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;}
-body.bos36-module .os-layout{display:block!important;width:100%!important;max-width:none!important;margin:0!important;}
-body.bos36-module .os-content{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;}
-body.bos36-module .page-head{display:none!important;}
-body.bos36-module #dashboardV2,body.bos36-module #summary,body.bos36-module #templatePipeline,body.bos36-module #customerList,body.bos36-module .source-panel,body.bos36-module #websiteLeads{display:none!important;}
-body.bos36-followups #followupCenter,body.bos36-website #websiteLeadCenter,body.bos36-whatsapp #whatsappCenter,body.bos36-finder #businessFinder{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;}
-body.bos36-followups #followupCenter .followup-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
-body.bos36-finder #businessFinder .finder-shell{width:100%!important;max-width:none!important;}
-body.bos36-finder #businessFinder .finder-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;}
-body.bos36-finder #businessFinder .finder-panels{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)!important;}
-body.bos36-whatsapp #whatsappCenter{padding:20px!important;}
-body.bos36-whatsapp #whatsappCenter .wa-summary{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
-body.bos36-website #websiteLeadCenter{padding:0!important;}
-body.bos36-website #websiteLeadCenter .website-lead-center-list{width:100%!important;}
-@media(max-width:900px){
- body.bos36-module #app{padding:0 10px 36px!important;}
- body.bos36-followups #followupCenter .followup-grid{grid-template-columns:1fr!important;}
- body.bos36-finder #businessFinder .finder-grid,body.bos36-finder #businessFinder .finder-panels{grid-template-columns:1fr!important;}
- body.bos36-whatsapp #whatsappCenter .wa-summary{grid-template-columns:1fr!important;}
-}
-</style>
+</body>
+</html>
