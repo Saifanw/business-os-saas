@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Join workspace — BusinessOS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f172a;--mut:#64748b;--line:#e6eaf2;--bg:#f5f7fb;--blue:#2f5bff;--green:#0f9d6a;--red:#e0483f}
+*{box-sizing:border-box;margin:0}body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:grid;place-items:center;padding:20px;-webkit-font-smoothing:antialiased}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 40px #0f172a14;max-width:420px;width:100%;padding:34px 30px;text-align:center}
+.logo{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#4f7bff,#2446e0);color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px;margin:0 auto 14px}
+h1{font-size:22px;letter-spacing:-.02em;margin-bottom:6px}p{color:var(--mut);font-size:14px;line-height:1.5;margin-bottom:18px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;border:1px solid var(--line);background:#fff;border-radius:11px;padding:12px 16px;font:inherit;font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;color:var(--ink)}
+.btn.p{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 16px #2f5bff33}.btn+.btn{margin-top:10px}
+.ic{font-size:40px;margin-bottom:8px}.err{color:#9b2c22;background:#fff4f2;border:1px solid #f3c1bb;border-radius:12px;padding:12px 14px;font-size:13.5px;text-align:left;margin-bottom:16px;line-height:1.5}
+.spin{width:30px;height:30px;border:3px solid #dfe6fb;border-top-color:var(--blue);border-radius:50%;animation:s .8s linear infinite;margin:6px auto 16px}@keyframes s{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="logo">B</div>
+  <section id="login" class="hidden"><h1>Join your team</h1><p>You've been invited to a BusinessOS workspace. Sign in with Google to join as a Sales Agent.</p><button class="btn p" id="gbtn">Continue with Google</button><p id="aerr" style="color:var(--red);font-size:12.5px;margin:12px 0 0"></p></section>
+  <section id="busy" class="hidden"><div class="spin"></div><h1>Joining workspace…</h1><p>This takes a few seconds.</p></section>
+  <section id="ok" class="hidden"><div class="ic">✅</div><h1 id="okT">You're in</h1><p id="okM"></p><a class="btn p" href="customers.html">Open my workspace →</a></section>
+  <section id="bad" class="hidden"><div class="ic">⚠️</div><h1>We couldn't join you</h1><div class="err" id="badM"></div><button class="btn" id="switch">Use a different Google account</button></section>
+</main>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import{getFirestore}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{resolveWorkspace}from"./assets/workspace.js";
+const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
+const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+const show=id=>["login","busy","ok","bad"].forEach(s=>$(s).classList.toggle("hidden",s!==id));
+let timer;
+onAuthStateChanged(auth,async u=>{
+  if(!u){show("login");return}
+  show("busy");
+  try{
+    const w=await resolveWorkspace(db,u),name=String(w.biz?.name||"").replace(/["'`]+/g,"").trim()||"your workspace";
+    $("okT").textContent=w.via==="join-link"?"Welcome to "+name:"You already have access";
+    $("okM").textContent=w.via==="join-link"?"You joined as a Sales Agent. You can now work with customers, follow-ups and deals.":"You're signed in to "+name+" as "+(w.role==="owner"?"the owner":w.role)+".";
+    show("ok");timer=setTimeout(()=>location.href="customers.html",3000);
+  }catch(e){console.error(e);$("badM").textContent=e.message||"Something went wrong. Please ask your owner for a new link.";show("bad")}
+});
+$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message||"Sign-in failed"}};
+$("switch").onclick=async()=>{clearTimeout(timer);try{await signOut(auth)}catch(e){}};
+</script>
+</body>
+</html>
