@@ -39,3 +39,9 @@ Public site → Live Demo → customer agrees → Admin creates Business → own
 
 ### Important
 Deploy `firestore.rules` to the Firebase project before using the new provisioning flow. Test with two separate Google accounts before onboarding real customers.
+
+## Prospecting & WhatsApp Campaigns V1
+
+Open `prospecting-center.html` for Google Places discovery, consent review, and approved WhatsApp campaign workflows. This feature requires Firebase Cloud Functions, Google Places API billing/key setup, and Meta WhatsApp Business Platform credentials. See `PROSPECTING-WHATSAPP-SETUP.md`.
+
+Google Places results are not treated as an exportable bulk contact database: the app persists Place IDs only and requires an independently licensed/exportable source or user-collected data for persistent CRM contacts. WhatsApp campaigns send only to records whose consent has been explicitly confirmed.
