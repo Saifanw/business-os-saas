@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Deals — Business OS</title>
+<style>
+:root{--ink:#14203a;--muted:#718096;--line:#e4e9f1;--blue:#315df6;--green:#078b67;--amber:#b77a00;--red:#d94b43;--bg:#f5f7fb}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}a{text-decoration:none;color:inherit}.nav{height:78px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 4.5%;gap:30px;position:sticky;top:0;z-index:20}.brand{font-size:23px;font-weight:900}.brand i{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#13203b;color:#fff;font-style:normal;margin-right:8px}.brand span{color:var(--blue)}.nav nav{display:flex;gap:28px;margin-left:auto;font-size:14px;font-weight:700;color:#4d5a70}.nav .live{background:#14203a;color:#fff;padding:13px 21px;border-radius:12px;font-weight:800}.shell{max-width:1400px;margin:auto;padding:28px 22px 60px}.auth{min-height:calc(100vh - 78px);display:grid;place-items:center}.auth-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:38px;max-width:430px;width:calc(100% - 30px);text-align:center;box-shadow:0 18px 50px #14203a12}.mark{width:50px;height:50px;border-radius:14px;background:#14203a;color:#fff;display:grid;place-items:center;font-weight:900;font-size:24px;margin:auto}.auth-card h1{margin:18px 0 8px}.auth-card p{color:var(--muted);font-size:13px;line-height:1.6}.google{height:48px;width:100%;border:1px solid #d8e0ea;border-radius:10px;background:#fff;font-weight:800;font-size:14px;cursor:pointer}.msg{font-size:12px;color:var(--red);margin-top:12px;min-height:18px}.hidden{display:none!important}.top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:20px}.eyebrow{font-size:10px;font-weight:900;letter-spacing:.18em;color:var(--blue)}.top h1{font-size:32px;margin:5px 0}.top p{margin:0;color:var(--muted);font-size:13px}.actions{display:flex;gap:8px}.btn{border:1px solid #d8e0ea;background:#fff;color:#334155;border-radius:10px;padding:11px 15px;font-size:12px;font-weight:800;cursor:pointer}.btn.primary{background:#14203a;color:#fff;border-color:#14203a}.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:13px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:19px;box-shadow:0 8px 25px #14203a08}.kpi small{display:block;color:var(--muted);font-size:11px;font-weight:700}.kpi b{display:block;font-size:28px;margin-top:7px}.kpi em{display:block;font-size:10px;color:var(--muted);font-style:normal;margin-top:5px}.grid{display:grid;grid-template-columns:1fr .42fr;gap:15px;margin-top:15px}.card h2{font-size:16px;margin:0}.sub{font-size:11px;color:var(--muted);margin:5px 0 18px}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:12px;min-width:720px}.table th{text-align:left;color:#8993a3;font-size:9px;text-transform:uppercase;letter-spacing:.08em;padding:11px;border-bottom:1px solid var(--line)}.table td{padding:13px 11px;border-bottom:1px solid #edf0f4}.pill{display:inline-flex;padding:5px 9px;border-radius:99px;background:#eaf9f2;color:#087b58;font-size:10px;font-weight:800}.pending{background:#fff6df;color:#9b6b00}.lost{background:#fff0ef;color:#c53f38}.money{font-weight:900}.empty{padding:35px;text-align:center;color:var(--muted);font-size:12px}.side-list{display:grid;gap:9px}.side-item{padding:12px;border:1px solid #edf0f4;border-radius:10px;background:#fcfdff}.side-item b{font-size:11px}.side-item small{display:block;color:#8b95a5;font-size:9px;margin-top:4px}.modal{display:none;position:fixed;inset:0;background:#0b1224a8;backdrop-filter:blur(5px);z-index:50;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;width:min(620px,95vw);max-height:90vh;overflow:auto;border-radius:18px;box-shadow:0 30px 90px #0004;padding:24px}.modal-box h2{margin:0 0 5px}.modal-box p{margin:0 0 18px;color:var(--muted);font-size:11px}.form{display:grid;grid-template-columns:1fr 1fr;gap:13px}.form label{font-size:11px;font-weight:800;color:#526077}.form .full{grid-column:1/-1}.form input,.form select,.form textarea{width:100%;margin-top:6px;border:1px solid #dce3eb;border-radius:9px;padding:11px;font-size:12px}.form textarea{min-height:90px;resize:vertical}.modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.toast{position:fixed;right:18px;bottom:18px;background:#14203a;color:#fff;padding:11px 15px;border-radius:10px;font-size:11px;font-weight:800;z-index:90}.toast.error{background:#8f2923}@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.nav nav{display:none}.top{align-items:flex-start;flex-direction:column}}@media(max-width:520px){.kpis{grid-template-columns:1fr}.shell{padding:18px 12px}.top h1{font-size:25px}.form{grid-template-columns:1fr}.form .full{grid-column:auto}}
+</style><link rel="stylesheet" href="assets/premium-shell.css">
+
+<style id="businessos-v36-global">
+:root{--bos36-bg:#f4f7fb;--bos36-ink:#14213d;--bos36-muted:#6d7b91;--bos36-line:#dfe6f0;--bos36-blue:#2563eb;--bos36-soft:#eef4ff}
+body.app-page,body{background:linear-gradient(180deg,#f4f7fb 0%,#f8fafc 100%);color:var(--bos36-ink)}
+.bos36-topbar{display:flex;align-items:center;gap:20px;min-height:72px;padding:10px 14px 10px 16px;margin:0 0 18px;background:rgba(255,255,255,.96);border:1px solid var(--bos36-line);border-radius:18px;box-shadow:0 10px 30px rgba(18,37,68,.07);position:relative;z-index:10}
+.bos36-brand{display:flex;align-items:center;gap:10px;min-width:188px;text-decoration:none;color:var(--bos36-ink)}
+.bos36-mark{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-size:19px;font-weight:950;background:linear-gradient(145deg,#1d4ed8,#4f7cff);box-shadow:0 8px 18px rgba(37,99,235,.22);position:relative;overflow:hidden}
+.bos36-mark:after{content:"";position:absolute;width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-radius:50%;top:-7px;right:-7px}
+.bos36-brandcopy b{display:block;font-size:17px;letter-spacing:-.35px;line-height:1}.bos36-brandcopy small{display:block;font-size:7px;letter-spacing:.16em;font-weight:900;color:#8290a5;margin-top:5px}
+.bos36-nav{display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:auto;scrollbar-width:none}.bos36-nav::-webkit-scrollbar{display:none}
+.bos36-nav a{height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0 11px;border:1px solid transparent;border-radius:10px;color:#607089;font-size:10px;font-weight:900;white-space:nowrap;text-decoration:none;transition:.16s ease}.bos36-nav a:hover{background:#f5f8fd;color:#2356b8}.bos36-nav a.active{background:var(--bos36-soft);border-color:#d7e4ff;color:#1f5bd7;box-shadow:inset 0 -2px 0 #2563eb}
+.bos36-divider{height:30px;width:1px;background:#e5eaf2;flex:none;margin:0 3px}.bos36-actions{display:flex;gap:7px;flex:none}.bos36-actions a{height:40px;padding:0 12px;display:inline-flex;align-items:center;border:1px solid #dce5f0;border-radius:10px;background:#fff;color:#35445d;font-size:10px;font-weight:900;text-decoration:none}
+/* full-width application canvas */
+body.app-page .premium-sidebar,body.app-page .os-sidebar,body.app-page .ie-sidebar,body.app-page .side{display:none!important}
+body.app-page .app-shell-grid,body.app-page .layout,body.app-page .ie-layout{display:block!important;max-width:none!important;width:100%!important}
+body.app-page .app-main,body.app-page .content,body.app-page .ie-content{width:100%!important;max-width:1500px!important;margin:0 auto!important;min-width:0!important}
+body.app-page .shell,body.app-page .ie-shell{max-width:none!important;width:100%!important;padding:18px 22px 48px!important}
+body.app-page .top{padding:0 4px 13px;margin:0 0 12px!important;align-items:center!important}.top h1{letter-spacing:-.8px}.top p{color:#728097!important}
+body.app-page .kpis{gap:10px!important}.kpi.card{min-height:70px!important;padding:13px 16px!important;border-radius:14px!important;box-shadow:0 8px 24px rgba(25,43,75,.045)!important}.kpi b{font-size:24px!important}.kpi small{font-size:10px!important}.kpi em{font-size:9px!important}
+body.app-page .card{border-color:#dfe6ef!important;border-radius:16px!important;box-shadow:0 10px 28px rgba(20,33,61,.045)!important}
+body.app-page .btn{border-radius:10px!important;font-weight:900!important}.bos36-topbar+*{min-width:0}
+/* reports/deals content density */
+body.bos36-report .grid{grid-template-columns:minmax(0,1fr) 340px!important}.bos36-report .table{min-width:0!important}.bos36-report .card{padding:18px!important}
+/* import/export */
+body.bos36-import .ie-content{max-width:1500px!important}.bos36-import .ie-head{margin-bottom:14px!important}.bos36-import .ie-layout{display:block!important}.bos36-import .ie-content>.ie-layout>*{min-width:0}.bos36-import .card{border-radius:16px!important;box-shadow:0 10px 28px rgba(20,33,61,.045)!important}
+/* team/settings */
+body.bos36-settings .content{max-width:1500px!important}.bos36-settings .layout{display:block!important}.bos36-settings .head{margin-bottom:14px!important}.bos36-settings .card{border-radius:16px!important;box-shadow:0 10px 28px rgba(20,33,61,.045)!important}
+/* module pages copied from the customer workspace */
+body.bos36-module .customers-shell{padding:18px 22px 48px!important;min-height:calc(100vh - 72px)!important}.bos36-module .customers-page{max-width:1500px!important;width:100%!important;margin:0 auto!important}.bos36-module .os-layout{display:block!important;max-width:none!important}.bos36-module .os-content{width:100%!important;max-width:none!important}.bos36-module .record-quickbar{display:none!important}.bos36-module #dashboardV2,.bos36-module .source-panel,#websiteLeads{display:none!important}.bos36-module .followup-center,.bos36-module .website-lead-center,#businessFinder,.bos36-module #whatsappCenter{border:1px solid #dfe6ef!important;border-radius:18px!important;background:#fff!important;box-shadow:0 12px 35px rgba(20,33,61,.055)!important}
+.bos36-module .followup-center{padding:20px!important}.bos36-module .followup-head h2,.bos36-module .website-lead-center-head h2{font-size:24px!important;letter-spacing:-.5px!important}.bos36-module .followup-grid{gap:12px!important}.bos36-module .followup-column{border-radius:13px!important;background:#fbfcfe!important}.bos36-module .followup-item{border-radius:11px!important;transition:.16s ease}.bos36-module .followup-item:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(20,33,61,.06)}
+.bos36-module .website-lead-center{padding:20px!important}.bos36-module .website-lead-center-toolbar{border-radius:12px!important;background:#f7f9fc!important;padding:10px!important}.bos36-module .website-lead-center-list{margin-top:12px!important}
+.bos36-module #businessFinder{padding:0!important}.bos36-module .finder-shell{padding:0!important}.bos36-module .finder-hero{border-radius:18px 18px 0 0!important}.bos36-module .finder-search,.bos36-module .finder-stats,.bos36-module .finder-panels,.bos36-module .finder-add{margin-left:0!important;margin-right:0!important}
+.bos36-module #whatsappCenter{padding:20px!important}.bos36-module .wa-summary{gap:10px!important}.bos36-module .wa-summary span{border-radius:12px!important}
+@media(max-width:1100px){.bos36-brand{min-width:150px}.bos36-nav a{padding:0 9px}.bos36-actions{display:none}.bos36-report .grid{grid-template-columns:1fr!important}}
+@media(max-width:900px){.bos36-topbar{flex-wrap:wrap;gap:8px;padding:9px}.bos36-brand{min-width:auto}.bos36-brandcopy{display:none}.bos36-nav{order:3;flex-basis:100%;width:100%}.bos36-divider{display:none}body.app-page .shell,body.app-page .ie-shell{padding:12px 10px 32px!important}.bos36-module .customers-shell{padding:12px 10px 32px!important}.bos36-module .followup-grid{grid-template-columns:1fr!important}.bos36-module .website-lead-center-head{flex-direction:column!important;align-items:flex-start!important}}
+</style>
+
+<style id="businessos-v38-nav-polish">
+/* V38 — larger, clearer BusinessOS navigation */
+.bos36-topbar{min-height:78px!important;height:auto!important;padding:10px 16px!important;gap:16px!important;border-radius:18px!important;}
+.bos36-brand{min-width:235px!important;gap:10px!important;}
+.bos36-mark{width:46px!important;height:46px!important;border-radius:13px!important;font-size:20px!important;}
+.bos36-brandcopy b{font-size:16px!important;line-height:1.1!important;}
+.bos36-brandcopy small{font-size:7px!important;letter-spacing:.14em!important;}
+.bos36-nav{gap:5px!important;}
+.bos36-nav a{height:44px!important;padding:0 14px!important;border-radius:11px!important;font-size:11px!important;font-weight:900!important;}
+.bos36-nav a.active{box-shadow:inset 0 -3px 0 #2563eb!important;}
+.bos36-actions a{height:44px!important;padding:0 16px!important;font-size:11px!important;border-radius:11px!important;}
+@media(max-width:1200px){.bos36-brand{min-width:190px!important}.bos36-nav a{padding:0 10px!important;font-size:10px!important}}
+@media(max-width:980px){.bos36-brand{min-width:auto!important}.bos36-brandcopy{display:none!important}.bos36-nav a{padding:0 9px!important}}
+</style>
+</head><body class="app-page">
+<header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="live" href="demo.html">Live Demo</a></header>
+<section id="auth" class="auth"><div class="auth-card"><div class="mark">B</div><h1>Deals Login</h1><p>Sign in with Google to view your private sales and revenue workspace.</p><button id="googleBtn" class="google">🔐 Continue with Google</button><div id="msg" class="msg"></div></div></section>
+<main id="app" class="shell hidden"><div class="app-shell-grid"><aside class="premium-sidebar" aria-label="Business OS navigation">
+<div class="side-title">WORKSPACE</div>
+<a href="customers.html"><span>⌂</span>Overview</a>
+<a href="customers.html"><span>👥</span>Customers</a>
+<a href="customers.html#customerList"><span>◷</span>Follow-ups</a>
+<a href="deals.html" class="active"><span>✓</span>Deals</a>
+<a href="customers.html#websiteLeads"><span>↗</span>Website Leads</a>
+<a href="customers.html#whatsappCenter"><span>💬</span>WhatsApp</a>
+<a href="customers.html#businessFinder"><span>⌕</span>Business Finder</a>
+<div class="side-divider"></div>
+<div class="side-title">MANAGE</div>
+<a href="reports.html"><span>▥</span>Reports</a>
+<a href="import-export.html"><span>⇅</span>Import / Export</a>
+<a href="team-settings.html"><span>⚙</span>Team & Settings</a>
+<a href="subscription.html"><span>◇</span>Plans & Limits</a>
+<a href="notifications.html"><span>🔔</span>Notifications</a>
+</aside><div class="app-main"><div class="top"><div><div class="eyebrow">SALES & REVENUE</div><h1 id="businessName">Deals</h1><p>Won business, deal values, payments and revenue in one place.</p></div><div class="actions"><a class="btn" href="customers.html">← Back to Workspace</a><button class="btn primary" onclick="openNewDeal()">＋ Add Deal</button></div></div>
+<section class="kpis"><div class="card kpi"><small>Total Deals</small><b id="kDeals">0</b><em>Won / active deals</em></div><div class="card kpi"><small>Deal Value</small><b id="kValue">₹0</b><em>Recorded deal amount</em></div><div class="card kpi"><small>Collected</small><b id="kCollected">₹0</b><em>Payments received</em></div><div class="card kpi"><small>Pending</small><b id="kPending">₹0</b><em>Still to collect</em></div><div class="card kpi"><small>Conversion</small><b id="kConversion">0%</b><em>Won / total leads</em></div></section>
+<div class="grid"><section class="card"><h2>Deals</h2><div class="sub">Every Won deal with value and payment status.</div><div class="table-wrap"><table class="table"><thead><tr><th>Customer</th><th>Deal</th><th>Value</th><th>Payment</th><th>Closed</th><th>Action</th></tr></thead><tbody id="dealRows"></tbody></table></div></section><aside class="card"><h2>Revenue Snapshot</h2><div class="sub">Quick view of where your money stands.</div><div id="snapshot" class="side-list"></div></aside></div></div></div></main>
+<div id="modal" class="modal"><div class="modal-box"><h2 id="modalTitle">Add Deal</h2><p>Deal details are private to this business workspace.</p><div class="form"><label>Customer<select id="dCustomer"></select></label><label>Deal / Service Name<input id="dName" placeholder="Property Sale / Course Admission"></label><label>Deal Value (₹)<input id="dAmount" type="number" min="0" step="1" placeholder="50000"></label><label>Payment Status<select id="dPayment"><option>Pending</option><option>Partially Paid</option><option>Paid</option></select><small id="paymentHint" style="display:block;color:#718096;font-size:10px;margin-top:5px">Status updates automatically from amount received.</small></label><label>Closing Date<input id="dDate" type="date"></label><label>Payment Received (₹)<input id="dReceived" type="number" min="0" step="1" placeholder="0"><small id="pendingHint" style="display:block;color:#718096;font-size:10px;margin-top:5px">Pending: ₹0</small></label><label>Payment Date<input id="dPaymentDate" type="date"></label><label>Payment Method<select id="dMethod"><option>Not recorded</option><option>Cash</option><option>UPI</option><option>Bank Transfer</option><option>Cheque</option><option>Other</option></select></label><label class="full">Notes<textarea id="dNotes" placeholder="Payment details, commission, next step..." ></textarea></label></div><div class="modal-foot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveDeal()">Save Deal</button></div></div></div><div id="toast" class="toast hidden"></div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import{getFirestore,collection,getDocs,query,where,doc,getDoc,setDoc,updateDoc,serverTimestamp,onSnapshot}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80",measurementId:"G-85D45ENBLK"};
+const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();let businessId=null,businessProfile={},contacts=[],deals=[],editId=null,unsubC=null,unsubD=null;const $=id=>document.getElementById(id);
+function msg(v){$('msg').textContent=v||''}function toast(v,error=false){const t=$('toast');t.textContent=v;t.classList.toggle('error',error);t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),2400)}function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}function money(n){return '₹'+Math.round(Number(n)||0).toLocaleString('en-IN')}function todayISO(){return new Date().toISOString().slice(0,10)}
+function parseAmount(v){if(typeof v==='number')return v;const s=String(v||'').replace(/,/g,'');const m=s.match(/([0-9]+(?:\.[0-9]+)?)/);if(!m)return 0;let n=Number(m[1]);if(/crore/i.test(s))n*=10000000;else if(/lakh|lac/i.test(s))n*=100000;else if(/k\b/i.test(s))n*=1000;return Math.round(n)}
+function localDate(v){if(!v)return'';if(v?.seconds)return new Date(v.seconds*1000).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});const d=new Date(v+'T00:00:00');return isNaN(d)?'':d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}
+function normalizeDeal(d){const amount=Number(d.amount)||parseAmount(d.value);return {...d,amount,status:d.status||'won'}}
+function render(){deals=deals.map(normalizeDeal);const activeDeals=deals.filter(d=>d.status==='won');const total=activeDeals.length,value=activeDeals.reduce((s,d)=>s+(d.amount||0),0),received=activeDeals.reduce((s,d)=>s+(Number(d.received)||0),0),pending=Math.max(0,value-received),won=contacts.filter(c=>['Won','Paid'].includes(c.status)).length,conv=contacts.length?Math.round(won/contacts.length*100):0;$('kDeals').textContent=total;$('kValue').textContent=money(value);$('kCollected').textContent=money(received);$('kPending').textContent=money(pending);$('kConversion').textContent=conv+'%';
+ $('dealRows').innerHTML=activeDeals.length?activeDeals.map(d=>{const p=d.paymentStatus||'Pending',cls=p==='Paid'?'pill':p==='Partially Paid'?'pill pending':'pill pending';return `<tr><td><b>${esc(d.customerName||'Unnamed')}</b><br><small>${esc(d.location||'')}</small></td><td>${esc(d.dealName||d.businessType||'Deal')}</td><td class="money">${money(d.amount||0)}</td><td><span class="${cls}">${esc(p)}</span></td><td>${esc(localDate(d.closedAt||d.createdAt)||'—')}</td><td><button class="btn" style="padding:7px 10px" onclick="editDeal('${esc(d.id)}')">Edit</button></td></tr>`}).join(''):'<tr><td colspan="6"><div class="empty">No active won deals yet. Move a customer to Won or add a deal manually.</div></td></tr>';
+ $('snapshot').innerHTML=`<div class="side-item"><b>Gross Deal Value</b><small>${money(value)}</small></div><div class="side-item"><b>Collected</b><small>${money(received)}</small></div><div class="side-item"><b>Pending Collection</b><small>${money(pending)}</small></div><div class="side-item"><b>Won Customers</b><small>${won} of ${contacts.length} leads · ${conv}% conversion</small></div>`;
+}
+function populateCustomers(){const s=$('dCustomer');s.innerHTML=contacts.map(c=>`<option value="${esc(c.id)}">${esc(c.name||'Unnamed')} — ${esc(c.status||'New')}</option>`).join('');if(!contacts.length)s.innerHTML='<option value="">No customers</option>'}
+function openNewDeal(){editId=null;populateCustomers();$('modalTitle').textContent='Add Deal';$('dName').value='';$('dAmount').value='';$('dPayment').value='Pending';$('dDate').value=todayISO();$('dReceived').value='0';$('dPaymentDate').value='';$('dMethod').value='Not recorded';$('dNotes').value='';syncPaymentFields();$('modal').classList.add('show')}
+function editDeal(id){const d=deals.find(x=>x.id===id);if(!d)return;editId=id;populateCustomers();$('modalTitle').textContent='Edit Deal';$('dCustomer').value=d.contactId||d.customerId||'';$('dName').value=d.dealName||'';$('dAmount').value=d.amount||parseAmount(d.value)||'';$('dPayment').value=d.paymentStatus||'Pending';$('dDate').value=d.closedAtISO||'';$('dReceived').value=Number(d.received)||0;$('dPaymentDate').value=d.paymentDateISO||'';$('dMethod').value=d.paymentMethod||'Not recorded';$('dNotes').value=d.notes||'';syncPaymentFields();$('modal').classList.add('show')}
+function closeModal(){$('modal').classList.remove('show')}
+function syncPaymentFields(){const amount=Math.max(0,Number($('dAmount').value)||0),received=Math.min(amount,Math.max(0,Number($('dReceived').value)||0));$('dReceived').value=received;const pending=Math.max(0,amount-received);$('pendingHint').textContent='Pending: '+money(pending);const status=amount>0&&received>=amount?'Paid':received>0?'Partially Paid':'Pending';$('dPayment').value=status;}
+async function saveDeal(){const cid=$('dCustomer').value,c=contacts.find(x=>x.id===cid);if(!cid||!c){toast('Select a customer',true);return}const amount=Math.max(0,Number($('dAmount').value)||0),received=Math.min(amount,Math.max(0,Number($('dReceived').value)||0));const paymentStatus=amount>0&&received>=amount?'Paid':received>0?'Partially Paid':'Pending';const data={contactId:cid,customerId:cid,customerName:c.name||'',businessType:c.businessType||'',type:c.type||'Customer',dealName:$('dName').value.trim()||c.req||c.requirement||'Deal',amount,value:amount?money(amount):c.budget||'',paymentStatus,received,pendingAmount:Math.max(0,amount-received),paymentDateISO:$('dPaymentDate').value||'',paymentMethod:$('dMethod').value||'Not recorded',closedAtISO:$('dDate').value||todayISO(),closedAt:$('dDate').value||todayISO(),notes:$('dNotes').value.trim(),stage:'Won',status:'won',source:c.source||'',location:(c.area?c.area+', ':'')+(c.city||''),updatedAt:serverTimestamp()};try{await setDoc(doc(db,'businesses',businessId,'deals',editId||cid),{...data,...(!editId?{createdAt:serverTimestamp()}: {})},{merge:true});if(c.status!=='Won'&&c.status!=='Paid')await updateDoc(doc(db,'businesses',businessId,'contacts',cid),{status:'Won',updatedAt:serverTimestamp()});closeModal();toast(editId?'Deal updated':'Deal created');}catch(e){console.error(e);toast(e.message||'Could not save deal',true)}}
+async function loadWorkspace(u){const userRef=doc(db,'users',u.uid);const us=await getDoc(userRef);let id=us.exists()?us.data()?.businessId:null,b=null;if(id){b=await getDoc(doc(db,'businesses',id));if(!b.exists())id=null}if(!id){const q=await getDocs(query(collection(db,'businesses'),where('ownerUid','==',u.uid)));const docs=q.docs.filter(x=>x.data()?.name);if(docs.length){b=docs.find(x=>String(x.data()?.status||'').toLowerCase()==='active')||docs[0];id=b.id;await setDoc(userRef,{uid:u.uid,email:u.email||'',displayName:u.displayName||'',businessId:id,businessName:b.data().name||'',role:'owner',templateId:b.data().templateId||'general',updatedAt:serverTimestamp()},{merge:true})}}if(!id)throw new Error('No Business OS workspace is linked to this Google account. Open Customers first.');businessId=id;businessProfile=b?.data()||(await getDoc(doc(db,'businesses',id))).data()||{};$('businessName').textContent=(businessProfile.name||'Business')+' — Deals';subscribe()}
+async function syncMissingWonDeals(){
+  try{
+    const ds=await getDocs(collection(db,'businesses',businessId,'deals'));
+    const existing=new Set(ds.docs.map(d=>d.id));
+    const wonContacts=contacts.filter(c=>['Won','Paid'].includes(String(c.status||'')));
+    const missing=wonContacts.filter(c=>!existing.has(c.id));
+    if(!missing.length)return;
+    await Promise.all(missing.map(c=>{
+      const amount=parseAmount(c.budget||c.value||0);
+      return setDoc(doc(db,'businesses',businessId,'deals',c.id),{
+        contactId:c.id,customerId:c.id,customerName:c.name||'',businessType:c.businessType||'',type:c.type||'Customer',
+        dealName:c.req||c.requirement||'Deal',amount,value:amount?money(amount):(c.budget||''),paymentStatus:'Pending',received:0,pendingAmount:amount,paymentDateISO:'',paymentMethod:'Not recorded',
+        closedAtISO:todayISO(),closedAt:todayISO(),stage:'Won',status:'won',source:c.source||'',
+        location:(c.area?c.area+', ':'')+(c.city||''),notes:c.note||c.notes||'',updatedAt:serverTimestamp(),createdAt:c.createdAt||serverTimestamp()
+      },{merge:true});
+    }));
+    toast(missing.length+' missing Won deal'+(missing.length===1?'':'s')+' synced');
+  }catch(e){console.error('Won deal sync failed',e);}
+}
+function subscribe(){
+  if(unsubC)unsubC();if(unsubD)unsubD();
+  unsubC=onSnapshot(collection(db,'businesses',businessId,'contacts'),async s=>{
+    contacts=s.docs.map(d=>({id:d.id,...d.data()}));
+    populateCustomers();render();
+    await syncMissingWonDeals();
+  },e=>toast(e.message||'Could not load customers',true));
+  unsubD=onSnapshot(collection(db,'businesses',businessId,'deals'),s=>{deals=s.docs.map(d=>({id:d.id,...d.data()}));render()},e=>toast(e.message||'Could not load deals',true));
+}
+$('dAmount').addEventListener('input',syncPaymentFields);$('dReceived').addEventListener('input',syncPaymentFields);
+$('googleBtn').onclick=async()=>{try{$('googleBtn').disabled=true;msg('Opening Google sign-in...');try{await signInWithPopup(auth,provider)}catch(e){if(['auth/popup-blocked','auth/popup-closed-by-user','auth/cancelled-popup-request','auth/operation-not-supported-in-this-environment'].includes(e.code)){await signInWithRedirect(auth,provider)}else throw e}}catch(e){msg(e.message||'Google sign-in failed');$('googleBtn').disabled=false}};
+try{await getRedirectResult(auth)}catch(e){msg(e.message||'Google sign-in failed')}
+onAuthStateChanged(auth,async u=>{if(!u){$('auth').classList.remove('hidden');$('app').classList.add('hidden');return}try{await loadWorkspace(u);$('auth').classList.add('hidden');$('app').classList.remove('hidden')}catch(e){console.error(e);msg(e.message||'Could not load deals');$('auth').classList.remove('hidden');$('app').classList.add('hidden')}});
+window.openNewDeal=openNewDeal;window.editDeal=editDeal;window.closeModal=closeModal;window.saveDeal=saveDeal;window.syncPaymentFields=syncPaymentFields;
+</script><script id="businessos-v36-nav-script">
+(function(){
+  const PAGE='deals';
+  const navHtml="<div class=\"bos36-topbar\" id=\"bos36Topbar\">\n  <a class=\"bos36-brand\" href=\"customer-list.html\"><span class=\"bos36-mark\">B</span><span class=\"bos36-brandcopy\"><b>BusinessOS</b><small>BUSINESS INTELLIGENCE</small></span></a>\n  <nav class=\"bos36-nav\" aria-label=\"BusinessOS navigation\">\n    <a data-page=\"overview\" href=\"customer-list.html\">\u2302 Overview</a>\n    <a data-page=\"customers\" href=\"customer-list.html\">\u25a6 Customers</a>\n    <a data-page=\"followups\" href=\"followups.html\">\u25f7 Follow-ups</a>\n    <a data-page=\"deals\" href=\"deals.html\">\u2713 Deals</a>\n    <a data-page=\"leads\" href=\"website-leads.html\">\u2197 Leads</a>\n    <a data-page=\"whatsapp\" href=\"whatsapp-center.html\">\u25c9 WhatsApp</a>\n    <a data-page=\"finder\" href=\"business-finder-app.html\">\u2315 Finder</a>\n    <span class=\"bos36-divider\"></span>\n    <a data-page=\"reports\" href=\"reports.html\">\u25a5 Reports</a>\n  </nav>\n  <div class=\"bos36-actions\"><a href=\"import-export.html\">\u2191 Import / Export</a></div>\n</div>";
+  function mount(){
+    if(document.getElementById('bos36Topbar')) return;
+    const app=document.getElementById('app'); if(!app) return;
+    const bar=document.createElement('div'); bar.id='bos36Topbar'; bar.className='bos36-topbar'; bar.innerHTML=navHtml;
+    const target=app.firstElementChild; if(target) app.insertBefore(bar,target); else app.prepend(bar);
+    bar.querySelectorAll('[data-page]').forEach(a=>{if(a.dataset.page===PAGE)a.classList.add('active')});
+  }
+  function applyPageClass(){document.body.classList.add('bos36-'+PAGE);}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{mount();applyPageClass()}); else {mount();applyPageClass()}
+})();
+</script>
+<style id="businessos-v36-deals">body.bos36-deals .app-main{max-width:1500px!important}.bos36-deals .top h1{font-size:30px!important}.bos36-deals .grid{margin-top:12px!important}.bos36-deals .table th{font-size:9px!important}.bos36-deals .table td{padding:12px 10px!important}.bos36-deals .modal-box{border-radius:18px!important}</style></body></html>
+
+<style id="businessos-v37-module-fix">
+/* V37 — module workspace correction: one module per page, full-width canvas. */
+.view-hidden{display:none!important;}
+body.bos36-module #app{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;padding:0 22px 52px!important;margin:0!important;}
+body.bos36-module .customers-page{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;}
+body.bos36-module .os-layout{display:block!important;width:100%!important;max-width:none!important;margin:0!important;}
+body.bos36-module .os-content{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;}
+body.bos36-module .page-head{display:none!important;}
+body.bos36-module #dashboardV2,body.bos36-module #summary,body.bos36-module #templatePipeline,body.bos36-module #customerList,body.bos36-module .source-panel,body.bos36-module #websiteLeads{display:none!important;}
+body.bos36-followups #followupCenter,body.bos36-website #websiteLeadCenter,body.bos36-whatsapp #whatsappCenter,body.bos36-finder #businessFinder{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;}
+body.bos36-followups #followupCenter .followup-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+body.bos36-finder #businessFinder .finder-shell{width:100%!important;max-width:none!important;}
+body.bos36-finder #businessFinder .finder-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;}
+body.bos36-finder #businessFinder .finder-panels{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)!important;}
+body.bos36-whatsapp #whatsappCenter{padding:20px!important;}
+body.bos36-whatsapp #whatsappCenter .wa-summary{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+body.bos36-website #websiteLeadCenter{padding:0!important;}
+body.bos36-website #websiteLeadCenter .website-lead-center-list{width:100%!important;}
+@media(max-width:900px){
+ body.bos36-module #app{padding:0 10px 36px!important;}
+ body.bos36-followups #followupCenter .followup-grid{grid-template-columns:1fr!important;}
+ body.bos36-finder #businessFinder .finder-grid,body.bos36-finder #businessFinder .finder-panels{grid-template-columns:1fr!important;}
+ body.bos36-whatsapp #whatsappCenter .wa-summary{grid-template-columns:1fr!important;}
+}
+</style>
