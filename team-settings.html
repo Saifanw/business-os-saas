@@ -1,150 +1,152 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Team & Settings — Business OS</title><link rel="stylesheet" href="assets/style.css">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Team &amp; Settings — BusinessOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#111827;--muted:#738096;--line:#e4e9f0;--soft:#f6f8fb;--blue:#315df6;--navy:#111b30;--green:#0b9460;--red:#d84a43;--amber:#a96e00}
-*{box-sizing:border-box}body{margin:0;background:#f4f6f9;color:var(--ink);font-family:Arial,sans-serif}.hidden{display:none!important}button,input,select{font:inherit}button{cursor:pointer}
-.nav{height:78px;padding:0 4.8%;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #e7eaf0;position:sticky;top:0;z-index:20}.brand{font-size:24px;font-weight:800;white-space:nowrap;text-decoration:none;color:inherit}.brand i{display:inline-grid;place-items:center;background:#142039;color:#fff;width:40px;height:40px;border-radius:11px;font-style:normal;margin-right:8px}.brand span{color:#2e61e8}.nav nav{display:flex;gap:30px;font-size:15px;color:#667085;font-weight:700}.nav nav a{text-decoration:none;color:inherit}.btn{background:#142039;color:#fff;padding:13px 19px;border-radius:12px;font-weight:800;text-decoration:none}
-.auth{min-height:calc(100vh - 78px);display:grid;place-items:center;padding:30px;background:radial-gradient(circle at 75% 25%,#e9e4ff 0,transparent 32%),radial-gradient(circle at 15% 80%,#e0f6ed 0,transparent 30%),#f4f6f9}.auth-card{width:min(470px,94vw);background:#fff;border:1px solid var(--line);border-radius:24px;padding:38px;box-shadow:0 25px 80px rgba(15,24,39,.12);text-align:center}.lock{width:58px;height:58px;margin:0 auto 18px;border-radius:17px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:24px}.auth-card h1{font-size:28px;margin:0 0 8px}.auth-card p{color:var(--muted);font-size:12px;line-height:1.6;margin:0 auto 24px}.google{width:100%;height:48px;border:1px solid #d8dee7;background:#fff;border-radius:11px;font-weight:900;font-size:12px}.msg{font-size:10px;margin-top:12px;color:var(--red);min-height:16px}
-.shell{min-height:calc(100vh - 78px);padding:24px 18px 50px}.layout{max-width:1450px;margin:0 auto;display:grid;grid-template-columns:225px minmax(0,1fr);gap:16px}.side{background:#fff;border:1px solid #e0e6ee;border-radius:16px;padding:15px;align-self:start;position:sticky;top:96px}.side-title{font-size:9px;letter-spacing:.16em;font-weight:900;color:#9aa5b6;padding:8px 10px}.side a{display:flex;align-items:center;gap:10px;padding:11px;border-radius:9px;color:#536177;text-decoration:none;font-size:11px;font-weight:800;margin:3px 0}.side a:hover,.side a.active{background:#eef3ff;color:var(--blue)}.side-divider{height:1px;background:#edf0f4;margin:12px 0}.content{min-width:0}.head{display:flex;justify-content:space-between;gap:15px;align-items:flex-end;margin-bottom:16px}.eyebrow{font-size:9px;letter-spacing:.18em;font-weight:900;color:var(--blue)}h1{font-size:29px;margin:5px 0}.head p{margin:0;color:var(--muted);font-size:11px}.session{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted)}.session button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;font-size:9px;font-weight:800}
-.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.card{background:#fff;border:1px solid #e1e7ef;border-radius:16px;overflow:hidden;margin-bottom:14px}.card-head{padding:15px 17px;border-bottom:1px solid #edf0f4;display:flex;justify-content:space-between;align-items:center;gap:10px}.card-head h2{margin:0;font-size:14px}.card-head p{margin:4px 0 0;color:var(--muted);font-size:9px}.card-body{padding:16px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field label{display:block;font-size:9px;font-weight:900;color:#66748a}.field input,.field select{width:100%;height:39px;border:1px solid #dce3ed;border-radius:9px;padding:0 10px;margin-top:5px;outline:none;font-size:10px;color:#172033;background:#fff}.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #315df612}.full{grid-column:1/-1}.primary{height:39px;border:0;border-radius:9px;background:var(--navy);color:#fff;padding:0 14px;font-size:10px;font-weight:900}.green{background:var(--green)}.soft-btn{height:34px;border:1px solid #dce3ed;border-radius:8px;background:#fff;padding:0 10px;font-size:9px;font-weight:900}.danger{color:var(--red);background:#fff7f6;border-color:#f0d0cd}.table{width:100%;border-collapse:collapse}.table th{text-align:left;color:#8a95a5;font-size:8px;text-transform:uppercase;letter-spacing:.08em;padding:10px 12px;border-bottom:1px solid #edf0f4}.table td{padding:12px;border-bottom:1px solid #edf0f4;font-size:10px;vertical-align:middle}.table tr:last-child td{border-bottom:0}.person{display:flex;align-items:center;gap:9px}.avatar{width:30px;height:30px;border-radius:9px;background:#eef3ff;color:var(--blue);display:grid;place-items:center;font-weight:900;font-size:9px}.person b{display:block;font-size:10px}.person small{display:block;color:var(--muted);margin-top:2px;font-size:8px}.pill{display:inline-flex;padding:4px 7px;border-radius:999px;font-size:8px;font-weight:900;background:#eef3ff;color:var(--blue)}.pill.green{background:#eaf8f2;color:#087f61}.pill.amber{background:#fff7df;color:#9a6a00}.pill.red{background:#fff0ee;color:#b23b34}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{border:1px solid #e5eaf0;border-radius:11px;padding:12px}.stat small{display:block;color:var(--muted);font-size:8px}.stat b{display:block;font-size:19px;margin-top:4px}.notice{padding:10px 12px;background:#f7f9fc;border-radius:9px;color:#728096;font-size:9px;line-height:1.5;margin-top:12px}.muted{color:var(--muted);font-size:9px}.toast{position:fixed;right:22px;bottom:22px;background:#142039;color:#fff;padding:11px 14px;border-radius:10px;font-size:10px;font-weight:800;box-shadow:0 12px 35px #14203933;z-index:100}.toast.error{background:#a72f29}.empty{text-align:center;color:var(--muted);padding:28px;font-size:10px}
-@media(max-width:980px){.layout{grid-template-columns:1fr}.side{position:static;display:flex;gap:4px;overflow:auto}.side-title,.side-divider{display:none}.side a{white-space:nowrap}.grid{grid-template-columns:1fr}}@media(max-width:600px){.nav nav{display:none}.head{align-items:flex-start;flex-direction:column}.form-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.table{min-width:700px}.table-wrap{overflow:auto}}
-</style><link rel="stylesheet" href="assets/premium-shell.css">
-
-<style id="businessos-v36-global">
-:root{--bos36-bg:#f4f7fb;--bos36-ink:#14213d;--bos36-muted:#6d7b91;--bos36-line:#dfe6f0;--bos36-blue:#2563eb;--bos36-soft:#eef4ff}
-body.app-page,body{background:linear-gradient(180deg,#f4f7fb 0%,#f8fafc 100%);color:var(--bos36-ink)}
-.bos36-topbar{display:flex;align-items:center;gap:20px;min-height:72px;padding:10px 14px 10px 16px;margin:0 0 18px;background:rgba(255,255,255,.96);border:1px solid var(--bos36-line);border-radius:18px;box-shadow:0 10px 30px rgba(18,37,68,.07);position:relative;z-index:10}
-.bos36-brand{display:flex;align-items:center;gap:10px;min-width:188px;text-decoration:none;color:var(--bos36-ink)}
-.bos36-mark{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-size:19px;font-weight:950;background:linear-gradient(145deg,#1d4ed8,#4f7cff);box-shadow:0 8px 18px rgba(37,99,235,.22);position:relative;overflow:hidden}
-.bos36-mark:after{content:"";position:absolute;width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-radius:50%;top:-7px;right:-7px}
-.bos36-brandcopy b{display:block;font-size:17px;letter-spacing:-.35px;line-height:1}.bos36-brandcopy small{display:block;font-size:7px;letter-spacing:.16em;font-weight:900;color:#8290a5;margin-top:5px}
-.bos36-nav{display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow:auto;scrollbar-width:none}.bos36-nav::-webkit-scrollbar{display:none}
-.bos36-nav a{height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0 11px;border:1px solid transparent;border-radius:10px;color:#607089;font-size:10px;font-weight:900;white-space:nowrap;text-decoration:none;transition:.16s ease}.bos36-nav a:hover{background:#f5f8fd;color:#2356b8}.bos36-nav a.active{background:var(--bos36-soft);border-color:#d7e4ff;color:#1f5bd7;box-shadow:inset 0 -2px 0 #2563eb}
-.bos36-divider{height:30px;width:1px;background:#e5eaf2;flex:none;margin:0 3px}.bos36-actions{display:flex;gap:7px;flex:none}.bos36-actions a{height:40px;padding:0 12px;display:inline-flex;align-items:center;border:1px solid #dce5f0;border-radius:10px;background:#fff;color:#35445d;font-size:10px;font-weight:900;text-decoration:none}
-/* full-width application canvas */
-body.app-page .premium-sidebar,body.app-page .os-sidebar,body.app-page .ie-sidebar,body.app-page .side{display:none!important}
-body.app-page .app-shell-grid,body.app-page .layout,body.app-page .ie-layout{display:block!important;max-width:none!important;width:100%!important}
-body.app-page .app-main,body.app-page .content,body.app-page .ie-content{width:100%!important;max-width:1500px!important;margin:0 auto!important;min-width:0!important}
-body.app-page .shell,body.app-page .ie-shell{max-width:none!important;width:100%!important;padding:18px 22px 48px!important}
-body.app-page .top{padding:0 4px 13px;margin:0 0 12px!important;align-items:center!important}.top h1{letter-spacing:-.8px}.top p{color:#728097!important}
-body.app-page .kpis{gap:10px!important}.kpi.card{min-height:70px!important;padding:13px 16px!important;border-radius:14px!important;box-shadow:0 8px 24px rgba(25,43,75,.045)!important}.kpi b{font-size:24px!important}.kpi small{font-size:10px!important}.kpi em{font-size:9px!important}
-body.app-page .card{border-color:#dfe6ef!important;border-radius:16px!important;box-shadow:0 10px 28px rgba(20,33,61,.045)!important}
-body.app-page .btn{border-radius:10px!important;font-weight:900!important}.bos36-topbar+*{min-width:0}
-/* reports/deals content density */
-body.bos36-report .grid{grid-template-columns:minmax(0,1fr) 340px!important}.bos36-report .table{min-width:0!important}.bos36-report .card{padding:18px!important}
-/* import/export */
-body.bos36-import .ie-content{max-width:1500px!important}.bos36-import .ie-head{margin-bottom:14px!important}.bos36-import .ie-layout{display:block!important}.bos36-import .ie-content>.ie-layout>*{min-width:0}.bos36-import .card{border-radius:16px!important;box-shadow:0 10px 28px rgba(20,33,61,.045)!important}
-/* team/settings */
-body.bos36-settings .content{max-width:1500px!important}.bos36-settings .layout{display:block!important}.bos36-settings .head{margin-bottom:14px!important}.bos36-settings .card{border-radius:16px!important;box-shadow:0 10px 28px rgba(20,33,61,.045)!important}
-/* module pages copied from the customer workspace */
-body.bos36-module .customers-shell{padding:18px 22px 48px!important;min-height:calc(100vh - 72px)!important}.bos36-module .customers-page{max-width:1500px!important;width:100%!important;margin:0 auto!important}.bos36-module .os-layout{display:block!important;max-width:none!important}.bos36-module .os-content{width:100%!important;max-width:none!important}.bos36-module .record-quickbar{display:none!important}.bos36-module #dashboardV2,.bos36-module .source-panel,#websiteLeads{display:none!important}.bos36-module .followup-center,.bos36-module .website-lead-center,#businessFinder,.bos36-module #whatsappCenter{border:1px solid #dfe6ef!important;border-radius:18px!important;background:#fff!important;box-shadow:0 12px 35px rgba(20,33,61,.055)!important}
-.bos36-module .followup-center{padding:20px!important}.bos36-module .followup-head h2,.bos36-module .website-lead-center-head h2{font-size:24px!important;letter-spacing:-.5px!important}.bos36-module .followup-grid{gap:12px!important}.bos36-module .followup-column{border-radius:13px!important;background:#fbfcfe!important}.bos36-module .followup-item{border-radius:11px!important;transition:.16s ease}.bos36-module .followup-item:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(20,33,61,.06)}
-.bos36-module .website-lead-center{padding:20px!important}.bos36-module .website-lead-center-toolbar{border-radius:12px!important;background:#f7f9fc!important;padding:10px!important}.bos36-module .website-lead-center-list{margin-top:12px!important}
-.bos36-module #businessFinder{padding:0!important}.bos36-module .finder-shell{padding:0!important}.bos36-module .finder-hero{border-radius:18px 18px 0 0!important}.bos36-module .finder-search,.bos36-module .finder-stats,.bos36-module .finder-panels,.bos36-module .finder-add{margin-left:0!important;margin-right:0!important}
-.bos36-module #whatsappCenter{padding:20px!important}.bos36-module .wa-summary{gap:10px!important}.bos36-module .wa-summary span{border-radius:12px!important}
-@media(max-width:1100px){.bos36-brand{min-width:150px}.bos36-nav a{padding:0 9px}.bos36-actions{display:none}.bos36-report .grid{grid-template-columns:1fr!important}}
-@media(max-width:900px){.bos36-topbar{flex-wrap:wrap;gap:8px;padding:9px}.bos36-brand{min-width:auto}.bos36-brandcopy{display:none}.bos36-nav{order:3;flex-basis:100%;width:100%}.bos36-divider{display:none}body.app-page .shell,body.app-page .ie-shell{padding:12px 10px 32px!important}.bos36-module .customers-shell{padding:12px 10px 32px!important}.bos36-module .followup-grid{grid-template-columns:1fr!important}.bos36-module .website-lead-center-head{flex-direction:column!important;align-items:flex-start!important}}
+:root{--ink:#0f172a;--mut:#64748b;--line:#e6eaf2;--bg:#f5f7fb;--blue:#2f5bff;--blue2:#1e40e0;--green:#0f9d6a;--amber:#d98a00;--red:#e0483f}
+*{box-sizing:border-box;margin:0}html,body{overflow-x:hidden}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}.hidden{display:none!important}:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.top{position:sticky;top:0;z-index:30;background:#ffffffee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1320px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:22px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;letter-spacing:-.02em}.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#4f7bff,#2446e0);color:#fff;display:grid;place-items:center;font-weight:800}
+.nav{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}
+.nav a{padding:8px 13px;border-radius:9px;color:var(--mut);font-weight:600;font-size:13px;white-space:nowrap}.nav a:hover{background:#f1f4fa;color:var(--ink)}
+.acts{display:flex;gap:10px;align-items:center}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:.15s;white-space:nowrap}.btn:hover{border-color:#c9d3e6;background:#f8faff}
+.btn.p{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 16px #2f5bff33}.btn.p:hover{background:var(--blue2)}.btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.menu{position:relative}.avatar{width:36px;height:36px;border-radius:50%;background:#e7edff;color:var(--blue);font-weight:700;display:grid;place-items:center;border:1px solid #d5defa}
+.dd{position:absolute;right:0;top:44px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 40px #0f172a1f;min-width:220px;padding:8px;z-index:40}.dd .em{padding:8px 10px;color:var(--mut);font-size:12px;border-bottom:1px solid var(--line);margin-bottom:6px;word-break:break-all}
+.dd a,.dd button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;font-size:13px;font-weight:600}.dd a:hover,.dd button:hover{background:#f3f6fc}
+main{max-width:1100px;margin:0 auto;padding:28px 24px 60px}
+.hero{margin-bottom:18px}.hero h1{font-size:28px;letter-spacing:-.03em;font-weight:800}.hero p{color:var(--mut);margin-top:2px}
+.role{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;background:#eaf0ff;color:var(--blue);text-transform:capitalize;margin-left:4px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px #0f172a08}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 16px;font-weight:600;font-size:13px}.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:start}
+.pad{padding:22px}.pad h2{font-size:16px;font-weight:700}.pad .sub{color:var(--mut);font-size:12.5px;margin:2px 0 18px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px}.fg label{display:grid;gap:5px;font-size:12px;font-weight:600;color:var(--mut)}.fg .full{grid-column:1/-1}
+input,select,textarea{font-weight:500}
+input[type=text],input[type=email],input[type=url],input[type=tel],select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13.5px;color:var(--ink);background:#fff;transition:.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2f5bff1f;outline:0}input.bad{border-color:var(--red)}.fe{color:var(--red);font-size:11.5px;font-weight:500;min-height:0}
+.mf{display:flex;gap:10px;justify-content:flex-end;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}.mf .dirty{margin-right:auto;color:var(--amber);font-size:12.5px;font-weight:600}
+.pv{display:flex;gap:12px;align-items:center;padding:14px;background:#f8faff;border:1px solid var(--line);border-radius:12px;margin-bottom:16px}.pv .logo{width:46px;height:46px;font-size:18px;border-radius:13px}.pv b{display:block;font-size:15px}.pv span{color:var(--mut);font-size:12.5px}
+.link{display:flex;gap:8px}.link input{flex:1;min-width:0;font-size:12px;color:var(--mut)}
+.kv{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:9px 0;border-top:1px solid var(--line)}.kv:first-of-type{border-top:0}.kv span{color:var(--mut)}.kv b{text-align:right;word-break:break-all}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}.stat{border:1px solid var(--line);border-radius:12px;padding:12px 14px}.stat b{display:block;font-size:22px;font-weight:800}.stat span{color:var(--mut);font-size:12px}
+.inv{display:grid;grid-template-columns:minmax(0,1fr) 130px auto;gap:10px;margin-bottom:6px}
+.note{background:#fff8e6;border:1px solid #f6e1a8;color:#7a5200;border-radius:10px;padding:10px 12px;font-size:12.5px;margin:10px 0 18px}
+.tr{display:grid;grid-template-columns:minmax(0,2fr) 90px 90px 235px;gap:12px;align-items:center;padding:13px 0;border-top:1px solid var(--line)}
+.who{display:flex;gap:12px;align-items:center;min-width:0}.av{width:38px;height:38px;border-radius:50%;background:#eaf0ff;color:var(--blue);display:grid;place-items:center;font-weight:700;font-size:12px;flex:none}.who b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.who span{display:block;color:var(--mut);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:#eef2f8;color:#475569;text-transform:capitalize;text-align:center}.tag.active{background:#e3f7ee;color:#0a7a50}.tag.disabled{background:#fdecea;color:var(--red)}.tag.owner{background:#efe8ff;color:#5b34d6}
+.ra{display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap}.mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 11px;font-size:12px;font-weight:700;white-space:nowrap}.mini:hover{background:#f5f8ff}.mini.d{color:var(--red)}.mini.x{padding:7px 9px;color:#94a3b8}.mini.x:hover{color:var(--red);border-color:#f3c1bb}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.roles div{border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--mut)}.roles b{display:block;color:var(--ink);font-size:13px;margin-bottom:2px}
+.track{height:10px;border-radius:99px;background:#eef2f8;overflow:hidden;margin:10px 0 6px}.track i{display:block;height:100%;background:var(--blue);border-radius:99px}.track i.w{background:var(--amber)}.track i.f{background:var(--red)}
+.err{background:#fff4f2;border:1px solid #f3c1bb;color:#9b2c22;border-radius:12px;padding:12px 16px;margin-bottom:14px}
+.sk{height:16px;border-radius:8px;background:linear-gradient(90deg,#eef2f8,#f8faff,#eef2f8);background-size:200% 100%;animation:sk 1.2s infinite;margin:10px 0}@keyframes sk{to{background-position:-200% 0}}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:11px;font-weight:600;z-index:90}.toast.bad{background:var(--red)}
+.auth{min-height:70vh;display:grid;place-items:center}.auth .card{max-width:380px;text-align:center;padding:34px}.auth h2{font-size:22px;margin:10px 0 6px}.auth p{color:var(--mut);margin-bottom:18px}
+@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){.top-in{padding:10px 14px 0;gap:10px;flex-wrap:wrap;height:auto}.nav{order:3;flex-basis:100%;padding-bottom:8px}.acts .btn{display:none}main{padding:18px 14px 50px}.hero h1{font-size:23px}.fg,.roles,.inv{grid-template-columns:1fr}.tr{grid-template-columns:minmax(0,1fr) auto auto;gap:8px}.tr .tag{align-self:center}.tr .ra{grid-column:1/-1;justify-content:flex-start}.pad{padding:16px}}
 </style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="customers.html"><span class="logo">B</span>BusinessOS</a>
+  <nav class="nav"><a href="customers.html">Overview</a><a href="customer-list.html">Customers</a><a href="followups.html">Follow-ups</a><a href="deals.html">Deals</a><a href="website-leads.html">Leads</a><a href="whatsapp-center.html">WhatsApp</a><a href="business-finder-app.html">Finder</a><a href="reports.html">Reports</a></nav>
+  <div class="acts"><a class="btn p" href="customer-list.html?add=1">＋ Add Customer</a>
+    <div class="menu"><button class="avatar" id="avBtn" aria-label="Account">?</button><div class="dd hidden" id="dd"><div class="em" id="ddEm"></div><a href="import-export.html#import-section">↑ Import customers</a><a href="import-export.html#export-section">↓ Export data</a><a href="team-settings.html" style="color:var(--blue)">⚙ Team &amp; settings</a><a href="subscription.html">Plan &amp; billing</a><button id="out">Logout</button></div></div></div>
+</div></header>
+<main>
+  <div id="auth" class="auth hidden"><div class="card"><div class="logo" style="margin:auto;width:46px;height:46px;font-size:20px">B</div><h2>Welcome to BusinessOS</h2><p>Sign in to manage your business profile and team.</p><button class="btn p" id="gbtn" style="width:100%;justify-content:center">Continue with Google</button><p id="aerr" style="color:var(--red);font-size:12px;margin-top:12px"></p></div></div>
+  <div id="app" class="hidden">
+    <div id="err" class="err hidden"></div>
+    <section class="hero"><h1>Team &amp; settings</h1><p id="sub">Loading…</p></section>
+    <div class="chips" id="chips"></div>
+    <div id="body"><div class="card pad"><div class="sk"></div><div class="sk" style="width:70%"></div><div class="sk" style="width:85%"></div></div></div>
+  </div>
+</main>
+<div id="toast" class="toast hidden"></div>
 
-<style id="businessos-v38-nav-polish">
-/* V38 — larger, clearer BusinessOS navigation */
-.bos36-topbar{min-height:78px!important;height:auto!important;padding:10px 16px!important;gap:16px!important;border-radius:18px!important;}
-.bos36-brand{min-width:235px!important;gap:10px!important;}
-.bos36-mark{width:46px!important;height:46px!important;border-radius:13px!important;font-size:20px!important;}
-.bos36-brandcopy b{font-size:16px!important;line-height:1.1!important;}
-.bos36-brandcopy small{font-size:7px!important;letter-spacing:.14em!important;}
-.bos36-nav{gap:5px!important;}
-.bos36-nav a{height:44px!important;padding:0 14px!important;border-radius:11px!important;font-size:11px!important;font-weight:900!important;}
-.bos36-nav a.active{box-shadow:inset 0 -3px 0 #2563eb!important;}
-.bos36-actions a{height:44px!important;padding:0 16px!important;font-size:11px!important;border-radius:11px!important;}
-@media(max-width:1200px){.bos36-brand{min-width:190px!important}.bos36-nav a{padding:0 10px!important;font-size:10px!important}}
-@media(max-width:980px){.bos36-brand{min-width:auto!important}.bos36-brandcopy{display:none!important}.bos36-nav a{padding:0 9px!important}}
-</style>
-</head><body class="app-page">
-<header class="nav"><a class="brand" href="index.html"><i>B</i>Business<span>OS</span></a><nav><a href="how-it-works.html">How it works</a><a href="customers.html">Customers</a><a href="features.html">Features</a><a href="business-types.html">Business Types</a><a href="pricing.html">Pricing</a><a href="admin.html">Admin</a></nav><a class="btn" href="demo.html">Live Demo</a></header>
-<section id="auth" class="auth"><div class="auth-card"><div class="lock">⚙</div><h1>Team & Settings</h1><p>Business profile, team members and workspace settings ko ek jagah manage karein.</p><button id="googleBtn" class="google">🔐 Continue with Google</button><div id="msg" class="msg"></div></div></section>
-<main id="app" class="shell hidden"><div class="layout">
-<aside class="side"><div class="side-title">WORKSPACE</div><a href="customers.html">⌂ <span>Overview</span></a><a href="customers.html#customerList">👥 <span>Customers</span></a><a href="customers.html#customerList">◷ <span>Follow-ups</span></a><a href="deals.html">✓ <span>Deals</span></a><a href="customers.html#businessFinder">⌕ <span>Business Finder</span></a><div class="side-divider"></div><div class="side-title">MANAGE</div><a href="reports.html">▥ <span>Reports</span></a><a href="import-export.html">⇅ <span>Import / Export</span></a><a class="active" href="team-settings.html">⚙ <span>Team & Settings</span></a><a href="subscription.html">◇ <span>Plans & Limits</span></a></aside>
-<section class="content"><div class="head"><div><div class="eyebrow">BUSINESS OS · CONTROL CENTER</div><h1 id="pageTitle">Team & Settings</h1><p id="pageSub">Manage your business profile and people who work with you.</p></div><div class="session"><span id="userEmail"></span><button onclick="logout()">Logout</button></div></div>
-<div id="managerOnly" class="hidden"><div class="grid"><div class="card"><div class="card-head"><div><h2>Business Profile</h2><p>Ye information aapke workspace ke default profile mein save hogi.</p></div><span class="pill green">Workspace</span></div><div class="card-body"><form id="businessForm"><div class="form-grid"><div class="field"><label>Business Name<input id="bName" required></label></div><div class="field"><label>Business Type<input id="bType"></label></div><div class="field"><label>Phone<input id="bPhone"></label></div><div class="field"><label>WhatsApp<input id="bWhatsApp"></label></div><div class="field"><label>City<input id="bCity"></label></div><div class="field"><label>Area<input id="bArea"></label></div><div class="field full"><label>Website<input id="bWebsite" placeholder="https://..."></label></div><div class="field full"><label>Description<input id="bDescription"></label></div></div><div style="margin-top:13px"><button class="primary" type="submit">Save Business Settings</button></div></form></div></div>
-<div class="card"><div class="card-head"><div><h2>Workspace Access</h2><p>Invite a teammate by email. They can join with the same Google account.</p></div><span class="pill">Team</span></div><div class="card-body"><div class="stats"><div class="stat"><small>Total Team</small><b id="statTeam">1</b></div><div class="stat"><small>Active</small><b id="statActive">1</b></div><div class="stat"><small>Pending</small><b id="statPending">0</b></div></div><div class="notice">Email sending is not automatic yet. Invitation is stored inside BusinessOS; the teammate signs in with the invited Google email to join.</div></div></div></div>
-<div class="card"><div class="card-head"><div><h2>Invite Team Member</h2><p>Owner/Admin can create a pending workspace invitation.</p></div></div><div class="card-body"><form id="inviteForm"><div class="form-grid"><div class="field"><label>Team Member Email<input id="inviteEmail" type="email" placeholder="name@company.com" required></label></div><div class="field"><label>Role<select id="inviteRole"><option value="sales">Sales</option><option value="admin">Admin</option></select></label></div></div><div style="margin-top:12px"><button class="primary green" type="submit">＋ Create Invitation</button></div></form><div class="notice">Admin = workspace management access. Sales = day-to-day CRM work. Role enforcement inside every module will be tightened further as the SaaS permission layer evolves.</div></div></div>
-<div class="card"><div class="card-head"><div><h2>Team Members & Invitations</h2><p>Owner and invited teammates.</p></div></div><div class="table-wrap"><table class="table"><thead><tr><th>Member</th><th>Role</th><th>Status</th><th>Created</th><th>Action</th></tr></thead><tbody id="teamRows"></tbody></table></div></div></div>
-<div id="memberView" class="card hidden"><div class="card-head"><div><h2>Your Workspace</h2><p id="memberIntro">You are a team member of this business.</p></div><span id="memberRole" class="pill green">Sales</span></div><div class="card-body"><div class="stats"><div class="stat"><small>Business</small><b id="memberBusiness">—</b></div><div class="stat"><small>Your Role</small><b id="memberRoleText">—</b></div><div class="stat"><small>Access</small><b>Active</b></div></div><div class="notice">Aapko workspace owner ne invite kiya hai. CRM work ke liye Customers, Follow-ups, Deals aur Business Finder use kar sakte hain.</div></div></div>
-</section></div></main><div id="toast" class="toast hidden"></div>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,doc,getDoc,setDoc,updateDoc,collection,collectionGroup,query,where,getDocs,serverTimestamp,deleteDoc}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-const cfg={apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80",measurementId:"G-85D45ENBLK"};
-const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();let currentUser=null,businessId=null,business={},userRole='sales',isManager=false,invites=[];const $=id=>document.getElementById(id);
-function toast(t,error=false){const x=$('toast');x.textContent=t;x.className='toast'+(error?' error':'');clearTimeout(window.__t);window.__t=setTimeout(()=>x.classList.add('hidden'),2600)}function msg(t){$('msg').textContent=t||''}function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}function ini(v){return String(v||'?').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase()}
-async function resolveWorkspace(u){
- const us=await getDoc(doc(db,'users',u.uid));
- if(us.exists()&&us.data()?.businessId){businessId=us.data().businessId;userRole=String(us.data()?.role||'sales');}
- if(!businessId){const inv=await getDocs(query(collectionGroup(db,'teamInvites'),where('email','==',(u.email||'').toLowerCase()),where('status','==','active')));if(!inv.empty){const d=inv.docs[0];businessId=d.ref.parent.parent.id;userRole=String(d.data()?.role||'sales');}}
- if(!businessId){const qs=await getDocs(query(collection(db,'businesses'),where('ownerUid','==',u.uid)));const named=qs.docs.filter(d=>d.data()?.name);if(named.length){businessId=named[0].id;userRole='owner';}}
- if(!businessId)throw new Error('No Business OS workspace is linked to this Google account. Open Customers first or ask the owner for an invitation.');
- const bs=await getDoc(doc(db,'businesses',businessId));if(!bs.exists())throw new Error('Workspace not found.');business=bs.data();
- const email=(u.email||'').toLowerCase();
- if(userRole!=='owner'&&userRole!=='admin'){
-   const inv=await getDoc(doc(db,'businesses',businessId,'teamInvites',email));
-   if(!inv.exists()||inv.data()?.status!=='active')throw new Error('Your team access is not active. Ask the owner to enable your invitation.');
- }
- isManager=userRole==='owner'||userRole==='admin'||business.ownerUid===u.uid;
- if(!us.exists()) await setDoc(doc(db,'users',u.uid),{uid:u.uid,email:u.email||'',displayName:u.displayName||'',businessId,businessName:business.name||'',role:userRole,templateId:business.templateId||'general',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
- else if(us.data()?.businessId!==businessId||us.data()?.role!==userRole) await setDoc(doc(db,'users',u.uid),{uid:u.uid,email:u.email||'',displayName:u.displayName||'',businessId,businessName:business.name||'',role:userRole,updatedAt:serverTimestamp()},{merge:true});
-}
-function renderBusiness(){for(const [id,key] of [['bName','name'],['bType','businessType'],['bPhone','phone'],['bWhatsApp','whatsapp'],['bCity','city'],['bArea','area'],['bWebsite','website'],['bDescription','description']])$(id).value=business[key]||'';$('pageTitle').textContent=(business.name||'Business')+' · Team & Settings';$('userEmail').textContent=currentUser?.email||'';if(isManager)$('managerOnly').classList.remove('hidden');else{$('managerOnly').classList.add('hidden');$('memberView').classList.remove('hidden');$('memberBusiness').textContent=business.name||'—';$('memberRoleText').textContent=userRole;$('memberRole').textContent=userRole.toUpperCase();}}
-async function loadInvites(){if(!isManager)return;const s=await getDocs(collection(db,'businesses',businessId,'teamInvites'));invites=s.docs.map(d=>({id:d.id,...d.data()}));renderInvites()}
-function renderInvites(){const rows=[{id:'owner',email:business.ownerEmail||currentUser?.email||'',name:business.ownerName||'Business Owner',role:'owner',status:'active',createdAt:business.createdAt},...invites];$('statTeam').textContent=rows.length;$('statActive').textContent=rows.filter(x=>x.status==='active').length;$('statPending').textContent=rows.filter(x=>x.status==='pending').length;$('teamRows').innerHTML=rows.map(x=>`<tr><td><div class="person"><div class="avatar">${ini(x.name||x.email)}</div><div><b>${esc(x.name||x.email)}</b><small>${esc(x.email)}</small></div></div></td><td><span class="pill">${esc(x.role)}</span></td><td><span class="pill ${x.status==='active'?'green':x.status==='disabled'?'red':'amber'}">${esc(x.status||'pending')}</span></td><td>${x.createdAt?.toDate?x.createdAt.toDate().toLocaleDateString('en-IN'):'—'}</td><td>${x.id==='owner'?'<span class="muted">Owner</span>':`<button class="soft-btn ${x.status==='active'?'danger':''}" onclick="toggleInvite('${encodeURIComponent(x.id)}','${x.status==='active'?'disabled':'active'}')">${x.status==='active'?'Disable':'Activate'}</button>`}</td></tr>`).join('')}
-window.toggleInvite=async(encoded,status)=>{const email=decodeURIComponent(encoded);try{await updateDoc(doc(db,'businesses',businessId,'teamInvites',email),{status,updatedAt:serverTimestamp()});toast(status==='active'?'Member activated':'Member disabled');await loadInvites()}catch(e){toast(e.message||'Could not update invitation',true)}};
-$('businessForm').onsubmit=async e=>{e.preventDefault();if(!isManager)return;try{const data={name:$('bName').value.trim(),businessType:$('bType').value.trim(),phone:$('bPhone').value.trim(),whatsapp:$('bWhatsApp').value.trim(),city:$('bCity').value.trim(),area:$('bArea').value.trim(),website:$('bWebsite').value.trim(),description:$('bDescription').value.trim(),updatedAt:serverTimestamp()};await updateDoc(doc(db,'businesses',businessId),data);Object.assign(business,data);toast('Business settings saved')}catch(e){toast(e.message||'Could not save settings',true)}};
-$('inviteForm').onsubmit=async e=>{e.preventDefault();if(!isManager)return;const email=$('inviteEmail').value.trim().toLowerCase(),role=$('inviteRole').value;if(!email)return;try{const ref=doc(db,'businesses',businessId,'teamInvites',email);const old=await getDoc(ref);if(old.exists()&&old.data()?.status==='active'){toast('This email is already active',true);return}await setDoc(ref,{email,role,status:'active',businessId,invitedBy:currentUser.uid,invitedByEmail:currentUser.email||'',createdAt:old.exists()?old.data()?.createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});$('inviteForm').reset();toast('Invitation created');await loadInvites()}catch(e){toast(e.message||'Could not create invitation',true)}};
-async function logout(){await signOut(auth)}window.logout=logout;
-async function boot(u){try{msg('');currentUser=u;await resolveWorkspace(u);renderBusiness();$('auth').classList.add('hidden');$('app').classList.remove('hidden');if(isManager)await loadInvites()}catch(e){console.error(e);msg(e.message||'Could not open workspace.');$('googleBtn').disabled=false}}
-$('googleBtn').onclick=async()=>{try{$('googleBtn').disabled=true;msg('Opening Google sign-in...');await signInWithPopup(auth,provider)}catch(e){if(['auth/popup-blocked','auth/popup-closed-by-user','auth/cancelled-popup-request'].includes(e.code)){await signInWithRedirect(auth,provider)}else{msg(e.message||'Google sign-in failed.');$('googleBtn').disabled=false}}};
-getRedirectResult(auth).catch(e=>console.warn(e));onAuthStateChanged(auth,u=>{if(u)boot(u);else{$('auth').classList.remove('hidden');$('app').classList.add('hidden')}});
-</script><script id="businessos-v36-nav-script">
-(function(){
-  const PAGE='settings';
-  const navHtml="<div class=\"bos36-topbar\" id=\"bos36Topbar\">\n  <a class=\"bos36-brand\" href=\"customer-list.html\"><span class=\"bos36-mark\">B</span><span class=\"bos36-brandcopy\"><b>BusinessOS</b><small>BUSINESS INTELLIGENCE</small></span></a>\n  <nav class=\"bos36-nav\" aria-label=\"BusinessOS navigation\">\n    <a data-page=\"overview\" href=\"customer-list.html\">\u2302 Overview</a>\n    <a data-page=\"customers\" href=\"customer-list.html\">\u25a6 Customers</a>\n    <a data-page=\"followups\" href=\"followups.html\">\u25f7 Follow-ups</a>\n    <a data-page=\"deals\" href=\"deals.html\">\u2713 Deals</a>\n    <a data-page=\"leads\" href=\"website-leads.html\">\u2197 Leads</a>\n    <a data-page=\"whatsapp\" href=\"whatsapp-center.html\">\u25c9 WhatsApp</a>\n    <a data-page=\"finder\" href=\"business-finder-app.html\">\u2315 Finder</a>\n    <span class=\"bos36-divider\"></span>\n    <a data-page=\"reports\" href=\"reports.html\">\u25a5 Reports</a>\n  </nav>\n  <div class=\"bos36-actions\"><a href=\"import-export.html\">\u2191 Import / Export</a></div>\n</div>";
-  function mount(){
-    if(document.getElementById('bos36Topbar')) return;
-    const app=document.getElementById('app'); if(!app) return;
-    const bar=document.createElement('div'); bar.id='bos36Topbar'; bar.className='bos36-topbar'; bar.innerHTML=navHtml;
-    const target=app.firstElementChild; if(target) app.insertBefore(bar,target); else app.prepend(bar);
-    bar.querySelectorAll('[data-page]').forEach(a=>{if(a.dataset.page===PAGE)a.classList.add('active')});
-  }
-  function applyPageClass(){document.body.classList.add('bos36-'+PAGE);}
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{mount();applyPageClass()}); else {mount();applyPageClass()}
-})();
+import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import{getFirestore,collection,collectionGroup,doc,getDoc,getDocs,onSnapshot,query,where,updateDoc,setDoc,deleteDoc,serverTimestamp,getCountFromServer}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
+const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const clean=v=>String(v??"").replace(/["'`]+/g,"").trim(),ini=n=>clean(n||"?").split(/[\s@.]+/).filter(Boolean).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"?";
+const FREE_LIMIT=10,PAID=["starter","growth","custom","business","paid"],F=[["name","Business name","text",1],["businessType","Business type","text"],["phone","Phone","tel"],["whatsapp","WhatsApp number","tel"],["city","City","text"],["area","Area","text"],["website","Website","url"],["description","Short description","ta",1]];
+let user,bizId,biz={},role="sales",manager=false,tab="profile",invites=[],usage=null,unsubI,form={};
+const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),2600)};
+const dt=v=>{const d=v?.toDate?v.toDate():v?.seconds?new Date(v.seconds*1000):null;return d?d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"—"};
+const formUrl=()=>{const u=new URL("lead-capture.html",location.href);u.searchParams.set("business",bizId);u.searchParams.set("template",biz.templateId||"general");u.searchParams.set("businessName",biz.name||"Business");return u.href};
+async function resolve(u){let id=null,r="sales";
+  const us=await getDoc(doc(db,"users",u.uid));if(us.exists()&&us.data().businessId){id=us.data().businessId;r=String(us.data().role||"sales")}
+  if(!id){try{const q=await getDocs(query(collectionGroup(db,"teamInvites"),where("email","==",(u.email||"").toLowerCase()),where("status","==","active")));if(!q.empty){const d=q.docs[0];id=d.ref.parent.parent.id;r=String(d.data().role||"sales")}}catch(e){console.warn("invite lookup",e)}}
+  if(!id){id=u.uid;r="owner"}
+  const bs=await getDoc(doc(db,"businesses",id));if(!bs.exists())throw new Error("No BusinessOS workspace is linked to this Google account.");
+  bizId=id;biz=bs.data();role=r;manager=["owner","admin"].includes(r)||biz.ownerUid===u.uid||id===u.uid;if(id===u.uid||biz.ownerUid===u.uid)role="owner";
+  if(!manager){const inv=await getDoc(doc(db,"businesses",id,"teamInvites",(u.email||"").toLowerCase()));if(!inv.exists()||inv.data().status!=="active")throw new Error("Your team access is not active. Ask the owner to enable your invitation.")}}
+async function loadUsage(){try{const[c,l]=await Promise.all([getCountFromServer(collection(db,"businesses",bizId,"contacts")),getCountFromServer(query(collection(db,"publicLeads"),where("businessId","==",bizId)))]);usage=c.data().count+l.data().count}catch(e){console.warn("usage",e);usage=null}}
+function head(){const nm=clean(biz.name)||"Your business";$("sub").innerHTML=`${esc(nm)} · you are <span class="role">${esc(role)}</span>`;
+  const T=manager?[["profile","Business profile"],["team","Team"],["plan","Plan & workspace"]]:[["profile","My access"]];if(!T.some(t=>t[0]===tab))tab=T[0][0];
+  $("chips").innerHTML=T.map(t=>`<button class="chip${tab===t[0]?" on":""}" data-tab="${t[0]}">${t[1]}</button>`).join("")}
+function render(){head();$("body").innerHTML=!manager?member():tab==="profile"?profile():tab==="team"?team():plan();if(manager&&tab==="profile")bindForm()}
+function member(){return`<div class="card pad"><h2>Your access</h2><div class="sub">You are a team member of this workspace.</div><div class="kv"><span>Business</span><b>${esc(clean(biz.name)||"—")}</b></div><div class="kv"><span>Your role</span><b style="text-transform:capitalize">${esc(role)}</b></div><div class="kv"><span>Signed in as</span><b>${esc(user.email||"")}</b></div><div class="note">You can work with customers, follow-ups and deals. Only the owner or an admin can change business settings and manage the team.</div></div>`}
+function profile(){const url=formUrl();return`<div class="grid"><form class="card pad" id="bf" novalidate><h2>Business profile</h2><div class="sub">Used across your workspace and on your public enquiry form.</div>
+  <div class="fg">${F.map(([k,l,t,full])=>`<label class="${full?"full":""}">${l}${t==="ta"?`<textarea id="f_${k}" rows="3" maxlength="300"></textarea>`:`<input id="f_${k}" type="${t==="tel"?"tel":t}" ${k==="businessType"?'list="types"':""}>`}<span class="fe" id="e_${k}"></span></label>`).join("")}</div>
+  <datalist id="types"><option>Real Estate</option><option>Insurance</option><option>Education</option><option>Clinic</option><option>Retail</option><option>Agency</option><option>Services</option><option>Other</option></datalist>
+  <div class="mf"><span class="dirty hidden" id="dirty">● Unsaved changes</span><button type="button" class="btn" id="discard" disabled>Discard</button><button type="submit" class="btn p" id="save" disabled>Save changes</button></div></form>
+  <div style="display:grid;gap:16px"><div class="card pad"><h2>How you appear</h2><div class="sub">Preview of your business identity.</div><div class="pv"><div class="logo" id="pvL">${esc(ini(biz.name))}</div><div><b id="pvN">${esc(clean(biz.name)||"Your business")}</b><span id="pvS">${esc([biz.businessType,biz.city].map(clean).filter(Boolean).join(" · ")||"Add type and city")}</span></div></div>
+  <h2 style="font-size:13px">Your enquiry form</h2><div class="sub" style="margin-bottom:10px">Share it to collect leads automatically.</div><div class="link"><input type="text" readonly value="${esc(url)}" aria-label="Enquiry form link"><button class="btn" id="cp" type="button">Copy</button></div></div></div></div>`}
+function bindForm(){F.forEach(([k])=>{form[k]=clean(biz[k]);const el=$("f_"+k);el.value=biz[k]||"";el.addEventListener("input",chk)});
+  $("cp").onclick=async()=>{try{await navigator.clipboard.writeText(formUrl());toast("Form link copied")}catch(e){toast("Press Ctrl+C to copy",true)}};
+  $("discard").onclick=()=>{F.forEach(([k])=>$("f_"+k).value=biz[k]||"");chk()};$("bf").onsubmit=saveProfile}
+function vals(){const o={};F.forEach(([k])=>o[k]=$("f_"+k).value.trim());return o}
+function chk(){const v=vals(),d=F.some(([k])=>v[k]!==clean(biz[k])&&v[k]!==(biz[k]||""));$("save").disabled=!d;$("discard").disabled=!d;$("dirty").classList.toggle("hidden",!d);
+  $("pvN").textContent=v.name||"Your business";$("pvL").textContent=ini(v.name);$("pvS").textContent=[v.businessType,v.city].filter(Boolean).join(" · ")||"Add type and city"}
+async function saveProfile(e){e.preventDefault();const v=vals();let ok=true;
+  const bad=(k,m)=>{$("e_"+k).textContent=m;$("f_"+k).classList.toggle("bad",!!m);if(m)ok=false};F.forEach(([k])=>bad(k,""));
+  if(!v.name)bad("name","Business name is required");
+  if(v.phone&&v.phone.replace(/\D/g,"").length<10)bad("phone","Enter a valid 10-digit number");if(v.whatsapp&&v.whatsapp.replace(/\D/g,"").length<10)bad("whatsapp","Enter a valid 10-digit number");
+  if(v.website&&!/^https?:\/\/.+\..+/i.test(v.website))bad("website","Start with http:// or https://");if(!ok)return;
+  try{$("save").disabled=true;await updateDoc(doc(db,"businesses",bizId),{...v,updatedAt:serverTimestamp()});Object.assign(biz,v);toast("Business settings saved");head();chk()}catch(x){console.error(x);toast(x.message||"Could not save settings",true);$("save").disabled=false}}
+function team(){const rows=[{id:"owner",email:biz.ownerEmail||(role==="owner"?user.email:""),name:biz.ownerName||"Business owner",role:"owner",status:"active",createdAt:biz.createdAt}].concat(invites.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)));
+  const act=rows.filter(r=>r.status==="active").length;
+  return`<div class="card pad"><h2>Team members</h2><div class="sub">Invite people who work with you. They sign in with the same Google account.</div>
+  <div class="stats"><div class="stat"><b>${rows.length}</b><span>Total</span></div><div class="stat"><b>${act}</b><span>Active</span></div><div class="stat"><b>${rows.length-act}</b><span>Disabled</span></div></div>
+  <form class="inv" id="invf" novalidate><input id="ie" type="email" placeholder="teammate@gmail.com" aria-label="Teammate email"><select id="ir" aria-label="Role"><option value="sales">Sales</option><option value="admin">Admin</option></select><button class="btn p" type="submit">Invite</button></form>
+  <div class="note">Email is not sent automatically. After inviting, tap <b>Share</b> to send the sign-in link on WhatsApp.</div>
+  ${rows.map(r=>`<div class="tr"><div class="who"><div class="av">${esc(ini(r.name||r.email))}</div><div style="min-width:0"><b>${esc(r.id==="owner"?r.name:r.email)}</b><span>${esc(r.id==="owner"?r.email:"Invited "+dt(r.createdAt))}</span></div></div><span class="tag ${r.role==="owner"?"owner":""}">${esc(r.role)}</span><span class="tag ${esc(r.status||"active")}">${esc(r.status||"active")}</span>
+  <div class="ra">${r.id==="owner"?'<span style="color:var(--mut);font-size:12px">Owner</span>':`<a class="mini" target="_blank" rel="noopener" href="${share(r)}">Share</a><button class="mini ${r.status==="active"?"d":""}" data-tg="${encodeURIComponent(r.id)}" data-to="${r.status==="active"?"disabled":"active"}">${r.status==="active"?"Disable":"Activate"}</button><button class="mini x" data-rm="${encodeURIComponent(r.id)}" aria-label="Remove ${esc(r.email)}" title="Remove">🗑</button>`}</div></div>`).join("")}
+  <div class="roles"><div><b>Sales</b>Customers, follow-ups, deals, leads and WhatsApp.</div><div><b>Admin</b>Everything Sales can do, plus business settings and team.</div></div></div>`}
+const share=r=>"https://wa.me/?text="+encodeURIComponent(`You're invited to join ${clean(biz.name)||"our business"} on BusinessOS as ${r.role}.\nSign in with Google using ${r.email}:\n${new URL("customers.html",location.href).href}`);
+function plan(){const p=String(biz.plan||"trial").toLowerCase(),paid=PAID.includes(p)||String(user.email||"").toLowerCase()==="saif.anwar1618@gmail.com",pct=usage==null?0:Math.min(100,Math.round(usage/FREE_LIMIT*100));
+  return`<div class="grid"><div class="card pad"><h2>Plan &amp; usage</h2><div class="sub">What your workspace includes today.</div><div class="kv"><span>Current plan</span><b style="text-transform:capitalize">${esc(p==="trial"?"Free trial":p)}</b></div>
+  ${paid?`<div class="kv"><span>Records</span><b>Unlimited</b></div>`:`<div style="padding-top:12px"><div class="kv" style="border:0;padding:0"><span>Records used</span><b>${usage==null?"—":usage} of ${FREE_LIMIT}</b></div><div class="track"><i class="${pct>=100?"f":pct>=80?"w":""}" style="width:${pct}%"></i></div><div style="color:var(--mut);font-size:12px">${usage==null?"Usage unavailable right now.":pct>=100?"Limit reached — upgrade to add more customers.":FREE_LIMIT-usage+" records left on the free plan."} Customers and active enquiries both count.</div></div>`}
+  <div class="mf" style="justify-content:flex-start"><a class="btn p" href="subscription.html">${paid?"Manage plan":"Upgrade plan"}</a></div></div>
+  <div class="card pad"><h2>Workspace</h2><div class="sub">Details for support and reference.</div><div class="kv"><span>Owner</span><b>${esc(biz.ownerEmail||user.email||"—")}</b></div><div class="kv"><span>Created</span><b>${dt(biz.createdAt)}</b></div><div class="kv"><span>Workspace ID</span><b style="font-size:11.5px">${esc(bizId)}</b></div><div class="mf" style="margin-top:12px;padding-top:12px"><button class="btn" id="cid">Copy workspace ID</button></div></div></div>`}
+async function invite(e){e.preventDefault();const email=$("ie").value.trim().toLowerCase(),r=$("ir").value;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return toast("Enter a valid email address",true);if(email===String(user.email||"").toLowerCase())return toast("That's your own email",true);
+  try{const ref=doc(db,"businesses",bizId,"teamInvites",email),old=await getDoc(ref);if(old.exists()&&old.data().status==="active")return toast("This email is already active",true);
+    await setDoc(ref,{email,role:r,status:"active",businessId:bizId,invitedBy:user.uid,invitedByEmail:user.email||"",createdAt:old.exists()?old.data().createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});toast("Invitation created — tap Share to send it")}catch(x){console.error(x);toast(x.message||"Could not create invitation",true)}}
+function listenInvites(){if(unsubI)unsubI();if(!manager)return;unsubI=onSnapshot(collection(db,"businesses",bizId,"teamInvites"),s=>{invites=s.docs.map(d=>({id:d.id,...d.data()}));if(tab==="team")render()},e=>{console.error(e);$("err").textContent="Could not load team: "+(e.code||e.message);$("err").classList.remove("hidden")})}
+onAuthStateChanged(auth,async u=>{user=u;
+  if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}
+  $("auth").classList.add("hidden");$("app").classList.remove("hidden");$("avBtn").textContent=ini(u.displayName||u.email);$("ddEm").textContent=u.email||"";
+  try{await resolve(u);$("err").classList.add("hidden");render();listenInvites();await loadUsage();if(tab==="plan")render()}catch(e){console.error(e);$("body").innerHTML="";$("chips").innerHTML="";$("sub").textContent="";$("err").textContent=e.message||"Could not open workspace.";$("err").classList.remove("hidden")}});
+$("avBtn").onclick=e=>{e.stopPropagation();$("dd").classList.toggle("hidden")};document.addEventListener("click",()=>$("dd").classList.add("hidden"));
+$("out").onclick=()=>signOut(auth);$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message}};
+document.addEventListener("submit",e=>{if(e.target.id==="invf")invite(e)});
+document.addEventListener("click",async e=>{const t=e.target,c=t.closest("[data-tab]");if(c){tab=c.dataset.tab;render();return}
+  if(t.id==="cid"){try{await navigator.clipboard.writeText(bizId);toast("Workspace ID copied")}catch(x){toast("Copy failed",true)}return}
+  const g=t.closest("[data-tg]");if(g){const em=decodeURIComponent(g.dataset.tg);try{await updateDoc(doc(db,"businesses",bizId,"teamInvites",em),{status:g.dataset.to,updatedAt:serverTimestamp()});toast(g.dataset.to==="active"?"Member activated":"Member disabled")}catch(x){toast(x.message||"Could not update",true)}return}
+  const r=t.closest("[data-rm]");if(r){const em=decodeURIComponent(r.dataset.rm);if(!confirm(`Remove ${em} from your team? They will lose access.`))return;try{await deleteDoc(doc(db,"businesses",bizId,"teamInvites",em));toast("Member removed")}catch(x){toast(x.message||"Could not remove",true)}}});
 </script>
-<style id="businessos-v36-settings">body.bos36-settings .head h1{font-size:30px!important;letter-spacing:-.7px!important}.bos36-settings .head p{color:#718096!important}</style></body></html>
-
-<style id="businessos-v37-module-fix">
-/* V37 — module workspace correction: one module per page, full-width canvas. */
-.view-hidden{display:none!important;}
-body.bos36-module #app{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;padding:0 22px 52px!important;margin:0!important;}
-body.bos36-module .customers-page{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;}
-body.bos36-module .os-layout{display:block!important;width:100%!important;max-width:none!important;margin:0!important;}
-body.bos36-module .os-content{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;}
-body.bos36-module .page-head{display:none!important;}
-body.bos36-module #dashboardV2,body.bos36-module #summary,body.bos36-module #templatePipeline,body.bos36-module #customerList,body.bos36-module .source-panel,body.bos36-module #websiteLeads{display:none!important;}
-body.bos36-followups #followupCenter,body.bos36-website #websiteLeadCenter,body.bos36-whatsapp #whatsappCenter,body.bos36-finder #businessFinder{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;}
-body.bos36-followups #followupCenter .followup-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
-body.bos36-finder #businessFinder .finder-shell{width:100%!important;max-width:none!important;}
-body.bos36-finder #businessFinder .finder-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;}
-body.bos36-finder #businessFinder .finder-panels{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)!important;}
-body.bos36-whatsapp #whatsappCenter{padding:20px!important;}
-body.bos36-whatsapp #whatsappCenter .wa-summary{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
-body.bos36-website #websiteLeadCenter{padding:0!important;}
-body.bos36-website #websiteLeadCenter .website-lead-center-list{width:100%!important;}
-@media(max-width:900px){
- body.bos36-module #app{padding:0 10px 36px!important;}
- body.bos36-followups #followupCenter .followup-grid{grid-template-columns:1fr!important;}
- body.bos36-finder #businessFinder .finder-grid,body.bos36-finder #businessFinder .finder-panels{grid-template-columns:1fr!important;}
- body.bos36-whatsapp #whatsappCenter .wa-summary{grid-template-columns:1fr!important;}
-}
-</style>
+</body>
+</html>
