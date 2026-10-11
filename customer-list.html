@@ -72,7 +72,7 @@ select,input[type=text],input[type=date],input[type=time],textarea{width:100%;bo
 
 /* ===== Customer modal: status first, details in a second tab ===== */
 .modal{padding:0;width:min(660px,100%);overflow:hidden;display:flex;flex-direction:column}
-.mh{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:22px 24px 14px}.mh h2{font-size:19px;margin:0 0 3px}.mh p{color:var(--mut);margin:0;font-size:13px;overflow-wrap:anywhere}.mh .st{flex:none;font-size:12.5px;padding:5px 13px;margin-top:2px}
+.mh{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:22px 24px 14px}.mh h2{font-size:19px;margin:0 0 3px}.mh p{color:var(--mut);margin:0;font-size:13px;overflow-wrap:anywhere}.mh .st{flex:none;font-size:12.5px;padding:5px 13px;margin-top:2px}.mh-actions{display:flex;align-items:center;gap:8px;flex:none}.m-import{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:7px 10px;font-size:12px;font-weight:700;white-space:nowrap}.m-import:hover{border-color:var(--blue);color:var(--blue)}
 .mtabs{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--line)}
 .mtabs button{border:0;background:none;padding:11px 14px;font-weight:600;font-size:13.5px;color:var(--mut);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
 .mtabs button:hover{color:var(--ink)}.mtabs button.on{color:var(--ink);border-bottom-color:var(--blue)}
@@ -118,7 +118,7 @@ select,input[type=text],input[type=date],input[type=time],textarea{width:100%;bo
   </div>
 </main>
 <div id="mo" class="ov hidden"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
-  <div class="mh"><div><h2 id="mt">Add customer</h2><p id="ms">Saved to your private workspace.</p></div><span class="st" id="m_badge">New</span></div>
+  <div class="mh"><div><h2 id="mt">Add customer</h2><p id="ms">Saved to your private workspace.</p></div><div class="mh-actions"><button type="button" class="m-import" id="m_import">↑ Import</button><span class="st" id="m_badge">New</span></div></div>
   <div class="mtabs" role="tablist"><button type="button" role="tab" class="on" data-mt="status">Status &amp; follow-up</button><button type="button" role="tab" data-mt="details">Details</button></div>
   <div class="mbody">
     <div id="mp_status">
@@ -218,7 +218,7 @@ onAuthStateChanged(auth,async u=>{user=u;
 /* modal */
 const mf={name:"m_name",phone:"m_phone",businessName:"m_biz",type:"m_type",area:"m_area",city:"m_city",req:"m_req",budget:"m_budget",status:"m_status",source:"m_src",note:"m_note"};
 function openM(id){editId=id||"";const c=all.find(x=>x.id===id)||{};
-  $("mt").textContent=id?"Customer details":"Add customer";$("ms").textContent=id?(clean(c.name)+(c.phone?" · "+clean(c.phone):"")):"Saved to your private workspace.";$("m_save").textContent=id?"Save changes":"Add customer";
+  $("mt").textContent=id?"Customer details":"Add customer";$("ms").textContent=id?(clean(c.name)+(c.phone?" · "+clean(c.phone):"")):"Saved to your private workspace.";$("m_save").textContent=id?"Save changes":"Add customer";$("m_import").classList.toggle("hidden",!!id);
   Object.entries(mf).forEach(([k,i])=>{$(i).value=clean(c[k]??(k==="req"?c.requirement:""))||(k==="type"?"Customer":k==="status"?"New":k==="source"?"Manual Entry":k==="city"?"":"")});
   $("m_date").value=c._d?`${c._d.getFullYear()}-${String(c._d.getMonth()+1).padStart(2,"0")}-${String(c._d.getDate()).padStart(2,"0")}`:"";$("m_time").value="";
   const cs=clean(c.status)||"New";document.querySelectorAll("#m_chips .sc.x,#m_status option.x").forEach(n=>n.remove());
@@ -245,7 +245,7 @@ function exportCSV(){const H=["Name","Mobile","Company","Category","Area","City"
 /* events */
 $("avBtn").onclick=e=>{e.stopPropagation();$("dd").classList.toggle("hidden")};document.addEventListener("click",()=>$("dd").classList.add("hidden"));
 $("out").onclick=()=>signOut(auth);$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message}};
-$("add").onclick=()=>openM();$("m_chips").addEventListener("click",e=>{const b=e.target.closest(".sc");if(b)setStatus(b.dataset.s)});
+$("add").onclick=()=>openM();$("m_import").onclick=()=>{window.location.href="import-export.html#import-section"};$("m_chips").addEventListener("click",e=>{const b=e.target.closest(".sc");if(b)setStatus(b.dataset.s)});
 document.querySelector(".mtabs").addEventListener("click",e=>{const b=e.target.closest("[data-mt]");if(b)setTab(b.dataset.mt)});
 document.querySelector(".qk").addEventListener("click",e=>{const b=e.target.closest("[data-qd]");if(!b)return;const d=new Date();d.setDate(d.getDate()+Number(b.dataset.qd));$("m_date").value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;if(!$("m_time").value)$("m_time").value="10:00"});
 $("exp").onclick=exportCSV;$("m_cancel").onclick=closeM;$("m_save").onclick=()=>save(false);$("m_done").onclick=()=>save(true);$("m_del").onclick=()=>del([editId]);
