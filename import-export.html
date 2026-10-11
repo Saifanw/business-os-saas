@@ -91,6 +91,15 @@ main{max-width:1000px;margin:0 auto;padding:28px 24px 60px}
 .ap-h{font-size:14px;font-weight:700;margin:24px 0 2px;display:flex;align-items:center;gap:8px}.ap-h .n{font-size:11.5px;background:#eef2f8;color:#475569;border-radius:99px;padding:1px 8px}
 .ap-note{display:flex;gap:10px;align-items:flex-start;margin-top:18px;padding:11px 14px;border-radius:12px;background:#f8faff;border:1px solid var(--line);color:var(--mut);font-size:12.5px}
 @media(max-width:700px){.rf{grid-template-columns:1fr}.rq-reason,.rq-a{margin-left:0}.rq-h{flex-wrap:wrap}}
+
+/* ===== Import button + plan bar ===== */
+html{scroll-padding-top:90px}
+.btn.off{opacity:.55;box-shadow:none}.btn.off:hover{opacity:.7}
+#planBar{margin:0 0 14px}
+.pb{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 16px}
+.pb .pt{flex:1;min-width:220px;font-size:13px;color:var(--mut)}.pb .pt b{color:var(--ink);font-size:13.5px}
+.pb .bar{height:7px;border-radius:99px;background:#eef2f8;overflow:hidden;margin-top:8px}.pb .bar i{display:block;height:100%;background:var(--blue);border-radius:99px}
+.pb.full{border-color:#f3c1bb;background:#fff7f6}.pb.full .bar i{background:var(--red)}.pb.warn{border-color:#f3dca3;background:#fffaf0}.pb.warn .bar i{background:var(--amber)}
 </style>
 </head>
 <body>
@@ -115,6 +124,8 @@ main{max-width:1000px;margin:0 auto;padding:28px 24px 60px}
       <div id="ownerRequestBox" class="hidden ap-b"><div id="ownerRequests"></div></div>
       <div id="approvalNotice" class="ap-note">Owner approvals apply to the Import &amp; Export controls on this page.</div>
     </section>
+    <div id="import-section"></div><div id="export-section"></div>
+    <div id="planBar" class="hidden"></div>
     <div class="chips"><button class="chip on" data-tab="import">↑ Import</button><button class="chip" data-tab="export">↓ Export</button></div>
 
     <section id="imp">
@@ -252,9 +263,10 @@ async function refresh(){const cols=FIELDS.filter(([f])=>map[f]);
   let m="";if(!map.name&&!map.phone&&!map.businessName)m='<div class="note r">Pick the <b>Name</b> or <b>Mobile</b> column so we know who your contacts are.</div>';
   else if(!pi.unl&&recs.length>cap)m=`<div class="note">${cap?`Your Free plan has room for <b>${cap}</b> more record${cap===1?"":"s"}, so only the first ${cap} will be imported.`:"Your Free plan limit (10 records) is full."} <a href="subscription.html">Upgrade to import all ${recs.length.toLocaleString()}</a>.</div>`;
   else if(!recs.length)m='<div class="note">Nothing new to import — every row is a duplicate or empty.</div>';
-  $("msg").innerHTML=m;$("go").disabled=!cap||busy;$("go").textContent=cap?`Import ${cap.toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${cap===1?"":"s"}`:"Nothing to import";refresh.n=cap}
+  refresh.why=!map.name&&!map.phone&&!map.businessName?"Pick the Name or Mobile column first.":(!pi.unl&&recs.length&&!cap)?"Your Free plan limit ("+FREE_LIMIT+" records) is full. Upgrade your plan or delete some records to import more.":!recs.length?"Nothing new to import. Every row is a duplicate or empty.":"";$("msg").innerHTML=m;$("go").disabled=!!busy;$("go").classList.toggle("off",!cap);$("go").setAttribute("aria-disabled",String(!cap));$("go").textContent=cap?`Import ${cap.toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${cap===1?"":"s"}`:"Nothing to import";refresh.n=cap}
 async function run(){
   if(busy)return;
+  if(!(refresh.n>0)){toast(refresh.why||"Nothing to import. Check duplicates, plan limit or column mapping.",true);return}
   busy=true;let done=0,success=false;
   const button=$("go"),cancel=$("cancel");
   button.disabled=true;cancel.disabled=true;button.textContent="Preparing import…";
@@ -285,7 +297,7 @@ async function run(){
     button.textContent="Retry import";
   }finally{
     busy=false;cancel.disabled=false;$("pgb").classList.add("hidden");$("pg").style.width="0";
-    if(!success){button.disabled=!(refresh.n>0);if(button.textContent==="Preparing import…"||button.textContent.startsWith("Importing "))button.textContent=`Import ${Math.max(0,refresh.n||0).toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${(refresh.n||0)===1?"":"s"}`;}
+    if(!success){button.disabled=false;button.classList.toggle("off",!(refresh.n>0));if(button.textContent==="Preparing import…"||button.textContent.startsWith("Importing "))button.textContent=`Import ${Math.max(0,refresh.n||0).toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${(refresh.n||0)===1?"":"s"}`;}
   }
 }
 function reset(){rows=[];headers=[];map={};step(1)}
@@ -305,9 +317,14 @@ async function exportData(k,f){const permission="export_"+k;const approval=await
   if(approval&&typeof approval==="object")await consumePermissionRequest(approval);await logTeamActivity("data_exported",`Exported ${out.length} ${k} records (${f.toUpperCase()})`,permission);toast(`${out.length.toLocaleString()} records exported`)}catch(e){console.error(e);toast(e.message||"Export failed",true)}}
 /* ---------- boot & events ---------- */
 function tab(t){$("imp").classList.toggle("hidden",t!=="import");$("exp").classList.toggle("hidden",t!=="export");document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c.dataset.tab===t))}
+const hashTab=()=>tab(location.hash==="#export-section"?"export":"import");window.addEventListener("hashchange",()=>{if(user&&bizId)hashTab()});
+async function showPlanBar(){const bar=$("planBar");try{const p=String(biz.plan||"trial").toLowerCase();if(!ENFORCE_FREE_LIMIT||PAID.includes(p)||String(user.email||"").toLowerCase()===OWNER){bar.classList.add("hidden");return}
+  await ensureExisting();plan=null;const pi=await planInfo();if(pi.unl){bar.classList.add("hidden");return}
+  const left=pi.remaining,used=Math.max(0,FREE_LIMIT-left),cls=left===0?"full":left<=3?"warn":"";
+  bar.innerHTML=`<div class="pb ${cls}"><div class="pt"><b>${left===0?"Free plan limit reached":"Free plan: "+used+" of "+FREE_LIMIT+" records used"}</b><div>${left===0?"You have "+FREE_LIMIT+" of "+FREE_LIMIT+" records, so new imports are paused. Upgrade for unlimited records, or delete some records first.":"You can import "+left+" more record"+(left===1?"":"s")+" before the limit."}</div><div class="bar"><i style="width:${Math.min(100,Math.round(used/FREE_LIMIT*100))}%"></i></div></div><a class="btn p" href="subscription.html">Upgrade plan</a></div>`;bar.classList.remove("hidden")}catch(e){console.warn("plan bar",e)}}
 onAuthStateChanged(auth,async u=>{user=u;if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}
   $("auth").classList.add("hidden");$("app").classList.remove("hidden");$("avBtn").textContent=ini(u.displayName||u.email);$("ddEm").textContent=u.email||"";
-  try{let id=u.uid;const us=await getDoc(doc(db,"users",u.uid));const profile=us.exists()?us.data():{};if(profile.businessId)id=profile.businessId;const b=await getDoc(doc(db,"businesses",id));if(!b.exists())throw new Error("No BusinessOS workspace is linked to this Google account.");bizId=id;biz=b.data();memberRole=String(profile.role||"sales").toLowerCase();isOwner=(u.uid===id||biz.ownerUid===u.uid||memberRole==="owner");$("err").classList.add("hidden");showApprovalUI();drawExp();loadCounts();await loadPermissionRequests();tab(location.hash==="#export-section"?"export":"import")}
+  try{let id=u.uid;const us=await getDoc(doc(db,"users",u.uid));const profile=us.exists()?us.data():{};if(profile.businessId)id=profile.businessId;const b=await getDoc(doc(db,"businesses",id));if(!b.exists())throw new Error("No BusinessOS workspace is linked to this Google account.");bizId=id;biz=b.data();memberRole=String(profile.role||"sales").toLowerCase();isOwner=(u.uid===id||biz.ownerUid===u.uid||memberRole==="owner");$("err").classList.add("hidden");showApprovalUI();drawExp();loadCounts();await loadPermissionRequests();hashTab();showPlanBar()}
   catch(e){console.error(e);$("err").textContent=e.message||"Could not open your workspace.";$("err").classList.remove("hidden")}});
 $("avBtn").onclick=e=>{e.stopPropagation();$("dd").classList.toggle("hidden")};document.addEventListener("click",()=>$("dd").classList.add("hidden"));
 $("out").onclick=()=>signOut(auth);$("refreshRequests").onclick=loadPermissionRequests;$("sendRequest").onclick=sendPermissionRequest;document.addEventListener("click",e=>{const a=e.target.closest("[data-approve]");if(a)reviewPermissionRequest(a.dataset.approve,"approved");const r=e.target.closest("[data-reject]");if(r)reviewPermissionRequest(r.dataset.reject,"rejected")});$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message}};
