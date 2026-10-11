@@ -181,7 +181,7 @@ function prepare(a){a=a.map(r=>r.map(c=>String(c??"").trim()));let hi=a.findInde
   headers=Array.from({length:w},(_,i)=>{let h=noHead?"":(a[hi][i]||"");h=h||"Column "+(i+1);if(seen[h]){seen[h]++;h+=" ("+seen[h]+")"}else seen[h]=1;return h});
   rows=a.slice(noHead?0:hi+1).filter(r=>r.some(Boolean)).map(r=>{const o={};headers.forEach((h,i)=>o[h]=r[i]??"");return o})}
 function autoMap(){const used=new Set(),m={};
-  for(const[f]of FIELDS){let best=null,bi=1e9;for(const h of headers){if(used.has(h))continue;const n=norm(h),i=AL[f].indexOf(n);if(i>=0&&i<bi){best=h;bi=i}}if(!best)for(const h of headers){if(used.has(h))continue;const n=norm(h);if(n.length>=4&&AL[f].some(a=>a.length>=4&&n.includes(a))){best=h;break}}if(best){m[f]=best;used.add(best)}}
+  for(const[f]of FIELDS){let best=null,bi=1e9;for(const h of headers){if(used.has(h))continue;const n=norm(h),aliases=Array.isArray(AL[f])?AL[f]:[],i=aliases.indexOf(n);if(i>=0&&i<bi){best=h;bi=i}}if(!best)for(const h of headers){if(used.has(h))continue;const n=norm(h);if(n.length>=4&&(Array.isArray(AL[f])?AL[f]:[]).some(a=>a.length>=4&&n.includes(a))){best=h;break}}if(best){m[f]=best;used.add(best)}}
   const col=h=>rows.slice(0,50).map(r=>r[h]).filter(Boolean);
   if(!m.phone){const h=headers.find(h=>!used.has(h)&&col(h).length&&col(h).filter(isPhone).length/col(h).length>=.6);if(h){m.phone=h;used.add(h)}}
   if(!m.email){const h=headers.find(h=>!used.has(h)&&col(h).length&&col(h).filter(v=>/@/.test(v)).length/col(h).length>=.6);if(h){m.email=h;used.add(h)}}
