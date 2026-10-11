@@ -22,8 +22,8 @@ h1{font-size:22px;letter-spacing:-.02em;margin-bottom:6px}p{color:var(--mut);fon
 <body>
 <main class="card">
   <div class="logo">B</div>
-  <section id="login" class="hidden"><h1>Join your team</h1><p>You've been invited to a BusinessOS workspace. Sign in with Google to join as a Sales Agent.</p><button class="btn p" id="gbtn">Continue with Google</button><p id="aerr" style="color:var(--red);font-size:12.5px;margin:12px 0 0"></p></section>
-  <section id="busy" class="hidden"><div class="spin"></div><h1>Joining workspace…</h1><p>This takes a few seconds.</p></section>
+  <section id="login" class="hidden"><h1>Join your team</h1><p>You've been invited to a BusinessOS workspace. Sign in with the exact Google email the owner invited.</p><button class="btn p" id="gbtn">Continue with Google</button><p id="aerr" style="color:var(--red);font-size:12.5px;margin:12px 0 0"></p></section>
+  <section id="busy" class="hidden"><div class="spin"></div><h1>Joining workspace…</h1><p>We are verifying your email invitation and connecting your account to the existing workspace.</p></section>
   <section id="ok" class="hidden"><div class="ic">✅</div><h1 id="okT">You're in</h1><p id="okM"></p><a class="btn p" href="customers.html">Open my workspace →</a></section>
   <section id="bad" class="hidden"><div class="ic">⚠️</div><h1>We couldn't join you</h1><div class="err" id="badM"></div><button class="btn" id="switch">Use a different Google account</button></section>
 </main>
@@ -42,7 +42,7 @@ onAuthStateChanged(auth,async u=>{
   try{
     const w=await resolveWorkspace(db,u),name=String(w.biz?.name||"").replace(/["'`]+/g,"").trim()||"your workspace";
     $("okT").textContent=w.via==="join-link"?"Welcome to "+name:"You already have access";
-    $("okM").textContent=w.via==="join-link"?"You joined as a Sales Agent. You can now work with customers, follow-ups and deals.":"You're signed in to "+name+" as "+(w.role==="owner"?"the owner":w.role)+".";
+    $("okM").textContent=w.via==="join-link"?"Your account is now connected to the invited workspace. You can work with the features allowed by your role.":"You're signed in to "+name+" as "+(w.role==="owner"?"the owner":w.role)+".";
     show("ok");timer=setTimeout(()=>location.href="customers.html",3000);
   }catch(e){console.error(e);$("badM").textContent=e.message||"Something went wrong. Please ask your owner for a new link.";show("bad")}
 });
