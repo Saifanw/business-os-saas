@@ -94,7 +94,7 @@ function nd(c){const r=String(c.next||"");if(!r||/not set|completed/i.test(r))re
 function derive(){const n=new Date();day=new Date(n.getFullYear(),n.getMonth(),n.getDate());
   all.forEach(c=>{const d=nd(c);c._d=d;c._diff=d?Math.round((d-day)/864e5):null;
     c._s=TERM.includes(c.status)?"x":/completed/i.test(c.next||"")?"dn":!d?"none":c._diff<0?"od":c._diff===0?"td":"up"})}
-const T={act:["Needs action",c=>c._s==="od"||c._s==="td"],od:["Overdue",c=>c._s==="od"],td:["Today",c=>c._s==="td"],up:["Upcoming",c=>c._s==="up"],dn:["Done",c=>c._s==="dn"]};
+const T={act:["Needs action",c=>c._s==="od"||c._s==="td"||(c._s==="none"&&String(c.status||"").toLowerCase()==="follow-up")],od:["Overdue",c=>c._s==="od"],td:["Today",c=>c._s==="td"],up:["Upcoming",c=>c._s==="up"],dn:["Done",c=>c._s==="dn"]};
 function render(){
   const cnt=k=>all.filter(T[k][1]).length,od=cnt("od"),td=cnt("td");
   $("navFu").textContent=od+td;$("navFu").classList.toggle("hidden",!(od+td));
