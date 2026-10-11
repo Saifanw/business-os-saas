@@ -44,6 +44,53 @@ main{max-width:1000px;margin:0 auto;padding:28px 24px 60px}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:11px;font-weight:600;z-index:90;max-width:90vw}.toast.bad{background:var(--red)}
 .auth{min-height:70vh;display:grid;place-items:center}.auth .card{max-width:380px;text-align:center;padding:34px}.auth h2{font-size:22px;margin:10px 0 6px}.auth p{color:var(--mut);margin-bottom:18px}
 @media(max-width:700px){.top-in{padding:10px 14px 0;gap:10px;flex-wrap:wrap;height:auto}.nav{order:3;flex-basis:100%;padding-bottom:8px}.acts .btn{display:none}main{padding:18px 14px 50px}.hero h1{font-size:23px}.map,.ex{grid-template-columns:1fr}.sum{grid-template-columns:1fr 1fr}.pad{padding:16px}.steps{display:none}.drop{padding:28px 14px}}
+/* ===== Requests, status pills & activity (shared design system) ===== */
+.sh{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.sh h2{font-size:17px;font-weight:700;letter-spacing:-.01em}.sh .sub{margin-bottom:0}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tools select{width:auto;min-width:200px;padding:8px 12px}
+.btn.sm{padding:7px 12px;font-size:12.5px;border-radius:9px}.btn svg{flex:none}
+.btn.d{color:var(--red)}.btn.d:hover{background:#fff4f2;border-color:#f3c1bb}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px 4px 9px;border-radius:99px;background:#eef2f8;color:#475569;white-space:nowrap;line-height:1.2}
+.st::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+.st.pending{background:#fff4dc;color:#a36200}.st.approved,.st.active{background:#e3f7ee;color:#0a7a50}
+.st.rejected,.st.disabled{background:#fdecea;color:#c4372f}.st.used{background:#e8efff;color:#2446e0}.st.revoked{background:#eceff4;color:#5b6679}
+.rl{display:inline-flex;align-items:center;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:8px;background:#f1f4fa;color:#475569;white-space:nowrap}
+.rl.owner{background:#efe8ff;color:#5b34d6}.rl.admin{background:#e8efff;color:#2446e0}
+.fl{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 4px}
+.fl .f{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 8px 6px 13px;font-size:12.5px;font-weight:600;color:var(--mut);display:inline-flex;align-items:center;gap:8px}
+.fl .f b{min-width:22px;text-align:center;padding:1px 6px;border-radius:99px;background:#eef2f8;color:#475569;font-size:11.5px}
+.fl .f:hover{border-color:#c9d3e6;color:var(--ink)}.fl .f.on{background:var(--ink);border-color:var(--ink);color:#fff}.fl .f.on b{background:#ffffff26;color:#fff}
+.fl .f.hot:not(.on) b{background:var(--amber);color:#fff}
+.rq{border:1px solid var(--line);border-radius:14px;background:#fff;padding:16px 18px;margin-top:10px}
+.rq.pending{border-left:3px solid var(--amber)}
+.rq-h{display:flex;gap:12px;align-items:flex-start}
+.rq-t{flex:1;min-width:0}.rq-t b{display:block;font-size:14.5px;font-weight:700}.rq-t span{display:block;color:var(--mut);font-size:12.5px;margin-top:2px;overflow-wrap:anywhere}
+.rq-r{display:grid;justify-items:end;gap:6px;flex:none}.rq-r time{font-size:11.5px;color:var(--mut)}
+.rq-reason{margin:12px 0 0 50px;padding:10px 13px;background:#f8faff;border:1px solid var(--line);border-radius:10px;font-size:13px;color:#334155;overflow-wrap:anywhere}
+.rq-reason small{display:block;font-size:11.5px;font-weight:600;color:var(--mut);margin-bottom:2px}
+.rq-a{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 0 50px}.rq-hint{font-size:12px;color:var(--mut)}
+.av{width:38px;height:38px;border-radius:50%;background:#eaf0ff;color:var(--blue);display:grid;place-items:center;font-weight:700;font-size:12px;flex:none}
+.empty{border:1px dashed #cfd8ea;background:#fafcff;border-radius:14px;padding:26px 18px;text-align:center;color:var(--mut);font-size:13px;margin-top:12px}
+.empty b{display:block;color:var(--ink);font-size:14px;margin-bottom:3px}
+.tl{margin-top:8px}.tl-i{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;padding:11px 0;position:relative}
+.tl-i:not(:last-child)::after{content:"";position:absolute;left:15px;top:44px;bottom:-1px;width:1px;background:var(--line)}
+.tl-i b{font-size:13.5px;font-weight:600}
+.tl-ic{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#eef2f8;color:#475569}
+.tl-ic.ok{background:#e3f7ee;color:#0a7a50}.tl-ic.bad{background:#fdecea;color:#c4372f}.tl-ic.warn{background:#fff4dc;color:#a36200}.tl-ic.info{background:#e8efff;color:#2446e0}
+.tl-r{display:flex;align-items:flex-start;gap:8px}.tl-r time{font-size:12px;color:var(--mut);white-space:nowrap;padding-top:2px}
+
+/* ===== Approval panel ===== */
+.ap{margin-bottom:18px}
+.ap-t{display:flex;gap:14px;align-items:flex-start}.ap-ic{width:42px;height:42px;border-radius:12px;background:#e8efff;color:var(--blue);display:grid;place-items:center;flex:none}
+.ap-t h2{font-size:17px;font-weight:700;letter-spacing:-.01em;margin-bottom:2px}.ap-t p{color:var(--mut);font-size:12.5px;max-width:560px}
+.ap-b{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.rf{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:14px;margin-bottom:14px}
+.rf label{display:grid;gap:6px;font-size:12px;font-weight:600;color:var(--mut)}
+.rf select,.rf input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:500;color:var(--ink);background:#fff;transition:.15s}
+.rf select:focus,.rf input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2f5bff1f;outline:0}
+.ap-h{font-size:14px;font-weight:700;margin:24px 0 2px;display:flex;align-items:center;gap:8px}.ap-h .n{font-size:11.5px;background:#eef2f8;color:#475569;border-radius:99px;padding:1px 8px}
+.ap-note{display:flex;gap:10px;align-items:flex-start;margin-top:18px;padding:11px 14px;border-radius:12px;background:#f8faff;border:1px solid var(--line);color:var(--mut);font-size:12.5px}
+@media(max-width:700px){.rf{grid-template-columns:1fr}.rq-reason,.rq-a{margin-left:0}.rq-h{flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -58,14 +105,15 @@ main{max-width:1000px;margin:0 auto;padding:28px 24px 60px}
   <div id="app" class="hidden">
     <div id="err" class="err hidden"></div>
     <section class="hero"><h1>Import &amp; export</h1><p>Bring in customers from almost any file, or download your data as a backup.</p></section>
-    <section class="card pad" id="approvalPanel" style="margin-bottom:16px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap"><div><h2 style="font-size:17px;margin-bottom:4px" id="approvalTitle">Permission approvals</h2><p style="color:var(--mut);font-size:12.5px" id="approvalIntro">Sensitive actions can require Owner approval.</p></div><button class="btn" id="refreshRequests" type="button">Refresh requests</button></div>
-      <div id="agentRequestBox" class="hidden" style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
-        <div class="map" style="margin-bottom:10px"><label>Permission needed<select id="requestPermission"><option value="import_customers">Import customers / prospects</option><option value="export_customers">Export customer list</option><option value="export_prospects">Export Finder prospects</option><option value="export_deals">Export deals &amp; payment data</option><option value="export_followups">Export follow-ups</option></select></label><label>Reason for request<input id="requestReason" maxlength="500" placeholder="Why do you need this access?" style="border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:#fff"></label></div>
-        <button class="btn p" id="sendRequest" type="button">Request access from Owner</button><div id="myRequests" style="margin-top:12px"></div>
+    <section class="card pad ap" id="approvalPanel">
+      <div class="sh"><div class="ap-t"><span class="ap-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><div><h2 id="approvalTitle">Permission approvals</h2><p id="approvalIntro">Sensitive actions can require Owner approval.</p></div></div><button class="btn" id="refreshRequests" type="button">Refresh</button></div>
+      <div id="agentRequestBox" class="hidden ap-b">
+        <div class="rf"><label>What do you need access to?<select id="requestPermission"><option value="import_customers">Import customers / prospects</option><option value="export_customers">Export customer list</option><option value="export_prospects">Export Finder prospects</option><option value="export_deals">Export deals &amp; payment data</option><option value="export_followups">Export follow-ups</option></select></label><label>Why do you need it?<input id="requestReason" maxlength="500" placeholder="e.g. Sharing the list with the field team"></label></div>
+        <button class="btn p" id="sendRequest" type="button">Request access from Owner</button>
+        <div id="myRequests"></div>
       </div>
-      <div id="ownerRequestBox" class="hidden" style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px"><div id="ownerRequests"></div></div>
-      <div id="approvalNotice" class="note" style="margin-top:12px;margin-bottom:0">Owner approvals apply to the normal Import &amp; Export controls in this page. Keep Firebase rules deployed and reviewed before treating this as a complete data-loss prevention control.</div>
+      <div id="ownerRequestBox" class="hidden ap-b"><div id="ownerRequests"></div></div>
+      <div id="approvalNotice" class="ap-note">Owner approvals apply to the Import &amp; Export controls on this page.</div>
     </section>
     <div class="chips"><button class="chip on" data-tab="import">↑ Import</button><button class="chip" data-tab="export">↓ Export</button></div>
 
@@ -164,13 +212,21 @@ function reqRef(){return collection(db,"businesses",bizId,"permissionRequests")}
 async function logTeamActivity(eventType,message,permission=""){try{await addDoc(collection(db,"businesses",bizId,"teamActivity"),{businessId:bizId,actorUid:user.uid,actorEmail:user.email||"",actorName:user.displayName||user.email||"Team member",targetEmail:user.email||"",eventType,message,permission:permission||"",createdAt:serverTimestamp()})}catch(e){console.warn("activity log skipped",e)}}
 function showApprovalUI(){
   $("approvalPanel").classList.remove("hidden");
-  if(isOwner){$("approvalTitle").textContent="Owner approval center";$("approvalIntro").textContent="Review requests from your team and approve or reject each permission.";$("ownerRequestBox").classList.remove("hidden");$("agentRequestBox").classList.add("hidden");$("approvalNotice").textContent="Approvals are specific to one permission request. Review the reason before approving."}
-  else{$("approvalTitle").textContent="Request permission";$("approvalIntro").textContent="Need to import or export data? Send a request to your workspace Owner.";$("agentRequestBox").classList.remove("hidden");$("ownerRequestBox").classList.add("hidden");$("approvalNotice").textContent="Sensitive actions in this page require an approved request. Ask the Owner if you need additional access."}
+  if(isOwner){$("approvalTitle").textContent="Owner approval center";$("approvalIntro").textContent="Review requests from your team and approve or reject each permission.";$("ownerRequestBox").classList.remove("hidden");$("agentRequestBox").classList.add("hidden");$("approvalNotice").textContent="Each approval is for one request and works once. Read the reason before you approve."}
+  else{$("approvalTitle").textContent="Request permission";$("approvalIntro").textContent="Need to import or export data? Send a request to your workspace Owner.";$("agentRequestBox").classList.remove("hidden");$("ownerRequestBox").classList.add("hidden");$("approvalNotice").textContent="Each approval works once. After you import or export, send a new request if you need access again."}
 }
 async function loadPermissionRequests(){if(!bizId||!user)return;try{const snap=await getDocs(isOwner?reqRef():query(reqRef(),where("requesterUid","==",user.uid)));permissionRequests=snap.docs.map(d=>({id:d.id,...d.data()}));permissionRequests.sort((a,b)=>{const at=a.createdAt?.toMillis?a.createdAt.toMillis():0,bt=b.createdAt?.toMillis?b.createdAt.toMillis():0;return bt-at});renderPermissionRequests()}catch(e){console.error("permission requests",e);toast("Could not load permission requests. Check Firestore rules.",true)}}
+let rqAll=false;document.addEventListener("click",e=>{if(e.target.closest("[data-rq-all]")){rqAll=!rqAll;renderPermissionRequests()}});
+const RQ_STATUS={pending:"Pending",approved:"Approved",rejected:"Rejected",revoked:"Revoked",used:"Used"};
+const RQ_HINT={pending:"Waiting for the Owner to review.",approved:"Approved. Go ahead and use it once.",used:"Already used. Send a new request to repeat it.",rejected:"The Owner declined this request.",revoked:"The Owner withdrew this approval."};
+const rqWhen=v=>{const ms=v?.toMillis?v.toMillis():v?.seconds?v.seconds*1000:0;return ms?new Date(ms).toLocaleString("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"Just now"};
+const rqIni=n=>String(n||"?").split(/[\s@.]+/).filter(Boolean).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"?";
 function renderPermissionRequests(){
-  if(isOwner){const pending=permissionRequests.filter(r=>r.status==="pending");$("ownerRequests").innerHTML=pending.length?pending.map(r=>`<div class="card" style="padding:14px;margin-top:10px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><b>${esc(PERMISSION_LABELS[r.permission]||r.permission||"Permission request")}</b><div style="color:var(--mut);font-size:12px;margin-top:4px">${esc(r.requesterName||r.requesterEmail||"Team member")} · ${esc(r.requesterEmail||"")}</div><p style="margin-top:8px;color:var(--mut)">Reason: ${esc(r.reason||"No reason provided")}</p></div><span class="badge" style="align-self:flex-start;background:#fff6df;color:#946200;border-radius:99px;padding:5px 9px;font-size:11px;font-weight:700">Pending</span></div><div style="display:flex;gap:8px;margin-top:12px"><button class="btn p" data-approve="${esc(r.id)}">Approve</button><button class="btn" data-reject="${esc(r.id)}">Reject</button></div></div>`).join(""):'<div class="note g" style="margin-top:12px">No pending permission requests.</div>';
-  }else{const mine=permissionRequests.filter(r=>r.requesterUid===user.uid);$("myRequests").innerHTML=mine.length?`<b style="font-size:13px">Your requests</b>`+mine.slice(0,8).map(r=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)"><div><b>${esc(PERMISSION_LABELS[r.permission]||r.permission)}</b><div style="font-size:12px;color:var(--mut)">${esc(r.reason||"")}</div></div><span style="font-size:11px;font-weight:700;color:${r.status==="approved"?"var(--green)":r.status==="rejected"?"var(--red)":"var(--amber)"}">${esc(r.status||"pending")}</span></div>`).join(""):'<p style="color:var(--mut);font-size:12px">You have not sent any requests yet.</p>'}
+  if(isOwner){const pending=permissionRequests.filter(r=>r.status==="pending"),done=permissionRequests.filter(r=>r.status!=="pending").slice(0,3);
+    const card=(r,withActions)=>{const s=r.status||"pending",nm=r.requesterName||r.requesterEmail||"Team member";return`<article class="rq ${esc(s)}"><div class="rq-h"><div class="av">${esc(rqIni(nm))}</div><div class="rq-t"><b>${esc(PERMISSION_LABELS[r.permission]||r.label||r.permission||"Permission request")}</b><span>${esc(nm)}${r.requesterEmail&&nm!==r.requesterEmail?" · "+esc(r.requesterEmail):""}</span></div><div class="rq-r"><span class="st ${esc(s)}">${esc(RQ_STATUS[s]||s)}</span><time>${rqWhen(r.createdAt)}</time></div></div><div class="rq-reason"><small>Reason given</small>${esc(r.reason||"No reason provided")}</div>${withActions?`<div class="rq-a"><button class="btn p sm" data-approve="${esc(r.id)}">Approve</button><button class="btn sm" data-reject="${esc(r.id)}">Reject</button></div>`:""}</article>`};
+    $("ownerRequests").innerHTML=`<h3 class="ap-h" style="margin-top:0">Needs your review<span class="n">${pending.length}</span></h3>`+(pending.length?pending.map(r=>card(r,true)).join(""):'<div class="empty"><b>All caught up</b>There are no pending permission requests.</div>')+(done.length?`<h3 class="ap-h">Recent decisions</h3>`+done.map(r=>card(r,false)).join("")+'<p style="margin-top:12px;font-size:12.5px;color:var(--mut)">Revoke approvals or see full history in <a href="team-settings.html" style="color:var(--blue);font-weight:600">Team &amp; settings</a>.</p>':"");
+  }else{const mine=permissionRequests.filter(r=>r.requesterUid===user.uid);
+    $("myRequests").innerHTML=`<h3 class="ap-h">Your requests${mine.length?`<span class="n">${mine.length}</span>`:""}</h3>`+(mine.length?mine.slice(0,rqAll?8:3).map(r=>{const s=r.status||"pending";return`<article class="rq ${esc(s)}"><div class="rq-h"><div class="rq-t"><b>${esc(PERMISSION_LABELS[r.permission]||r.label||r.permission)}</b><span>${esc(RQ_HINT[s]||"")}</span></div><div class="rq-r"><span class="st ${esc(s)}">${esc(RQ_STATUS[s]||s)}</span><time>${rqWhen(r.createdAt)}</time></div></div>${r.reason?`<div class="rq-reason" style="margin-left:0"><small>Your reason</small>${esc(r.reason)}</div>`:""}</article>`}).join("")+(mine.length>3?`<button type="button" class="btn sm" data-rq-all style="margin-top:12px">${rqAll?"Show fewer":"Show all "+Math.min(mine.length,8)+" requests"}</button>`:""):'<div class="empty"><b>No requests yet</b>Choose a permission above and send your first request to the Owner.</div>')}
 }
 async function sendPermissionRequest(){const permission=$("requestPermission").value,reason=$("requestReason").value.trim();if(!reason){toast("Please add a short reason for the request.",true);return}try{const dupe=permissionRequests.find(r=>r.requesterUid===user.uid&&r.permission===permission&&r.status==="pending");if(dupe){toast("You already have a pending request for this permission.");return}await addDoc(reqRef(),{businessId:bizId,permission,label:PERMISSION_LABELS[permission],reason,requesterUid:user.uid,requesterEmail:user.email||"",requesterName:user.displayName||user.email||"Team member",status:"pending",createdAt:serverTimestamp()});await logTeamActivity("permission_requested",`Requested ${PERMISSION_LABELS[permission]||permission}`,permission);$("requestReason").value="";toast("Request sent to the Owner.");await loadPermissionRequests()}catch(e){console.error(e);toast("Could not send request: "+(e.message||"permission denied"),true)}}
 async function reviewPermissionRequest(id,status){try{const r=permissionRequests.find(x=>x.id===id);if(!r||r.status!=="pending")return;await updateDoc(doc(db,"businesses",bizId,"permissionRequests",id),{status,reviewedBy:user.uid,reviewedAt:serverTimestamp()});await logTeamActivity(status==="approved"?"permission_approved":"permission_rejected",`${status==="approved"?"Approved":"Rejected"} ${r.label||r.permission} request`,r.permission);toast(status==="approved"?"Permission request approved.":"Request rejected.");await loadPermissionRequests()}catch(e){console.error(e);toast("Could not update request. Check Owner permissions.",true)}}
