@@ -52,6 +52,7 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 .auth{min-height:70vh;display:grid;place-items:center}.auth .card{max-width:380px;text-align:center;padding:34px}.auth h2{font-size:22px;margin:10px 0 6px}.auth p{color:var(--mut);margin-bottom:18px}
 @media(max-width:1100px){.fu{grid-template-columns:minmax(0,1.6fr) 150px auto}}@media(max-width:860px){.fu{grid-template-columns:minmax(0,1fr);gap:8px}.fu .when{padding-left:52px}.fu .ra{justify-content:flex-start;flex-wrap:wrap;padding-left:52px}.q{min-width:0;width:100%}}
 @media(max-width:700px){.top-in{padding:10px 14px 0;gap:10px;flex-wrap:wrap;height:auto}.nav{order:3;flex-basis:100%;padding-bottom:8px}main{padding:18px 14px 50px}.hero h1{font-size:23px}.fu{padding:14px}.gh{padding:11px 14px}}
+.av-wrap{position:relative;flex:none}.sdot{position:absolute;right:-1px;top:-1px;z-index:1;width:11px;height:11px;border-radius:50%;background:var(--d);border:2px solid #fff;box-sizing:border-box}.sdot.new{--d:#22c55e;animation:sdp 2s ease-out infinite}.sdot.td{--d:#f59e0b}.sdot.od{--d:#ef4444}@keyframes sdp{0%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}70%{box-shadow:0 0 0 6px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}@media (prefers-reduced-motion:reduce){.sdot{animation:none!important}}
 </style>
 </head>
 <body>
@@ -110,10 +111,11 @@ function render(){
     if(g!==last){const n=page.filter(x=>(tab==="dn"?"Completed":x._s==="none"?"Needs a next step":x._s==="od"?"Overdue":x._diff===0?"Today":x._diff===1?"Tomorrow":x._d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}))===g).length;h+=`<div class="gh ${g==="Overdue"?"od":g==="Today"?"td":""}"><span>${g}</span><span>${n}</span></div>`;last=g}
     h+=row(c)});
   $("list").innerHTML=h;const m=$("more");m.classList.toggle("hidden",rows.length<=shown);m.innerHTML=`Showing ${page.length} of ${rows.length} · <button class="btn" id="lm">Load more</button>`}
+const sdot=(k,t)=>k?`<span class="sdot ${k}" title="${t}" aria-label="${t}"></span>`:"";const SDL={od:"Follow-up overdue",td:"Follow-up due today",new:"Newly added"};
 function row(c){const p=String(c.next||"").split(" · "),ph=normP(c.phone),nm=clean(c.name)||"Unnamed",sc=clean(c.status)||"New",
   dt=c._d?c._d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}):"",
   w=c._s==="none"?`<b>Needs follow-up</b><span>No date or time set · ${esc(sc)}</span>`:c._s==="dn"?`<b>✓ Completed</b><span>${esc(clean(c.last)||"Follow-up done")}</span>`:c._s==="od"?`<b>${-c._diff}d overdue</b><span>${dt} · ${esc(p[1]||"—")} · ${esc(p[2]||"Call")}</span>`:c._s==="td"?`<b>Today · ${esc(p[1]||"—")}</b><span>${esc(p[2]||"Call")}</span>`:`<b>${dt}</b><span>${esc(p[1]||"—")} · ${esc(p[2]||"Call")}</span>`;
-  return`<div class="fu"><div class="who"><div class="av">${esc(ini(nm))}</div><div style="min-width:0"><b><em>${esc(nm)}</em><span class="st ${sc.replace(/\s+/g,"-")}">${esc(sc)}</span></b><span>${esc(clean(c.req||c.requirement)||"No requirement")}${clean(c.phone)?" · "+esc(clean(c.phone)):""}</span></div></div>
+  return`<div class="fu"><div class="who"><div class="av-wrap"><div class="av">${esc(ini(nm))}</div>${sdot(c._s==="od"||c._s==="td"?c._s:"",SDL[c._s])}</div><div style="min-width:0"><b><em>${esc(nm)}</em><span class="st ${sc.replace(/\s+/g,"-")}">${esc(sc)}</span></b><span>${esc(clean(c.req||c.requirement)||"No requirement")}${clean(c.phone)?" · "+esc(clean(c.phone)):""}</span></div></div>
   <div class="when ${c._s}">${w}</div>
   <div class="ra">${ph.length>=10?`<a class="mini" href="tel:+91${ph.slice(-10)}">📞 Call</a><a class="mini wa" target="_blank" rel="noopener" href="https://wa.me/91${ph.slice(-10)}">WhatsApp</a>`:""}<button class="mini" data-act="re" data-id="${c.id}">${c._s==="dn"?"Schedule next":"Reschedule"}</button>${c._s==="dn"?"":`<button class="mini ok" data-act="done" data-id="${c.id}">✓ Done</button>`}</div></div>`}
 const ref=id=>doc(db,"businesses",bizId,"contacts",id);

@@ -95,6 +95,7 @@ a.kpi{display:block;transition:.15s;position:relative;overflow:hidden}a.kpi:hove
 .auth{min-height:70vh;display:grid;place-items:center}.auth .card{max-width:380px;text-align:center;padding:34px}.auth h2{font-size:22px;margin:10px 0 6px}.auth p{color:var(--mut);margin-bottom:18px}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.two,.three{grid-template-columns:minmax(0,1fr)}.three>.card{grid-column:auto!important}}
 @media(max-width:700px){.top-in{padding:0 14px;gap:10px;flex-wrap:wrap;height:auto;padding-top:10px}.nav{order:3;flex-basis:100%;padding-bottom:8px}.acts .btn:not(.p){display:none}main{padding:18px 14px 50px}.kpis{grid-template-columns:1fr 1fr}.kpis>:last-child{grid-column:span 2}.hero h1{font-size:24px}.item .mini.v{display:none}.item{flex-wrap:wrap}.item .t{flex-basis:calc(100% - 52px)}.item .tag,.item .mini.wa{margin-left:50px}.item .tag+.mini.wa{margin-left:0}}
+.av-wrap{position:relative;flex:none}.sdot{position:absolute;right:-1px;top:-1px;z-index:1;width:11px;height:11px;border-radius:50%;background:var(--d);border:2px solid #fff;box-sizing:border-box}.sdot.new{--d:#22c55e;animation:sdp 2s ease-out infinite}.sdot.td{--d:#f59e0b}.sdot.od{--d:#ef4444}@keyframes sdp{0%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}70%{box-shadow:0 0 0 6px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}@media (prefers-reduced-motion:reduce){.sdot{animation:none!important}}
 </style>
 </head>
 <body>
@@ -192,6 +193,7 @@ function listen(id){
   },e=>{console.error(e);$("err").textContent="Could not load your data: "+(e.code||e.message)+". Please refresh or check your permissions.";$("err").classList.remove("hidden");$("summary").classList.remove("sk");$("summary").textContent="Data unavailable."});
 }
 
+const sdot=(k,t)=>k?`<span class="sdot ${k}" title="${t}" aria-label="${t}"></span>`:"";const SDL={od:"Follow-up overdue",td:"Follow-up due today",new:"Newly added"};
 function render(){
   const now=new Date(),day=new Date(now.getFullYear(),now.getMonth(),now.getDate()),open=customers.filter(c=>!TERM.includes(c.status)&&!/completed/i.test(c.next||""));
   const due=[];open.forEach(c=>{const d=nextDate(c);if(!d)return;const diff=Math.round((day-d)/864e5);if(diff>=0)due.push({c,diff})});
@@ -208,7 +210,7 @@ function render(){
   $("kpis").innerHTML=K.map(k=>`<a class="card kpi" style="--c:${k[3]}" href="${k[4]}"><div class="l">${k[0]}</div><div class="n">${k[1]}</div><div class="s">${k[2]}</div></a>`).join("");
 
   $("prio").innerHTML=due.length?due.slice(0,6).map(({c,diff})=>{const ph=String(c.phone||"").replace(/\D/g,""),wa=ph.length>=10?"https://wa.me/"+(ph.length===10?"91"+ph:ph):"",tm=String(c.next).split(" · ").slice(1).join(" · ");
-    return `<div class="item"><div class="av">${esc(ini(c.name))}</div><div class="t"><b>${esc(clean(c.name)||"Unnamed")}</b><span>${esc(clean(c.req||c.requirement)||"No requirement")}${tm?" · "+esc(tm):""}</span></div><span class="tag ${diff>0?"od":"td"}">${diff>0?diff+"d overdue":"Today"}</span>${wa?`<a class="mini wa" target="_blank" rel="noopener" href="${wa}">WhatsApp</a>`:""}<a class="mini v" href="customer-list.html">View</a></div>`}).join("")+(due.length>6?`<div style="padding-top:12px;text-align:center"><a class="mini" href="followups.html">+${due.length-6} more</a></div>`:"")
+    return `<div class="item"><div class="av-wrap"><div class="av">${esc(ini(c.name))}</div>${sdot(diff>0?"od":"td",SDL[diff>0?"od":"td"])}</div><div class="t"><b>${esc(clean(c.name)||"Unnamed")}</b><span>${esc(clean(c.req||c.requirement)||"No requirement")}${tm?" · "+esc(tm):""}</span></div><span class="tag ${diff>0?"od":"td"}">${diff>0?diff+"d overdue":"Today"}</span>${wa?`<a class="mini wa" target="_blank" rel="noopener" href="${wa}">WhatsApp</a>`:""}<a class="mini v" href="customer-list.html">View</a></div>`}).join("")+(due.length>6?`<div style="padding-top:12px;text-align:center"><a class="mini" href="followups.html">+${due.length-6} more</a></div>`:"")
     :`<div class="empty"><b>${total?"🎉 You're all caught up":"No customers yet"}</b>${total?"No follow-ups are due. Schedule the next ones to keep your pipeline moving.":"Import your list or add a customer to see priorities here."}<div style="margin-top:14px"><a class="btn p" href="${total?(un?"followups.html?tab=un":"customer-list.html"):"import-export.html#import-section"}">${total?"Schedule follow-ups":"Import customers"}</a></div></div>`;
 
   if(un)$("prio").innerHTML+=`<a class="nudge" href="followups.html?tab=un"><span>📌 <b>${un} customer${un===1?" has":"s have"} no next step</b> — nobody is waiting for a call unless you schedule one.</span><em>Schedule →</em></a>`;
@@ -219,7 +221,7 @@ function render(){
   $("bar").innerHTML=keys.map(k=>`<i title="${esc(k)}: ${cnt[k]}" style="width:${cnt[k]/total*100}%;background:${col[k]||"#a1a1aa"}"></i>`).join("");
   $("legend").innerHTML=keys.map(k=>`<div><span class="dot" style="background:${col[k]||"#a1a1aa"}"></span>${esc(k)}<b>${cnt[k]}</b></div>`).join("")||'<div class="empty" style="grid-column:1/-1">Pipeline appears once you add customers.</div>';
 
-  $("recent").innerHTML=customers.slice(0,5).map(c=>`<div class="item"><div class="av">${esc(ini(c.name))}</div><div class="t"><b>${esc(clean(c.name)||"Unnamed")}</b><span>${esc(clean(c.req||c.requirement)||"No requirement")}${clean(c.area)?" · "+esc(clean(c.area)):""}</span></div><span class="tag st">${esc(clean(c.status)||"New")}</span><a class="mini v" href="customer-list.html">View</a></div>`).join("")||'<div class="empty">No customers yet.</div>';
+  $("recent").innerHTML=customers.slice(0,5).map(c=>{const _d=nextDate(c),_o=!TERM.includes(c.status)&&!/completed/i.test(c.next||"")&&_d,_df=_o?Math.round((day-_d)/864e5):-1,_k=_df>0?"od":_df===0?"td":(Date.now()/1000-ts(c)<180&&ts(c)>0?"new":"");return `<div class="item"><div class="av-wrap"><div class="av">${esc(ini(c.name))}</div>${sdot(_k,SDL[_k])}</div><div class="t"><b>${esc(clean(c.name)||"Unnamed")}</b><span>${esc(clean(c.req||c.requirement)||"No requirement")}${clean(c.area)?" · "+esc(clean(c.area)):""}</span></div><span class="tag st">${esc(clean(c.status)||"New")}</span><a class="mini v" href="customer-list.html">View</a></div>`}).join("")||'<div class="empty">No customers yet.</div>';
 
   const sc={};customers.forEach(c=>{const s=clean(c.source)||"Other";sc[s]=(sc[s]||0)+1});const top=Object.entries(sc).sort((a,b)=>b[1]-a[1]).slice(0,5),mx=top[0]?.[1]||1;
   $("sources").innerHTML=top.map(([k,v])=>`<div class="src"><span>${esc(k)}</span><div class="tr"><i style="width:${v/mx*100}%"></i></div><b>${v}</b></div>`).join("")||'<div class="empty">No data yet.</div>';
