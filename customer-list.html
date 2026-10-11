@@ -208,7 +208,7 @@ function listen(id){if(unsub)unsub();bizId=id;
   unsub=onSnapshot(collection(db,"businesses",id,"contacts"),s=>{
     if(s.empty&&user&&id!==user.uid)return listen(user.uid);
     all=s.docs.map(d=>({id:d.id,...d.data({serverTimestamps:"estimate"})}));loaded=true;derive();opts();$("err").classList.add("hidden");apply();
-    if(!listen.once){listen.once=1;if(new URLSearchParams(location.search).get("add"))openM()}
+    if(!listen.once){listen.once=1;const _p=new URLSearchParams(location.search);const _q=_p.get("q");if(_q){$("q").value=_q;apply()}if(_p.get("add"))openM()}
   },e=>{console.error(e);loaded=true;$("err").textContent="Could not load customers: "+(e.code||e.message);$("err").classList.remove("hidden");render()})}
 onAuthStateChanged(auth,async u=>{user=u;
   if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}

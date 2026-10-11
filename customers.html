@@ -31,6 +31,34 @@ a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}
 .dd .em{padding:8px 10px;color:var(--mut);font-size:12px;border-bottom:1px solid var(--line);margin-bottom:6px;word-break:break-all}
 .dd a,.dd button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;font-size:13px;font-weight:600}
 .dd a:hover,.dd button:hover{background:#f3f6fc}
+/* global search */
+.nav{min-width:0}
+.gs{position:relative;flex:0 1 300px;min-width:180px}
+.gs-box{display:flex;align-items:center;gap:8px;height:38px;padding:0 10px 0 12px;background:#f3f6fc;border:1px solid transparent;border-radius:10px;transition:.15s}
+.gs-box:hover{background:#eef2fa}
+.gs-box:focus-within{background:#fff;border-color:#b9c8f7;box-shadow:0 0 0 4px #2f5bff1a}
+.gs-box svg{width:15px;height:15px;color:#7a869a;flex:none}
+.gs input{flex:1;min-width:0;border:0;outline:0;background:none;font:inherit;font-size:13px;color:var(--ink)}
+.gs input::placeholder{color:#8a96a8}
+.gs kbd{font:600 10.5px Inter,system-ui,sans-serif;color:#7a869a;background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;flex:none}
+.gs-box:focus-within #gsKbd{display:none}
+.gs-clear{display:none;border:0;background:#e4e9f3;color:#5b6678;width:18px;height:18px;border-radius:50%;font-size:12px;line-height:1;padding:0;flex:none}
+.gs-clear:hover{background:#d5dcec}.gs.has .gs-clear{display:block}.gs.has #gsKbd{display:none}
+.gs-pop{position:absolute;left:0;top:calc(100% + 8px);width:max(100%,440px);max-width:92vw;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 50px #0f172a24;padding:6px;z-index:60;max-height:70vh;overflow:auto}
+.gs-lbl{padding:8px 10px 4px;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8a96a8}
+.gs-it{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:10px;cursor:pointer;color:inherit}
+.gs-it.act,.gs-it:hover{background:#f1f5ff}
+.gs-it .av{width:34px;height:34px;font-size:11px}
+.gs-it .t{flex:1;min-width:0}.gs-it .t b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gs-it .t span{display:block;font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gs-it mark{background:#fff0b8;color:inherit;border-radius:3px;padding:0 1px}
+.gs-it .tag{flex:none}
+.gs-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:4px;padding:10px 12px;border-top:1px solid var(--line);font-size:12px;color:var(--mut)}
+.gs-foot a{color:var(--blue);font-weight:700}
+.gs-foot span kbd{margin:0 2px}
+.gs-empty{padding:26px 14px;text-align:center;color:var(--mut);font-size:13px}.gs-empty b{display:block;color:var(--ink);font-size:14px;margin-bottom:3px}
+@media(max-width:1180px){.gs{flex-basis:210px;min-width:150px}#gsKbd{display:none}}
+@media(max-width:900px){.gs{order:4;flex-basis:100%;padding-bottom:8px}.gs-pop{width:100%}.gs-foot span{display:none}}
 /* layout */
 main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 .hero{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
@@ -77,6 +105,15 @@ a.kpi{display:block;transition:.15s;position:relative;overflow:hidden}a.kpi:hove
     <a href="followups.html">Follow-ups <span class="pill hidden" id="navFu">0</span></a><a href="deals.html">Deals</a>
     <a href="website-leads.html">Leads</a><a href="whatsapp-center.html">WhatsApp</a><a href="business-finder-app.html">Finder</a><a href="prospecting-center.html">Prospecting</a><a href="reports.html">Reports</a>
   </nav>
+  <div class="gs hidden" id="gs" role="search">
+    <div class="gs-box">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="m14 14 3.5 3.5"/></svg>
+      <input id="gsq" type="text" placeholder="Search customers…" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="gsPop" aria-label="Search customers">
+      <button type="button" class="gs-clear" id="gsClear" aria-label="Clear search">×</button>
+      <kbd id="gsKbd">Ctrl K</kbd>
+    </div>
+    <div class="gs-pop hidden" id="gsPop" role="listbox"></div>
+  </div>
   <div class="acts">
     <a class="btn p" href="customer-list.html?add=1">＋ Add Customer</a>
     <div class="menu"><button class="avatar" id="avBtn" aria-label="Account">?</button>
@@ -135,8 +172,8 @@ $("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvide
 
 onAuthStateChanged(auth,async u=>{
   user=u;
-  if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}
-  $("auth").classList.add("hidden");$("app").classList.remove("hidden");
+  if(!u){$("gs").classList.add("hidden");$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}
+  $("auth").classList.add("hidden");$("app").classList.remove("hidden");$("gs").classList.remove("hidden");
   $("avBtn").textContent=ini(u.displayName||u.email);$("ddEm").textContent=u.email||"";
   const h=new Date().getHours(),nm=clean((u.displayName||u.email||"").split(/[ @]/)[0]);
   $("hello").textContent=(h<12?"Good morning":h<17?"Good afternoon":"Good evening")+(nm?", "+nm.charAt(0).toUpperCase()+nm.slice(1):"");
@@ -186,7 +223,68 @@ function render(){
 
   const sc={};customers.forEach(c=>{const s=clean(c.source)||"Other";sc[s]=(sc[s]||0)+1});const top=Object.entries(sc).sort((a,b)=>b[1]-a[1]).slice(0,5),mx=top[0]?.[1]||1;
   $("sources").innerHTML=top.map(([k,v])=>`<div class="src"><span>${esc(k)}</span><div class="tr"><i style="width:${v/mx*100}%"></i></div><b>${v}</b></div>`).join("")||'<div class="empty">No data yet.</div>';
+  if(window.__gsRefresh)window.__gsRefresh();
 }
+
+/* ---------- Global search ---------- */
+(function(){
+  const gs=$("gs"),q=$("gsq"),pop=$("gsPop"),clr=$("gsClear");
+  let res=[],idx=-1,raw="";
+  $("gsKbd").textContent=/Mac|iPhone|iPad/.test(navigator.platform)?"⌘ K":"Ctrl K";
+  const norm=v=>clean(v).toLowerCase().replace(/\s+/g," ");
+  const digits=v=>String(v||"").replace(/\D/g,"");
+  const hl=(t,w)=>{t=clean(t);if(!w)return esc(t);const i=t.toLowerCase().indexOf(w);return i<0?esc(t):esc(t.slice(0,i))+"<mark>"+esc(t.slice(i,i+w.length))+"</mark>"+esc(t.slice(i+w.length))};
+  function search(term){
+    const w=norm(term),d=digits(term);
+    if(!w)return customers.slice(0,6).map(c=>({c,r:0}));
+    const out=[];
+    customers.forEach(c=>{
+      const name=norm(c.name),ph=digits(c.phone);
+      const hay=[c.name,c.phone,c.businessName,c.area,c.city,c.req,c.requirement,c.email,c.status,c.source,c.type].map(norm).join(" ");
+      let sc=0;
+      if(name.startsWith(w))sc=100;else if(name.split(" ").some(x=>x.startsWith(w)))sc=80;else if(name.includes(w))sc=60;
+      else if(d.length>=3&&ph.includes(d))sc=70;
+      else if(hay.includes(w))sc=30;
+      if(sc)out.push({c,r:sc});
+    });
+    return out.sort((a,b)=>b.r-a.r).slice(0,7);
+  }
+  function draw(){
+    const w=norm(raw);res=search(raw);if(idx>=res.length)idx=res.length-1;
+    let h="";
+    if(!customers.length)h='<div class="gs-empty"><b>No customers yet</b>Add or import customers to search them here.</div>';
+    else if(!res.length)h='<div class="gs-empty"><b>No results for “'+esc(raw.trim())+'”</b>Try a name, mobile number, area or requirement.</div>';
+    else{
+      h='<div class="gs-lbl">'+(w?"Customers":"Recently added")+'</div>'+res.map((x,i)=>{
+        const c=x.c,nm=clean(c.name)||"Unnamed",meta=[clean(c.phone),clean(c.area),clean(c.req||c.requirement)].filter(Boolean);
+        return '<a class="gs-it'+(i===idx?" act":"")+'" role="option" data-i="'+i+'" href="customer-profile.html?id='+encodeURIComponent(c.id)+'"><div class="av">'+esc(ini(nm))+'</div><div class="t"><b>'+hl(nm,w)+'</b><span>'+(meta.length?meta.map(m=>hl(m,w)).join(" · "):"No details")+'</span></div><span class="tag st">'+esc(clean(c.status)||"New")+'</span></a>';
+      }).join("");
+    }
+    if(w&&customers.length)h+='<div class="gs-foot"><span><kbd>↑</kbd><kbd>↓</kbd> navigate · <kbd>Enter</kbd> open</span><a href="customer-list.html?q='+encodeURIComponent(raw.trim())+'">See all results →</a></div>';
+    pop.innerHTML=h;
+  }
+  const open=()=>{draw();pop.classList.remove("hidden");q.setAttribute("aria-expanded","true")};
+  const close=()=>{pop.classList.add("hidden");q.setAttribute("aria-expanded","false");idx=-1};
+  const mark=()=>{pop.querySelectorAll(".gs-it").forEach((el,i)=>{el.classList.toggle("act",i===idx);if(i===idx)el.scrollIntoView({block:"nearest"})})};
+  q.addEventListener("focus",open);
+  q.addEventListener("input",()=>{raw=q.value;gs.classList.toggle("has",!!raw);idx=raw.trim()&&search(raw).length?0:-1;open()});
+  clr.addEventListener("click",()=>{q.value="";raw="";gs.classList.remove("has");idx=-1;q.focus();open()});
+  q.addEventListener("keydown",e=>{
+    if(e.key==="ArrowDown"){e.preventDefault();if(pop.classList.contains("hidden"))open();if(res.length){idx=(idx+1)%res.length;mark()}}
+    else if(e.key==="ArrowUp"){e.preventDefault();if(res.length){idx=idx<=0?res.length-1:idx-1;mark()}}
+    else if(e.key==="Enter"){e.preventDefault();if(idx>=0&&res[idx])location.href="customer-profile.html?id="+encodeURIComponent(res[idx].c.id);else if(raw.trim())location.href="customer-list.html?q="+encodeURIComponent(raw.trim())}
+    else if(e.key==="Escape"){if(raw){q.value="";raw="";gs.classList.remove("has");draw()}else{close();q.blur()}}
+  });
+  pop.addEventListener("mousemove",e=>{const a=e.target.closest(".gs-it");if(a&&+a.dataset.i!==idx){idx=+a.dataset.i;mark()}});
+  document.addEventListener("click",e=>{if(!gs.contains(e.target))close()});
+  document.addEventListener("keydown",e=>{
+    const typing=/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)||document.activeElement.isContentEditable;
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"||(e.key==="/"&&!typing&&!e.ctrlKey&&!e.metaKey)){
+      if(gs.classList.contains("hidden"))return;e.preventDefault();q.focus();q.select()}
+  });
+  /* keep results fresh when live data changes */
+  window.__gsRefresh=()=>{if(!pop.classList.contains("hidden"))draw()};
+})();
 </script>
 <script src="assets/nav-more.js" defer></script>
 </body>
