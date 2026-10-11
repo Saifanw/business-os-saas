@@ -37,7 +37,7 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 .chip.on{background:var(--ink);border-color:var(--ink);color:#fff}.chip.on b{background:#ffffff26;color:#fff}
 .tool{padding:16px;margin-bottom:14px}
 .search{position:relative;margin-bottom:12px}.search input[type=text]{width:100%;padding-left:38px;border:1px solid var(--line);background:#f8faff;border-radius:11px;padding:11px 14px 11px 38px}.search:before{content:"⌕";position:absolute;left:14px;top:9px;color:var(--mut);font-size:16px}
-.filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr)) auto;gap:10px;align-items:end}
+.filters{display:grid;grid-template-columns:repeat(7,minmax(0,1fr)) auto;gap:10px;align-items:end}
 .filters label{display:grid;gap:4px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
 .date-range{display:flex;align-items:end;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.date-range label{display:grid;gap:5px;min-width:170px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}.date-range input{height:38px;padding:0 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface,#fff);color:var(--text)}.date-hint{font-size:12px;color:var(--mut);padding:0 0 10px}
 select,input[type=text],input[type=date],input[type=time],textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 10px;font-size:13px;text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink)}
@@ -113,6 +113,7 @@ select,input[type=text],input[type=date],input[type=time],textarea{width:100%;bo
         <label>Category<select id="f_type"></select></label><label>Area<select id="f_area"></select></label><label>Status<select id="f_status"></select></label>
         <label>Source<select id="f_src"></select></label><label>Business type<select id="f_sub"></select></label>
         <label>Follow-up date<select id="f_date"><option value="">Any date</option><option value="yesterday">Yesterday</option><option value="today">Today</option><option value="week">Last 7 days</option><option value="month">This month</option><option value="custom">Custom date range</option><option value="od">Overdue</option><option value="up">Upcoming</option><option value="none">Not scheduled</option></select></label>
+        <label>Sort by<select id="f_sort"><option value="latest">Latest first</option><option value="import">Import order (newest batch first)</option></select></label>
         <button class="btn" id="reset">Reset</button></div><div id="customDateRange" class="date-range hidden"><label>From date<input type="date" id="f_date_from"></label><label>To date<input type="date" id="f_date_to"></label><span class="date-hint">Select a date range to filter scheduled follow-ups.</span></div></section>
     <div id="bulk" class="bulk hidden"><span id="bn">0 selected</span><button class="btn d" id="bdel">✕ Delete selected</button></div>
     <section class="card list"><div class="row head"><div><input type="checkbox" id="all" aria-label="Select all"></div><div>Customer</div><div>Requirement</div><div>Status</div><div>Next action</div><div style="text-align:right">Actions</div></div><div id="rows"></div><div id="more" class="more hidden"></div></section>
@@ -180,7 +181,18 @@ function apply(){
         if(F.d==="custom") {if(!F.from&&!F.to)return false;const from=F.from?new Date(F.from+"T00:00:00"):null,to=F.to?new Date(F.to+"T23:59:59.999"):null;if(from&&d<from||to&&d>to)return false}
       }
     }
-    if(chip==="Overdue")return c._s==="od";if(chip)return c.status===chip;return true}).sort((a,b)=>ts(b)-ts(a));
+    if(chip==="Overdue")return c._s==="od";if(chip)return c.status===chip;return true});
+  if($("f_sort").value==="import"){
+    view.sort((a,b)=>{
+      const batchA=Number(a.importBatchAt||((a.createdAt?.seconds||0)*1000));
+      const batchB=Number(b.importBatchAt||((b.createdAt?.seconds||0)*1000));
+      if(batchA!==batchB)return batchB-batchA;
+      const rowA=Number.isFinite(Number(a.importRowOrder))?Number(a.importRowOrder):0;
+      const rowB=Number.isFinite(Number(b.importRowOrder))?Number(b.importRowOrder):0;
+      if(a.importBatchId&&a.importBatchId===b.importBatchId&&rowA!==rowB)return rowA-rowB;
+      return ts(b)-ts(a);
+    });
+  }else view.sort((a,b)=>ts(b)-ts(a));
   shown=50;render()}
 function chips(){const cnt=s=>all.filter(c=>c.status===s).length,od=all.filter(c=>c._s==="od").length;
   const C=[["","All",all.length],["Interested","🔥 Interested",cnt("Interested")],["Overdue","⚠ Overdue",od],["Won","🏆 Won",cnt("Won")],["Lost","✕ Lost",cnt("Lost")]];
@@ -199,7 +211,7 @@ function rowH(c){const ph=normP(c.phone),wa=ph.length>=10?"https://wa.me/91"+ph.
   <div><span class="st ${sc.replace(/\s+/g,"-")}">${esc(sc)}</span>${(a=>`<small class="ad" title="${a?"Added "+fmtAdded(c.createdAt,1):"Added date not recorded"}">${a||"—"}</small>`)(fmtAdded(c.createdAt))}</div><div>${nx(c)}</div>
   <div class="ra">${wa?`<a class="mini wa" target="_blank" rel="noopener" href="${wa}">WhatsApp</a>`:""}<button class="mini v" data-act="profile" data-id="${c.id}">View</button><button class="mini x" data-act="del" data-id="${c.id}" aria-label="Delete ${esc(nm)}" title="Delete">🗑</button></div></div>`}
 function render(){
-  chips();$("sub").textContent=`${view.length} of ${all.length} records · latest first`;
+  chips();$("sub").textContent=`${view.length} of ${all.length} records · ${$("f_sort").value==="import"?"import order · newest batch first":"latest first"}`;
   if(!loaded){$("rows").innerHTML=Array(6).fill('<div class="row"><div></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div></div></div>').join("");return}
   const page=view.slice(0,shown);
   $("rows").innerHTML=page.length?page.map(rowH).join(""):(all.length?`<div class="empty"><div style="font-size:30px">🔎</div><b>No matching customers</b>Try a different search or clear the filters.<br><button class="btn" id="rst2">Reset filters</button></div>`:`<div class="empty"><div style="font-size:34px">👥</div><b>No customers yet</b>Import your Excel list or add your first customer.<br><a class="btn" href="import-export.html#import-section">↑ Import from Excel</a> <button class="btn p" id="add2">＋ Add Customer</button></div>`);
@@ -253,10 +265,10 @@ document.querySelector(".qk").addEventListener("click",e=>{const b=e.target.clos
 $("exp").onclick=exportCSV;$("m_cancel").onclick=closeM;$("m_save").onclick=()=>save(false);$("m_done").onclick=()=>save(true);$("m_del").onclick=()=>del([editId]);
 $("mo").addEventListener("click",e=>{if(e.target.id==="mo")closeM()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeM()});
 let st;$("q").addEventListener("input",()=>{clearTimeout(st);st=setTimeout(apply,150)});
-["f_type","f_area","f_status","f_src","f_sub"].forEach(i=>$(i).addEventListener("change",apply));
+["f_type","f_area","f_status","f_src","f_sub","f_sort"].forEach(i=>$(i).addEventListener("change",apply));
 $("f_date").addEventListener("change",()=>{$("customDateRange").classList.toggle("hidden",$("f_date").value!=="custom");apply()});
 ["f_date_from","f_date_to"].forEach(i=>$(i).addEventListener("change",apply));
-const reset=()=>{$("q").value="";["f_type","f_area","f_status","f_src","f_sub","f_date","f_date_from","f_date_to"].forEach(i=>$(i).value="");$("customDateRange").classList.add("hidden");chip="";apply()};$("reset").onclick=reset;
+const reset=()=>{$("q").value="";["f_type","f_area","f_status","f_src","f_sub","f_date","f_date_from","f_date_to"].forEach(i=>$(i).value="");$("f_sort").value="latest";$("customDateRange").classList.add("hidden");chip="";apply()};$("reset").onclick=reset;
 $("chips").addEventListener("click",e=>{const b=e.target.closest("[data-chip]");if(!b)return;chip=chip===b.dataset.chip?"":b.dataset.chip;apply()});
 $("all").addEventListener("change",e=>{view.slice(0,shown).forEach(c=>e.target.checked?sel.add(c.id):sel.delete(c.id));render()});
 $("bdel").onclick=()=>del([...sel]);

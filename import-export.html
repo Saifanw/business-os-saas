@@ -265,9 +265,12 @@ async function run(){
     const {recs}=build(),pi=await planInfo(),list=pi.unl?recs:recs.slice(0,pi.remaining);
     if(!list.length){toast("Nothing to import. Check duplicates, plan limit, or column mapping.",true);return;}
     $("pgb").classList.remove("hidden");button.textContent="Starting import…";
+    // Preserve the original file row sequence for users who choose Import order on Customers.
+    const importBatchId=`${Date.now()}_${user.uid}`;
+    const importBatchAt=Date.now();
     for(let i=0;i<list.length;i+=400){
       const batch=writeBatch(db);
-      list.slice(i,i+400).forEach(r=>batch.set(doc(collection(db,"businesses",bizId,"contacts")),r));
+      list.slice(i,i+400).forEach((r,j)=>batch.set(doc(collection(db,"businesses",bizId,"contacts")),{...r,importBatchId,importBatchAt,importRowOrder:i+j,importedAt:serverTimestamp()}));
       await batch.commit();done=Math.min(list.length,i+400);
       $("pg").style.width=Math.round(done/list.length*100)+"%";
       button.textContent=`Importing ${done.toLocaleString()} / ${list.length.toLocaleString()}…`;
