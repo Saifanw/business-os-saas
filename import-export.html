@@ -253,11 +253,41 @@ async function refresh(){const cols=FIELDS.filter(([f])=>map[f]);
   else if(!pi.unl&&recs.length>cap)m=`<div class="note">${cap?`Your Free plan has room for <b>${cap}</b> more record${cap===1?"":"s"}, so only the first ${cap} will be imported.`:"Your Free plan limit (10 records) is full."} <a href="subscription.html">Upgrade to import all ${recs.length.toLocaleString()}</a>.</div>`;
   else if(!recs.length)m='<div class="note">Nothing new to import — every row is a duplicate or empty.</div>';
   $("msg").innerHTML=m;$("go").disabled=!cap||busy;$("go").textContent=cap?`Import ${cap.toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${cap===1?"":"s"}`:"Nothing to import";refresh.n=cap}
-async function run(){const approval=await requirePermission("import_customers");if(!approval)return;const{recs}=build(),pi=await planInfo(),list=pi.unl?recs:recs.slice(0,pi.remaining);if(!list.length)return;busy=true;$("go").disabled=true;$("cancel").disabled=true;$("pgb").classList.remove("hidden");let done=0;
-  try{for(let i=0;i<list.length;i+=400){const b=writeBatch(db);list.slice(i,i+400).forEach(r=>b.set(doc(collection(db,"businesses",bizId,"contacts")),r));await b.commit();done=Math.min(list.length,i+400);$("pg").style.width=Math.round(done/list.length*100)+"%";$("go").textContent=`Importing ${done.toLocaleString()} / ${list.length.toLocaleString()}…`}
-    if(approval&&typeof approval==="object")await consumePermissionRequest(approval);await logTeamActivity("data_imported",`Imported ${done} ${kind==="prospect"?"prospects":"customers"}`,"import_customers");existing=null;plan=null;$("dt").textContent=`${done.toLocaleString()} ${kind==="prospect"?"prospects":"customers"} imported`;$("dm").textContent=`From ${fname}. They are now in your customer list.`;step(3);loadCounts()}
-  catch(e){console.error(e);toast((e.code==="permission-denied"?"Permission denied — please sign in again. ":"")+(e.message||"Import failed")+(done?` (${done} saved before the error)`:""),true);$("go").textContent="Retry import";$("go").disabled=false}
-  finally{busy=false;$("cancel").disabled=false;$("pgb").classList.add("hidden");$("pg").style.width="0"}}
+async function run(){
+  if(busy)return;
+  busy=true;let done=0,success=false;
+  const button=$("go"),cancel=$("cancel");
+  button.disabled=true;cancel.disabled=true;button.textContent="Preparing import…";
+  try{
+    // Keep permission checks inside the try block so Firestore/rules errors are visible to the user.
+    const approval=await requirePermission("import_customers");
+    if(!approval){button.disabled=false;button.textContent=`Import ${Math.max(0,refresh.n||0).toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${(refresh.n||0)===1?"":"s"}`;return;}
+    const {recs}=build(),pi=await planInfo(),list=pi.unl?recs:recs.slice(0,pi.remaining);
+    if(!list.length){toast("Nothing to import. Check duplicates, plan limit, or column mapping.",true);return;}
+    $("pgb").classList.remove("hidden");button.textContent="Starting import…";
+    for(let i=0;i<list.length;i+=400){
+      const batch=writeBatch(db);
+      list.slice(i,i+400).forEach(r=>batch.set(doc(collection(db,"businesses",bizId,"contacts")),r));
+      await batch.commit();done=Math.min(list.length,i+400);
+      $("pg").style.width=Math.round(done/list.length*100)+"%";
+      button.textContent=`Importing ${done.toLocaleString()} / ${list.length.toLocaleString()}…`;
+    }
+    if(approval&&typeof approval==="object")await consumePermissionRequest(approval);
+    await logTeamActivity("data_imported",`Imported ${done} ${kind==="prospect"?"prospects":"customers"}`,"import_customers");
+    existing=null;plan=null;
+    $("dt").textContent=`${done.toLocaleString()} ${kind==="prospect"?"prospects":"customers"} imported`;
+    $("dm").textContent=`From ${fname}. They are now in your customer list.`;
+    step(3);success=true;loadCounts();
+  }catch(e){
+    console.error("BusinessOS import failed:",e);
+    const reason=e?.code==="permission-denied"?"Firestore denied the import. Check Owner approval and Firestore rules.":(e?.message||"Unknown error while importing.");
+    toast(reason+(done?` (${done} saved before the error)`:""),true);
+    button.textContent="Retry import";
+  }finally{
+    busy=false;cancel.disabled=false;$("pgb").classList.add("hidden");$("pg").style.width="0";
+    if(!success){button.disabled=!(refresh.n>0);if(button.textContent==="Preparing import…"||button.textContent.startsWith("Importing "))button.textContent=`Import ${Math.max(0,refresh.n||0).toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${(refresh.n||0)===1?"":"s"}`;}
+  }
+}
 function reset(){rows=[];headers=[];map={};step(1)}
 /* ---------- export ---------- */
 const EXP=[["customers","Customers","All customer records"],["prospects","Finder prospects","Business Finder prospects"],["deals","Deals","Deal & payment data"],["followups","Follow-ups","Customers with a follow-up date"]];
