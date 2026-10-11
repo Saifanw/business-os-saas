@@ -95,7 +95,7 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,doc,getDoc,onSnapshot,setDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,setDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
 const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -106,6 +106,7 @@ const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${Str
 const M={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
 function nextDate(c){const m=String(c.next||"").match(/(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})/);if(!m||/completed/i.test(c.next))return null;const mo=M[m[2].slice(0,3).toLowerCase()];return mo==null?null:new Date(+m[3],mo,+m[1])}
 let user,bizId,uC,uD,contacts=[],deals=[],ready={c:0,d:0},list=[],flt="",q="",shown=40,editId="",isNew=false;
+async function logTeamActivity(eventType,message){try{await addDoc(collection(db,"businesses",bizId,"teamActivity"),{businessId:bizId,actorUid:user.uid,actorEmail:user.email||"",actorName:user.displayName||user.email||"Team member",targetEmail:"",eventType,message,permission:"",createdAt:serverTimestamp()})}catch(e){console.warn("activity log skipped",e)}}
 const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),2600)};
 function dt(v){if(!v)return null;if(v.seconds)return new Date(v.seconds*1000);const d=new Date(String(v).length<=10?v+"T00:00:00":v);return isNaN(d)?null:d}
 function norm(d,c,virtual){const amount=Number(d.amount)||amt(d.value)||(virtual?amt(c?.budget||c?.value):0),received=Math.min(amount,Math.max(0,Number(d.received)||0)),pay=amount>0&&received>=amount?"Paid":received>0?"Partially":"Pending";
@@ -151,7 +152,7 @@ async function save(){const cid=$("m_cust").value,c=contacts.find(x=>x.id===cid)
   const data={contactId:cid,customerId:cid,customerName:c.name||"",businessType:c.businessType||"",type:c.type||"Customer",dealName:$("m_name").value.trim()||clean(c.req||c.requirement)||"Deal",amount,value:amount?money(amount):c.budget||"",paymentStatus:ps,received,pendingAmount:Math.max(0,amount-received),paymentDateISO:$("m_pdate").value||"",paymentMethod:$("m_method").value,closedAtISO:cd,closedAt:cd,notes:$("m_note").value.trim(),stage:"Won",status:"won",source:c.source||"",location:[c.area,c.city].map(clean).filter(Boolean).join(", "),updatedAt:serverTimestamp()};
   const docId=editId||cid,existing=deals.some(d=>d.id===docId);
   try{await setDoc(doc(db,"businesses",bizId,"deals",docId),{...data,...(existing?{}:{createdAt:serverTimestamp()})},{merge:true});
-    if(!WON.includes(c.status))await updateDoc(doc(db,"businesses",bizId,"contacts",cid),{status:"Won",updatedAt:serverTimestamp()});closeM();toast(isNew?"Deal added":"Deal saved")}catch(e){console.error(e);toast(e.message||"Could not save deal",true)}}
+    if(!WON.includes(c.status))await updateDoc(doc(db,"businesses",bizId,"contacts",cid),{status:"Won",updatedAt:serverTimestamp()});await logTeamActivity("deal_saved",`${isNew?"Added":"Updated"} deal for ${clean(c.name)||"customer"}`);closeM();toast(isNew?"Deal added":"Deal saved")}catch(e){console.error(e);toast(e.message||"Could not save deal",true)}}
 function listen(id){[uC,uD].forEach(u=>u&&u());bizId=id;ready={c:0,d:0};
   uC=onSnapshot(collection(db,"businesses",id,"contacts"),s=>{if(s.empty&&user&&id!==user.uid)return listen(user.uid);contacts=s.docs.map(d=>({id:d.id,...d.data()}));ready.c=1;build();$("err").classList.add("hidden");render()},e=>fail(e));
   uD=onSnapshot(collection(db,"businesses",id,"deals"),s=>{deals=s.docs.map(d=>({id:d.id,...d.data()}));ready.d=1;build();render()},e=>fail(e))}

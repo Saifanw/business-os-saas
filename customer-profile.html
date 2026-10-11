@@ -146,7 +146,7 @@ input:focus,textarea:focus,select.fld:focus,.fld select:focus{border-color:var(-
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,doc,getDoc,onSnapshot,updateDoc,writeBatch,serverTimestamp,arrayUnion,arrayRemove}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,updateDoc,writeBatch,serverTimestamp,arrayUnion,arrayRemove}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
 const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 
@@ -249,30 +249,31 @@ function rDeal(){
 
 /* ---------- writes ---------- */
 const ev=(type,note)=>({date:stamp(),type,note,ts:Date.now()});
-async function run(fn,ok,undo){try{await fn();toast(ok,{undo})}catch(e){fail("Could not save",e);render()}}
+async function logTeamActivity(eventType,message){try{await addDoc(collection(db,"businesses",bizId,"teamActivity"),{businessId:bizId,actorUid:user.uid,actorEmail:user.email||"",actorName:user.displayName||user.email||"Team member",targetEmail:"",eventType,message,permission:"",createdAt:serverTimestamp()})}catch(e){console.warn("activity log skipped",e)}}
+async function run(fn,ok,undo){try{await fn();toast(ok,{undo});return true}catch(e){fail("Could not save",e);render();return false}}
 async function logActivity(){
   const note=$("actTx").value.trim()||qType+" logged",e=ev(qType,note),prev=contact.last;
-  await run(()=>updateDoc(cref(),{events:arrayUnion(e),last:dtStr(new Date()),updatedAt:serverTimestamp()}),qType+" logged",()=>updateDoc(cref(),{events:arrayRemove(e),last:prev??"",updatedAt:serverTimestamp()}));$("actTx").value=""
+  const saved=await run(()=>updateDoc(cref(),{events:arrayUnion(e),last:dtStr(new Date()),updatedAt:serverTimestamp()}),qType+" logged",()=>updateDoc(cref(),{events:arrayRemove(e),last:prev??"",updatedAt:serverTimestamp()}));if(saved)await logTeamActivity("customer_interaction",`${qType} logged for ${clean(contact.name)||"customer"}`);$("actTx").value=""
 }
 async function saveNote(){
   const t=$("noteTx").value.trim();if(!t)return toast("Write a note first",{bad:true});const e=ev("Note",t),prev=contact.note??"";
-  await run(()=>updateDoc(cref(),{note:t,notes:t,events:arrayUnion(e),updatedAt:serverTimestamp()}),"Note saved",()=>updateDoc(cref(),{note:prev,notes:prev,events:arrayRemove(e),updatedAt:serverTimestamp()}));$("noteTx").value=""
+  const saved=await run(()=>updateDoc(cref(),{note:t,notes:t,events:arrayUnion(e),updatedAt:serverTimestamp()}),"Note saved",()=>updateDoc(cref(),{note:prev,notes:prev,events:arrayRemove(e),updatedAt:serverTimestamp()}));if(saved)await logTeamActivity("customer_note_saved",`Saved a note for ${clean(contact.name)||"customer"}`);$("noteTx").value=""
 }
 async function changeStatus(){
   const prev=clean(contact.status)||"New",next=$("stSel").value;if(next===prev)return;const e=ev("Status changed",prev+" → "+next);
-  await run(()=>updateDoc(cref(),{status:next,events:arrayUnion(e),updatedAt:serverTimestamp()}),"Status updated to "+next,()=>updateDoc(cref(),{status:prev,events:arrayRemove(e),updatedAt:serverTimestamp()}))
+  const saved=await run(()=>updateDoc(cref(),{status:next,events:arrayUnion(e),updatedAt:serverTimestamp()}),"Status updated to "+next,()=>updateDoc(cref(),{status:prev,events:arrayRemove(e),updatedAt:serverTimestamp()}));if(saved)await logTeamActivity("customer_status_changed",`Changed ${clean(contact.name)||"customer"} status: ${prev} → ${next}`)
 }
 function logRef(){return doc(collection(db,"businesses",bizId,"contacts",cid,"followups"))}
 async function saveFollowup(){
   const dv=$("fuD").value;if(!dv)return toast("Choose a follow-up date",{bad:true});
   const type=$("fuY").value,note=$("fuN").value.trim(),next=dstr(new Date(dv+"T00:00:00"))+" · "+t12($("fuT").value)+" · "+type,re=$("fuForm").dataset.mode==="resched",prev=contact.next??"Not set";
   const e=ev(re?"Follow-up rescheduled":"Follow-up scheduled",next+(note?" — "+note:"")),lr=logRef();
-  await run(async()=>{const b=writeBatch(db);b.update(cref(),{next,events:arrayUnion(e),updatedAt:serverTimestamp()});b.set(lr,{kind:re?"rescheduled":"scheduled",due:next,type,note,createdAt:serverTimestamp()});await b.commit()},re?"Follow-up rescheduled":"Follow-up scheduled",async()=>{const b=writeBatch(db);b.update(cref(),{next:prev,events:arrayRemove(e),updatedAt:serverTimestamp()});b.delete(lr);await b.commit()});
-  $("fuN").value="";openFu("new",true)
+  const saved=await run(async()=>{const b=writeBatch(db);b.update(cref(),{next,events:arrayUnion(e),updatedAt:serverTimestamp()});b.set(lr,{kind:re?"rescheduled":"scheduled",due:next,type,note,createdAt:serverTimestamp()});await b.commit()},re?"Follow-up rescheduled":"Follow-up scheduled",async()=>{const b=writeBatch(db);b.update(cref(),{next:prev,events:arrayRemove(e),updatedAt:serverTimestamp()});b.delete(lr);await b.commit()});
+  if(saved)await logTeamActivity("followup_scheduled",`${re?"Rescheduled":"Scheduled"} follow-up for ${clean(contact.name)||"customer"}`);$("fuN").value="";openFu("new",true)
 }
 async function markDone(){
   const prevN=contact.next??"Not set",prevL=contact.last??"",e=ev("Follow-up completed","Completed: "+clean(prevN)),lr=logRef();
-  await run(async()=>{const b=writeBatch(db);b.update(cref(),{next:"Completed",last:dtStr(new Date()),events:arrayUnion(e),updatedAt:serverTimestamp()});b.set(lr,{kind:"done",due:clean(prevN),type:"",note:"",createdAt:serverTimestamp()});await b.commit()},"Follow-up marked done",async()=>{const b=writeBatch(db);b.update(cref(),{next:prevN,last:prevL,events:arrayRemove(e),updatedAt:serverTimestamp()});b.delete(lr);await b.commit()})
+  const saved=await run(async()=>{const b=writeBatch(db);b.update(cref(),{next:"Completed",last:dtStr(new Date()),events:arrayUnion(e),updatedAt:serverTimestamp()});b.set(lr,{kind:"done",due:clean(prevN),type:"",note:"",createdAt:serverTimestamp()});await b.commit()},"Follow-up marked done",async()=>{const b=writeBatch(db);b.update(cref(),{next:prevN,last:prevL,events:arrayRemove(e),updatedAt:serverTimestamp()});b.delete(lr);await b.commit()});if(saved)await logTeamActivity("followup_completed",`Completed follow-up for ${clean(contact.name)||"customer"}`)
 }
 function setTab(t){document.querySelectorAll("[data-tab]").forEach(b=>{const on=b.dataset.tab===t;b.setAttribute("aria-selected",on);$("p_"+b.dataset.tab).classList.toggle("hidden",!on)})}
 function openFu(mode,silent){
@@ -301,7 +302,7 @@ async function saveEdit(){
   const fd=$("e_fd").value;if(fd){const nx=dstr(new Date(fd+"T00:00:00"))+" · "+t12($("e_ft").value)+" · "+$("e_fy").value;if(nx!==clean(c.next)){patch.next=nx;changed.push("next follow-up")}}
   if(!changed.length){closeEdit();return toast("No changes to save")}
   patch.events=arrayUnion(ev("Customer updated","Updated: "+changed.join(", ")));patch.updatedAt=serverTimestamp();
-  closeEdit();await run(()=>updateDoc(cref(),patch),"Customer updated")
+  closeEdit();const saved=await run(()=>updateDoc(cref(),patch),"Customer updated");if(saved)await logTeamActivity("customer_updated",`Updated customer ${clean(contact.name)||"customer"}: ${changed.join(", ")}`)
 }
 async function deleteContact(){
   if(!confirm(`Permanently delete "${clean(contact.name)||"this customer"}" and its follow-up history? This cannot be undone.`))return;
