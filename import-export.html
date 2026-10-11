@@ -91,15 +91,6 @@ main{max-width:1000px;margin:0 auto;padding:28px 24px 60px}
 .ap-h{font-size:14px;font-weight:700;margin:24px 0 2px;display:flex;align-items:center;gap:8px}.ap-h .n{font-size:11.5px;background:#eef2f8;color:#475569;border-radius:99px;padding:1px 8px}
 .ap-note{display:flex;gap:10px;align-items:flex-start;margin-top:18px;padding:11px 14px;border-radius:12px;background:#f8faff;border:1px solid var(--line);color:var(--mut);font-size:12.5px}
 @media(max-width:700px){.rf{grid-template-columns:1fr}.rq-reason,.rq-a{margin-left:0}.rq-h{flex-wrap:wrap}}
-
-/* ===== Import button + plan bar ===== */
-html{scroll-padding-top:90px}
-.btn.off{opacity:.55;box-shadow:none}.btn.off:hover{opacity:.7}
-#planBar{margin:0 0 14px}
-.pb{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 16px}
-.pb .pt{flex:1;min-width:220px;font-size:13px;color:var(--mut)}.pb .pt b{color:var(--ink);font-size:13.5px}
-.pb .bar{height:7px;border-radius:99px;background:#eef2f8;overflow:hidden;margin-top:8px}.pb .bar i{display:block;height:100%;background:var(--blue);border-radius:99px}
-.pb.full{border-color:#f3c1bb;background:#fff7f6}.pb.full .bar i{background:var(--red)}.pb.warn{border-color:#f3dca3;background:#fffaf0}.pb.warn .bar i{background:var(--amber)}
 </style>
 </head>
 <body>
@@ -124,8 +115,6 @@ html{scroll-padding-top:90px}
       <div id="ownerRequestBox" class="hidden ap-b"><div id="ownerRequests"></div></div>
       <div id="approvalNotice" class="ap-note">Owner approvals apply to the Import &amp; Export controls on this page.</div>
     </section>
-    <div id="import-section"></div><div id="export-section"></div>
-    <div id="planBar" class="hidden"></div>
     <div class="chips"><button class="chip on" data-tab="import">↑ Import</button><button class="chip" data-tab="export">↓ Export</button></div>
 
     <section id="imp">
@@ -157,7 +146,6 @@ html{scroll-padding-top:90px}
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import{getFirestore,collection,doc,getDoc,getDocs,query,where,writeBatch,deleteDoc,serverTimestamp,getCountFromServer,addDoc,updateDoc}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import{resolveWorkspace,blockWorkspace}from"./assets/workspace.js";
 const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
 const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 const ENFORCE_FREE_LIMIT=true,FREE_LIMIT=10,PAID=["starter","growth","custom","business","paid","premium"],OWNER="saif.anwar1618@gmail.com";
@@ -193,7 +181,7 @@ function prepare(a){a=a.map(r=>r.map(c=>String(c??"").trim()));let hi=a.findInde
   headers=Array.from({length:w},(_,i)=>{let h=noHead?"":(a[hi][i]||"");h=h||"Column "+(i+1);if(seen[h]){seen[h]++;h+=" ("+seen[h]+")"}else seen[h]=1;return h});
   rows=a.slice(noHead?0:hi+1).filter(r=>r.some(Boolean)).map(r=>{const o={};headers.forEach((h,i)=>o[h]=r[i]??"");return o})}
 function autoMap(){const used=new Set(),m={};
-  for(const[f]of FIELDS){let best=null,bi=1e9;for(const h of headers){if(used.has(h))continue;const n=norm(h),aliases=Array.isArray(AL[f])?AL[f]:[],i=aliases.indexOf(n);if(i>=0&&i<bi){best=h;bi=i}}if(!best)for(const h of headers){if(used.has(h))continue;const n=norm(h);if(n.length>=4&&(Array.isArray(AL[f])?AL[f]:[]).some(a=>a.length>=4&&n.includes(a))){best=h;break}}if(best){m[f]=best;used.add(best)}}
+  for(const[f]of FIELDS){let best=null,bi=1e9;for(const h of headers){if(used.has(h))continue;const n=norm(h),i=AL[f].indexOf(n);if(i>=0&&i<bi){best=h;bi=i}}if(!best)for(const h of headers){if(used.has(h))continue;const n=norm(h);if(n.length>=4&&AL[f].some(a=>a.length>=4&&n.includes(a))){best=h;break}}if(best){m[f]=best;used.add(best)}}
   const col=h=>rows.slice(0,50).map(r=>r[h]).filter(Boolean);
   if(!m.phone){const h=headers.find(h=>!used.has(h)&&col(h).length&&col(h).filter(isPhone).length/col(h).length>=.6);if(h){m.phone=h;used.add(h)}}
   if(!m.email){const h=headers.find(h=>!used.has(h)&&col(h).length&&col(h).filter(v=>/@/.test(v)).length/col(h).length>=.6);if(h){m.email=h;used.add(h)}}
@@ -242,7 +230,7 @@ function renderPermissionRequests(){
   }else{const mine=permissionRequests.filter(r=>r.requesterUid===user.uid);
     $("myRequests").innerHTML=`<h3 class="ap-h">Your requests${mine.length?`<span class="n">${mine.length}</span>`:""}</h3>`+(mine.length?mine.slice(0,rqAll?8:3).map(r=>{const s=r.status||"pending";return`<article class="rq ${esc(s)}"><div class="rq-h"><div class="rq-t"><b>${esc(PERMISSION_LABELS[r.permission]||r.label||r.permission)}</b><span>${esc(RQ_HINT[s]||"")}</span></div><div class="rq-r"><span class="st ${esc(s)}">${esc(RQ_STATUS[s]||s)}</span><time>${rqWhen(r.createdAt)}</time></div></div>${r.reason?`<div class="rq-reason" style="margin-left:0"><small>Your reason</small>${esc(r.reason)}</div>`:""}</article>`}).join("")+(mine.length>3?`<button type="button" class="btn sm" data-rq-all style="margin-top:12px">${rqAll?"Show fewer":"Show all "+Math.min(mine.length,8)+" requests"}</button>`:""):'<div class="empty"><b>No requests yet</b>Choose a permission above and send your first request to the Owner.</div>')}
 }
-async function sendPermissionRequest(){if(!needWs())return;const permission=$("requestPermission").value,reason=$("requestReason").value.trim();if(!reason){toast("Please add a short reason for the request.",true);return}try{const dupe=permissionRequests.find(r=>r.requesterUid===user.uid&&r.permission===permission&&r.status==="pending");if(dupe){toast("You already have a pending request for this permission.");return}await addDoc(reqRef(),{businessId:bizId,permission,label:PERMISSION_LABELS[permission],reason,requesterUid:user.uid,requesterEmail:user.email||"",requesterName:user.displayName||user.email||"Team member",status:"pending",createdAt:serverTimestamp()});await logTeamActivity("permission_requested",`Requested ${PERMISSION_LABELS[permission]||permission}`,permission);$("requestReason").value="";toast("Request sent to the Owner.");await loadPermissionRequests()}catch(e){console.error(e);toast("Could not send request: "+(e.message||"permission denied"),true)}}
+async function sendPermissionRequest(){const permission=$("requestPermission").value,reason=$("requestReason").value.trim();if(!reason){toast("Please add a short reason for the request.",true);return}try{const dupe=permissionRequests.find(r=>r.requesterUid===user.uid&&r.permission===permission&&r.status==="pending");if(dupe){toast("You already have a pending request for this permission.");return}await addDoc(reqRef(),{businessId:bizId,permission,label:PERMISSION_LABELS[permission],reason,requesterUid:user.uid,requesterEmail:user.email||"",requesterName:user.displayName||user.email||"Team member",status:"pending",createdAt:serverTimestamp()});await logTeamActivity("permission_requested",`Requested ${PERMISSION_LABELS[permission]||permission}`,permission);$("requestReason").value="";toast("Request sent to the Owner.");await loadPermissionRequests()}catch(e){console.error(e);toast("Could not send request: "+(e.message||"permission denied"),true)}}
 async function reviewPermissionRequest(id,status){try{const r=permissionRequests.find(x=>x.id===id);if(!r||r.status!=="pending")return;await updateDoc(doc(db,"businesses",bizId,"permissionRequests",id),{status,reviewedBy:user.uid,reviewedAt:serverTimestamp()});await logTeamActivity(status==="approved"?"permission_approved":"permission_rejected",`${status==="approved"?"Approved":"Rejected"} ${r.label||r.permission} request`,r.permission);toast(status==="approved"?"Permission request approved.":"Request rejected.");await loadPermissionRequests()}catch(e){console.error(e);toast("Could not update request. Check Owner permissions.",true)}}
 async function getApprovedPermission(permission){if(isOwner)return null;const fresh=await getDocs(query(reqRef(),where("requesterUid","==",user.uid)));const list=fresh.docs.map(d=>({id:d.id,...d.data()}));permissionRequests=list;renderPermissionRequests();return list.find(r=>r.requesterUid===user.uid&&r.permission===permission&&r.status==="approved")||null}
 async function consumePermissionRequest(r){if(!r||isOwner)return;await updateDoc(doc(db,"businesses",bizId,"permissionRequests",r.id),{status:"used",usedAt:serverTimestamp()});await logTeamActivity("permission_used",`Used approved ${r.label||r.permission} permission`,r.permission);await loadPermissionRequests()}
@@ -264,12 +252,9 @@ async function refresh(){const cols=FIELDS.filter(([f])=>map[f]);
   let m="";if(!map.name&&!map.phone&&!map.businessName)m='<div class="note r">Pick the <b>Name</b> or <b>Mobile</b> column so we know who your contacts are.</div>';
   else if(!pi.unl&&recs.length>cap)m=`<div class="note">${cap?`Your Free plan has room for <b>${cap}</b> more record${cap===1?"":"s"}, so only the first ${cap} will be imported.`:"Your Free plan limit (10 records) is full."} <a href="subscription.html">Upgrade to import all ${recs.length.toLocaleString()}</a>.</div>`;
   else if(!recs.length)m='<div class="note">Nothing new to import — every row is a duplicate or empty.</div>';
-  refresh.why=!map.name&&!map.phone&&!map.businessName?"Pick the Name or Mobile column first.":(!pi.unl&&recs.length&&!cap)?"Your Free plan limit ("+FREE_LIMIT+" records) is full. Upgrade your plan or delete some records to import more.":!recs.length?"Nothing new to import. Every row is a duplicate or empty.":"";$("msg").innerHTML=m;$("go").disabled=!!busy;$("go").classList.toggle("off",!cap);$("go").setAttribute("aria-disabled",String(!cap));$("go").textContent=cap?`Import ${cap.toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${cap===1?"":"s"}`:"Nothing to import";refresh.n=cap}
-const needWs=()=>{if(bizId&&user)return true;toast("Your workspace is not loaded yet. Refresh the page or sign in again.",true);return false};
+  $("msg").innerHTML=m;$("go").disabled=!cap||busy;$("go").textContent=cap?`Import ${cap.toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${cap===1?"":"s"}`:"Nothing to import";refresh.n=cap}
 async function run(){
   if(busy)return;
-  if(!needWs())return;
-  if(!(refresh.n>0)){toast(refresh.why||"Nothing to import. Check duplicates, plan limit or column mapping.",true);return}
   busy=true;let done=0,success=false;
   const button=$("go"),cancel=$("cancel");
   button.disabled=true;cancel.disabled=true;button.textContent="Preparing import…";
@@ -300,7 +285,7 @@ async function run(){
     button.textContent="Retry import";
   }finally{
     busy=false;cancel.disabled=false;$("pgb").classList.add("hidden");$("pg").style.width="0";
-    if(!success){button.disabled=false;button.classList.toggle("off",!(refresh.n>0));if(button.textContent==="Preparing import…"||button.textContent.startsWith("Importing "))button.textContent=`Import ${Math.max(0,refresh.n||0).toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${(refresh.n||0)===1?"":"s"}`;}
+    if(!success){button.disabled=!(refresh.n>0);if(button.textContent==="Preparing import…"||button.textContent.startsWith("Importing "))button.textContent=`Import ${Math.max(0,refresh.n||0).toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${(refresh.n||0)===1?"":"s"}`;}
   }
 }
 function reset(){rows=[];headers=[];map={};step(1)}
@@ -308,7 +293,7 @@ function reset(){rows=[];headers=[];map={};step(1)}
 const EXP=[["customers","Customers","All customer records"],["prospects","Finder prospects","Business Finder prospects"],["deals","Deals","Deal & payment data"],["followups","Follow-ups","Customers with a follow-up date"]];
 const counts={};async function loadCounts(){try{const C=collection(db,"businesses",bizId,"contacts");const[c,p,d]=await Promise.all([getCountFromServer(query(C,where("type","!=","Prospect"))),getCountFromServer(query(C,where("type","==","Prospect"))),getCountFromServer(collection(db,"businesses",bizId,"deals"))]);counts.customers=c.data().count;counts.prospects=p.data().count;counts.deals=d.data().count;drawExp()}catch(e){console.warn("counts",e)}}
 function drawExp(){$("exl").innerHTML=EXP.map(([k,t,d])=>`<div class="card exc"><div><b>${t}</b><span>${counts[k]!=null?counts[k].toLocaleString()+" records · ":""}${d}</span></div><div style="display:flex;gap:8px"><button class="btn" data-ex="${k}" data-f="csv">CSV</button><button class="btn" data-ex="${k}" data-f="xlsx">Excel</button></div></div>`).join("")}
-async function exportData(k,f){if(!needWs())return;const permission="export_"+k;const approval=await requirePermission(permission);if(!approval)return;try{let out=[];const C=collection(db,"businesses",bizId,"contacts");
+async function exportData(k,f){const permission="export_"+k;const approval=await requirePermission(permission);if(!approval)return;try{let out=[];const C=collection(db,"businesses",bizId,"contacts");
   if(k==="deals"){const s=await getDocs(collection(db,"businesses",bizId,"deals"));out=s.docs.map(d=>d.data()).map(d=>({"Customer":d.customerName,"Deal":d.dealName,"Deal value":d.amount,"Received":d.received,"Pending":d.pendingAmount,"Payment status":d.paymentStatus,"Payment date":d.paymentDateISO,"Payment method":d.paymentMethod,"Closed":d.closedAtISO,"Notes":d.notes}))}
   else{const s=await getDocs(C),all=s.docs.map(d=>d.data());existing=all;const pr=c=>c.type==="Prospect"||c.source==="Business Finder";
     if(k==="customers")out=all.filter(c=>!pr(c)).map(c=>({Name:c.name,Mobile:c.phone,Email:c.email,Company:c.businessName,Category:c.businessType,Type:c.type,City:c.city,Area:c.area,Requirement:c.req||c.requirement,Budget:c.budget,Status:c.status,Source:c.source,"Next follow-up":c.next,Notes:c.notes||c.note}));
@@ -320,15 +305,10 @@ async function exportData(k,f){if(!needWs())return;const permission="export_"+k;
   if(approval&&typeof approval==="object")await consumePermissionRequest(approval);await logTeamActivity("data_exported",`Exported ${out.length} ${k} records (${f.toUpperCase()})`,permission);toast(`${out.length.toLocaleString()} records exported`)}catch(e){console.error(e);toast(e.message||"Export failed",true)}}
 /* ---------- boot & events ---------- */
 function tab(t){$("imp").classList.toggle("hidden",t!=="import");$("exp").classList.toggle("hidden",t!=="export");document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c.dataset.tab===t))}
-const hashTab=()=>tab(location.hash==="#export-section"?"export":"import");window.addEventListener("hashchange",()=>{if(user&&bizId)hashTab()});
-async function showPlanBar(){const bar=$("planBar");try{const p=String(biz.plan||"trial").toLowerCase();if(!ENFORCE_FREE_LIMIT||PAID.includes(p)||String(user.email||"").toLowerCase()===OWNER){bar.classList.add("hidden");return}
-  await ensureExisting();plan=null;const pi=await planInfo();if(pi.unl){bar.classList.add("hidden");return}
-  const left=pi.remaining,used=Math.max(0,FREE_LIMIT-left),cls=left===0?"full":left<=3?"warn":"";
-  bar.innerHTML=`<div class="pb ${cls}"><div class="pt"><b>${left===0?"Free plan limit reached":"Free plan: "+used+" of "+FREE_LIMIT+" records used"}</b><div>${left===0?"You have "+FREE_LIMIT+" of "+FREE_LIMIT+" records, so new imports are paused. Upgrade for unlimited records, or delete some records first.":"You can import "+left+" more record"+(left===1?"":"s")+" before the limit."}</div><div class="bar"><i style="width:${Math.min(100,Math.round(used/FREE_LIMIT*100))}%"></i></div></div><a class="btn p" href="subscription.html">Upgrade plan</a></div>`;bar.classList.remove("hidden")}catch(e){console.warn("plan bar",e)}}
 onAuthStateChanged(auth,async u=>{user=u;if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}
   $("auth").classList.add("hidden");$("app").classList.remove("hidden");$("avBtn").textContent=ini(u.displayName||u.email);$("ddEm").textContent=u.email||"";
-  try{const w=await resolveWorkspace(db,u);if(!w||!w.bizId||!w.biz)throw new Error("No BusinessOS workspace is linked to this Google account.");bizId=w.bizId;biz=w.biz;memberRole=String(w.role||"sales").toLowerCase();isOwner=(u.uid===bizId||biz.ownerUid===u.uid||memberRole==="owner");$("err").classList.add("hidden");showApprovalUI();drawExp();loadCounts();await loadPermissionRequests();hashTab();showPlanBar()}
-  catch(e){console.error(e);bizId=undefined;$("err").textContent=e.message||"Could not open your workspace.";$("err").classList.remove("hidden");blockWorkspace(e,auth)}});
+  try{let id=u.uid;const us=await getDoc(doc(db,"users",u.uid));const profile=us.exists()?us.data():{};if(profile.businessId)id=profile.businessId;const b=await getDoc(doc(db,"businesses",id));if(!b.exists())throw new Error("No BusinessOS workspace is linked to this Google account.");bizId=id;biz=b.data();memberRole=String(profile.role||"sales").toLowerCase();isOwner=(u.uid===id||biz.ownerUid===u.uid||memberRole==="owner");$("err").classList.add("hidden");showApprovalUI();drawExp();loadCounts();await loadPermissionRequests();tab(location.hash==="#export-section"?"export":"import")}
+  catch(e){console.error(e);$("err").textContent=e.message||"Could not open your workspace.";$("err").classList.remove("hidden")}});
 $("avBtn").onclick=e=>{e.stopPropagation();$("dd").classList.toggle("hidden")};document.addEventListener("click",()=>$("dd").classList.add("hidden"));
 $("out").onclick=()=>signOut(auth);$("refreshRequests").onclick=loadPermissionRequests;$("sendRequest").onclick=sendPermissionRequest;document.addEventListener("click",e=>{const a=e.target.closest("[data-approve]");if(a)reviewPermissionRequest(a.dataset.approve,"approved");const r=e.target.closest("[data-reject]");if(r)reviewPermissionRequest(r.dataset.reject,"rejected")});$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message}};
 $("pick").onclick=()=>$("file").click();$("chg").onclick=()=>{reset();$("file").click()};$("file").onchange=e=>onFile(e.target.files[0]);
