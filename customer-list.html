@@ -68,6 +68,29 @@ select,input[type=text],input[type=date],input[type=time],textarea{width:100%;bo
 @media(max-width:1180px){.filters{grid-template-columns:repeat(3,minmax(0,1fr))}.row{grid-template-columns:40px minmax(0,2fr) minmax(0,1.2fr) 120px minmax(0,1.1fr) 190px}}
 @media(max-width:860px){.row.head{display:none}.row{grid-template-columns:28px minmax(0,1fr);gap:6px 10px;padding:15px 14px}.row>*:not(:first-child){grid-column:2}.ra{justify-content:flex-start;margin-top:4px}}
 @media(max-width:700px){.top-in{padding:10px 14px 0;gap:10px;flex-wrap:wrap;height:auto}.nav{order:3;flex-basis:100%;padding-bottom:8px}.acts .btn:not(.p){display:none}main{padding:18px 14px 50px}.filters{grid-template-columns:1fr 1fr}.hero h1{font-size:23px}.fg{grid-template-columns:1fr}}
+
+/* ===== Customer modal: status first, details in a second tab ===== */
+.modal{padding:0;width:min(660px,100%);overflow:hidden;display:flex;flex-direction:column}
+.mh{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:22px 24px 14px}.mh h2{font-size:19px;margin:0 0 3px}.mh p{color:var(--mut);margin:0;font-size:13px;overflow-wrap:anywhere}.mh .st{flex:none;font-size:12.5px;padding:5px 13px;margin-top:2px}
+.mtabs{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--line)}
+.mtabs button{border:0;background:none;padding:11px 14px;font-weight:600;font-size:13.5px;color:var(--mut);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.mtabs button:hover{color:var(--ink)}.mtabs button.on{color:var(--ink);border-bottom-color:var(--blue)}
+.mbody{padding:20px 24px 20px;overflow:auto;flex:1;min-height:min(430px,56vh)}
+.mq{font-size:13px;font-weight:700;margin-bottom:10px}
+.sc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:6px}
+.sc{--c:#475569;--bg:#f1f4fa;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;font-weight:700;font-size:13px;color:var(--ink);display:flex;align-items:center;gap:9px;text-align:left;transition:.12s}
+.sc::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.sc:hover{background:var(--bg);border-color:var(--c)}
+.sc.on{background:var(--c);border-color:var(--c);color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--c) 35%,transparent)}.sc.on::before{background:#fff}
+.sc[data-s="New"]{--c:#64748b;--bg:#f1f4fa}.sc[data-s="Contacted"],.sc[data-s="Qualified"]{--c:#0b6aa2;--bg:#e3f3fd}.sc[data-s="Interested"]{--c:#5b34d6;--bg:#efe8ff}
+.sc[data-s="Follow-up"]{--c:#b7791f;--bg:#fff3d6}.sc[data-s="Site Visit"],.sc[data-s="Negotiation"]{--c:#d9650b;--bg:#ffeddc}.sc[data-s="Won"]{--c:#0f9d6a;--bg:#e3f7ee}.sc[data-s="Lost"]{--c:#e0483f;--bg:#fdecea}
+.fu{margin-top:20px;padding:16px;background:#f8faff;border:1px solid var(--line);border-radius:14px}
+.fu h3{font-size:13.5px;font-weight:700;margin-bottom:10px}
+.fu input,.mbody textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;font-size:13.5px}
+.qk{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.qk button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 12px;font-size:12.5px;font-weight:600;color:var(--ink)}.qk button:hover{border-color:var(--blue);color:var(--blue)}
+.mnote{display:grid;gap:5px;font-size:12px;font-weight:600;color:var(--mut);margin-top:16px}
+.modal .mf{margin:0;padding:14px 24px 18px;border-top:1px solid var(--line);background:#fff}
+@media(max-width:700px){.sc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mh,.mtabs,.mbody{padding-left:16px;padding-right:16px}.modal .mf{padding:12px 16px 16px;flex-direction:column-reverse;gap:8px}.modal .mf>div{width:100%}.modal .mf>div .btn{flex:1;justify-content:center}.mbody{min-height:0}}
 </style>
 </head>
 <body>
@@ -93,16 +116,26 @@ select,input[type=text],input[type=date],input[type=time],textarea{width:100%;bo
     <section class="card list"><div class="row head"><div><input type="checkbox" id="all" aria-label="Select all"></div><div>Customer</div><div>Requirement</div><div>Status</div><div>Next action</div><div style="text-align:right">Actions</div></div><div id="rows"></div><div id="more" class="more hidden"></div></section>
   </div>
 </main>
-<div id="mo" class="ov hidden"><div class="modal" role="dialog" aria-modal="true"><h2 id="mt">Add customer</h2><p id="ms">Saved to your private workspace.</p>
-  <div class="fg">
-    <label>Name *<input id="m_name" type="text"></label><label>Mobile<input id="m_phone" type="text" inputmode="tel"></label>
-    <label>Company<input id="m_biz" type="text"></label><label>Category<select id="m_type"><option>Customer</option><option>Broker</option><option>Seller</option><option>Prospect</option><option>Agent</option><option>Partner</option><option>Investor</option></select></label>
-    <label>Area<input id="m_area" type="text"></label><label>City<input id="m_city" type="text"></label>
-    <label>Requirement<input id="m_req" type="text"></label><label>Budget / Value<input id="m_budget" type="text"></label>
-    <label>Status<select id="m_status"><option>New</option><option>Contacted</option><option>Qualified</option><option>Interested</option><option>Follow-up</option><option>Site Visit</option><option>Negotiation</option><option>Won</option><option>Lost</option></select></label>
-    <label>Source<select id="m_src"><option>Manual Entry</option><option>Website</option><option>WhatsApp</option><option>Phone</option><option>Google</option><option>Facebook</option><option>Instagram</option><option>Referral</option><option>Walk-in</option><option>Other</option></select></label>
-    <label>Follow-up date<input id="m_date" type="date"></label><label>Follow-up time<input id="m_time" type="time"></label>
-    <label class="full">Notes<textarea id="m_note" rows="3"></textarea></label></div>
+<div id="mo" class="ov hidden"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+  <div class="mh"><div><h2 id="mt">Add customer</h2><p id="ms">Saved to your private workspace.</p></div><span class="st" id="m_badge">New</span></div>
+  <div class="mtabs" role="tablist"><button type="button" role="tab" class="on" data-mt="status">Status &amp; follow-up</button><button type="button" role="tab" data-mt="details">Details</button></div>
+  <div class="mbody">
+    <div id="mp_status">
+      <div class="mq">Where is this customer right now?</div>
+      <div class="sc-grid" id="m_chips" role="radiogroup" aria-label="Customer status"><button type="button" class="sc" role="radio" aria-checked="false" data-s="New">New</button><button type="button" class="sc" role="radio" aria-checked="false" data-s="Contacted">Contacted</button><button type="button" class="sc" role="radio" aria-checked="false" data-s="Qualified">Qualified</button><button type="button" class="sc" role="radio" aria-checked="false" data-s="Interested">Interested</button><button type="button" class="sc" role="radio" aria-checked="false" data-s="Follow-up">Follow-up</button><button type="button" class="sc" role="radio" aria-checked="false" data-s="Site Visit">Site Visit</button><button type="button" class="sc" role="radio" aria-checked="false" data-s="Negotiation">Negotiation</button><button type="button" class="sc" role="radio" aria-checked="false" data-s="Won">Won</button><button type="button" class="sc" role="radio" aria-checked="false" data-s="Lost">Lost</button></div>
+      <select id="m_status" class="hidden" aria-hidden="true" tabindex="-1"><option>New</option><option>Contacted</option><option>Qualified</option><option>Interested</option><option>Follow-up</option><option>Site Visit</option><option>Negotiation</option><option>Won</option><option>Lost</option></select>
+      <div class="fu"><h3>Next follow-up</h3>
+        <div class="fg"><label>Date<input id="m_date" type="date"></label><label>Time<input id="m_time" type="time"></label></div>
+        <div class="qk"><button type="button" data-qd="0">Today</button><button type="button" data-qd="1">Tomorrow</button><button type="button" data-qd="3">In 3 days</button><button type="button" data-qd="7">Next week</button></div></div>
+      <label class="mnote">Notes<textarea id="m_note" rows="3" placeholder="Anything worth remembering about this customer"></textarea></label>
+    </div>
+    <div id="mp_details" class="hidden"><div class="fg">
+      <label>Name *<input id="m_name" type="text"></label><label>Mobile<input id="m_phone" type="text" inputmode="tel"></label>
+      <label>Company<input id="m_biz" type="text"></label><label>Category<select id="m_type"><option>Customer</option><option>Broker</option><option>Seller</option><option>Prospect</option><option>Agent</option><option>Partner</option><option>Investor</option></select></label>
+      <label>Area<input id="m_area" type="text"></label><label>City<input id="m_city" type="text"></label>
+      <label>Requirement<input id="m_req" type="text"></label><label>Budget / Value<input id="m_budget" type="text"></label>
+      <label class="full">Source<select id="m_src"><option>Manual Entry</option><option>Website</option><option>WhatsApp</option><option>Phone</option><option>Google</option><option>Facebook</option><option>Instagram</option><option>Referral</option><option>Walk-in</option><option>Other</option></select></label></div></div>
+  </div>
   <div class="mf"><div style="display:flex;gap:8px"><button class="btn d hidden" id="m_del">Delete</button><button class="btn hidden" id="m_done">✓ Mark follow-up done</button></div><div style="display:flex;gap:8px"><button class="btn" id="m_cancel">Cancel</button><button class="btn p" id="m_save">Save customer</button></div></div></div></div>
 <div id="toast" class="toast hidden"></div>
 
@@ -174,13 +207,18 @@ onAuthStateChanged(auth,async u=>{user=u;
 /* modal */
 const mf={name:"m_name",phone:"m_phone",businessName:"m_biz",type:"m_type",area:"m_area",city:"m_city",req:"m_req",budget:"m_budget",status:"m_status",source:"m_src",note:"m_note"};
 function openM(id){editId=id||"";const c=all.find(x=>x.id===id)||{};
-  $("mt").textContent=id?"Customer details":"Add customer";$("ms").textContent=id?"Edit details, change status or schedule the next follow-up.":"Saved to your private workspace.";
+  $("mt").textContent=id?"Customer details":"Add customer";$("ms").textContent=id?(clean(c.name)+(c.phone?" · "+clean(c.phone):"")):"Saved to your private workspace.";$("m_save").textContent=id?"Save changes":"Add customer";
   Object.entries(mf).forEach(([k,i])=>{$(i).value=clean(c[k]??(k==="req"?c.requirement:""))||(k==="type"?"Customer":k==="status"?"New":k==="source"?"Manual Entry":k==="city"?"":"")});
   $("m_date").value=c._d?`${c._d.getFullYear()}-${String(c._d.getMonth()+1).padStart(2,"0")}-${String(c._d.getDate()).padStart(2,"0")}`:"";$("m_time").value="";
-  $("m_del").classList.toggle("hidden",!id);$("m_done").classList.toggle("hidden",!id);$("mo").classList.remove("hidden");$("m_name").focus()}
+  const cs=clean(c.status)||"New";document.querySelectorAll("#m_chips .sc.x,#m_status option.x").forEach(n=>n.remove());
+  if(!STAT.includes(cs)){const o=document.createElement("option");o.className="x";o.textContent=cs;$("m_status").appendChild(o);const b=document.createElement("button");b.type="button";b.className="sc x";b.dataset.s=cs;b.setAttribute("role","radio");b.textContent=cs;$("m_chips").appendChild(b)}
+  setStatus(cs);$("m_del").classList.toggle("hidden",!id);$("m_done").classList.toggle("hidden",!id);$("mo").classList.remove("hidden");setTab(id?"status":"details");if(!id)$("m_name").focus()}
+const STAT=["New","Contacted","Qualified","Interested","Follow-up","Site Visit","Negotiation","Won","Lost"];
+function setStatus(v){const s=v||"New";$("m_status").value=s;document.querySelectorAll("#m_chips .sc").forEach(b=>{const on=b.dataset.s===s;b.classList.toggle("on",on);b.setAttribute("aria-checked",String(on))});const bd=$("m_badge");bd.textContent=s;bd.className="st "+s.replace(/\s+/g,"-")}
+function setTab(t){document.querySelectorAll(".mtabs button").forEach(b=>{const on=b.dataset.mt===t;b.classList.toggle("on",on);b.setAttribute("aria-selected",String(on))});$("mp_status").classList.toggle("hidden",t!=="status");$("mp_details").classList.toggle("hidden",t!=="details")}
 const closeM=()=>$("mo").classList.add("hidden");
 function t12(v){if(!v)return"—";let[h,m]=v.split(":").map(Number);return`${String(h%12||12).padStart(2,"0")}:${String(m).padStart(2,"0")} ${h<12?"AM":"PM"}`}
-async function save(done){const name=$("m_name").value.trim();if(!name)return toast("Customer name is required",true);
+async function save(done){const name=$("m_name").value.trim();if(!name){setTab("details");$("m_name").focus();return toast("Customer name is required",true)}
   const d={};Object.entries(mf).forEach(([k,i])=>d[k]=$(i).value.trim());d.requirement=d.req;d.phoneNormalized=normP(d.phone);
   if(d.phoneNormalized&&all.some(c=>c.id!==editId&&normP(c.phone)===d.phoneNormalized))return toast("A customer with this mobile already exists",true);
   const dv=$("m_date").value;d.next=done?"Completed":dv?new Date(dv+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})+" · "+t12($("m_time").value)+" · Call":"Not set";
@@ -196,7 +234,10 @@ function exportCSV(){const H=["Name","Mobile","Company","Category","Area","City"
 /* events */
 $("avBtn").onclick=e=>{e.stopPropagation();$("dd").classList.toggle("hidden")};document.addEventListener("click",()=>$("dd").classList.add("hidden"));
 $("out").onclick=()=>signOut(auth);$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message}};
-$("add").onclick=()=>openM();$("exp").onclick=exportCSV;$("m_cancel").onclick=closeM;$("m_save").onclick=()=>save(false);$("m_done").onclick=()=>save(true);$("m_del").onclick=()=>del([editId]);
+$("add").onclick=()=>openM();$("m_chips").addEventListener("click",e=>{const b=e.target.closest(".sc");if(b)setStatus(b.dataset.s)});
+document.querySelector(".mtabs").addEventListener("click",e=>{const b=e.target.closest("[data-mt]");if(b)setTab(b.dataset.mt)});
+document.querySelector(".qk").addEventListener("click",e=>{const b=e.target.closest("[data-qd]");if(!b)return;const d=new Date();d.setDate(d.getDate()+Number(b.dataset.qd));$("m_date").value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;if(!$("m_time").value)$("m_time").value="10:00"});
+$("exp").onclick=exportCSV;$("m_cancel").onclick=closeM;$("m_save").onclick=()=>save(false);$("m_done").onclick=()=>save(true);$("m_del").onclick=()=>del([editId]);
 $("mo").addEventListener("click",e=>{if(e.target.id==="mo")closeM()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeM()});
 let st;$("q").addEventListener("input",()=>{clearTimeout(st);st=setTimeout(apply,150)});
 ["f_type","f_area","f_status","f_src","f_sub","f_date"].forEach(i=>$(i).addEventListener("change",apply));
