@@ -94,25 +94,25 @@ function nd(c){const r=String(c.next||"");if(!r||/not set|completed/i.test(r))re
 function derive(){const n=new Date();day=new Date(n.getFullYear(),n.getMonth(),n.getDate());
   all.forEach(c=>{const d=nd(c);c._d=d;c._diff=d?Math.round((d-day)/864e5):null;
     c._s=TERM.includes(c.status)?"x":/completed/i.test(c.next||"")?"dn":!d?"none":c._diff<0?"od":c._diff===0?"td":"up"})}
-const T={act:["Needs action",c=>c._s==="od"||c._s==="td"||(c._s==="none"&&String(c.status||"").toLowerCase()==="follow-up")],od:["Overdue",c=>c._s==="od"],td:["Today",c=>c._s==="td"],up:["Upcoming",c=>c._s==="up"],dn:["Done",c=>c._s==="dn"]};
+const T={act:["Needs action",c=>c._s==="od"||c._s==="td"||(String(c.status||"").toLowerCase()==="follow-up"&&c._s==="none")],od:["Overdue",c=>c._s==="od"],td:["Today",c=>c._s==="td"],up:["Upcoming",c=>c._s==="up"],dn:["Done",c=>c._s==="dn"]};
 function render(){
   const cnt=k=>all.filter(T[k][1]).length,od=cnt("od"),td=cnt("td");
-  $("navFu").textContent=od+td;$("navFu").classList.toggle("hidden",!(od+td));
+  $("navFu").textContent=cnt("act");$("navFu").classList.toggle("hidden",!cnt("act"));
   $("chips").innerHTML=Object.keys(T).map(k=>`<button class="chip${tab===k?" on":""}${k==="od"?" r":""}" data-tab="${k}">${T[k][0]} <b>${cnt(k)}</b></button>`).join("");
   $("sub").innerHTML=!loaded?"Loading…":od+td?`<b>${td} due today</b>${od?` · <b style="color:var(--red)">${od} overdue</b>`:""} · ${cnt("up")} upcoming`:`You're all caught up · ${cnt("up")} upcoming`;
   if(!loaded){$("list").innerHTML=Array(5).fill('<div class="fu"><div class="sk"></div><div class="sk"></div><div></div></div>').join("");return}
   const s=q.toLowerCase();let rows=all.filter(T[tab][1]).filter(c=>!s||[c.name,c.phone,c.req,c.area].map(clean).join(" ").toLowerCase().includes(s));
-  rows=tab==="dn"?rows.sort((a,b)=>ts(b)-ts(a)):rows.sort((a,b)=>a._d-b._d||String(a.next).localeCompare(String(b.next)));
-  if(!rows.length){const E={act:["🎉","You're all caught up","No overdue or due-today follow-ups."],od:["✅","Nothing overdue","Great — no missed follow-ups."],td:["☀️","Nothing due today","Plan tomorrow's calls from your customer list."],up:["📅","No upcoming follow-ups","Schedule the next step for your customers."],dn:["🗂️","No completed follow-ups yet","Mark follow-ups done and they'll appear here."]}[tab];
+  rows=tab==="dn"?rows.sort((a,b)=>ts(b)-ts(a)):rows.sort((a,b)=>(a._d?.getTime()??Infinity)-(b._d?.getTime()??Infinity)||String(a.next||"").localeCompare(String(b.next||"")));
+  if(!rows.length){const E={act:["🎉","No follow-ups need action","No overdue, due-today, or unscheduled Follow-up-status customers."],od:["✅","Nothing overdue","Great — no missed follow-ups."],td:["☀️","Nothing due today","Plan tomorrow's calls from your customer list."],up:["📅","No upcoming follow-ups","Schedule the next step for your customers."],dn:["🗂️","No completed follow-ups yet","Mark follow-ups done and they'll appear here."]}[tab];
     $("list").innerHTML=`<div class="empty"><div style="font-size:34px">${q?"🔎":E[0]}</div><b>${q?"No matches":E[1]}</b>${q?"Try a different search.":E[2]}<br><a class="btn p" href="customer-list.html">Open customers</a></div>`;$("more").classList.add("hidden");return}
   const page=rows.slice(0,shown);let last="",h="";
-  page.forEach(c=>{const g=tab==="dn"?"Completed":c._s==="od"?"Overdue":c._diff===0?"Today":c._diff===1?"Tomorrow":c._d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
-    if(g!==last){const n=page.filter(x=>(tab==="dn"?"Completed":x._s==="od"?"Overdue":x._diff===0?"Today":x._diff===1?"Tomorrow":x._d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}))===g).length;h+=`<div class="gh ${g==="Overdue"?"od":g==="Today"?"td":""}"><span>${g}</span><span>${n}</span></div>`;last=g}
+  page.forEach(c=>{const g=tab==="dn"?"Completed":c._s==="none"?"Needs a next step":c._s==="od"?"Overdue":c._diff===0?"Today":c._diff===1?"Tomorrow":c._d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
+    if(g!==last){const n=page.filter(x=>(tab==="dn"?"Completed":x._s==="none"?"Needs a next step":x._s==="od"?"Overdue":x._diff===0?"Today":x._diff===1?"Tomorrow":x._d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}))===g).length;h+=`<div class="gh ${g==="Overdue"?"od":g==="Today"?"td":""}"><span>${g}</span><span>${n}</span></div>`;last=g}
     h+=row(c)});
   $("list").innerHTML=h;const m=$("more");m.classList.toggle("hidden",rows.length<=shown);m.innerHTML=`Showing ${page.length} of ${rows.length} · <button class="btn" id="lm">Load more</button>`}
 function row(c){const p=String(c.next||"").split(" · "),ph=normP(c.phone),nm=clean(c.name)||"Unnamed",sc=clean(c.status)||"New",
   dt=c._d?c._d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}):"",
-  w=c._s==="dn"?`<b>✓ Completed</b><span>${esc(clean(c.last)||"Follow-up done")}</span>`:c._s==="od"?`<b>${-c._diff}d overdue</b><span>${dt} · ${esc(p[1]||"—")} · ${esc(p[2]||"Call")}</span>`:c._s==="td"?`<b>Today · ${esc(p[1]||"—")}</b><span>${esc(p[2]||"Call")}</span>`:`<b>${dt}</b><span>${esc(p[1]||"—")} · ${esc(p[2]||"Call")}</span>`;
+  w=c._s==="none"?`<b>Needs follow-up</b><span>No date or time set · ${esc(sc)}</span>`:c._s==="dn"?`<b>✓ Completed</b><span>${esc(clean(c.last)||"Follow-up done")}</span>`:c._s==="od"?`<b>${-c._diff}d overdue</b><span>${dt} · ${esc(p[1]||"—")} · ${esc(p[2]||"Call")}</span>`:c._s==="td"?`<b>Today · ${esc(p[1]||"—")}</b><span>${esc(p[2]||"Call")}</span>`:`<b>${dt}</b><span>${esc(p[1]||"—")} · ${esc(p[2]||"Call")}</span>`;
   return`<div class="fu"><div class="who"><div class="av">${esc(ini(nm))}</div><div style="min-width:0"><b><em>${esc(nm)}</em><span class="st ${sc.replace(/\s+/g,"-")}">${esc(sc)}</span></b><span>${esc(clean(c.req||c.requirement)||"No requirement")}${clean(c.phone)?" · "+esc(clean(c.phone)):""}</span></div></div>
   <div class="when ${c._s}">${w}</div>
   <div class="ra">${ph.length>=10?`<a class="mini" href="tel:+91${ph.slice(-10)}">📞 Call</a><a class="mini wa" target="_blank" rel="noopener" href="https://wa.me/91${ph.slice(-10)}">WhatsApp</a>`:""}<button class="mini" data-act="re" data-id="${c.id}">${c._s==="dn"?"Schedule next":"Reschedule"}</button>${c._s==="dn"?"":`<button class="mini ok" data-act="done" data-id="${c.id}">✓ Done</button>`}</div></div>`}
