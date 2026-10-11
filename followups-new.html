@@ -143,5 +143,6 @@ let st;$("q").addEventListener("input",e=>{clearTimeout(st);st=setTimeout(()=>{q
 document.addEventListener("click",e=>{const t=e.target,c=t.closest("[data-tab]");if(c){tab=c.dataset.tab;shown=60;render();return}
   if(t.id==="lm"){shown+=60;render();return}const a=t.closest("[data-act]");if(a)a.dataset.act==="done"?done(a.dataset.id):openM(a.dataset.id)});
 </script>
+<script src="assets/nav-more.js" defer></script>
 </body>
 </html>

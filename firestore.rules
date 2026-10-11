@@ -166,11 +166,11 @@ service cloud.firestore {
           && request.resource.data.reason is string
           && request.resource.data.status == 'pending'
           && request.resource.data.createdAt == request.time;
-        allow update: if isOwnerOfBusiness(businessId)
-          && resource.data.status == 'pending'
-          && request.resource.data.status in ['approved','rejected']
+        allow update: if (isOwnerOfBusiness(businessId)
           && request.resource.data.reviewedBy == request.auth.uid
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','reviewedBy','reviewedAt'])
+          && ((resource.data.status == 'pending' && request.resource.data.status in ['approved','rejected'])
+            || (resource.data.status == 'approved' && request.resource.data.status == 'revoked')))
           || (isActiveTeamMember(businessId)
             && resource.data.requesterUid == request.auth.uid
             && resource.data.status == 'approved'
@@ -186,7 +186,7 @@ service cloud.firestore {
           && request.resource.data.keys().hasOnly(['businessId','actorUid','actorEmail','actorName','targetEmail','eventType','message','permission','createdAt'])
           && request.resource.data.businessId == businessId
           && request.resource.data.actorUid == request.auth.uid
-          && request.resource.data.eventType in ['permission_requested','permission_approved','permission_rejected','permission_used','member_disabled','member_activated','member_removed','member_invited','data_imported','data_exported','customer_created','customer_updated','customer_status_changed','customer_interaction','customer_note_saved','followup_scheduled','followup_completed','deal_saved']
+          && request.resource.data.eventType in ['permission_requested','permission_approved','permission_rejected','permission_used','permission_revoked','member_disabled','member_activated','member_removed','member_invited','data_imported','data_exported','customer_created','customer_updated','customer_status_changed','customer_interaction','customer_note_saved','followup_scheduled','followup_completed','deal_saved']
           && request.resource.data.message is string
           && request.resource.data.createdAt == request.time;
         allow update, delete: if false;

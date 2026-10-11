@@ -138,5 +138,6 @@ $("mc").onclick=closeM;$("mo").addEventListener("click",e=>{if(e.target.id==="mo
 $("cpy").onclick=async()=>{try{await navigator.clipboard.writeText($("cpy").dataset.txt);toast("Request details copied")}catch(e){toast("Copy failed",true)}};
 document.addEventListener("click",e=>{const b=e.target.closest("[data-up]");if(b)openM(b.dataset.up)});
 </script>
+<script src="assets/nav-more.js" defer></script>
 </body>
 </html>

@@ -279,5 +279,6 @@ $("exC").onclick=()=>{if(!ready.c||errs.c)return toast("Customer data is not ava
 $("exD").onclick=()=>{if(!ready.d||errs.d)return toast("Deal data is not available to export",true);const r=range(),d=slice(r.s,r.e,true).d;
   csv(`deals-${tag()}.csv`,[["Customer","Deal","Amount","Received","Pending","Estimated from budget","Closed"],...d.map(x=>[x.customer,x.name,x.amount,x.received,x.pending,x.est?"Yes":"No",x.closed?iso(x.closed):""])]);toast(`Exported ${d.length} deals`)};
 </script>
+<script src="assets/nav-more.js" defer></script>
 </body>
 </html>

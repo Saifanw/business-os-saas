@@ -290,5 +290,6 @@ $("tpl").onclick=e=>{e.preventDefault();const a=document.createElement("a");a.hr
 document.addEventListener("click",e=>{const c=e.target.closest("[data-tab]");if(c)tab(c.dataset.tab);const x=e.target.closest("[data-ex]");if(x)exportData(x.dataset.ex,x.dataset.f)});
 window.addEventListener("hashchange",()=>tab(location.hash==="#export-section"?"export":"import"));
 </script>
+<script src="assets/nav-more.js" defer></script>
 </body>
 </html>

@@ -171,5 +171,6 @@ let st;$("q").addEventListener("input",e=>{clearTimeout(st);st=setTimeout(()=>{q
 document.addEventListener("click",e=>{const t=e.target,f=t.closest("[data-f]");if(f){flt=f.dataset.f;shown=40;render();return}
   if(t.id==="lm"){shown+=40;render();return}if(t.id==="add2"){openM();return}const a=t.closest("[data-act]");if(a)openM(a.dataset.id,a.dataset.act==="pay")});
 </script>
+<script src="assets/nav-more.js" defer></script>
 </body>
 </html>

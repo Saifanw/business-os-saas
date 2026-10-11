@@ -239,5 +239,6 @@ document.addEventListener("click",async e=>{const t=e.target,c=t.closest("[data-
   const g=t.closest("[data-tg]");if(g){const em=decodeURIComponent(g.dataset.tg);try{await updateDoc(doc(db,"businesses",bizId,"teamInvites",em),{status:g.dataset.to,updatedAt:serverTimestamp()});await logTeamActivity(g.dataset.to==="active"?"member_activated":"member_disabled",`${g.dataset.to==="active"?"Activated":"Disabled"} team member ${em}`,em);toast(g.dataset.to==="active"?"Member activated":"Member disabled");if(tab==="requests")await loadRequestsActivity()}catch(x){toast(x.message||"Could not update",true)}return}
   const r=t.closest("[data-rm]");if(r){const em=decodeURIComponent(r.dataset.rm);if(!confirm(`Remove ${em} from your team? They will lose access.`))return;try{await deleteDoc(doc(db,"businesses",bizId,"teamInvites",em));await logTeamActivity("member_removed",`Removed team member ${em}`,em);toast("Member removed")}catch(x){toast(x.message||"Could not remove",true)}}});
 </script>
+<script src="assets/nav-more.js" defer></script>
 </body>
 </html>

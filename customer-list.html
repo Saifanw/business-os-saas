@@ -209,5 +209,6 @@ document.addEventListener("click",e=>{const t=e.target;if(t.id==="lm"){shown+=50
   const s=t.closest("[data-sel]");if(s){s.checked?sel.add(s.dataset.sel):sel.delete(s.dataset.sel);bulk();$("all").checked=view.slice(0,shown).every(c=>sel.has(c.id));return}
   const r=t.closest(".row[data-id]");if(r&&!t.closest("a,button,input"))openM(r.dataset.id)});
 </script>
+<script src="assets/nav-more.js" defer></script>
 </body>
 </html>

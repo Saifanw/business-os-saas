@@ -127,5 +127,6 @@ let st;$("q").addEventListener("input",e=>{clearTimeout(st);st=setTimeout(()=>{q
 document.addEventListener("click",e=>{const t=e.target,c=t.closest("[data-t]");if(c){tab=c.dataset.t;shown=40;render();return}if(t.id==="lm"){shown+=40;render();return}
   const a=t.closest("[data-act]");if(a)a.dataset.act==="add"?addLead(a.dataset.id):delLead(a.dataset.id)});
 </script>
+<script src="assets/nav-more.js" defer></script>
 </body>
 </html>
