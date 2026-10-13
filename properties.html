@@ -67,10 +67,6 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 .sc{font-weight:800;font-size:13px;color:#0a7a50;background:#e9f9f1;border-radius:99px;padding:3px 10px}.sc.m{color:#9a6200;background:#fff3d6}
 .fg .third{grid-column:span 1}
 
-.ph .pbadge{position:absolute;left:10px;bottom:10px;z-index:2;padding:6px 12px;border-radius:11px;color:#fff;font-size:15px;font-weight:800;letter-spacing:-.2px;line-height:1.1;background:linear-gradient(135deg,#1f3fd8,#6a3df0);box-shadow:0 8px 18px rgba(49,93,246,.42),inset 0 1px 0 rgba(255,255,255,.28)}
-.ph .pbadge.Sold{background:linear-gradient(135deg,#7f1d1d,#c43c35);box-shadow:0 8px 18px rgba(196,60,53,.35)}.ph .pbadge.Hold{background:linear-gradient(135deg,#8a5a00,#d98a00);box-shadow:0 8px 18px rgba(217,138,0,.35)}
-.ph::after{content:"";position:absolute;inset:auto 0 0 0;height:50%;background:linear-gradient(to top,rgba(10,16,34,.5),transparent);pointer-events:none;border-radius:0}
-.ph .st,.ph .code,.ph .pn{z-index:2}
 .ph .pn{position:absolute;right:10px;bottom:10px;background:#0f172acc;color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px}
 .bd{display:flex;gap:5px;flex-wrap:wrap}.bd i{font-style:normal;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:#e9f9f1;color:#0a7a50}.bd i.w{background:#fff3d6;color:#9a6200}
 .rate{font-size:12px;color:var(--mut);font-weight:600;margin-left:6px}
@@ -168,7 +164,7 @@ function adText(d,hi,short){const L=hi?{sale:"बिक्री हेतु",s
  const o=[`🏠 *${L.sale}* — ${d.title||d.type}`,`📍 ${d.locality||""}, ${d.city||"Jaipur"}${d.landmark?" ("+d.landmark+")":""}`,`💰 ${L.price}: ${money(d.price)}${r?" ("+L.rate+" "+inr(r)+"/"+L.gaj+")":""}`];
  const sz=[d.size,g?g+" "+L.gaj:""].filter(Boolean).join(" • ");if(sz)o.push(`📏 ${L.size}: ${sz}`);if(d.bedrooms)o.push(`🛏 ${d.bedrooms} BHK`);if(top)o.push(`🧭 ${top}`);
  if(!short){[d.patta?L.patta+": "+d.patta:"",d.registry?L.reg+": "+d.registry:"",d.loan?L.loan+": "+d.loan:""].filter(Boolean).forEach(x=>o.push("📄 "+x));hl.forEach(x=>o.push("✅ "+x));if(d.mapUrl)o.push("🗺 "+d.mapUrl)}
- o.push("",`📞 ${L.ref} • Ref: ${d.code||"New"}`);return o.join("\n")}
+ o.push("",`📞 ${L.ref}`);return o.join("\n")}
 const shareText=p=>adText(p,false,false)+(p.published&&typeof pub!=="undefined"&&pub&&typeof listLink==="function"?"\n\n🔗 Photos & details: "+listLink(p.id):"");
 function render(){const ok=ready.c&&ready.p;
  const soldV=props.filter(p=>p.status==="Sold").reduce((a,p)=>a+(+p.soldPrice||+p.price||0),0),av=props.filter(p=>p.status==="Available"),V=av.reduce((s,p)=>s+(+p.price||0),0),sold=props.filter(p=>p.status==="Sold").length,mc=av.reduce((s,p)=>s+matches(p).length,0);
@@ -182,8 +178,8 @@ function render(){const ok=ready.c&&ready.p;
  $("grid").innerHTML=rows.length?rows.map(p=>{const m=p.status==="Sold"?[]:matches(p),lin=(p.interestedIds||[]).map(i=>contacts.find(c=>c.id===i)).filter(Boolean),mmm=0;
   const ph=photosOf(p),sc=scoreOf(p),r=rateOf(p),g=gajOf(p),bg=ph[0]?`style="background-image:url('${esc(ph[0])}')"`:"",col=sc.sc>=80?"#0f9d6a":sc.sc>=50?"#d98a00":"#e0483f";
   const bd=[p.corner==="Yes"?"Corner":"",p.patta,p.registry==="Registry available"?"Registry ✓":p.registry,p.loan==="Available"?"Loan ✓":""].filter(Boolean);
-  return`<div class="pc"><div class="ph" ${bg}>${ph[0]?"":ICON[p.type]||"🏠"}<span class="st ${p.status}">${p.status==="Hold"?"On hold":p.status}</span><span class="code">${esc(code(p))}</span>${ph.length>1?`<span class="pn">📷 ${ph.length}</span>`:""}${Number(p.price)>0?`<span class="pbadge ${p.status}">${p.status==="Sold"?"Sold · ":""}${money(p.status==="Sold"?(p.soldPrice||p.price):p.price)}</span>`:""}</div>
-  <div class="pb2"><h3>${esc(p.title)}</h3><div><span class="price">${money(p.price)}</span>${r?`<span class="rate">${inr(r)}/Gaj</span>`:""}</div><div style="color:var(--mut);font-size:12.5px">📍 ${esc(p.locality)}, ${esc(p.city||"")}${p.landmark?" · "+esc(p.landmark):""}</div>
+  return`<div class="pc"><div class="ph" ${bg}>${ph[0]?"":ICON[p.type]||"🏠"}<span class="st ${p.status}">${p.status==="Hold"?"On hold":p.status}</span>${ph.length>1?`<span class="pn">📷 ${ph.length}</span>`:""}</div>
+  <div class="pb2"><h3>${esc(p.title)} <span style="color:var(--mut);font-weight:600;font-size:11.5px;margin-left:4px;white-space:nowrap">${esc(code(p))}</span></h3><div><span class="price">${money(p.price)}</span>${r?`<span class="rate">${inr(r)}/Gaj</span>`:""}</div><div style="color:var(--mut);font-size:12.5px">📍 ${esc(p.locality)}, ${esc(p.city||"")}${p.landmark?" · "+esc(p.landmark):""}</div>
   <div class="meta"><span>${esc(p.type)}</span>${p.size?`<span>${esc(p.size)}</span>`:""}${g?`<span>${g} Gaj</span>`:""}${p.bedrooms?`<span>${esc(p.bedrooms)} BHK</span>`:""}${p.facing?`<span>${esc(p.facing)} facing</span>`:""}${p.roadWidth?`<span>${esc(p.roadWidth)} ft road</span>`:""}</div>
   ${p.status==="Sold"?`<div class="bd"><i style="background:#fde8e6;color:#9b2c22">Sold to ${esc(p.soldToName||"buyer")} · ${money(p.soldPrice||p.price)}</i></div>`:""}${cbOf(p.id).length?`<div class="bd"><i data-openreq="1" style="background:#fff3d6;color:#9a6200;cursor:pointer">📞 ${cbOf(p.id).length} call-back request${cbOf(p.id).length>1?"s":""} — dekho</i></div>`:""}${lin.length&&p.status!=="Sold"?`<div class="bd"><i style="background:#eef2ff;color:#2f5bff">⭐ ${lin.slice(0,2).map(c=>esc(clean(c.name).split(" ")[0])).join(", ")}${lin.length>2?" +"+(lin.length-2):""}</i></div>`:""}${bd.length?`<div class="bd">${bd.map(x=>`<i>${esc(x)}</i>`).join("")}</div>`:`<div class="bd"><i class="w">Legal details missing</i></div>`}
   ${p.ownerName?`<div style="font-size:12px;color:var(--mut)">Owner: <b style="color:var(--ink)">${esc(p.ownerName)}</b>${p.ownerPhone?` · <a href="tel:${esc(p.ownerPhone)}" style="color:var(--blue);font-weight:700">${esc(p.ownerPhone)}</a>`:""}</div>`:""}

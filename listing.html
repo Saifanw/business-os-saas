@@ -32,13 +32,12 @@ textarea{height:76px;padding-top:11px;resize:vertical}
 .center{text-align:center;padding:60px 20px;color:var(--muted)}.hidden{display:none!important}
 .ref{font-size:12px;color:var(--muted)}
 /* premium price badge + sticky action bar */
-.pbadge{position:absolute;left:14px;bottom:14px;z-index:2;display:flex;flex-direction:column;gap:1px;padding:9px 16px 10px;border-radius:14px;color:#fff;background:linear-gradient(135deg,#1f3fd8 0%,#6a3df0 100%);box-shadow:0 10px 26px rgba(49,93,246,.45),inset 0 1px 0 rgba(255,255,255,.28);line-height:1.1}
-.pbadge small{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;opacity:.85}
-.pbadge b{font-size:25px;font-weight:800;letter-spacing:-.5px}
-.pbadge em{font-style:normal;font-size:11.5px;font-weight:700;opacity:.9;margin-top:2px}
-.pbadge.sold{background:linear-gradient(135deg,#7f1d1d,#c43c35)}.pbadge.hold{background:linear-gradient(135deg,#8a5a00,#d98a00)}
-.gal::after{content:"";position:absolute;inset:auto 0 0 0;height:42%;background:linear-gradient(to top,rgba(10,16,34,.55),transparent);pointer-events:none}
-.tag{z-index:2;box-shadow:0 4px 12px rgba(15,23,42,.18)}
+.pbadge{position:absolute;left:12px;bottom:12px;z-index:2;display:flex;align-items:baseline;gap:6px;padding:7px 14px;border-radius:12px;color:#fff;background:linear-gradient(135deg,#1f3fd8 0%,#6a3df0 100%);box-shadow:0 6px 16px rgba(49,93,246,.35);line-height:1.1}
+.pbadge small{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.pbadge b{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.pbadge.sold{background:linear-gradient(135deg,#7f1d1d,#c43c35);box-shadow:0 6px 16px rgba(196,60,53,.3)}.pbadge.hold{background:linear-gradient(135deg,#8a5a00,#d98a00);box-shadow:0 6px 16px rgba(217,138,0,.3)}
+.gal::after{content:"";position:absolute;inset:auto 0 0 0;height:30%;background:linear-gradient(to top,rgba(10,16,34,.4),transparent);pointer-events:none}
+.tag{z-index:2;box-shadow:0 2px 8px rgba(15,23,42,.15)}
 .sbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;align-items:center}
 .sbar .sp{flex:1;min-width:0;line-height:1.15}.sbar .sp small{display:block;font-size:11px;color:var(--muted);font-weight:700}.sbar .sp b{font-size:18px;color:var(--blue);font-weight:800}
 .sbar .btn{flex:none;min-width:0;padding:12px 18px}
@@ -90,7 +89,7 @@ function paint(p,b){
   const phone=String(b.phone||"").replace(/\D/g,""),wa=phone?(phone.length===10?"91"+phone:phone):"";
   const waMsg=`Hello, I am interested in ${title} – ${money(p.price)}. Please share details.`;
   const el=$("ok");
-  el.innerHTML=`<div><div class="gal" id="gal">${photos.length?"":esc(ICON[p.type]||"🏠")}<span class="tag ${st[1]}">${st[0]}</span>${Number(p.price)>0?`<div class="pbadge ${st[1]}"><small>${st[1]==="sold"?"Sold at":"Price"}</small><b>${esc(money(p.price))}</b>${rate?`<em>${inr(rate)}/Gaj</em>`:""}</div>`:""}</div><div class="thumbs" id="th"></div></div>
+  el.innerHTML=`<div><div class="gal" id="gal">${photos.length?"":esc(ICON[p.type]||"🏠")}<span class="tag ${st[1]}">${st[0]}</span>${Number(p.price)>0?`<div class="pbadge ${st[1]}">${st[1]==="sold"?"<small>Sold</small>":""}<b>${esc(money(p.price))}</b></div>`:""}</div><div class="thumbs" id="th"></div></div>
   <div class="card"><h1>${esc(title)}</h1><div><span class="price">${esc(money(p.price))}</span>${rate?`<span class="rate">${inr(rate)}/Gaj</span>`:""}</div>
   <div class="loc">📍 ${esc(p.locality||"")}${p.city?", "+esc(p.city):""}${p.landmark?" · "+esc(p.landmark):""}</div>
   <div class="chips">${meta.map(x=>`<span>${esc(x)}</span>`).join("")}${badges.map(x=>`<span class="g">${esc(x)}</span>`).join("")}</div></div>
