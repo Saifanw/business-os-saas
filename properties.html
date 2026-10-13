@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Properties — BusinessOS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f172a;--mut:#64748b;--line:#e6eaf2;--bg:#f5f7fb;--blue:#2f5bff;--blue2:#1e40e0;--green:#0f9d6a;--amber:#d98a00;--red:#e0483f;--purple:#7c4dff}
+*{box-sizing:border-box;margin:0}html,body{overflow-x:hidden}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}.hidden{display:none!important}:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.top{position:sticky;top:0;z-index:30;background:#ffffffee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1320px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:22px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;letter-spacing:-.02em}.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#4f7bff,#2446e0);color:#fff;display:grid;place-items:center;font-weight:800}
+.nav{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}
+.nav a{padding:8px 13px;border-radius:9px;color:var(--mut);font-weight:600;font-size:13px;white-space:nowrap;display:flex;gap:7px;align-items:center}.nav a:hover{background:#f1f4fa;color:var(--ink)}.nav a.on{background:#eaf0ff;color:var(--blue)}
+.pill{background:var(--red);color:#fff;border-radius:99px;font-size:10px;padding:1px 6px;font-weight:700}
+.acts{display:flex;gap:10px;align-items:center}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:.15s}.btn:hover{border-color:#c9d3e6;background:#f8faff}
+.btn.p{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 16px #2f5bff33}.btn.p:hover{background:var(--blue2)}
+.menu{position:relative}.avatar{width:36px;height:36px;border-radius:50%;background:#e7edff;color:var(--blue);font-weight:700;display:grid;place-items:center;border:1px solid #d5defa}
+.dd{position:absolute;right:0;top:44px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 40px #0f172a1f;min-width:220px;padding:8px;z-index:40}.dd .em{padding:8px 10px;color:var(--mut);font-size:12px;border-bottom:1px solid var(--line);margin-bottom:6px;word-break:break-all}
+.dd a,.dd button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;font-size:13px;font-weight:600}.dd a:hover,.dd button:hover{background:#f3f6fc}
+main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}.hero h1{font-size:28px;letter-spacing:-.03em;font-weight:800}.hero p{color:var(--mut);margin-top:2px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px #0f172a08}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.kpi{padding:18px 20px;position:relative;overflow:hidden}.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.kpi .l{color:var(--mut);font-weight:600;font-size:12px}.kpi .n{font-size:28px;font-weight:800;letter-spacing:-.03em;margin:6px 0 2px}.kpi .s{font-size:12px;color:var(--mut)}
+.grid{display:grid;grid-template-columns:minmax(0,2.1fr) minmax(0,1fr);gap:16px;align-items:start}
+.bar{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:16px 20px;border-bottom:1px solid var(--line)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;font-weight:600;font-size:13px;display:flex;gap:8px;align-items:center}
+.chip b{background:#eef2f8;border-radius:99px;padding:0 8px;font-size:11px;line-height:20px;color:var(--mut)}.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}.chip.on b{background:#ffffff26;color:#fff}
+.q{border:1px solid var(--line);background:#f8faff;border-radius:10px;padding:8px 12px;min-width:200px;font-size:13px}
+.row{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.3fr) 150px 110px 190px;gap:14px;align-items:center;padding:13px 20px;border-top:1px solid var(--line)}.row:hover{background:#fafcff}
+.row.head{border-top:0;background:#f8faff;font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--mut);text-transform:uppercase;padding:10px 20px}
+.who{display:flex;gap:12px;align-items:center;min-width:0}.av{width:38px;height:38px;border-radius:50%;background:#eaf0ff;color:var(--blue);display:grid;place-items:center;font-weight:700;font-size:12px;flex:none}
+.who b,.c b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.who span,.c span{display:block;color:var(--mut);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.val b{font-size:14px}.val span{display:block;font-size:11px;color:var(--mut)}.pb{height:5px;background:#eef2f8;border-radius:9px;margin-top:6px;overflow:hidden}.pb i{display:block;height:100%;background:var(--green);border-radius:9px}
+.tag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}.tag.Pending{background:#fff3d6;color:#9a6200}.tag.Partially{background:#e3f3fd;color:#0b6aa2}.tag.Paid{background:#e3f7ee;color:#0a7a50}
+.ra{display:flex;gap:7px;justify-content:flex-end}.mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 11px;font-size:12px;font-weight:700;white-space:nowrap}.mini:hover{background:#f5f8ff}.mini.ok{background:#e9f9f1;border-color:#c5ecd9;color:#0a7a50}
+.side{padding:20px}.side h2{font-size:15px;font-weight:700}.side .sub{color:var(--mut);font-size:12px;margin:2px 0 14px}
+.big{font-size:30px;font-weight:800;letter-spacing:-.03em}.track{height:12px;border-radius:99px;background:#eef2f8;overflow:hidden;margin:10px 0 8px}.track i{display:block;height:100%;background:linear-gradient(90deg,#0f9d6a,#34d399);border-radius:99px}
+.kv{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mut);margin:4px 0}.kv b{color:var(--ink)}
+.out{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}.out .c{flex:1;min-width:0}
+.empty{text-align:center;padding:48px 16px;color:var(--mut)}.empty b{display:block;color:var(--ink);font-size:16px;margin:6px 0 4px}.empty .btn{margin-top:14px}
+.more{text-align:center;padding:16px;border-top:1px solid var(--line);color:var(--mut)}
+.sk{height:16px;border-radius:8px;background:linear-gradient(90deg,#eef2f8,#f8faff,#eef2f8);background-size:200% 100%;animation:sk 1.2s infinite}@keyframes sk{to{background-position:-200% 0}}
+.err{background:#fff4f2;border:1px solid #f3c1bb;color:#9b2c22;border-radius:12px;padding:12px 16px;margin-bottom:14px}
+.ov{position:fixed;inset:0;background:#0f172a80;backdrop-filter:blur(3px);z-index:60;display:grid;place-items:center;padding:16px}
+.modal{background:#fff;border-radius:18px;width:min(560px,100%);max-height:92vh;overflow:auto;padding:24px}.modal h2{font-size:19px}.modal>p{color:var(--mut);margin:2px 0 16px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}.fg label{display:grid;gap:5px;font-size:12px;font-weight:600;color:var(--mut)}.fg .full{grid-column:1/-1}
+.fg input,.fg select,.fg textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:13px;color:var(--ink);background:#fff}
+.hint{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;background:#f8faff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px}
+.mf{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:11px;font-weight:600;z-index:90}.toast.bad{background:var(--red)}
+.auth{min-height:70vh;display:grid;place-items:center}.auth .card{max-width:380px;text-align:center;padding:34px}.auth h2{font-size:22px;margin:10px 0 6px}.auth p{color:var(--mut);margin-bottom:18px}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:minmax(0,1fr)}.row{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) 140px 190px}.row .cl{display:none}}
+@media(max-width:700px){.top-in{padding:10px 14px 0;gap:10px;flex-wrap:wrap;height:auto}.nav{order:3;flex-basis:100%;padding-bottom:8px}main{padding:18px 14px 50px}.hero h1{font-size:23px}.kpis{grid-template-columns:1fr 1fr}.kpis>:last-child{grid-column:span 2}.kpi{padding:14px 14px 14px 16px}.kpi .n{font-size:20px}.row.head{display:none}.row{grid-template-columns:minmax(0,1fr);gap:6px;padding:15px 14px}.ra{justify-content:flex-start}.fg{grid-template-columns:1fr}.bar{padding:14px}.q{min-width:0;width:100%}}
+
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;padding:18px}
+.pc{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;display:flex;flex-direction:column;transition:.15s}.pc:hover{box-shadow:0 14px 30px #0f172a14;transform:translateY(-2px)}
+.ph{height:150px;background:linear-gradient(135deg,#dfe8ff,#f3e8ff);background-size:cover;background-position:center;position:relative;display:grid;place-items:center;font-size:42px}
+.st{position:absolute;left:10px;top:10px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:#fff}.st.Available{color:#0a7a50}.st.Hold{color:#9a6200}.st.Sold{color:#9b2c22}
+.code{position:absolute;right:10px;top:10px;font-size:11px;font-weight:700;background:#0f172acc;color:#fff;padding:4px 9px;border-radius:8px}
+.pb2{padding:14px 16px;display:grid;gap:6px;flex:1}.pb2 h3{font-size:15px;letter-spacing:-.01em}.price{font-size:20px;font-weight:800;color:var(--blue)}.meta{display:flex;gap:6px;flex-wrap:wrap}.meta span{background:#f1f4fa;border-radius:8px;padding:3px 9px;font-size:11.5px;font-weight:600;color:var(--mut)}
+.pf{display:flex;gap:7px;padding:0 16px 14px;flex-wrap:wrap}.mt{background:#e9f9f1;border-color:#c5ebd8;color:#0a7a50}
+.mrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}.mrow .c{flex:1;min-width:0}.mrow .c b{display:block}.mrow .c span{color:var(--mut);font-size:12px}
+.sc{font-weight:800;font-size:13px;color:#0a7a50;background:#e9f9f1;border-radius:99px;padding:3px 10px}.sc.m{color:#9a6200;background:#fff3d6}
+.fg .third{grid-column:span 1}
+</style></head><body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="customers.html"><span class="logo">B</span>BusinessOS</a>
+  <nav class="nav"><a href="customers.html">Overview</a><a href="customer-list.html">Customers</a><a href="followups.html">Follow-ups <span class="pill hidden" id="navFu">0</span></a><a href="deals.html">Deals</a><a href="website-leads.html">Leads</a><a href="whatsapp-center.html">WhatsApp</a><a href="business-finder-app.html">Finder</a><a href="reports.html">Reports</a></nav>
+  <div class="acts"><button class="btn p" id="add">＋ Add Property</button>
+    <div class="menu"><button class="avatar" id="avBtn" aria-label="Account">?</button><div class="dd hidden" id="dd"><div class="em" id="ddEm"></div><a href="import-export.html#import-section">↑ Import customers</a><a href="import-export.html#export-section">↓ Export data</a><a href="team-settings.html">Settings</a><a href="subscription.html">Plan &amp; billing</a><button id="out">Logout</button></div></div></div>
+</div></header>
+<main>
+<div id="auth" class="auth hidden"><div class="card"><div class="logo" style="margin:auto;width:46px;height:46px;font-size:20px">B</div><h2>Welcome to BusinessOS</h2><p>Sign in to manage your properties.</p><button class="btn p" id="gbtn" style="width:100%;justify-content:center">Continue with Google</button><p id="aerr" style="color:var(--red);font-size:12px;margin-top:12px"></p></div></div>
+<div id="app" class="hidden"><div id="err" class="err hidden"></div>
+<section class="hero"><div><h1>Properties</h1><p>Listings, owners and matching buyers — one tap to share on WhatsApp.</p></div></section>
+<section class="kpis" id="kpis"></section>
+<div class="card" style="overflow:clip"><div class="bar"><div class="chips" id="chips"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><select class="q" id="ty" style="min-width:130px"></select><input class="q" id="q" placeholder="Search area, title, code…" aria-label="Search properties"></div></div><div id="grid" class="pg"></div></div>
+</div></main>
+
+<div id="mo" class="ov hidden"><div class="modal" role="dialog" aria-modal="true"><h2 id="mt">Add property</h2><p>Fill the basics — you can edit later.</p>
+<div class="fg"><label class="full">Title *<input id="f_title" placeholder="e.g. 3 BHK Villa, Vaishali Nagar"></label>
+<label>Type<select id="f_type"><option>Plot</option><option>Flat</option><option>Villa</option><option>House</option><option>Commercial</option><option>Shop</option><option>Farmhouse</option><option>Agricultural</option></select></label>
+<label>Status<select id="f_status"><option>Available</option><option>Hold</option><option>Sold</option></select></label>
+<label>Locality / Area *<input id="f_loc" placeholder="Vaishali Nagar"></label><label>City<input id="f_city" value="Jaipur"></label>
+<label>Price (₹) *<input id="f_price" type="number" min="0" inputmode="numeric"></label><label>Size<input id="f_size" placeholder="e.g. 200 Gaj / 1450 sq ft"></label>
+<label>Bedrooms<input id="f_bed" type="number" min="0"></label><label>Facing<select id="f_face"><option value="">—</option><option>East</option><option>West</option><option>North</option><option>South</option></select></label>
+<label>Owner name<input id="f_on"></label><label>Owner phone<input id="f_op" inputmode="tel"></label>
+<label class="full">Photo link (optional)<input id="f_img" placeholder="https://…"></label>
+<label class="full">Highlights<textarea id="f_note" rows="2" placeholder="Corner plot, 40ft road, patta ready, loan available…"></textarea></label></div>
+<div class="mf"><button class="btn" id="m_del" style="margin-right:auto;color:var(--red)">Delete</button><button class="btn" id="m_cancel">Cancel</button><button class="btn p" id="m_save">Save</button></div></div></div>
+
+<div id="mm" class="ov hidden"><div class="modal"><h2 id="mmt">Matching customers</h2><p id="mms"></p><div id="mml"></div><div class="mf"><button class="btn" id="mm_x">Close</button></div></div></div>
+<div id="toast" class="toast hidden"></div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,setDoc,deleteDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
+const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const clean=v=>String(v??"").replace(/["'`]+/g,"").trim(),ini=n=>clean(n||"?").split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"?";
+const money=n=>{n=Math.round(Number(n)||0);return n>=1e7?"₹"+(n/1e7).toFixed(2).replace(/\.?0+$/,"")+" Cr":n>=1e5?"₹"+(n/1e5).toFixed(2).replace(/\.?0+$/,"")+" Lakh":"₹"+n.toLocaleString("en-IN")};
+function amt(v){if(typeof v==="number")return v;const s=String(v||"").replace(/,/g,""),m=s.match(/([0-9]+(?:\.[0-9]+)?)/);if(!m)return 0;let n=Number(m[1]);if(/crore|cr\b/i.test(s))n*=1e7;else if(/lakh|lac/i.test(s))n*=1e5;else if(/k\b/i.test(s))n*=1e3;return Math.round(n)}
+const ICON={Plot:"📐",Flat:"🏢",Villa:"🏡",House:"🏠",Commercial:"🏬",Shop:"🏪",Farmhouse:"🌳",Agricultural:"🌾"};
+let user,bizId,uC,uP,contacts=[],props=[],ready={c:0,p:0},flt="",ty="",q="",editId="";
+const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),2600)};
+const code=p=>p.code||"P-"+p.id.slice(0,4).toUpperCase();
+/* matching: budget 45 + location 35 + type 20 */
+function matches(p){const price=Number(p.price)||0,loc=clean(p.locality).toLowerCase(),res=[];
+ contacts.filter(c=>!["Won","Paid","Lost"].includes(c.status)).forEach(c=>{let s=0;const b=amt(c.budget||c.value),why=[];
+  if(b&&price){const r=b/price;if(r>=.9&&r<=1.3){s+=45;why.push("Budget fits")}else if(r>=.75&&r<1.6){s+=22;why.push("Budget close")}}
+  const cl=[c.area,c.location,c.city,c.req,c.requirement].map(x=>clean(x).toLowerCase()).join(" ");
+  if(loc&&cl.includes(loc)){s+=35;why.push("Area match")}
+  if(cl.includes(String(p.type||"").toLowerCase())){s+=20;why.push(p.type)}
+  if(s>=45)res.push({c,s,why})});
+ return res.sort((a,b)=>b.s-a.s)}
+function shareText(p){return`🏠 *${p.title}*\n📍 ${p.locality}, ${p.city||"Jaipur"}\n💰 ${money(p.price)}${p.size?"\n📏 "+p.size:""}${p.bedrooms?"\n🛏 "+p.bedrooms+" BHK":""}${p.facing?"\n🧭 "+p.facing+" facing":""}${p.note?"\n✨ "+p.note:""}\n\nRef: ${code(p)} — Interested? Reply to this message.`}
+function render(){const ok=ready.c&&ready.p;
+ const av=props.filter(p=>p.status==="Available"),V=av.reduce((s,p)=>s+(+p.price||0),0),sold=props.filter(p=>p.status==="Sold").length,mc=av.reduce((s,p)=>s+matches(p).length,0);
+ const K=[["Total listings",props.length,"All properties","#2f5bff"],["Available",av.length,"Ready to sell","#0f9d6a"],["Inventory value",money(V),"Available stock","#7c4dff"],["Sold",sold,"Closed listings","#d98a00"],["Buyer matches",mc,"Customers fitting your stock","#0b6aa2"]];
+ $("kpis").innerHTML=K.map(k=>`<div class="card kpi" style="--c:${k[3]}"><div class="l">${k[0]}</div><div class="n">${ok?k[1]:"—"}</div><div class="s">${k[2]}</div></div>`).join("");
+ const cnt=k=>props.filter(p=>!k||p.status===k).length;
+ $("chips").innerHTML=[["","All"],["Available","Available"],["Hold","On hold"],["Sold","Sold"]].map(c=>`<button class="chip${flt===c[0]?" on":""}" data-f="${c[0]}">${c[1]} <b>${cnt(c[0])}</b></button>`).join("");
+ const types=[...new Set(props.map(p=>p.type).filter(Boolean))];$("ty").innerHTML='<option value="">All types</option>'+types.map(t=>`<option${t===ty?" selected":""}>${esc(t)}</option>`).join("");
+ if(!ok){$("grid").innerHTML=Array(3).fill('<div class="pc"><div class="sk" style="height:150px;border-radius:0"></div><div class="pb2"><div class="sk"></div><div class="sk"></div></div></div>').join("");return}
+ const s=q.toLowerCase(),rows=props.filter(p=>(!flt||p.status===flt)&&(!ty||p.type===ty)&&(!s||[p.title,p.locality,p.city,code(p),p.ownerName].join(" ").toLowerCase().includes(s)));
+ $("grid").innerHTML=rows.length?rows.map(p=>{const m=p.status==="Sold"?[]:matches(p),bg=p.image?`style="background-image:url('${esc(p.image)}')"`:"";
+  return`<div class="pc"><div class="ph" ${bg}>${p.image?"":ICON[p.type]||"🏠"}<span class="st ${p.status}">${p.status==="Hold"?"On hold":p.status}</span><span class="code">${esc(code(p))}</span></div>
+  <div class="pb2"><h3>${esc(p.title)}</h3><div class="price">${money(p.price)}</div><div style="color:var(--mut);font-size:12.5px">📍 ${esc(p.locality)}, ${esc(p.city||"")}</div>
+  <div class="meta"><span>${esc(p.type)}</span>${p.size?`<span>${esc(p.size)}</span>`:""}${p.bedrooms?`<span>${esc(p.bedrooms)} BHK</span>`:""}${p.facing?`<span>${esc(p.facing)} facing</span>`:""}</div>
+  ${p.ownerName?`<div style="font-size:12px;color:var(--mut)">Owner: <b style="color:var(--ink)">${esc(p.ownerName)}</b></div>`:""}</div>
+  <div class="pf"><button class="mini mt" data-a="match" data-id="${p.id}">👥 ${m.length} match${m.length===1?"":"es"}</button><button class="mini" data-a="share" data-id="${p.id}">WhatsApp</button><button class="mini" data-a="copy" data-id="${p.id}">Copy</button><button class="mini" data-a="edit" data-id="${p.id}">Edit</button></div></div>`}).join("")
+ :`<div class="empty" style="grid-column:1/-1"><div style="font-size:34px">🏠</div><b>${props.length?"No matching properties":"Add your first property"}</b>${props.length?"Try another filter.":"Add a listing and BusinessOS will instantly find buyers from your customers."}<br>${props.length?"":'<button class="btn p" id="add2">＋ Add Property</button>'}</div>`}
+function openM(id){editId=id||"";const p=props.find(x=>x.id===id)||{};$("mt").textContent=id?"Edit property":"Add property";
+ [["title","title"],["type","type"],["status","status"],["loc","locality"],["city","city"],["price","price"],["size","size"],["bed","bedrooms"],["face","facing"],["on","ownerName"],["op","ownerPhone"],["img","image"],["note","note"]].forEach(([a,b])=>$("f_"+a).value=p[b]??(a==="status"?"Available":a==="city"?"Jaipur":a==="type"?"Plot":""));
+ $("m_del").classList.toggle("hidden",!id);$("mo").classList.remove("hidden");$("f_title").focus()}
+async function save(){const g=i=>clean($("f_"+i).value),title=g("title"),loc=g("loc"),price=+$("f_price").value||0;
+ if(!title||!loc||!price)return toast("Title, area and price are required",true);
+ const d={title,type:$("f_type").value,status:$("f_status").value,locality:loc,city:g("city"),price,size:g("size"),bedrooms:g("bed"),facing:$("f_face").value,ownerName:g("on"),ownerPhone:g("op"),image:$("f_img").value.trim(),note:g("note"),updatedAt:serverTimestamp()};
+ try{if(editId)await setDoc(doc(db,"businesses",bizId,"properties",editId),d,{merge:true});else await addDoc(collection(db,"businesses",bizId,"properties"),{...d,code:"P-"+String(props.length+1).padStart(3,"0"),createdAt:serverTimestamp()});
+  $("mo").classList.add("hidden");toast("Property saved")}catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — deploy firestore.rules":e.message,true)}}
+function showMatch(id){const p=props.find(x=>x.id===id),m=matches(p);$("mmt").textContent="Buyers for "+p.title;$("mms").textContent=m.length?m.length+" customers fit this property (best first).":"No customer fits yet. Add customers with budget and area, and they will appear here.";
+ $("mml").innerHTML=m.map(({c,s,why})=>{const ph=String(c.phone||"").replace(/\D/g,""),w=ph?`https://wa.me/${ph.length===10?"91"+ph:ph}?text=${encodeURIComponent("Namaste "+clean(c.name)+",\n\n"+shareText(p))}`:"";
+  return`<div class="mrow"><div class="c"><b>${esc(clean(c.name)||"Unnamed")}</b><span>${esc(why.join(" · "))}${c.budget?" · "+esc(c.budget):""}</span></div><span class="sc${s<70?" m":""}">${Math.min(s,100)}%</span>${w?`<a class="mini mt" target="_blank" rel="noopener" href="${w}">Send</a>`:""}</div>`}).join("");$("mm").classList.remove("hidden")}
+function listen(id){[uC,uP].forEach(u=>u&&u());bizId=id;ready={c:0,p:0};
+ uC=onSnapshot(collection(db,"businesses",id,"contacts"),s=>{if(s.empty&&user&&id!==user.uid)return listen(user.uid);contacts=s.docs.map(d=>({id:d.id,...d.data()}));ready.c=1;render()},fail);
+ uP=onSnapshot(collection(db,"businesses",id,"properties"),s=>{props=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));ready.p=1;render()},fail)}
+function fail(e){console.error(e);ready={c:1,p:1};$("err").textContent="Could not load properties: "+(e.code||e.message)+(e.code==="permission-denied"?" — deploy the updated firestore.rules.":"");$("err").classList.remove("hidden");render()}
+onAuthStateChanged(auth,async u=>{user=u;if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}
+ $("auth").classList.add("hidden");$("app").classList.remove("hidden");render();let id=u.uid;try{const s=await getDoc(doc(db,"users",u.uid));id=s.exists()&&s.data().businessId||u.uid}catch(e){console.warn(e)}
+ listen(id);$("avBtn").textContent=ini(u.displayName||u.email);$("ddEm").textContent=u.email||""});
+$("avBtn").onclick=e=>{e.stopPropagation();$("dd").classList.toggle("hidden")};document.addEventListener("click",()=>$("dd").classList.add("hidden"));
+$("out").onclick=()=>signOut(auth);$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message}};
+$("add").onclick=()=>openM();$("m_cancel").onclick=()=>$("mo").classList.add("hidden");$("m_save").onclick=save;$("mm_x").onclick=()=>$("mm").classList.add("hidden");
+$("m_del").onclick=async()=>{if(editId&&confirm("Delete this property?")){await deleteDoc(doc(db,"businesses",bizId,"properties",editId));$("mo").classList.add("hidden");toast("Deleted")}};
+$("ty").onchange=e=>{ty=e.target.value;render()};let st;$("q").addEventListener("input",e=>{clearTimeout(st);st=setTimeout(()=>{q=e.target.value.trim();render()},150)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("mo").classList.add("hidden");$("mm").classList.add("hidden")}});
+document.addEventListener("click",async e=>{const t=e.target,f=t.closest("[data-f]");if(f){flt=f.dataset.f;render();return}if(t.id==="add2"){openM();return}
+ const a=t.closest("[data-a]");if(!a)return;const p=props.find(x=>x.id===a.dataset.id);if(!p)return;
+ if(a.dataset.a==="edit")openM(p.id);else if(a.dataset.a==="match")showMatch(p.id);
+ else if(a.dataset.a==="share")window.open("https://wa.me/?text="+encodeURIComponent(shareText(p)),"_blank");
+ else{try{await navigator.clipboard.writeText(shareText(p).replace(/\*/g,""));toast("Ad text copied")}catch{toast("Copy not allowed by browser",true)}}});
+</script>
+<script src="assets/nav-more.js" defer></script>
+</body></html>

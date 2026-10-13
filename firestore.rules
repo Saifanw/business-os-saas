@@ -201,6 +201,9 @@ service cloud.firestore {
       match /deals/{dealId} {
         allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
       }
+      match /properties/{propertyId} {
+        allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
+      }
       match /prospects/{prospectId} {
         allow read, create, update, delete: if ownsBusiness(businessId) || isAdmin();
       }
