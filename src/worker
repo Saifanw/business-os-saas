@@ -1,0 +1,140 @@
+// BusinessOS share worker.
+// - Proxies the static site (GitHub Pages) as-is.
+// - For listing.html?s=SLUG&id=ID and sell.html?s=SLUG it injects Open Graph tags
+//   (title, price, photo) read from Firestore, so WhatsApp/Facebook/Telegram show a rich preview.
+// - /og/ID.jpg serves the first photo of a listing. Photos live in Firestore as base64 data URLs,
+//   which crawlers cannot use directly, so this endpoint decodes them into a real image response.
+// Only PUBLIC data is read (publicListings / publicSlugs, which firestore.rules allow anyone to read).
+const PROJECT = "business-os-saas-traking";
+const DEFAULT_ORIGIN = "https://saifanw.github.io/business-os-saas";
+const FS = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
+const SLUG_RE = /^[a-z0-9][a-z0-9-]{2,29}$/;
+const ID_RE = /^[\w-]{3,64}$/;
+
+const val = f => f == null ? undefined :
+  f.stringValue ?? f.integerValue ?? f.doubleValue ?? f.booleanValue ?? f.timestampValue ??
+  (f.arrayValue ? (f.arrayValue.values || []).map(val) : undefined);
+const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const tidy = t => String(t ?? "").replace(/\s+/g, " ").trim();
+const clip = (t, n) => { t = tidy(t); return t.length > n ? t.slice(0, n - 1).trim() + "…" : t; };
+const money = n => {
+  n = Number(n); if (!n) return "";
+  if (n >= 1e7) return "₹" + +(n / 1e7).toFixed(2) + " Crore";
+  if (n >= 1e5) return "₹" + +(n / 1e5).toFixed(2) + " Lakh";
+  return "₹" + n.toLocaleString("en-IN");
+};
+
+async function getDoc(path) {
+  const r = await fetch(`${FS}/${path}`, { cf: { cacheTtl: 60, cacheEverything: true } });
+  if (!r.ok) return null;
+  const raw = (await r.json()).fields || {};
+  const o = {}; for (const k in raw) o[k] = val(raw[k]);
+  return o;
+}
+
+function inject(html, { title, desc, image, url }) {
+  const tags = [
+    `<meta property="og:type" content="website">`,
+    `<meta property="og:title" content="${esc(title)}">`,
+    `<meta property="og:description" content="${esc(desc)}">`,
+    `<meta property="og:url" content="${esc(url)}">`,
+    image ? `<meta property="og:image" content="${esc(image)}">` : "",
+    image ? `<meta property="og:image:type" content="image/jpeg">` : "",
+    `<meta name="twitter:card" content="${image ? "summary_large_image" : "summary"}">`,
+    `<meta name="twitter:title" content="${esc(title)}">`,
+    `<meta name="twitter:description" content="${esc(desc)}">`,
+    image ? `<meta name="twitter:image" content="${esc(image)}">` : "",
+    `<meta name="description" content="${esc(desc)}">`,
+  ].filter(Boolean).join("\n");
+  let out = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${esc(title)}</title>`);
+  out = out.replace(/<meta name="robots"[^>]*>/i, "");           // keep previews & indexing simple
+  return out.includes("</head>") ? out.replace("</head>", tags + "\n</head>") : tags + out;
+}
+
+const htmlResponse = (body, status = 200) => new Response(body, {
+  status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=60" },
+});
+
+async function originHtml(origin, path) {
+  const r = await fetch(origin + path, { cf: { cacheTtl: 60, cacheEverything: true } });
+  return r;
+}
+
+async function listingPage(request, origin) {
+  const url = new URL(request.url);
+  const res = await originHtml(origin, "/listing.html");
+  if (!res.ok) return res;
+  const html = await res.text();
+  try {
+    const slug = (url.searchParams.get("s") || "").toLowerCase(), id = url.searchParams.get("id") || "";
+    if (!SLUG_RE.test(slug) || !ID_RE.test(id)) return htmlResponse(html);
+    const [p, b] = await Promise.all([getDoc(`publicListings/${id}`), getDoc(`publicSlugs/${slug}`)]);
+    if (!p || !b || p.slug !== slug || p.businessId !== b.businessId) return htmlResponse(html);
+    const sold = String(p.status) === "Sold";
+    const name = tidy(p.title) || `${p.type || "Property"} in ${p.locality || ""}`;
+    const price = money(p.price);
+    const title = clip((sold ? "SOLD · " : "") + name + (price ? " — " + price : ""), 90);
+    const gaj = Number(p.areaGaj) ? `${Number(p.areaGaj)} Gaj` : "";
+    const bits = [
+      [p.locality, p.city].filter(Boolean).join(", "), p.size, gaj, p.bedrooms ? `${p.bedrooms} BHK` : "",
+      p.facing ? `${p.facing} facing` : "", p.patta, p.registry,
+    ].filter(Boolean);
+    const desc = clip(bits.join(" • ") + (b.businessName ? ` — ${b.businessName}` : ""), 190);
+    const photos = Array.isArray(p.photos) ? p.photos : [];
+    const v = String(p.updatedAt || "").replace(/\D/g, "").slice(0, 14);
+    const image = photos.length ? `${url.origin}/og/${id}.jpg${v ? "?v=" + v : ""}` : "";
+    return htmlResponse(inject(html, { title, desc, image, url: url.origin + url.pathname + url.search }));
+  } catch (e) {
+    return htmlResponse(html);
+  }
+}
+
+async function sellPage(request, origin) {
+  const url = new URL(request.url);
+  const res = await originHtml(origin, "/sell.html");
+  if (!res.ok) return res;
+  const html = await res.text();
+  try {
+    const slug = (url.searchParams.get("s") || "").toLowerCase();
+    if (!SLUG_RE.test(slug)) return htmlResponse(html);
+    const b = await getDoc(`publicSlugs/${slug}`);
+    if (!b) return htmlResponse(html);
+    const name = tidy(b.businessName) || "Property consultant";
+    return htmlResponse(inject(html, {
+      title: clip(`Sell your property with ${name}`, 90),
+      desc: "Fill in your property details — we will review, list it and contact you.",
+      image: "", url: url.origin + url.pathname + url.search,
+    }));
+  } catch (e) {
+    return htmlResponse(html);
+  }
+}
+
+async function ogImage(id) {
+  const p = ID_RE.test(id) ? await getDoc(`publicListings/${id}`) : null;
+  const first = p && Array.isArray(p.photos) ? p.photos[0] : "";
+  if (!first) return new Response("No image", { status: 404 });
+  const m = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/.exec(first);
+  if (m) {
+    const bin = atob(m[2]), bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new Response(bytes, { headers: { "content-type": m[1], "cache-control": "public, max-age=86400" } });
+  }
+  if (/^https:\/\//i.test(first)) return Response.redirect(first, 302);
+  return new Response("No image", { status: 404 });
+}
+
+export default {
+  async fetch(request, env) {
+    if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
+    const url = new URL(request.url);
+    const origin = String((env && env.ORIGIN) || DEFAULT_ORIGIN).replace(/\/+$/, "");
+    const og = /^\/og\/([\w-]{3,64})\.jpg$/.exec(url.pathname);
+    if (og) return ogImage(og[1]);
+    if (url.pathname === "/listing.html") return listingPage(request, origin);
+    if (url.pathname === "/sell.html") return sellPage(request, origin);
+    // everything else: transparent proxy to the static site
+    const r = await fetch(origin + url.pathname + url.search, { cf: { cacheTtl: 60, cacheEverything: true } });
+    return new Response(r.body, r);
+  },
+};
