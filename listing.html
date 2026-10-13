@@ -88,13 +88,12 @@ function paint(p,b){
   const meta=[p.type,p.size,g?g+" Gaj":"",p.bedrooms?p.bedrooms+" BHK":"",p.facing?p.facing+" facing":"",p.roadWidth?p.roadWidth+" ft road":""].filter(Boolean);
   const hl=String(p.note||"").split("\n").map(x=>x.trim()).filter(Boolean);
   const phone=String(b.phone||"").replace(/\D/g,""),wa=phone?(phone.length===10?"91"+phone:phone):"";
-  const waMsg=`Hello, I am interested in ${title} (Ref ${p.code||""}) – ${money(p.price)}. Please share details.`;
+  const waMsg=`Hello, I am interested in ${title} – ${money(p.price)}. Please share details.`;
   const el=$("ok");
   el.innerHTML=`<div><div class="gal" id="gal">${photos.length?"":esc(ICON[p.type]||"🏠")}<span class="tag ${st[1]}">${st[0]}</span>${Number(p.price)>0?`<div class="pbadge ${st[1]}"><small>${st[1]==="sold"?"Sold at":"Price"}</small><b>${esc(money(p.price))}</b>${rate?`<em>${inr(rate)}/Gaj</em>`:""}</div>`:""}</div><div class="thumbs" id="th"></div></div>
   <div class="card"><h1>${esc(title)}</h1><div><span class="price">${esc(money(p.price))}</span>${rate?`<span class="rate">${inr(rate)}/Gaj</span>`:""}</div>
   <div class="loc">📍 ${esc(p.locality||"")}${p.city?", "+esc(p.city):""}${p.landmark?" · "+esc(p.landmark):""}</div>
-  <div class="chips">${meta.map(x=>`<span>${esc(x)}</span>`).join("")}${badges.map(x=>`<span class="g">${esc(x)}</span>`).join("")}</div>
-  ${p.code?`<div class="ref" style="margin-top:10px">Ref: ${esc(p.code)}</div>`:""}</div>
+  <div class="chips">${meta.map(x=>`<span>${esc(x)}</span>`).join("")}${badges.map(x=>`<span class="g">${esc(x)}</span>`).join("")}</div></div>
   ${hl.length?`<div class="card"><div class="sec">Highlights</div><ul>${hl.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
   ${httpUrl(p.mapUrl)?`<div class="card"><div class="sec">Location</div><a class="btn" style="display:block" target="_blank" rel="noopener noreferrer" href="${esc(httpUrl(p.mapUrl))}">🗺 Open in Google Maps</a></div>`:""}
   <div class="card"><div class="sec">Contact ${esc(b.businessName||"the consultant")}</div>
@@ -103,7 +102,7 @@ function paint(p,b){
     <form class="form" id="lf" novalidate><label>Your name *<input id="ln" maxlength="80" autocomplete="name"></label><label>Mobile *<input id="lm" maxlength="20" inputmode="tel" autocomplete="tel"></label>
     <label class="full">Message (optional)<textarea id="lmsg" maxlength="500"></textarea></label><input class="hp" id="lw" tabindex="-1" autocomplete="off" aria-hidden="true">
     <button class="btn call" id="lb" type="submit" style="grid-column:1/-1">Request call back</button><div class="msg" id="lmg"></div></form></div>
-  ${(phone&&st[1]!=="sold")?`<div class="sbar"><div class="sp"><small>${esc(p.code?"Ref "+p.code:"Price")}</small><b>${esc(money(p.price))}</b></div><a class="btn call" href="tel:+${esc(wa)}">📞 Call</a><a class="btn wa" target="_blank" rel="noopener noreferrer" href="https://wa.me/${esc(wa)}?text=${encodeURIComponent(waMsg)}">WhatsApp</a></div>`:""}`;
+  ${(phone&&st[1]!=="sold")?`<div class="sbar"><div class="sp"><small>Price</small><b>${esc(money(p.price))}</b></div><a class="btn call" href="tel:+${esc(wa)}">📞 Call</a><a class="btn wa" target="_blank" rel="noopener noreferrer" href="https://wa.me/${esc(wa)}?text=${encodeURIComponent(waMsg)}">WhatsApp</a></div>`:""}`;
   if(photos.length){const gal=$("gal"),th=$("th");const main=document.createElement("img");main.className="main";main.alt=title;main.src=photos[0];gal.prepend(main);
     if(photos.length>1)photos.forEach((u,i)=>{const t=document.createElement("img");t.src=u;t.alt="Photo "+(i+1);if(!i)t.className="on";t.onclick=()=>{main.src=u;th.querySelectorAll("img").forEach(x=>x.classList.toggle("on",x===t))};th.appendChild(t)})}
   $("lf").addEventListener("submit",async e=>{
