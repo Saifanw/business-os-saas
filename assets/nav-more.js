@@ -35,7 +35,7 @@
   btn.innerHTML='More<span class="dot" hidden></span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 4 4 4 4-4"/></svg>';
   var menu=document.createElement("div");menu.className="nav-more-menu";menu.hidden=true;menu.setAttribute("role","menu");
   /* same menu, same order, on every page */
-  var ORDER=[["website-leads.html","Leads"],["whatsapp-center.html","WhatsApp"],["business-finder-app.html","Finder"],["prospecting-center.html","Prospecting"],["reports.html","Reports"],["import-export.html","Import & export"],["team-settings.html","Team & settings"]],here=location.pathname.split("/").pop();
+  var ORDER=[["properties.html","Properties"],["website-leads.html","Leads"],["whatsapp-center.html","WhatsApp"],["business-finder-app.html","Finder"],["prospecting-center.html","Prospecting"],["reports.html","Reports"],["import-export.html","Import & export"],["team-settings.html","Team & settings"]],here=location.pathname.split("/").pop();
   ORDER.forEach(function(x){
     var a=rest.filter(function(r){return(r.getAttribute("href")||"").split(/[?#]/)[0]===x[0]})[0];
     if(!a){a=document.createElement("a");a.href=x[0];a.textContent=x[1];if(here===x[0])a.className="on"}
