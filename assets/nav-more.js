@@ -10,6 +10,13 @@
   var css=document.createElement("style");
   css.textContent=
     "nav.nav{overflow:visible!important}"+
+    ".nav-quick{display:flex;align-items:center;gap:6px;flex:none;margin-left:6px;padding-left:10px;border-left:1px solid var(--line,#e6eaf2)}"+
+    ".nav-quick a{display:inline-flex!important;align-items:center;gap:6px;height:36px;padding:0 12px!important;border-radius:10px!important;font-size:13px!important;font-weight:700;white-space:nowrap;border:1px solid transparent}"+
+    ".nav-quick a svg{display:inline-block!important;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}"+
+    ".nav-quick a.qc{background:#eaf0ff;color:#2347d6;border-color:#d3defe}.nav-quick a.qc:hover{background:#dbe5ff}"+
+    ".nav-quick a.qw{background:#e6f6ef;color:#0b7a53;border-color:#bfe8d6}.nav-quick a.qw:hover{background:#d5f0e4}"+
+    ".nav-quick a.on{box-shadow:0 0 0 2px currentColor inset}"+
+    "@media(max-width:760px){.nav-quick{margin-left:2px;padding-left:4px}.nav-quick a{padding:0 9px!important}.nav-quick a span{display:none}}"+
     ".nav-more{position:relative;flex:none}"+
     ".nav-more>button{border:0;background:none;font:inherit;font-weight:600;font-size:13px;color:var(--mut,#64748b);padding:8px 13px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap}"+
     ".nav-more>button:hover,.nav-more>button[aria-expanded=true]{background:#f1f4fa;color:var(--ink,#0f172a)}"+
@@ -29,13 +36,27 @@
   CORE.forEach(function(h){var a=nav.querySelector(':scope > a[href^="'+h+'"]');
     if(!a){a=document.createElement("a");a.href=h;a.textContent=LABEL[h];if(location.pathname.split("/").pop()===h)a.className="on"}
     nav.appendChild(a)});
+
+  /* Call + WhatsApp: always visible, with icons (not hidden in More) */
+  (function(){
+    var here=location.pathname.split("/").pop(),mode=new URLSearchParams(location.search).get("mode");
+    var old=nav.querySelector(':scope > a[href^="whatsapp-center.html"]');if(old)old.remove();
+    var q=document.createElement("div");q.className="nav-quick";
+    var PH='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>';
+    var WA='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg>';
+    var c=document.createElement("a");c.href="whatsapp-center.html?mode=call";c.className="qc";c.title="Call customers";c.innerHTML=PH+"<span>Calls</span>";
+    var w=document.createElement("a");w.href="whatsapp-center.html";w.className="qw";w.title="WhatsApp customers";w.innerHTML=WA+"<span>WhatsApp</span>";
+    if(here==="whatsapp-center.html"){(mode==="call"?c:w).classList.add("on")}
+    q.appendChild(c);q.appendChild(w);nav.appendChild(q);
+  })();
+  rest=rest.filter(function(a){return a.isConnected});
   if(!rest.length)return;
   var wrap=document.createElement("div");wrap.className="nav-more";
   var btn=document.createElement("button");btn.type="button";btn.setAttribute("aria-haspopup","true");btn.setAttribute("aria-expanded","false");
   btn.innerHTML='More<span class="dot" hidden></span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 4 4 4 4-4"/></svg>';
   var menu=document.createElement("div");menu.className="nav-more-menu";menu.hidden=true;menu.setAttribute("role","menu");
   /* same menu, same order, on every page */
-  var ORDER=[["properties.html","Properties"],["website-leads.html","Leads"],["whatsapp-center.html","WhatsApp"],["business-finder-app.html","Finder"],["prospecting-center.html","Prospecting"],["reports.html","Reports"],["import-export.html","Import & export"],["team-settings.html","Team & settings"]],here=location.pathname.split("/").pop();
+  var ORDER=[["properties.html","Properties"],["website-leads.html","Leads"],["business-finder-app.html","Finder"],["prospecting-center.html","Prospecting"],["reports.html","Reports"],["import-export.html","Import & export"],["team-settings.html","Team & settings"]],here=location.pathname.split("/").pop();
   ORDER.forEach(function(x){
     var a=rest.filter(function(r){return(r.getAttribute("href")||"").split(/[?#]/)[0]===x[0]})[0];
     if(!a){a=document.createElement("a");a.href=x[0];a.textContent=x[1];if(here===x[0])a.className="on"}
