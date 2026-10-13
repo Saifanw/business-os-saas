@@ -66,6 +66,16 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 .mrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}.mrow .c{flex:1;min-width:0}.mrow .c b{display:block}.mrow .c span{color:var(--mut);font-size:12px}
 .sc{font-weight:800;font-size:13px;color:#0a7a50;background:#e9f9f1;border-radius:99px;padding:3px 10px}.sc.m{color:#9a6200;background:#fff3d6}
 .fg .third{grid-column:span 1}
+
+.ph .pn{position:absolute;right:10px;bottom:10px;background:#0f172acc;color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px}
+.bd{display:flex;gap:5px;flex-wrap:wrap}.bd i{font-style:normal;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:#e9f9f1;color:#0a7a50}.bd i.w{background:#fff3d6;color:#9a6200}
+.rate{font-size:12px;color:var(--mut);font-weight:600;margin-left:6px}
+.qs{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--mut);font-weight:600}.qs .tr{flex:1;height:5px;background:#eef2f8;border-radius:9px;overflow:hidden}.qs .tr i{display:block;height:100%;border-radius:9px;background:var(--g)}
+.sec{grid-column:1/-1;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-top:6px;border-top:1px solid var(--line);padding-top:12px}
+.scb{grid-column:1/-1;background:#f8faff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:12.5px}
+.adb{grid-column:1/-1;border:1px dashed #b9c8ff;background:#f5f8ff;border-radius:12px;padding:12px}.adb textarea{min-height:140px;font-size:12.5px}.adt{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
+.tg{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;font-size:12px;font-weight:700}.tg.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.modal.big2{width:min(680px,100%)}
 </style></head><body>
 <header class="top"><div class="top-in">
   <a class="brand" href="customers.html"><span class="logo">B</span>BusinessOS</a>
@@ -78,19 +88,30 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 <div id="app" class="hidden"><div id="err" class="err hidden"></div>
 <section class="hero"><div><h1>Properties</h1><p>Listings, owners and matching buyers — one tap to share on WhatsApp.</p></div></section>
 <section class="kpis" id="kpis"></section>
-<div class="card" style="overflow:clip"><div class="bar"><div class="chips" id="chips"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><select class="q" id="ty" style="min-width:130px"></select><input class="q" id="q" placeholder="Search area, title, code…" aria-label="Search properties"></div></div><div id="grid" class="pg"></div></div>
+<div class="card" style="overflow:clip"><div class="bar"><div class="chips" id="chips"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><select class="q" id="ty" style="min-width:130px"></select><select class="q" id="so" style="min-width:140px"><option value="new">Newest first</option><option value="lo">Price: low → high</option><option value="hi">Price: high → low</option><option value="qs">Best listing quality</option></select><input class="q" id="q" placeholder="Search area, title, code…" aria-label="Search properties"></div></div><div id="grid" class="pg"></div></div>
 </div></main>
 
-<div id="mo" class="ov hidden"><div class="modal" role="dialog" aria-modal="true"><h2 id="mt">Add property</h2><p>Fill the basics — you can edit later.</p>
-<div class="fg"><label class="full">Title *<input id="f_title" placeholder="e.g. 3 BHK Villa, Vaishali Nagar"></label>
+<div id="mo" class="ov hidden"><div class="modal" role="dialog" aria-modal="true" style="width:min(700px,100%)"><h2 id="mt">Add property</h2><p>Jitni detail, utni jaldi deal. Score 100% karne ki koshish karo.</p>
+<div class="fg"><div class="sec">Basic</div>
+<label class="full">Title *<input id="f_title" placeholder="e.g. 100 Gaj corner plot, Jagatpura"></label>
 <label>Type<select id="f_type"><option>Plot</option><option>Flat</option><option>Villa</option><option>House</option><option>Commercial</option><option>Shop</option><option>Farmhouse</option><option>Agricultural</option></select></label>
 <label>Status<select id="f_status"><option>Available</option><option>Hold</option><option>Sold</option></select></label>
-<label>Locality / Area *<input id="f_loc" placeholder="Vaishali Nagar"></label><label>City<input id="f_city" value="Jaipur"></label>
-<label>Price (₹) *<input id="f_price" type="number" min="0" inputmode="numeric"></label><label>Size<input id="f_size" placeholder="e.g. 200 Gaj / 1450 sq ft"></label>
-<label>Bedrooms<input id="f_bed" type="number" min="0"></label><label>Facing<select id="f_face"><option value="">—</option><option>East</option><option>West</option><option>North</option><option>South</option></select></label>
+<label>Locality / Area *<input id="f_loc" placeholder="Jagatpura"></label><label>City<input id="f_city" value="Jaipur"></label>
+<label>Price (₹) *<input id="f_price" type="number" min="0" inputmode="numeric"></label><label>Size (e.g. 30x60 ft / 1450 sq ft)<input id="f_size" placeholder="30x60 ft"></label>
+<label>Area in Gaj (auto if ft×ft)<input id="f_gaj" type="number" step="0.1" min="0"></label><label>Bedrooms (BHK)<input id="f_bed" type="number" min="0"></label>
+<div class="sec">Plot / legal details</div>
+<label>Facing<select id="f_face"><option value="">—</option><option>East</option><option>West</option><option>North</option><option>South</option></select></label><label>Road width (ft)<input id="f_road" inputmode="numeric" placeholder="40"></label>
+<label>Corner plot<select id="f_corner"><option value="">—</option><option>Yes</option><option>No</option></select></label>
+<label>Patta / land type<select id="f_patta"><option value="">—</option><option>JDA approved</option><option>Society patta</option><option>Gram panchayat patta</option><option>90-A / converted</option></select></label>
+<label>Registry<select id="f_reg"><option value="">—</option><option>Registry available</option><option>Registry under process</option><option>Agreement / POA only</option></select></label>
+<label>Home loan<select id="f_loan"><option value="">—</option><option>Available</option><option>Not available</option></select></label>
+<div class="sec">Location, owner & photos</div>
+<label>Landmark<input id="f_land" placeholder="Near Jagatpura railway station"></label><label>Google Maps link<input id="f_map" placeholder="https://maps.app.goo.gl/…"></label>
 <label>Owner name<input id="f_on"></label><label>Owner phone<input id="f_op" inputmode="tel"></label>
-<label class="full">Photo link (optional)<input id="f_img" placeholder="https://…"></label>
-<label class="full">Highlights<textarea id="f_note" rows="2" placeholder="Corner plot, 40ft road, patta ready, loan available…"></textarea></label></div>
+<label class="full">Photo links — ek line mein ek (3+ photos = zyada score)<textarea id="f_img" rows="2" placeholder="https://…jpg"></textarea></label>
+<label class="full">Khaas baatein / highlights — ek line mein ek<textarea id="f_note" rows="3" placeholder="Pakki sadak, light-paani ready&#10;School 500 m door"></textarea></label>
+<div class="scb" id="f_score"></div>
+<div class="adb"><div class="adt"><b style="font-size:13px;margin-right:auto">📣 Ad post (auto)</b><button class="tg on" data-l="en">English</button><button class="tg" data-l="hi">हिंदी</button><span style="width:8px"></span><button class="tg on" data-s="1">Short</button><button class="tg" data-s="0">Full</button></div><textarea id="f_ad"></textarea><div class="adt" style="margin:8px 0 0"><button class="mini" id="ad_cp">Copy</button><button class="mini mt" id="ad_wa">Send on WhatsApp</button></div></div></div>
 <div class="mf"><button class="btn" id="m_del" style="margin-right:auto;color:var(--red)">Delete</button><button class="btn" id="m_cancel">Cancel</button><button class="btn p" id="m_save">Save</button></div></div></div>
 
 <div id="mm" class="ov hidden"><div class="modal"><h2 id="mmt">Matching customers</h2><p id="mms"></p><div id="mml"></div><div class="mf"><button class="btn" id="mm_x">Close</button></div></div></div>
@@ -107,7 +128,7 @@ const clean=v=>String(v??"").replace(/["'`]+/g,"").trim(),ini=n=>clean(n||"?").s
 const money=n=>{n=Math.round(Number(n)||0);return n>=1e7?"₹"+(n/1e7).toFixed(2).replace(/\.?0+$/,"")+" Cr":n>=1e5?"₹"+(n/1e5).toFixed(2).replace(/\.?0+$/,"")+" Lakh":"₹"+n.toLocaleString("en-IN")};
 function amt(v){if(typeof v==="number")return v;const s=String(v||"").replace(/,/g,""),m=s.match(/([0-9]+(?:\.[0-9]+)?)/);if(!m)return 0;let n=Number(m[1]);if(/crore|cr\b/i.test(s))n*=1e7;else if(/lakh|lac/i.test(s))n*=1e5;else if(/k\b/i.test(s))n*=1e3;return Math.round(n)}
 const ICON={Plot:"📐",Flat:"🏢",Villa:"🏡",House:"🏠",Commercial:"🏬",Shop:"🏪",Farmhouse:"🌳",Agricultural:"🌾"};
-let user,bizId,uC,uP,contacts=[],props=[],ready={c:0,p:0},flt="",ty="",q="",editId="";
+let so="new",user,bizId,uC,uP,contacts=[],props=[],ready={c:0,p:0},flt="",ty="",q="",editId="";
 const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),2600)};
 const code=p=>p.code||"P-"+p.id.slice(0,4).toUpperCase();
 /* matching: budget 45 + location 35 + type 20 */
@@ -119,7 +140,19 @@ function matches(p){const price=Number(p.price)||0,loc=clean(p.locality).toLower
   if(cl.includes(String(p.type||"").toLowerCase())){s+=20;why.push(p.type)}
   if(s>=45)res.push({c,s,why})});
  return res.sort((a,b)=>b.s-a.s)}
-function shareText(p){return`🏠 *${p.title}*\n📍 ${p.locality}, ${p.city||"Jaipur"}\n💰 ${money(p.price)}${p.size?"\n📏 "+p.size:""}${p.bedrooms?"\n🛏 "+p.bedrooms+" BHK":""}${p.facing?"\n🧭 "+p.facing+" facing":""}${p.note?"\n✨ "+p.note:""}\n\nRef: ${code(p)} — Interested? Reply to this message.`}
+const inr=n=>"₹"+Math.round(n).toLocaleString("en-IN");
+const photosOf=p=>Array.isArray(p.photos)&&p.photos.length?p.photos:(p.image?[p.image]:[]);
+function gajOf(d){if(+d.areaGaj)return +d.areaGaj;const m=String(d.size||"").toLowerCase().replace(/×/g,"x").match(/(\d+(?:\.\d+)?)\s*(?:x|\*|by)\s*(\d+(?:\.\d+)?)/);return m?+(m[1]*m[2]/9).toFixed(1):0}
+const rateOf=d=>{const g=gajOf(d);return g&&(+d.price||0)/g>500?Math.round(d.price/g):0};
+function scoreOf(d){const ph=photosOf(d).length,it=[["3+ photos",ph>=3,20],["Price",!!+d.price,10],["Size / Gaj",!!(d.size||+d.areaGaj),10],["Facing",!!d.facing,5],["Road width",!!d.roadWidth,5],["Patta",!!d.patta,10],["Registry",!!d.registry,10],["Highlights",!!d.note,10],["Landmark / map",!!(d.landmark||d.mapUrl),10],["Owner phone",!!d.ownerPhone,10]];
+ return{sc:it.reduce((s,x)=>s+(x[1]?x[2]:0),0),miss:it.filter(x=>!x[1]).map(x=>x[0])}}
+function adText(d,hi,short){const L=hi?{sale:"बिक्री हेतु",size:"साइज़",price:"कीमत",rate:"रेट",road:"रोड",corner:"कॉर्नर प्लॉट",patta:"पट्टा",reg:"रजिस्ट्री",loan:"लोन",gaj:"गज",ref:"संपर्क करें"}:{sale:"FOR SALE",size:"Size",price:"Price",rate:"Rate",road:"Road",corner:"Corner plot",patta:"Patta",reg:"Registry",loan:"Home loan",gaj:"Gaj",ref:"Contact for site visit"};
+ const g=gajOf(d),r=rateOf(d),hl=String(d.note||"").split("\n").map(x=>x.trim()).filter(Boolean),top=[d.facing,d.roadWidth?L.road+" "+d.roadWidth+" ft":"",d.corner==="Yes"?L.corner:""].filter(Boolean).join(" | ");
+ const o=[`🏠 *${L.sale}* — ${d.title||d.type}`,`📍 ${d.locality||""}, ${d.city||"Jaipur"}${d.landmark?" ("+d.landmark+")":""}`,`💰 ${L.price}: ${money(d.price)}${r?" ("+L.rate+" "+inr(r)+"/"+L.gaj+")":""}`];
+ const sz=[d.size,g?g+" "+L.gaj:""].filter(Boolean).join(" • ");if(sz)o.push(`📏 ${L.size}: ${sz}`);if(d.bedrooms)o.push(`🛏 ${d.bedrooms} BHK`);if(top)o.push(`🧭 ${top}`);
+ if(!short){[d.patta?L.patta+": "+d.patta:"",d.registry?L.reg+": "+d.registry:"",d.loan?L.loan+": "+d.loan:""].filter(Boolean).forEach(x=>o.push("📄 "+x));hl.forEach(x=>o.push("✅ "+x));if(d.mapUrl)o.push("🗺 "+d.mapUrl)}
+ o.push("",`📞 ${L.ref} • Ref: ${d.code||"New"}`);return o.join("\n")}
+const shareText=p=>adText(p,false,false);
 function render(){const ok=ready.c&&ready.p;
  const av=props.filter(p=>p.status==="Available"),V=av.reduce((s,p)=>s+(+p.price||0),0),sold=props.filter(p=>p.status==="Sold").length,mc=av.reduce((s,p)=>s+matches(p).length,0);
  const K=[["Total listings",props.length,"All properties","#2f5bff"],["Available",av.length,"Ready to sell","#0f9d6a"],["Inventory value",money(V),"Available stock","#7c4dff"],["Sold",sold,"Closed listings","#d98a00"],["Buyer matches",mc,"Customers fitting your stock","#0b6aa2"]];
@@ -128,21 +161,32 @@ function render(){const ok=ready.c&&ready.p;
  $("chips").innerHTML=[["","All"],["Available","Available"],["Hold","On hold"],["Sold","Sold"]].map(c=>`<button class="chip${flt===c[0]?" on":""}" data-f="${c[0]}">${c[1]} <b>${cnt(c[0])}</b></button>`).join("");
  const types=[...new Set(props.map(p=>p.type).filter(Boolean))];$("ty").innerHTML='<option value="">All types</option>'+types.map(t=>`<option${t===ty?" selected":""}>${esc(t)}</option>`).join("");
  if(!ok){$("grid").innerHTML=Array(3).fill('<div class="pc"><div class="sk" style="height:150px;border-radius:0"></div><div class="pb2"><div class="sk"></div><div class="sk"></div></div></div>').join("");return}
- const s=q.toLowerCase(),rows=props.filter(p=>(!flt||p.status===flt)&&(!ty||p.type===ty)&&(!s||[p.title,p.locality,p.city,code(p),p.ownerName].join(" ").toLowerCase().includes(s)));
- $("grid").innerHTML=rows.length?rows.map(p=>{const m=p.status==="Sold"?[]:matches(p),bg=p.image?`style="background-image:url('${esc(p.image)}')"`:"";
-  return`<div class="pc"><div class="ph" ${bg}>${p.image?"":ICON[p.type]||"🏠"}<span class="st ${p.status}">${p.status==="Hold"?"On hold":p.status}</span><span class="code">${esc(code(p))}</span></div>
-  <div class="pb2"><h3>${esc(p.title)}</h3><div class="price">${money(p.price)}</div><div style="color:var(--mut);font-size:12.5px">📍 ${esc(p.locality)}, ${esc(p.city||"")}</div>
-  <div class="meta"><span>${esc(p.type)}</span>${p.size?`<span>${esc(p.size)}</span>`:""}${p.bedrooms?`<span>${esc(p.bedrooms)} BHK</span>`:""}${p.facing?`<span>${esc(p.facing)} facing</span>`:""}</div>
-  ${p.ownerName?`<div style="font-size:12px;color:var(--mut)">Owner: <b style="color:var(--ink)">${esc(p.ownerName)}</b></div>`:""}</div>
-  <div class="pf"><button class="mini mt" data-a="match" data-id="${p.id}">👥 ${m.length} match${m.length===1?"":"es"}</button><button class="mini" data-a="share" data-id="${p.id}">WhatsApp</button><button class="mini" data-a="copy" data-id="${p.id}">Copy</button><button class="mini" data-a="edit" data-id="${p.id}">Edit</button></div></div>`}).join("")
+ const s=q.toLowerCase(),rows=props.filter(p=>(!flt||p.status===flt)&&(!ty||p.type===ty)&&(!s||[p.title,p.locality,p.city,code(p),p.ownerName,p.landmark].join(" ").toLowerCase().includes(s)));rows.sort((a,b)=>so==="lo"?a.price-b.price:so==="hi"?b.price-a.price:so==="qs"?scoreOf(b).sc-scoreOf(a).sc:0);
+ $("grid").innerHTML=rows.length?rows.map(p=>{const m=p.status==="Sold"?[]:matches(p),mmm=0;
+  const ph=photosOf(p),sc=scoreOf(p),r=rateOf(p),g=gajOf(p),bg=ph[0]?`style="background-image:url('${esc(ph[0])}')"`:"",col=sc.sc>=80?"#0f9d6a":sc.sc>=50?"#d98a00":"#e0483f";
+  const bd=[p.corner==="Yes"?"Corner":"",p.patta,p.registry==="Registry available"?"Registry ✓":p.registry,p.loan==="Available"?"Loan ✓":""].filter(Boolean);
+  return`<div class="pc"><div class="ph" ${bg}>${ph[0]?"":ICON[p.type]||"🏠"}<span class="st ${p.status}">${p.status==="Hold"?"On hold":p.status}</span><span class="code">${esc(code(p))}</span>${ph.length>1?`<span class="pn">📷 ${ph.length}</span>`:""}</div>
+  <div class="pb2"><h3>${esc(p.title)}</h3><div><span class="price">${money(p.price)}</span>${r?`<span class="rate">${inr(r)}/Gaj</span>`:""}</div><div style="color:var(--mut);font-size:12.5px">📍 ${esc(p.locality)}, ${esc(p.city||"")}${p.landmark?" · "+esc(p.landmark):""}</div>
+  <div class="meta"><span>${esc(p.type)}</span>${p.size?`<span>${esc(p.size)}</span>`:""}${g?`<span>${g} Gaj</span>`:""}${p.bedrooms?`<span>${esc(p.bedrooms)} BHK</span>`:""}${p.facing?`<span>${esc(p.facing)} facing</span>`:""}${p.roadWidth?`<span>${esc(p.roadWidth)} ft road</span>`:""}</div>
+  ${bd.length?`<div class="bd">${bd.map(x=>`<i>${esc(x)}</i>`).join("")}</div>`:`<div class="bd"><i class="w">Legal details missing</i></div>`}
+  ${p.ownerName?`<div style="font-size:12px;color:var(--mut)">Owner: <b style="color:var(--ink)">${esc(p.ownerName)}</b>${p.ownerPhone?` · <a href="tel:${esc(p.ownerPhone)}" style="color:var(--blue);font-weight:700">${esc(p.ownerPhone)}</a>`:""}</div>`:""}
+  <div class="qs" style="--g:${col}" title="${sc.miss.length?"Missing: "+esc(sc.miss.join(", ")):"Complete"}"><span>Listing</span><div class="tr"><i style="width:${sc.sc}%"></i></div><b style="color:${col}">${sc.sc}%</b></div></div>
+  <div class="pf"><button class="mini mt" data-a="match" data-id="${p.id}">👥 ${m.length} match${m.length===1?"":"es"}</button><button class="mini" data-a="share" data-id="${p.id}">WhatsApp</button><button class="mini" data-a="copy" data-id="${p.id}">Copy ad</button><button class="mini" data-a="edit" data-id="${p.id}">Edit</button></div></div>`}).join("")
  :`<div class="empty" style="grid-column:1/-1"><div style="font-size:34px">🏠</div><b>${props.length?"No matching properties":"Add your first property"}</b>${props.length?"Try another filter.":"Add a listing and BusinessOS will instantly find buyers from your customers."}<br>${props.length?"":'<button class="btn p" id="add2">＋ Add Property</button>'}</div>`}
+const FM=[["title","title"],["type","type"],["status","status"],["loc","locality"],["city","city"],["price","price"],["size","size"],["gaj","areaGaj"],["bed","bedrooms"],["face","facing"],["road","roadWidth"],["corner","corner"],["patta","patta"],["reg","registry"],["loan","loan"],["land","landmark"],["map","mapUrl"],["on","ownerName"],["op","ownerPhone"],["note","note"]];
+let adHi=false,adShort=true;
+function readForm(){const d={},v=i=>clean($("f_"+i).value);FM.forEach(([a,b])=>d[b]=a==="note"?$("f_note").value.split("\n").map(x=>clean(x)).filter(Boolean).join("\n"):a==="price"?(+$("f_price").value||0):a==="gaj"?(+$("f_gaj").value||0):(["type","status","face","corner","patta","reg","loan"].includes(a)?$("f_"+a).value:v(a)));
+ d.photos=$("f_img").value.split("\n").map(x=>x.trim()).filter(x=>/^https?:\/\//i.test(x));d.image=d.photos[0]||"";d.code=(props.find(x=>x.id===editId)||{}).code||"P-"+String(props.length+1).padStart(3,"0");return d}
+function refreshForm(){const d=readForm(),{sc,miss}=scoreOf(d),g=gajOf(d),r=rateOf(d);
+ $("f_score").innerHTML=`<b>Listing quality: ${sc}%</b>${miss.length?" — baaki: "+miss.join(", "):" ✓ Poori detail, buyers ko pasand aayegi"}${g?`<br>📐 ${g} Gaj${r?" · Rate "+inr(r)+"/Gaj":""}`:""}`;
+ $("f_ad").value=adText(d,adHi,adShort)}
 function openM(id){editId=id||"";const p=props.find(x=>x.id===id)||{};$("mt").textContent=id?"Edit property":"Add property";
- [["title","title"],["type","type"],["status","status"],["loc","locality"],["city","city"],["price","price"],["size","size"],["bed","bedrooms"],["face","facing"],["on","ownerName"],["op","ownerPhone"],["img","image"],["note","note"]].forEach(([a,b])=>$("f_"+a).value=p[b]??(a==="status"?"Available":a==="city"?"Jaipur":a==="type"?"Plot":""));
- $("m_del").classList.toggle("hidden",!id);$("mo").classList.remove("hidden");$("f_title").focus()}
-async function save(){const g=i=>clean($("f_"+i).value),title=g("title"),loc=g("loc"),price=+$("f_price").value||0;
- if(!title||!loc||!price)return toast("Title, area and price are required",true);
- const d={title,type:$("f_type").value,status:$("f_status").value,locality:loc,city:g("city"),price,size:g("size"),bedrooms:g("bed"),facing:$("f_face").value,ownerName:g("on"),ownerPhone:g("op"),image:$("f_img").value.trim(),note:g("note"),updatedAt:serverTimestamp()};
- try{if(editId)await setDoc(doc(db,"businesses",bizId,"properties",editId),d,{merge:true});else await addDoc(collection(db,"businesses",bizId,"properties"),{...d,code:"P-"+String(props.length+1).padStart(3,"0"),createdAt:serverTimestamp()});
+ FM.forEach(([a,b])=>{const dv=a==="status"?"Available":a==="city"?"Jaipur":a==="type"?"Plot":"";$("f_"+a).value=a==="gaj"?(p.areaGaj||""):(p[b]??dv)});
+ $("f_img").value=photosOf(p).join("\n");adHi=false;adShort=true;document.querySelectorAll("#mo [data-l]").forEach(b=>b.classList.toggle("on",b.dataset.l==="en"));document.querySelectorAll("#mo [data-s]").forEach(b=>b.classList.toggle("on",b.dataset.s==="1"));
+ $("m_del").classList.toggle("hidden",!id);refreshForm();$("mo").classList.remove("hidden");$("f_title").focus()}
+async function save(){const d=readForm();if(!d.title||!d.locality||!d.price)return toast("Title, area and price are required",true);
+ const code0=d.code;delete d.code;d.areaGaj=gajOf(d)||0;d.updatedAt=serverTimestamp();
+ try{if(editId)await setDoc(doc(db,"businesses",bizId,"properties",editId),d,{merge:true});else await addDoc(collection(db,"businesses",bizId,"properties"),{...d,code:code0,createdAt:serverTimestamp()});
   $("mo").classList.add("hidden");toast("Property saved")}catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — deploy firestore.rules":e.message,true)}}
 function showMatch(id){const p=props.find(x=>x.id===id),m=matches(p);$("mmt").textContent="Buyers for "+p.title;$("mms").textContent=m.length?m.length+" customers fit this property (best first).":"No customer fits yet. Add customers with budget and area, and they will appear here.";
  $("mml").innerHTML=m.map(({c,s,why})=>{const ph=String(c.phone||"").replace(/\D/g,""),w=ph?`https://wa.me/${ph.length===10?"91"+ph:ph}?text=${encodeURIComponent("Namaste "+clean(c.name)+",\n\n"+shareText(p))}`:"";
@@ -158,6 +202,12 @@ $("avBtn").onclick=e=>{e.stopPropagation();$("dd").classList.toggle("hidden")};d
 $("out").onclick=()=>signOut(auth);$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message}};
 $("add").onclick=()=>openM();$("m_cancel").onclick=()=>$("mo").classList.add("hidden");$("m_save").onclick=save;$("mm_x").onclick=()=>$("mm").classList.add("hidden");
 $("m_del").onclick=async()=>{if(editId&&confirm("Delete this property?")){await deleteDoc(doc(db,"businesses",bizId,"properties",editId));$("mo").classList.add("hidden");toast("Deleted")}};
+$("so").onchange=e=>{so=e.target.value;render()};
+$("mo").addEventListener("input",e=>{if(e.target.id!=="f_ad")refreshForm()});
+$("mo").addEventListener("click",e=>{const t=e.target.closest("[data-l],[data-s]");if(!t)return;e.preventDefault();
+ if(t.dataset.l){adHi=t.dataset.l==="hi";document.querySelectorAll("#mo [data-l]").forEach(b=>b.classList.toggle("on",b===t))}else{adShort=t.dataset.s==="1";document.querySelectorAll("#mo [data-s]").forEach(b=>b.classList.toggle("on",b===t))}refreshForm()});
+$("ad_cp").onclick=async()=>{try{await navigator.clipboard.writeText($("f_ad").value.replace(/\*/g,""));toast("Ad copied")}catch{toast("Copy not allowed",true)}};
+$("ad_wa").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent($("f_ad").value),"_blank");
 $("ty").onchange=e=>{ty=e.target.value;render()};let st;$("q").addEventListener("input",e=>{clearTimeout(st);st=setTimeout(()=>{q=e.target.value.trim();render()},150)});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("mo").classList.add("hidden");$("mm").classList.add("hidden")}});
 document.addEventListener("click",async e=>{const t=e.target,f=t.closest("[data-f]");if(f){flt=f.dataset.f;render();return}if(t.id==="add2"){openM();return}
