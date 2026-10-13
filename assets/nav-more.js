@@ -66,6 +66,7 @@
     btn.innerHTML='More<span class="dot" hidden></span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 4 4 4 4-4"/></svg>';
     menu=document.createElement("div");menu.className="nav-more-menu";menu.hidden=true;menu.setAttribute("role","menu");
     var IC={
+      "custom-requests.html":'<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
       "properties.html":'<path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/>',
       "website-leads.html":'<path d="M7 17 17 7M8 7h9v9"/>',
       "whatsapp-center.html":'<path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/>',
@@ -75,7 +76,7 @@
       "import-export.html":'<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
       "team-settings.html":'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>'
     };
-    var ORDER=[["properties.html","Properties"],["website-leads.html","Leads"],["whatsapp-center.html","WhatsApp"],["business-finder-app.html","Finder"],["prospecting-center.html","Prospecting"],["reports.html","Reports"],["import-export.html","Import & export"]],SET=["team-settings.html","Team & settings"];
+    var ORDER=[["properties.html","Properties"],["website-leads.html","Leads"],["whatsapp-center.html","WhatsApp"],["business-finder-app.html","Finder"],["prospecting-center.html","Prospecting"],["reports.html","Reports"],["import-export.html","Import & export"],["custom-requests.html","Customise request"]],SET=["team-settings.html","Team & settings"];
     function find(h){return rest.filter(function(r){return(r.getAttribute("href")||"").split(/[?#]/)[0]===h})[0]}
     function item(x){
       var a=find(x[0]);
