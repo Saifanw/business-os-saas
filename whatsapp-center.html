@@ -348,7 +348,7 @@ function setMode(x){
   $('eyebrow').textContent=x==='call'?'Call Center':'WhatsApp Center';$('h1').textContent=x==='call'?'Call your customers':'Message your customers';
   $('sentLbl').textContent=x==='call'?'Called today':'Opened today';
   document.title=(x==='call'?'Calls':'WhatsApp Center')+' — Business OS';
-  document.querySelectorAll('.nav-quick a').forEach(a=>a.classList.toggle('on',a.classList.contains(x==='call'?'qc':'qw')));
+  document.dispatchEvent(new CustomEvent('bos-mode',{detail:x}));
   try{history.replaceState(null,'',x==='call'?'?mode=call':location.pathname)}catch(e){}
   sel.clear();shown=50;if(loaded)render()}
 function whyTag(m){
