@@ -51,3 +51,6 @@
   document.addEventListener("click",function(e){if(!wrap.contains(e.target))close()});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"){close();btn.focus()}});
 })();
+
+/* Upgrade bar for Free workspaces (see ../upgrade-banner.js) */
+(function(){try{var s=document.createElement("script");s.type="module";s.src=(document.currentScript&&document.currentScript.src?document.currentScript.src.replace(/assets\/nav-more\.js.*$/,""):"")+"upgrade-banner.js";document.head.appendChild(s)}catch(e){}})();
