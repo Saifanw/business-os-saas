@@ -106,7 +106,7 @@ fieldset{border:1px solid var(--line);border-radius:12px;padding:12px;display:gr
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,getDocs,getDoc,getCountFromServer,doc,setDoc,updateDoc,serverTimestamp,query,where}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,collection,getDocs,getDoc,getCountFromServer,doc,setDoc,updateDoc,serverTimestamp,query,where,deleteDoc,writeBatch}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const cfg={apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80",measurementId:"G-85D45ENBLK"};
 async function watchPayments(){try{const s=await getDocs(query(collection(db,"paymentRequests"),where("paymentStatus","==","pending"))),n=s.docs.filter(d=>d.data().submittedAt).length,a=document.querySelector('.nav a[href="admin-payments.html"]');
   if(a)a.innerHTML="Payments"+(n?` <span style="background:#dc2626;color:#fff;border-radius:99px;padding:1px 8px;font-size:11px;margin-left:4px">${n}</span>`:"");
@@ -181,7 +181,7 @@ function renderList(){const q=norm($("q").value);
 <div class="c"><b>${esc(clean(b.ownerName)||"No owner name")}</b><span>${esc(clean(b.ownerEmail)||"No owner email")}</span><span>${esc(clean(b.phone||b.whatsapp)||"No mobile")}</span></div>
 <div><span class="tag ${i.paid?"b":""}">${esc(i.P.n)}</span><span class="sm">${esc(u)}</span></div>
 <div><span class="tag ${sTag[0]}">${sTag[1]}</span><span class="sm">${esc(end)}</span><span class="sm">${b.ownerUid?"Owner linked":"Owner not linked"}</span></div>
-<div class="ra">${w?`<a class="mini wa" href="${esc(w)}" target="_blank" rel="noopener" aria-label="WhatsApp ${esc(name(b))}">WhatsApp</a>`:""}<button class="mini k" data-a="edit" data-id="${esc(b.id)}" aria-label="Manage ${esc(name(b))}">Manage</button><button class="mini" data-a="tog" data-id="${esc(b.id)}" aria-label="${i.status==="suspended"?"Activate":"Suspend"} ${esc(name(b))}">${i.status==="suspended"?"Activate":"Suspend"}</button></div></div>`}).join("")}
+<div class="ra">${w?`<a class="mini wa" href="${esc(w)}" target="_blank" rel="noopener" aria-label="WhatsApp ${esc(name(b))}">WhatsApp</a>`:""}<button class="mini k" data-a="edit" data-id="${esc(b.id)}" aria-label="Manage ${esc(name(b))}">Manage</button><button class="mini" data-a="tog" data-id="${esc(b.id)}" aria-label="${i.status==="suspended"?"Activate":"Suspend"} ${esc(name(b))}">${i.status==="suspended"?"Activate":"Suspend"}</button><button class="mini" data-a="del" data-id="${esc(b.id)}" style="color:#dc2626" aria-label="Delete ${esc(name(b))}">Delete</button></div></div>`}).join("")}
 /* load — listener first, cosmetics after */
 async function load(){show("app",true);try{const snap=await getDocs(collection(db,"businesses"));biz=snap.docs.map(d=>({id:d.id,...d.data()}));$("err").classList.add("hidden");render()}catch(e){showErr(e,"Could not load accounts");$("summary").classList.remove("sk");$("summary").textContent="Accounts could not be loaded.";$("att").innerHTML="";$("list").innerHTML=`<div class="empty"><b>No data</b>Fix the error above, then press Refresh.</div>`}}
 async function checkUsage(){const btn=$("usageBtn"),list=biz.filter(b=>{const i=info(b);return !i.paid&&i.status!=="suspended"});
@@ -228,12 +228,30 @@ async function toggle(id){const b=biz.find(x=>x.id===id);if(!b)return;const prev
  if(!confirm(`${next==="suspended"?"Suspend":"Activate"} ${name(b)}?${next==="suspended"?" Data is kept, but app pages must enforce the block.":""}`))return;
  const set=async s=>{try{await updateDoc(doc(db,"businesses",id),s==="suspended"?{status:s,suspendedReason:"admin",suspendedAt:serverTimestamp(),updatedAt:serverTimestamp()}:{status:s,updatedAt:serverTimestamp()});b.status=s;render();return true}catch(e){showErr(e,"Status update failed");toast("Status update failed",null,true);return false}};
  if(await set(next))toast(`${name(b)} ${next==="suspended"?"suspended":"activated"}`,()=>set(prev))}
+/* Permanent delete: removes the workspace document and its main data. Cannot be undone. */
+async function removeAcc(id,btn){const b=biz.find(x=>x.id===id);if(!b)return;const nm=name(b),mine=auth.currentUser&&auth.currentUser.uid===id;
+ if(mine&&!confirm("This is YOUR own admin workspace. Delete it anyway?"))return;
+ const paid=info(b).status==="active"&&!["free","trial"].includes(norm(b.plan));
+ if(paid&&!confirm(`${nm} has an ACTIVE paid plan. Deleting does not refund or cancel anything. Continue?`))return;
+ const t=prompt(`Permanently delete "${nm}" with its customers, deals, properties and settings?\n\nThis cannot be undone.\nType DELETE to confirm.`);
+ if(t!=="DELETE"){if(t!==null)toast("Not deleted — you must type DELETE exactly");return}
+ if(btn)btn.disabled=true;toast("Deleting "+nm+"…");let removed=0,skipped=[];
+ const wipe=async(ref)=>{const snap=await getDocs(ref);for(let i=0;i<snap.docs.length;i+=400){const w=writeBatch(db);snap.docs.slice(i,i+400).forEach(d=>w.delete(d.ref));await w.commit();removed+=Math.min(400,snap.docs.length-i)}return snap.docs};
+ try{
+  for(const sub of["contacts","deals","properties","prospects","settings","teamInvites"]){
+   try{const docs=await wipe(collection(db,"businesses",id,sub));
+    if(sub==="contacts"){for(let i=0;i<docs.length;i+=20)await Promise.all(docs.slice(i,i+20).map(d=>wipe(collection(db,"businesses",id,"contacts",d.id,"followups")).catch(()=>{})))}}
+   catch(e){console.warn("skip",sub,e);skipped.push(sub)}}
+  await deleteDoc(doc(db,"businesses",id));
+  biz=biz.filter(x=>x.id!==id);delete usage[id];render();
+  toast(`${nm} deleted${skipped.length?" (could not clear: "+skipped.join(", ")+")":""}`)
+ }catch(e){console.error(e);showErr(e,"Delete failed");toast("Delete failed: "+(e.code||e.message),null,true);if(btn)btn.disabled=false}}
 function exportCsv(){const H=["Business","Owner","Email","Phone","City","Area","Type","Plan","Status","Plan ends","Customer capacity","Linked","Last payment (INR)"];
  const q=v=>`"${String(v??"").replace(/"/g,'""')}"`,rows=biz.map(b=>{const i=info(b);return[name(b),b.ownerName,b.ownerEmail,b.phone,b.city,b.area,b.businessType,i.P.n,i.status,i.ends,i.cap,b.ownerUid?"yes":"no",b.lastPaymentAmount||0].map(clean).map(q).join(",")});
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+[H.map(q).join(","),...rows].join("\n")],{type:"text/csv"}));a.download=`businessos-accounts-${isoDay(new Date())}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast(`Exported ${rows.length} accounts`)}
 /* events */
 $("chips").onclick=e=>{const c=e.target.closest("[data-f]");if(c){filter=c.dataset.f;render()}};
-document.body.addEventListener("click",e=>{const a=e.target.closest("[data-a]");if(!a)return;if(a.dataset.a==="edit")openForm(a.dataset.id);if(a.dataset.a==="tog")toggle(a.dataset.id)});
+document.body.addEventListener("click",e=>{const a=e.target.closest("[data-a]");if(!a)return;if(a.dataset.a==="edit")openForm(a.dataset.id);if(a.dataset.a==="tog")toggle(a.dataset.id);if(a.dataset.a==="del")removeAcc(a.dataset.id,a)});
 $("q").addEventListener("input",renderList);$("add").onclick=()=>openForm();$("refresh").onclick=load;$("csv").onclick=exportCsv;$("usageBtn").onclick=checkUsage;
 $("x").onclick=$("cancel").onclick=closeForm;$("dr").addEventListener("mousedown",e=>{if(e.target.id==="dr")closeForm()});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("dr").classList.contains("hidden"))closeForm()});
 $("gbtn").onclick=async()=>{$("aerr").textContent="";try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){console.error(e);$("aerr").textContent=`${e?.code||"error"} — ${e?.message||"Google sign-in failed."}`}};
