@@ -161,3 +161,66 @@ exports.whatsappWebhook = onRequest({ secrets: [WHATSAPP_VERIFY_TOKEN, WHATSAPP_
     return res.sendStatus(200);
   } catch (e) { console.error('WhatsApp webhook error', e); return res.sendStatus(500); }
 });
+
+// ---------- Manual payment review (admin only, atomic + idempotent) ----------
+const PAID_PLANS = require('./plans');
+const ADMIN_EMAILS = ['saif.anwar1618@gmail.com'];
+async function requireAdmin(request) {
+  const uid = await requireAuth(request);
+  const email = String((request.auth.token && request.auth.token.email) || '').toLowerCase();
+  if (ADMIN_EMAILS.includes(email)) return uid;
+  const a = await db.doc(`admins/${uid}`).get();
+  if (!a.exists) throw new HttpsError('permission-denied', 'Only administrators can review payments.');
+  return uid;
+}
+const isoDay = d => d.toISOString().slice(0, 10);
+async function reviewPaymentImpl(request) {
+  const adminUid = await requireAdmin(request);
+  const { paymentId, action } = request.data || {};
+  const note = clean(request.data && request.data.note, 500);
+  if (!paymentId || !['approve', 'reject', 'note'].includes(action)) throw new HttpsError('invalid-argument', 'Invalid request.');
+  const pRef = db.doc(`paymentRequests/${clean(paymentId, 100)}`);
+  const log = (act, extra = {}) => db.collection('paymentAuditLogs').add({ paymentRequestId: pRef.id, action: act, performedBy: adminUid, notes: note, timestamp: FieldValue.serverTimestamp(), ...extra }).catch(e => console.error('audit log failed', e));
+
+  if (action === 'note') {
+    await pRef.update({ adminNote: note, updatedAt: FieldValue.serverTimestamp() });
+    await log('note'); return { ok: true };
+  }
+  if (action === 'reject') {
+    if (!note) throw new HttpsError('invalid-argument', 'Please enter a rejection reason.');
+    await db.runTransaction(async tx => {
+      const s = await tx.get(pRef); if (!s.exists) throw new HttpsError('not-found', 'Payment not found.');
+      if (s.data().paymentStatus !== 'pending') throw new HttpsError('failed-precondition', 'Only pending payments can be rejected.');
+      tx.update(pRef, { paymentStatus: 'rejected', rejectionReason: note, rejectedBy: adminUid, rejectedAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
+    });
+    await log('rejected'); return { ok: true, status: 'rejected' };
+  }
+
+  // approve — payment + business + subscription are written in ONE transaction
+  const result = await db.runTransaction(async tx => {
+    const s = await tx.get(pRef); if (!s.exists) throw new HttpsError('not-found', 'Payment not found.');
+    const p = s.data();
+    if (p.paymentStatus === 'verified') return { already: true, startsAt: p.subscriptionStartsAt, expiresAt: p.subscriptionExpiresAt, planId: p.planId, amount: p.amount, customerPhone: p.customerPhone || '', customerName: p.customerName || '' };
+    if (p.paymentStatus !== 'pending' || !p.submittedAt || !p.utr) throw new HttpsError('failed-precondition', 'The customer has not submitted payment details yet.');
+    const plan = PAID_PLANS[p.planId];
+    if (!plan || Number(p.amount) !== plan.amount) throw new HttpsError('failed-precondition', 'Plan or amount does not match the price list. Reject this request.');
+    const dup = await tx.get(db.collection('paymentRequests').where('utr', '==', p.utr).where('paymentStatus', '==', 'verified').limit(1));
+    if (!dup.empty) throw new HttpsError('failed-precondition', 'This UTR/reference is already used on a verified payment.');
+    const bRef = db.doc(`businesses/${p.businessId}`), bSnap = await tx.get(bRef), b = bSnap.exists ? bSnap.data() : {};
+    const today = new Date(); today.setUTCHours(0, 0, 0, 0);
+    const curEnd = b.subscriptionEndsAt ? new Date(b.subscriptionEndsAt + 'T00:00:00Z') : null;
+    const extend = curEnd && curEnd > today && !['free', 'trial'].includes(String(b.plan || '').toLowerCase());
+    const base = extend ? curEnd : today, end = new Date(base.getTime() + plan.days * 864e5);
+    const startsAt = extend && b.subscriptionStartsAt ? b.subscriptionStartsAt : isoDay(today), expiresAt = isoDay(end);
+    tx.set(bRef, { plan: p.planId, status: 'active', subscriptionStartsAt: startsAt, subscriptionEndsAt: expiresAt, recordLimit: plan.lim.customers, prospectLimit: plan.lim.prospects, teamLimit: plan.lim.team, dealLimit: plan.lim.deals, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+    tx.set(db.doc(`subscriptions/${p.businessId}`), { customerUid: p.customerUid, businessId: p.businessId, planId: p.planId, status: 'active', startsAt, expiresAt, paymentRequestId: pRef.id, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+    tx.update(pRef, { paymentStatus: 'verified', subscriptionStatus: 'active', verifiedBy: adminUid, verifiedAt: FieldValue.serverTimestamp(), subscriptionStartsAt: startsAt, subscriptionExpiresAt: expiresAt, updatedAt: FieldValue.serverTimestamp() });
+    return { already: false, startsAt, expiresAt, planId: p.planId, amount: p.amount, customerPhone: p.customerPhone || '', customerName: p.customerName || '' };
+  });
+  if (!result.already) await log('verified', { planId: result.planId, expiresAt: result.expiresAt });
+  return { ok: true, status: 'verified', ...result };
+}
+exports.reviewPayment = onCall({ timeoutSeconds: 60 }, async (request) => {
+  try { return await reviewPaymentImpl(request); }
+  catch (e) { if (e instanceof HttpsError) throw e; console.error('reviewPayment failed', e); throw new HttpsError('internal', 'Server error: ' + (e && e.message ? e.message : e)); }
+});
