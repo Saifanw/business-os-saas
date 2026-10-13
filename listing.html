@@ -50,6 +50,7 @@ const money=n=>{n=Math.round(Number(n)||0);if(!n)return"Price on request";return
 const inr=n=>"₹"+Math.round(n).toLocaleString("en-IN");
 const gajOf=d=>{if(+d.areaGaj)return +d.areaGaj;const m=String(d.size||"").toLowerCase().replace(/×/g,"x").match(/(\d+(?:\.\d+)?)\s*(?:x|\*|by)\s*(\d+(?:\.\d+)?)/);return m?+(m[1]*m[2]/9).toFixed(1):0};
 const httpUrl=u=>/^https?:\/\//i.test(String(u||""))?String(u):"";
+const imgUrl=u=>/^(https?:\/\/|data:image\/(jpeg|png|webp);base64,)/i.test(String(u||""))?String(u):"";
 const ICON={Plot:"📐",Flat:"🏢",Villa:"🏡",House:"🏠",Commercial:"🏬",Shop:"🏪",Farmhouse:"🌳",Agricultural:"🌾"};
 const show=x=>{["load","bad","ok"].forEach(k=>$(k).classList.toggle("hidden",k!==x))};
 (async()=>{
@@ -68,7 +69,7 @@ function paint(p,b){
   document.title=title+" — "+(b.businessName||"");
   $("biz").textContent=b.businessName||"Property";
   const more=$("more");more.href="sell.html?s="+encodeURIComponent(slug);more.classList.remove("hidden");
-  const photos=(Array.isArray(p.photos)?p.photos:[]).map(httpUrl).filter(Boolean);
+  const photos=(Array.isArray(p.photos)?p.photos:[]).map(imgUrl).filter(Boolean);
   const st=p.status==="Sold"?["Sold","sold"]:p.status==="Hold"?["On hold","hold"]:["Available",""];
   const badges=[p.corner==="Yes"?"Corner":"",p.patta,p.registry,p.loan==="Available"?"Home loan available":""].filter(Boolean);
   const meta=[p.type,p.size,g?g+" Gaj":"",p.bedrooms?p.bedrooms+" BHK":"",p.facing?p.facing+" facing":"",p.roadWidth?p.roadWidth+" ft road":""].filter(Boolean);

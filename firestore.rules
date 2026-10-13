@@ -172,6 +172,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['businessId','slug','code','title','type','locality','city','price','size','areaGaj','bedrooms','facing','roadWidth','corner','patta','registry','loan','landmark','mapUrl','note','photos','status','createdAt','updatedAt'])
         && request.resource.data.businessId is string
         && request.resource.data.slug is string
+        && request.resource.data.photos is list && request.resource.data.photos.size() <= 6
         && isOwnerOfBusiness(request.resource.data.businessId)
         && exists(/databases/$(database)/documents/publicSlugs/$(request.resource.data.slug))
         && get(/databases/$(database)/documents/publicSlugs/$(request.resource.data.slug)).data.businessId == request.resource.data.businessId
@@ -242,7 +243,8 @@ service cloud.firestore {
       // (strict shape + size limits); only the business team can read/approve/reject/delete.
       match /submissions/{submissionId} {
         allow create: if exists(/databases/$(database)/documents/businesses/$(businessId))
-          && request.resource.data.keys().hasOnly(['name','mobile','type','locality','city','price','size','note','status','createdAt'])
+          && request.resource.data.keys().hasOnly(['name','mobile','type','locality','city','price','size','note','photos','status','createdAt'])
+          && (!('photos' in request.resource.data) || (request.resource.data.photos is list && request.resource.data.photos.size() <= 3))
           && request.resource.data.status == 'pending'
           && request.resource.data.createdAt == request.time
           && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 80

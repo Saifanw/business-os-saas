@@ -75,6 +75,7 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 .scb{grid-column:1/-1;background:#f8faff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:12.5px}
 .adb{grid-column:1/-1;border:1px dashed #b9c8ff;background:#f5f8ff;border-radius:12px;padding:12px}.adb textarea{min-height:140px;font-size:12.5px}.adt{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
 .tg{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;font-size:12px;font-weight:700}.tg.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pvw{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}.pvw .t,.rqp .t{position:relative;width:76px;height:76px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}.pvw .t img,.rqp .t img{width:100%;height:100%;object-fit:cover}.pvw .t button{position:absolute;right:3px;top:3px;width:22px;height:22px;border:0;border-radius:50%;background:#0f172acc;color:#fff;font-size:13px;line-height:1;cursor:pointer}.rqp{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
 .modal.big2{width:min(680px,100%)}
 </style></head><body>
 <header class="top"><div class="top-in">
@@ -108,7 +109,8 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 <div class="sec">Location, owner & photos</div>
 <label>Landmark<input id="f_land" placeholder="Near Jagatpura railway station"></label><label>Google Maps link<input id="f_map" placeholder="https://maps.app.goo.gl/…"></label>
 <label>Owner name<input id="f_on"></label><label>Owner phone<input id="f_op" inputmode="tel"></label>
-<label class="full">Photo links — ek line mein ek (3+ photos = zyada score)<textarea id="f_img" rows="2" placeholder="https://…jpg"></textarea></label>
+<label class="full">Photos upload karo (gallery / camera, max 6)<input id="f_up" type="file" accept="image/*" multiple style="height:auto;padding:10px 12px"></label><div class="pvw full" id="f_pv"></div>
+<label class="full">Ya photo links — ek line mein ek (3+ photos = zyada score)<textarea id="f_img" rows="2" placeholder="https://…jpg"></textarea></label>
 <label class="full">Khaas baatein / highlights — ek line mein ek<textarea id="f_note" rows="3" placeholder="Pakki sadak, light-paani ready&#10;School 500 m door"></textarea></label>
 <div class="scb" id="f_score"></div>
 <div class="adb"><div class="adt"><b style="font-size:13px;margin-right:auto">📣 Ad post (auto)</b><button class="tg on" data-l="en">English</button><button class="tg" data-l="hi">हिंदी</button><span style="width:8px"></span><button class="tg on" data-s="1">Short</button><button class="tg" data-s="0">Full</button></div><textarea id="f_ad"></textarea><div class="adt" style="margin:8px 0 0"><button class="mini" id="ad_cp">Copy</button><button class="mini mt" id="ad_wa">Send on WhatsApp</button></div></div></div>
@@ -185,15 +187,25 @@ function render(){const ok=ready.c&&ready.p;
   <div class="pf">${p.status==="Sold"?"":`<button class="mini mt" data-a="match" data-id="${p.id}">👥 ${m.length} match${m.length===1?"":"es"}</button><button class="mini" data-a="int" data-id="${p.id}">⭐ ${lin.length} interested</button>`}<button class="mini" data-a="share" data-id="${p.id}">WhatsApp</button><button class="mini" data-a="copy" data-id="${p.id}">Copy ad</button><button class="mini" data-a="edit" data-id="${p.id}">Edit</button>${pub?(p.published?`<button class="mini mt" data-a="plink" data-id="${p.id}">🔗 Copy link</button><button class="mini" data-a="unpub" data-id="${p.id}">Unpublish</button>`:p.status==="Sold"?"":`<button class="mini" data-a="pub" data-id="${p.id}">🌐 Publish</button>`):""}${p.status==="Sold"?"":`<button class="mini" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22" data-a="sold" data-id="${p.id}">✓ Sold</button>`}</div></div>`}).join("")
  :`<div class="empty" style="grid-column:1/-1"><div style="font-size:34px">🏠</div><b>${props.length?"No matching properties":"Add your first property"}</b>${props.length?"Try another filter.":"Add a listing and BusinessOS will instantly find buyers from your customers."}<br>${props.length?"":'<button class="btn p" id="add2">＋ Add Property</button>'}</div>`}
 const FM=[["title","title"],["type","type"],["status","status"],["loc","locality"],["city","city"],["price","price"],["size","size"],["gaj","areaGaj"],["bed","bedrooms"],["face","facing"],["road","roadWidth"],["corner","corner"],["patta","patta"],["reg","registry"],["loan","loan"],["land","landmark"],["map","mapUrl"],["on","ownerName"],["op","ownerPhone"],["note","note"]];
-let adHi=false,adShort=true;
+let adHi=false,adShort=true,upPh=[];
+const isData=u=>/^data:image\//i.test(String(u||""));
+const MAXPX=1000;
+function compressImage(file){return new Promise((res,rej)=>{if(!/^image\//.test(file.type))return rej(new Error("not an image"));const url=URL.createObjectURL(file),im=new Image();
+ im.onload=()=>{URL.revokeObjectURL(url);let w=im.naturalWidth,h=im.naturalHeight;const k=Math.min(1,MAXPX/Math.max(w,h));w=Math.round(w*k);h=Math.round(h*k);
+  const c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+  let q=.78,out=c.toDataURL("image/jpeg",q);while(out.length>190000&&q>.4){q-=.08;out=c.toDataURL("image/jpeg",q)}
+  out.length>260000?rej(new Error("photo too large")):res(out)};
+ im.onerror=()=>{URL.revokeObjectURL(url);rej(new Error("could not read photo"))};im.src=url})}
+function paintUp(){const b=$("f_pv");b.innerHTML="";upPh.forEach((u,i)=>{const t=document.createElement("div");t.className="t";const im=document.createElement("img");im.src=u;im.alt="";const x=document.createElement("button");x.type="button";x.textContent="×";x.setAttribute("aria-label","Remove photo");x.onclick=()=>{upPh.splice(i,1);paintUp();refreshForm()};t.append(im,x);b.append(t)})}
+
 function readForm(){const d={},v=i=>clean($("f_"+i).value);FM.forEach(([a,b])=>d[b]=a==="note"?$("f_note").value.split("\n").map(x=>clean(x)).filter(Boolean).join("\n"):a==="price"?(+$("f_price").value||0):a==="gaj"?(+$("f_gaj").value||0):(["type","status","face","corner","patta","reg","loan"].includes(a)?$("f_"+a).value:v(a)));
- d.photos=$("f_img").value.split("\n").map(x=>x.trim()).filter(x=>/^https?:\/\//i.test(x));d.image=d.photos[0]||"";d.code=(props.find(x=>x.id===editId)||{}).code||"P-"+String(props.length+1).padStart(3,"0");return d}
+ d.photos=[...upPh,...$("f_img").value.split("\n").map(x=>x.trim()).filter(x=>/^https?:\/\//i.test(x))];d.image=d.photos[0]||"";d.code=(props.find(x=>x.id===editId)||{}).code||"P-"+String(props.length+1).padStart(3,"0");return d}
 function refreshForm(){const d=readForm(),{sc,miss}=scoreOf(d),g=gajOf(d),r=rateOf(d);
  $("f_score").innerHTML=`<b>Listing quality: ${sc}%</b>${miss.length?" — baaki: "+miss.join(", "):" ✓ Poori detail, buyers ko pasand aayegi"}${g?`<br>📐 ${g} Gaj${r?" · Rate "+inr(r)+"/Gaj":""}`:""}`;
  $("f_ad").value=adText(d,adHi,adShort)}
 function openM(id){editId=id||"";const p=props.find(x=>x.id===id)||{};prevStatus=p.status||"Available";$("mt").textContent=id?"Edit property":"Add property";
  FM.forEach(([a,b])=>{const dv=a==="status"?"Available":a==="city"?"Jaipur":a==="type"?"Plot":"";$("f_"+a).value=a==="gaj"?(p.areaGaj||""):(p[b]??dv)});
- $("f_img").value=photosOf(p).join("\n");adHi=false;adShort=true;document.querySelectorAll("#mo [data-l]").forEach(b=>b.classList.toggle("on",b.dataset.l==="en"));document.querySelectorAll("#mo [data-s]").forEach(b=>b.classList.toggle("on",b.dataset.s==="1"));
+ upPh=photosOf(p).filter(isData);$("f_img").value=photosOf(p).filter(x=>!isData(x)).join("\n");paintUp();adHi=false;adShort=true;document.querySelectorAll("#mo [data-l]").forEach(b=>b.classList.toggle("on",b.dataset.l==="en"));document.querySelectorAll("#mo [data-s]").forEach(b=>b.classList.toggle("on",b.dataset.s==="1"));
  $("m_del").classList.toggle("hidden",!id);refreshForm();$("mo").classList.remove("hidden");$("f_title").focus()}
 async function save(){const d=readForm();if(!d.title||!d.locality||!d.price)return toast("Title, area and price are required",true);
  const code0=d.code,wantSold=!!editId&&d.status==="Sold"&&prevStatus!=="Sold";if(wantSold)d.status=prevStatus;delete d.code;d.areaGaj=gajOf(d)||0;d.updatedAt=serverTimestamp();
@@ -209,7 +221,7 @@ const listLink=id=>pub?base()+"listing.html?s="+encodeURIComponent(pub.slug)+"&i
 const PUBF=["code","title","type","locality","city","price","size","areaGaj","bedrooms","facing","roadWidth","corner","patta","registry","loan","landmark","mapUrl","note","photos","status"];
 function publicCopy(d){const o={businessId:bizId,slug:pub.slug};
  PUBF.forEach(k=>{let v=d[k];if(v===undefined||v===null)v=(k==="photos"?[]:(k==="price"||k==="areaGaj")?0:"");
-  if(k==="photos")v=(Array.isArray(v)?v:[]).filter(u=>/^https?:\/\//i.test(u)).slice(0,10);
+  if(k==="photos")v=(Array.isArray(v)?v:[]).filter(u=>/^(https?:\/\/|data:image\/(jpeg|png|webp);base64,)/i.test(u)).slice(0,6);
   if(k==="price"||k==="areaGaj")v=Number(v)||0;
   if(k==="bedrooms"||k==="roadWidth")v=String(v??"");
   o[k]=v});
@@ -239,10 +251,10 @@ async function savePM(){const name=clean($("pm_name").value),phone=$("pm_phone")
  finally{btn.disabled=false}}
 const pend=()=>subs.filter(x=>x.status==="pending").sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
 function paintReq(){const n=pend().length,b=$("reqN");b.textContent=n;b.classList.toggle("hidden",!n);if(!$("rq").classList.contains("hidden"))fillReq()}
-function fillReq(){const L=pend();$("rq_l").innerHTML=L.length?L.map(s=>`<div class="mrow" style="align-items:flex-start;flex-wrap:wrap"><div class="c"><b>${esc(clean(s.name))} · ${esc(s.mobile)}</b><span>${esc(s.type)} · ${esc(s.locality)}, ${esc(s.city)}${s.size?" · "+esc(s.size):""}${s.price?" · "+money(s.price):""}</span>${s.note?`<span style="display:block;margin-top:4px">${esc(s.note)}</span>`:""}</div>
+function fillReq(){const L=pend();$("rq_l").innerHTML=L.length?L.map(s=>`<div class="mrow" style="align-items:flex-start;flex-wrap:wrap"><div class="c"><b>${esc(clean(s.name))} · ${esc(s.mobile)}</b><span>${esc(s.type)} · ${esc(s.locality)}, ${esc(s.city)}${s.size?" · "+esc(s.size):""}${s.price?" · "+money(s.price):""}</span>${s.note?`<span style="display:block;margin-top:4px">${esc(s.note)}</span>`:""}${Array.isArray(s.photos)&&s.photos.length?`<div class="rqp">${s.photos.filter(isData).map(u=>`<div class="t"><img src="${esc(u)}" alt=""></div>`).join("")}</div>`:""}</div>
   <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="mini mt" data-ap="${s.id}" data-pb="1">${pub?"✓ Approve & Publish":"✓ Approve"}</button>${pub?`<button class="mini" data-ap="${s.id}" data-pb="0">Approve (private)</button>`:""}<button class="mini" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22" data-rj="${s.id}">✕ Reject</button></div></div>`).join(""):'<div class="empty">Abhi koi naya request nahi.<br>'+(pub?"Apna Sell & Earn link clients ko bhejo.":"Pehle \"Public page\" se apna link banao.")+'</div>'}
 async function approveSub(id,publish){const s=subs.find(x=>x.id===id);if(!s)return;
- const doPub=publish&&!!pub,d={title:`${s.size?s.size+" ":""}${s.type} in ${s.locality}`,type:s.type,status:"Available",locality:s.locality,city:s.city||"Jaipur",price:Number(s.price)||0,size:s.size||"",bedrooms:"",facing:"",roadWidth:"",corner:"",patta:"",registry:"",loan:"",landmark:"",mapUrl:"",ownerName:s.name,ownerPhone:s.mobile,note:s.note||"",photos:[],image:"",source:"Sell page"};
+ const doPub=publish&&!!pub,d={title:`${s.size?s.size+" ":""}${s.type} in ${s.locality}`,type:s.type,status:"Available",locality:s.locality,city:s.city||"Jaipur",price:Number(s.price)||0,size:s.size||"",bedrooms:"",facing:"",roadWidth:"",corner:"",patta:"",registry:"",loan:"",landmark:"",mapUrl:"",ownerName:s.name,ownerPhone:s.mobile,note:s.note||"",photos:(Array.isArray(s.photos)?s.photos:[]).filter(isData).slice(0,3),source:"Sell page"};d.image=d.photos[0]||"";
  d.areaGaj=gajOf(d)||0;d.code="P-"+String(props.length+1).padStart(3,"0");
  try{const pr=doc(collection(db,"businesses",bizId,"properties")),b=writeBatch(db),T=serverTimestamp();
   b.set(pr,{...d,published:doPub,createdAt:T,updatedAt:T});
@@ -252,6 +264,8 @@ async function approveSub(id,publish){const s=subs.find(x=>x.id===id);if(!s)retu
   toast(doPub?"Approved & published — link copy ho gaya":"Approved — property list me aa gayi")}
  catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — firestore.rules deploy karo":e.message,true)}}
 async function rejectSub(id){if(!confirm("Is request ko reject karna hai?"))return;try{await updateDoc(doc(db,"businesses",bizId,"submissions",id),{status:"rejected",rejectedAt:serverTimestamp()});toast("Rejected")}catch(e){toast(e.message,true)}}
+$("f_up").addEventListener("change",async e=>{const files=[...e.target.files].slice(0,Math.max(0,6-upPh.length));e.target.value="";if(!files.length){toast("Maximum 6 photos",true);return}
+ $("m_save").disabled=true;for(const f of files){try{upPh.push(await compressImage(f))}catch(err){toast("Photo add nahi hui: "+err.message,true)}}$("m_save").disabled=false;paintUp();refreshForm()});
 $("pubBtn").onclick=openPM;$("pm_x").onclick=()=>$("pm").classList.add("hidden");$("pm_save").onclick=savePM;
 $("reqBtn").onclick=()=>{fillReq();$("rq").classList.remove("hidden")};$("rq_x").onclick=()=>$("rq").classList.add("hidden");
 $("pm").addEventListener("click",async e=>{if(e.target.id==="pm_cp"){try{await navigator.clipboard.writeText(sellLink());toast("Link copied")}catch{toast("Copy not allowed",true)}}});

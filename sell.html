@@ -26,6 +26,7 @@ input:focus,select:focus,textarea:focus{border-color:#9bb1f7;box-shadow:0 0 0 3p
 .done .tick{width:56px;height:56px;border-radius:50%;background:#e9f9f1;color:var(--green);display:grid;place-items:center;font-size:28px;margin:0 auto 14px}
 .done h2{margin:0 0 8px}.done p{color:var(--muted);font-size:14px;line-height:1.6;margin:0}
 .bad{padding:44px 30px;text-align:center;color:var(--muted)}
+.pv{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}.pv .t{position:relative;width:84px;height:84px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}.pv .t img{width:100%;height:100%;object-fit:cover}.pv .t button{position:absolute;right:3px;top:3px;width:22px;height:22px;border:0;border-radius:50%;background:#0f172acc;color:#fff;font-size:13px;line-height:1;cursor:pointer}
 .hidden{display:none!important}
 @media(max-width:600px){.form{grid-template-columns:1fr;padding:20px}.head{padding:22px 20px}label.full,.submit,.msg,.note{grid-column:auto}}
 </style></head><body>
@@ -43,6 +44,7 @@ input:focus,select:focus,textarea:focus{border-color:#9bb1f7;box-shadow:0 0 0 3p
     <label>Expected price (₹)<input id="price" inputmode="numeric" placeholder="e.g. 4500000"></label>
     <label class="full">Size (e.g. 30x60 ft, 100 Gaj, 1450 sq ft)<input id="size" maxlength="60"></label>
     <label class="full">Other details (patta, registry, facing, road, landmark…)<textarea id="note" maxlength="1000"></textarea></label>
+    <label class="full">Photos (up to 3) — gallery se ya camera se<input id="photos" type="file" accept="image/*" multiple style="height:auto;padding:10px 12px"></label><div class="pv" id="pv"></div>
     <input class="hp" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <div class="note">Your number is shared only with this consultant. It is not shown publicly.</div>
     <div class="msg" id="msg"></div>
@@ -57,7 +59,15 @@ import{getFirestore,doc,getDoc,collection,addDoc,serverTimestamp}from"https://ww
 const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
 const db=getFirestore(app),$=id=>document.getElementById(id);
 const slug=(new URLSearchParams(location.search).get("s")||"").toLowerCase();
-let biz=null;
+let biz=null,imgs=[],busy=0;
+const MAXPX=1000;
+function compressImage(file){return new Promise((res,rej)=>{if(!/^image\//.test(file.type))return rej(new Error("not an image"));const url=URL.createObjectURL(file),im=new Image();
+ im.onload=()=>{URL.revokeObjectURL(url);let w=im.naturalWidth,h=im.naturalHeight;const k=Math.min(1,MAXPX/Math.max(w,h));w=Math.round(w*k);h=Math.round(h*k);
+  const c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+  let q=.78,out=c.toDataURL("image/jpeg",q);while(out.length>190000&&q>.4){q-=.08;out=c.toDataURL("image/jpeg",q)}
+  out.length>260000?rej(new Error("photo too large")):res(out)};
+ im.onerror=()=>{URL.revokeObjectURL(url);rej(new Error("could not read photo"))};im.src=url})}
+
 const show=id=>{["bad","load","ok","done"].forEach(x=>$(x).classList.toggle("hidden",x!==id))};
 (async()=>{
   if(!/^[a-z0-9][a-z0-9-]{2,29}$/.test(slug))return show("bad");
@@ -71,8 +81,14 @@ const show=id=>{["bad","load","ok","done"].forEach(x=>$(x).classList.toggle("hid
     show("ok");
   }catch(e){console.error(e);show("bad")}
 })();
+const paintPv=()=>{$("pv").innerHTML="";imgs.forEach((u,i)=>{const t=document.createElement("div");t.className="t";const im=document.createElement("img");im.src=u;im.alt="";const b=document.createElement("button");b.type="button";b.textContent="×";b.setAttribute("aria-label","Remove photo");b.onclick=()=>{imgs.splice(i,1);paintPv()};t.append(im,b);$("pv").append(t)})};
+$("photos").addEventListener("change",async e=>{const files=[...e.target.files].slice(0,Math.max(0,3-imgs.length));e.target.value="";if(!files.length&&imgs.length>=3){$("msg").textContent="Maximum 3 photos.";return}
+  $("msg").textContent="";busy++;$("go").disabled=true;
+  for(const f of files){try{imgs.push(await compressImage(f))}catch(err){$("msg").textContent="Ek photo add nahi ho payi: "+err.message}}
+  busy--;if(!busy)$("go").disabled=false;paintPv()});
 $("f").addEventListener("submit",async e=>{
   e.preventDefault();$("msg").textContent="";
+  if(busy)return $("msg").textContent="Photos process ho rahi hain, ek second…";
   if($("website").value)return show("done"); // honeypot: bots get a fake success, nothing is saved
   const name=$("name").value.trim(),mobile=$("mobile").value.replace(/[^\d+]/g,""),locality=$("locality").value.trim();
   if(!name)return $("msg").textContent="Please enter your name.";
@@ -83,7 +99,7 @@ $("f").addEventListener("submit",async e=>{
   try{
     await addDoc(collection(db,"businesses",biz.businessId,"submissions"),{
       name,mobile,type:$("type").value,locality,city:$("city").value.trim()||"Jaipur",price,
-      size:$("size").value.trim(),note:$("note").value.trim(),status:"pending",createdAt:serverTimestamp()});
+      size:$("size").value.trim(),photos:imgs,note:$("note").value.trim(),status:"pending",createdAt:serverTimestamp()});
     show("done");
   }catch(err){console.error(err);$("msg").textContent="Could not send right now. Please try again in a moment.";btn.disabled=false}
 });
