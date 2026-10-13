@@ -1,10 +1,30 @@
 /* BusinessOS — simple navigation.
- * Top bar: Overview · Customers · Follow-ups · Deals · [Calls] · More.
+ * Top bar: Overview · Customers · Follow-ups · Deals · [Properties / Vehicles] · Calls · More.
+ * The industry item (Properties today, Vehicles later) only shows for businesses that use it,
+ * decided by INVENTORY / TEMPLATE_MODULE below.
  * Everything else lives under "More" (uniform icons, Team & settings highlighted at the bottom).
  * Loaded with <script src="assets/nav-more.js" defer></script> on app pages only.
  * Existing link ids (navFu, navLd, nFollow...) are moved, not recreated, so counters keep working. */
 (function(){
   var CORE=["customers.html","customer-list.html","followups.html","deals.html"];
+  /* Industry module: the one extra page that sits next to Deals for businesses that need it.
+   * To add a new industry: add an INVENTORY entry, map its templateId in TEMPLATE_MODULE.
+   * ready:false keeps the link hidden until the page actually exists. */
+  var INVENTORY={
+    property:{href:"properties.html",label:"Properties",ready:true},
+    car:{href:"vehicles.html",label:"Vehicles",ready:false}
+  };
+  /* templateId -> module. "" = no industry page. Empty/unknown-old templateId falls back to
+   * "property" because this product shipped property-first (existing workspaces keep Properties). */
+  var TEMPLATE_MODULE={property:"property",car:"car",coaching:"",general:"property"};
+  function moduleKey(){
+    var v={};try{v=JSON.parse(localStorage.getItem("bos.vertical")||"{}")||{}}catch(e){}
+    if(v.m)return v.m==="none"?"":v.m;               /* explicit override: businesses/{id}.inventoryModule */
+    var t=v.t||"";
+    if(!t)return "property";
+    return Object.prototype.hasOwnProperty.call(TEMPLATE_MODULE,t)?TEMPLATE_MODULE[t]:"";
+  }
+  function isInv(h){for(var k in INVENTORY)if(INVENTORY[k].href===h)return true;return false}
   var nav=document.querySelector("nav.nav");
   if(!nav||nav.dataset.simple||!nav.querySelector('a[href="customer-list.html"]'))return;
   nav.dataset.simple="1";
@@ -42,12 +62,12 @@
     ".nav-more-menu a.nm-set .nm-ic{background:#2f5bff;color:#fff}",
     ".nav-more-menu a.nm-set:hover .nm-ic{background:#2347d6;color:#fff}",
     ".nav-more-menu a.nm-set .nm-go{margin-left:auto;width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;opacity:.7}",
-    "@media(max-width:760px){.nav-more-menu{left:auto;right:0;width:min(260px,calc(100vw - 24px))}nav.nav{gap:0!important;justify-content:space-between}nav.nav>a,.nav-more>button{padding:8px 5px!important;font-size:12px!important}nav.nav>a svg{display:none!important}.nav-call{margin-left:2px;padding:0 10px!important}.nav-call span{display:none}}"
+    "@media(max-width:760px){nav.nav{gap:0!important;justify-content:flex-start;overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch;scrollbar-width:none}nav.nav::-webkit-scrollbar{display:none}nav.nav>a,.nav-more>button{padding:8px 8px!important;font-size:12.5px!important;flex:none;white-space:nowrap}nav.nav>a svg{display:none!important}nav.nav>a.nav-call svg{display:block!important}.nav-call{margin-left:4px;padding:0 11px!important}.nav-call span{display:none}.nav-more-menu{position:fixed;left:12px;right:12px;width:auto;max-width:360px;margin-left:auto}}"
   ].join("\n");
   document.head.appendChild(css);
 
   var links=[].slice.call(nav.querySelectorAll(":scope > a")),rest=[];
-  links.forEach(function(a){var h=(a.getAttribute("href")||"").split(/[?#]/)[0];if(CORE.indexOf(h)<0)rest.push(a)});
+  links.forEach(function(a){var h=(a.getAttribute("href")||"").split(/[?#]/)[0];if(isInv(h)){a.remove();return}if(CORE.indexOf(h)<0)rest.push(a)});
   /* make sure all four everyday links exist, in the same order on every page */
   var LABEL={"customers.html":"Overview","customer-list.html":"Customers","followups.html":"Follow-ups","deals.html":"Deals"};
   CORE.forEach(function(h){var a=nav.querySelector(':scope > a[href^="'+h+'"]');
@@ -58,6 +78,20 @@
   var PHONE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>';
   var call=document.createElement("a");call.href="whatsapp-center.html?mode=call";call.className="nav-call";call.title="Call your customers";call.innerHTML=PHONE+"<span>Calls</span>";
   nav.appendChild(call);
+
+  /* Industry link (Properties / Vehicles) — top bar, right after Deals, only when the business uses it */
+  var inv=null;
+  function applyInventory(){
+    if(inv&&inv.parentNode)inv.parentNode.removeChild(inv);inv=null;
+    var cfg=INVENTORY[moduleKey()];
+    if(!cfg||!cfg.ready)return;
+    inv=document.createElement("a");inv.href=cfg.href;inv.className="nav-inv"+(here===cfg.href?" on":"");inv.textContent=cfg.label;
+    if(here===cfg.href)inv.setAttribute("aria-current","page");
+    nav.insertBefore(inv,call);
+  }
+  applyInventory();
+  document.addEventListener("bos-vertical",applyInventory);
+  (function(){var on=nav.querySelector(":scope > a.on");if(on&&nav.scrollWidth>nav.clientWidth)nav.scrollLeft=Math.max(0,on.offsetLeft-nav.offsetLeft-12)})();   /* pages fire this once the business profile loads */
 
   var wrap=null,btn=null,menu=null;
   if(rest.length){
@@ -76,7 +110,7 @@
       "import-export.html":'<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
       "team-settings.html":'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>'
     };
-    var ORDER=[["properties.html","Properties"],["website-leads.html","Leads"],["whatsapp-center.html","WhatsApp"],["business-finder-app.html","Finder"],["prospecting-center.html","Prospecting"],["reports.html","Reports"],["import-export.html","Import & export"],["custom-requests.html","Customise request"]],SET=["team-settings.html","Team & settings"];
+    var ORDER=[["website-leads.html","Leads"],["whatsapp-center.html","WhatsApp"],["business-finder-app.html","Finder"],["prospecting-center.html","Prospecting"],["reports.html","Reports"],["import-export.html","Import & export"],["custom-requests.html","Customise request"]],SET=["team-settings.html","Team & settings"];
     function find(h){return rest.filter(function(r){return(r.getAttribute("href")||"").split(/[?#]/)[0]===h})[0]}
     function item(x){
       var a=find(x[0]);
@@ -99,7 +133,10 @@
     function badge(){var d=btn.querySelector(".dot");d.hidden=!menu.querySelector(".pill:not(.hidden),em.cnt:not(.z)")}
     badge();new MutationObserver(badge).observe(menu,{subtree:true,childList:true,attributes:true,characterData:true});
     function close(){menu.hidden=true;btn.setAttribute("aria-expanded","false")}
-    btn.addEventListener("click",function(e){e.stopPropagation();var open=menu.hidden;menu.hidden=!open;btn.setAttribute("aria-expanded",String(open))});
+    btn.addEventListener("click",function(e){e.stopPropagation();var open=menu.hidden;
+      menu.style.top=(open&&window.matchMedia("(max-width:760px)").matches)?(btn.getBoundingClientRect().bottom+6)+"px":"";
+      menu.hidden=!open;btn.setAttribute("aria-expanded",String(open))});
+    nav.addEventListener("scroll",close,{passive:true});window.addEventListener("scroll",close,{passive:true});
     document.addEventListener("click",function(e){if(!wrap.contains(e.target))close()});
     document.addEventListener("keydown",function(e){if(e.key==="Escape"){close();btn.focus()}});
   }
