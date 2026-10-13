@@ -115,12 +115,15 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 <div class="mf"><button class="btn" id="m_del" style="margin-right:auto;color:var(--red)">Delete</button><button class="btn" id="m_cancel">Cancel</button><button class="btn p" id="m_save">Save</button></div></div></div>
 
 <div id="mm" class="ov hidden"><div class="modal"><h2 id="mmt">Matching customers</h2><p id="mms"></p><div id="mml"></div><div class="mf"><button class="btn" id="mm_x">Close</button></div></div></div>
+<div id="sm" class="ov hidden"><div class="modal"><h2 id="smt">Mark as sold</h2><p>Buyer aur price daalo — deal apne aap ban jayegi aur customer "Won" ho jayega.</p>
+<div class="fg"><label class="full">Buyer (customer) *<select id="sm_buy"></select></label><label>Final price (₹) *<input id="sm_price" type="number" min="0" inputmode="numeric"></label><label>Received so far (₹)<input id="sm_rec" type="number" min="0" inputmode="numeric"></label><label>Sold date<input id="sm_date" type="date"></label><label>Note<input id="sm_note" placeholder="Token, registry date…"></label></div>
+<div class="mf"><button class="btn" id="sm_x">Cancel</button><button class="btn p" id="sm_ok">Confirm sold</button></div></div></div>
 <div id="toast" class="toast hidden"></div>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,setDoc,deleteDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,setDoc,deleteDoc,writeBatch,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
 const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -154,24 +157,24 @@ function adText(d,hi,short){const L=hi?{sale:"बिक्री हेतु",s
  o.push("",`📞 ${L.ref} • Ref: ${d.code||"New"}`);return o.join("\n")}
 const shareText=p=>adText(p,false,false);
 function render(){const ok=ready.c&&ready.p;
- const av=props.filter(p=>p.status==="Available"),V=av.reduce((s,p)=>s+(+p.price||0),0),sold=props.filter(p=>p.status==="Sold").length,mc=av.reduce((s,p)=>s+matches(p).length,0);
- const K=[["Total listings",props.length,"All properties","#2f5bff"],["Available",av.length,"Ready to sell","#0f9d6a"],["Inventory value",money(V),"Available stock","#7c4dff"],["Sold",sold,"Closed listings","#d98a00"],["Buyer matches",mc,"Customers fitting your stock","#0b6aa2"]];
+ const soldV=props.filter(p=>p.status==="Sold").reduce((a,p)=>a+(+p.soldPrice||+p.price||0),0),av=props.filter(p=>p.status==="Available"),V=av.reduce((s,p)=>s+(+p.price||0),0),sold=props.filter(p=>p.status==="Sold").length,mc=av.reduce((s,p)=>s+matches(p).length,0);
+ const K=[["Total listings",props.length,"All properties","#2f5bff"],["Available",av.length,"Ready to sell","#0f9d6a"],["Inventory value",money(V),"Available stock","#7c4dff"],["Sold",sold,sold?money(soldV)+" closed":"Closed listings","#d98a00"],["Buyer matches",mc,"Customers fitting your stock","#0b6aa2"]];
  $("kpis").innerHTML=K.map(k=>`<div class="card kpi" style="--c:${k[3]}"><div class="l">${k[0]}</div><div class="n">${ok?k[1]:"—"}</div><div class="s">${k[2]}</div></div>`).join("");
  const cnt=k=>props.filter(p=>!k||p.status===k).length;
  $("chips").innerHTML=[["","All"],["Available","Available"],["Hold","On hold"],["Sold","Sold"]].map(c=>`<button class="chip${flt===c[0]?" on":""}" data-f="${c[0]}">${c[1]} <b>${cnt(c[0])}</b></button>`).join("");
  const types=[...new Set(props.map(p=>p.type).filter(Boolean))];$("ty").innerHTML='<option value="">All types</option>'+types.map(t=>`<option${t===ty?" selected":""}>${esc(t)}</option>`).join("");
  if(!ok){$("grid").innerHTML=Array(3).fill('<div class="pc"><div class="sk" style="height:150px;border-radius:0"></div><div class="pb2"><div class="sk"></div><div class="sk"></div></div></div>').join("");return}
  const s=q.toLowerCase(),rows=props.filter(p=>(!flt||p.status===flt)&&(!ty||p.type===ty)&&(!s||[p.title,p.locality,p.city,code(p),p.ownerName,p.landmark].join(" ").toLowerCase().includes(s)));rows.sort((a,b)=>so==="lo"?a.price-b.price:so==="hi"?b.price-a.price:so==="qs"?scoreOf(b).sc-scoreOf(a).sc:0);
- $("grid").innerHTML=rows.length?rows.map(p=>{const m=p.status==="Sold"?[]:matches(p),mmm=0;
+ $("grid").innerHTML=rows.length?rows.map(p=>{const m=p.status==="Sold"?[]:matches(p),lin=(p.interestedIds||[]).map(i=>contacts.find(c=>c.id===i)).filter(Boolean),mmm=0;
   const ph=photosOf(p),sc=scoreOf(p),r=rateOf(p),g=gajOf(p),bg=ph[0]?`style="background-image:url('${esc(ph[0])}')"`:"",col=sc.sc>=80?"#0f9d6a":sc.sc>=50?"#d98a00":"#e0483f";
   const bd=[p.corner==="Yes"?"Corner":"",p.patta,p.registry==="Registry available"?"Registry ✓":p.registry,p.loan==="Available"?"Loan ✓":""].filter(Boolean);
   return`<div class="pc"><div class="ph" ${bg}>${ph[0]?"":ICON[p.type]||"🏠"}<span class="st ${p.status}">${p.status==="Hold"?"On hold":p.status}</span><span class="code">${esc(code(p))}</span>${ph.length>1?`<span class="pn">📷 ${ph.length}</span>`:""}</div>
   <div class="pb2"><h3>${esc(p.title)}</h3><div><span class="price">${money(p.price)}</span>${r?`<span class="rate">${inr(r)}/Gaj</span>`:""}</div><div style="color:var(--mut);font-size:12.5px">📍 ${esc(p.locality)}, ${esc(p.city||"")}${p.landmark?" · "+esc(p.landmark):""}</div>
   <div class="meta"><span>${esc(p.type)}</span>${p.size?`<span>${esc(p.size)}</span>`:""}${g?`<span>${g} Gaj</span>`:""}${p.bedrooms?`<span>${esc(p.bedrooms)} BHK</span>`:""}${p.facing?`<span>${esc(p.facing)} facing</span>`:""}${p.roadWidth?`<span>${esc(p.roadWidth)} ft road</span>`:""}</div>
-  ${bd.length?`<div class="bd">${bd.map(x=>`<i>${esc(x)}</i>`).join("")}</div>`:`<div class="bd"><i class="w">Legal details missing</i></div>`}
+  ${p.status==="Sold"?`<div class="bd"><i style="background:#fde8e6;color:#9b2c22">Sold to ${esc(p.soldToName||"buyer")} · ${money(p.soldPrice||p.price)}</i></div>`:""}${lin.length&&p.status!=="Sold"?`<div class="bd"><i style="background:#eef2ff;color:#2f5bff">⭐ ${lin.slice(0,2).map(c=>esc(clean(c.name).split(" ")[0])).join(", ")}${lin.length>2?" +"+(lin.length-2):""}</i></div>`:""}${bd.length?`<div class="bd">${bd.map(x=>`<i>${esc(x)}</i>`).join("")}</div>`:`<div class="bd"><i class="w">Legal details missing</i></div>`}
   ${p.ownerName?`<div style="font-size:12px;color:var(--mut)">Owner: <b style="color:var(--ink)">${esc(p.ownerName)}</b>${p.ownerPhone?` · <a href="tel:${esc(p.ownerPhone)}" style="color:var(--blue);font-weight:700">${esc(p.ownerPhone)}</a>`:""}</div>`:""}
   <div class="qs" style="--g:${col}" title="${sc.miss.length?"Missing: "+esc(sc.miss.join(", ")):"Complete"}"><span>Listing</span><div class="tr"><i style="width:${sc.sc}%"></i></div><b style="color:${col}">${sc.sc}%</b></div></div>
-  <div class="pf"><button class="mini mt" data-a="match" data-id="${p.id}">👥 ${m.length} match${m.length===1?"":"es"}</button><button class="mini" data-a="share" data-id="${p.id}">WhatsApp</button><button class="mini" data-a="copy" data-id="${p.id}">Copy ad</button><button class="mini" data-a="edit" data-id="${p.id}">Edit</button></div></div>`}).join("")
+  <div class="pf">${p.status==="Sold"?"":`<button class="mini mt" data-a="match" data-id="${p.id}">👥 ${m.length} match${m.length===1?"":"es"}</button><button class="mini" data-a="int" data-id="${p.id}">⭐ ${lin.length} interested</button>`}<button class="mini" data-a="share" data-id="${p.id}">WhatsApp</button><button class="mini" data-a="copy" data-id="${p.id}">Copy ad</button><button class="mini" data-a="edit" data-id="${p.id}">Edit</button>${p.status==="Sold"?"":`<button class="mini" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22" data-a="sold" data-id="${p.id}">✓ Sold</button>`}</div></div>`}).join("")
  :`<div class="empty" style="grid-column:1/-1"><div style="font-size:34px">🏠</div><b>${props.length?"No matching properties":"Add your first property"}</b>${props.length?"Try another filter.":"Add a listing and BusinessOS will instantly find buyers from your customers."}<br>${props.length?"":'<button class="btn p" id="add2">＋ Add Property</button>'}</div>`}
 const FM=[["title","title"],["type","type"],["status","status"],["loc","locality"],["city","city"],["price","price"],["size","size"],["gaj","areaGaj"],["bed","bedrooms"],["face","facing"],["road","roadWidth"],["corner","corner"],["patta","patta"],["reg","registry"],["loan","loan"],["land","landmark"],["map","mapUrl"],["on","ownerName"],["op","ownerPhone"],["note","note"]];
 let adHi=false,adShort=true;
@@ -180,27 +183,47 @@ function readForm(){const d={},v=i=>clean($("f_"+i).value);FM.forEach(([a,b])=>d
 function refreshForm(){const d=readForm(),{sc,miss}=scoreOf(d),g=gajOf(d),r=rateOf(d);
  $("f_score").innerHTML=`<b>Listing quality: ${sc}%</b>${miss.length?" — baaki: "+miss.join(", "):" ✓ Poori detail, buyers ko pasand aayegi"}${g?`<br>📐 ${g} Gaj${r?" · Rate "+inr(r)+"/Gaj":""}`:""}`;
  $("f_ad").value=adText(d,adHi,adShort)}
-function openM(id){editId=id||"";const p=props.find(x=>x.id===id)||{};$("mt").textContent=id?"Edit property":"Add property";
+function openM(id){editId=id||"";const p=props.find(x=>x.id===id)||{};prevStatus=p.status||"Available";$("mt").textContent=id?"Edit property":"Add property";
  FM.forEach(([a,b])=>{const dv=a==="status"?"Available":a==="city"?"Jaipur":a==="type"?"Plot":"";$("f_"+a).value=a==="gaj"?(p.areaGaj||""):(p[b]??dv)});
  $("f_img").value=photosOf(p).join("\n");adHi=false;adShort=true;document.querySelectorAll("#mo [data-l]").forEach(b=>b.classList.toggle("on",b.dataset.l==="en"));document.querySelectorAll("#mo [data-s]").forEach(b=>b.classList.toggle("on",b.dataset.s==="1"));
  $("m_del").classList.toggle("hidden",!id);refreshForm();$("mo").classList.remove("hidden");$("f_title").focus()}
 async function save(){const d=readForm();if(!d.title||!d.locality||!d.price)return toast("Title, area and price are required",true);
- const code0=d.code;delete d.code;d.areaGaj=gajOf(d)||0;d.updatedAt=serverTimestamp();
+ const code0=d.code,wantSold=!!editId&&d.status==="Sold"&&prevStatus!=="Sold";if(wantSold)d.status=prevStatus;delete d.code;d.areaGaj=gajOf(d)||0;d.updatedAt=serverTimestamp();
  try{if(editId)await setDoc(doc(db,"businesses",bizId,"properties",editId),d,{merge:true});else await addDoc(collection(db,"businesses",bizId,"properties"),{...d,code:code0,createdAt:serverTimestamp()});
-  $("mo").classList.add("hidden");toast("Property saved")}catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — deploy firestore.rules":e.message,true)}}
-function showMatch(id){const p=props.find(x=>x.id===id),m=matches(p);$("mmt").textContent="Buyers for "+p.title;$("mms").textContent=m.length?m.length+" customers fit this property (best first).":"No customer fits yet. Add customers with budget and area, and they will appear here.";
- $("mml").innerHTML=m.map(({c,s,why})=>{const ph=String(c.phone||"").replace(/\D/g,""),w=ph?`https://wa.me/${ph.length===10?"91"+ph:ph}?text=${encodeURIComponent("Namaste "+clean(c.name)+",\n\n"+shareText(p))}`:"";
-  return`<div class="mrow"><div class="c"><b>${esc(clean(c.name)||"Unnamed")}</b><span>${esc(why.join(" · "))}${c.budget?" · "+esc(c.budget):""}</span></div><span class="sc${s<70?" m":""}">${Math.min(s,100)}%</span>${w?`<a class="mini mt" target="_blank" rel="noopener" href="${w}">Send</a>`:""}</div>`}).join("");$("mm").classList.remove("hidden")}
+  $("mo").classList.add("hidden");toast("Property saved");if(wantSold)openSold(editId)}catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — deploy firestore.rules":e.message,true)}}
+let mmS={id:"",tab:"match"},prevStatus="Available",soldPid="";
+const waLink=(c,p)=>{const ph=String(c.phone||"").replace(/\D/g,"");return ph?`https://wa.me/${ph.length===10?"91"+ph:ph}?text=${encodeURIComponent("Namaste "+clean(c.name)+",\n\n"+shareText(p))}`:""};
+function paintMM(){const p=props.find(x=>x.id===mmS.id);if(!p)return;const ids=p.interestedIds||[],m=matches(p),lin=ids.map(i=>contacts.find(c=>c.id===i)).filter(Boolean),T=mmS.tab;
+ $("mmt").textContent=p.title;
+ $("mms").innerHTML=`<span class="adt" style="margin:0"><button class="tg${T==="match"?" on":""}" data-tab="match">Matches (${m.length})</button><button class="tg${T==="int"?" on":""}" data-tab="int">⭐ Interested (${lin.length})</button></span>`;
+ const btns=(c,extra)=>{const w=waLink(c,p);return(w?`<a class="mini mt" target="_blank" rel="noopener" href="${w}">Send</a>`:"")+extra};
+ if(T==="match")$("mml").innerHTML=m.length?m.map(({c,s,why})=>{const on=ids.includes(c.id);return`<div class="mrow"><div class="c"><b>${esc(clean(c.name)||"Unnamed")}</b><span>${esc(why.join(" · "))}${c.budget?" · "+esc(c.budget):""}</span></div><span class="sc${s<70?" m":""}">${Math.min(s,100)}%</span>${btns(c,`<button class="mini${on?"":" mt"}" data-lk="${c.id}">${on?"✓ Linked":"＋ Link"}</button>`)}</div>`}).join(""):'<div class="empty">Abhi koi customer fit nahi. Budget aur area ke saath customers add karo.</div>';
+ else $("mml").innerHTML=lin.length?lin.map(c=>`<div class="mrow"><div class="c"><b>${esc(clean(c.name)||"Unnamed")}</b><span>${esc(clean(c.phone))}${c.budget?" · "+esc(c.budget):""}${c.status?" · "+esc(c.status):""}</span></div>${btns(c,`<button class="mini" data-sold="${c.id}" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22">✓ Sold to</button><button class="mini" data-lk="${c.id}">Remove</button>`)}</div>`).join(""):'<div class="empty">Koi customer link nahi hai. "Matches" tab se <b>＋ Link</b> dabao.</div>'}
+function showMatch(id,tab){mmS={id,tab:tab||"match"};paintMM();$("mm").classList.remove("hidden")}
+async function toggleLink(pid,cid){const p=props.find(x=>x.id===pid),ids=new Set(p.interestedIds||[]),on=!ids.has(cid);on?ids.add(cid):ids.delete(cid);
+ try{await setDoc(doc(db,"businesses",bizId,"properties",pid),{interestedIds:[...ids],updatedAt:serverTimestamp()},{merge:true});toast(on?"Customer linked":"Removed")}catch(e){console.error(e);toast(e.message,true)}}
+function openSold(pid,cid){const p=props.find(x=>x.id===pid);if(!p)return;soldPid=pid;const ids=p.interestedIds||[],cs=contacts.filter(c=>c.status!=="Lost"),first=cs.filter(c=>ids.includes(c.id)),rest=cs.filter(c=>!ids.includes(c.id));
+ $("smt").textContent="Sold: "+p.title;$("sm_buy").innerHTML='<option value="">Select buyer</option>'+first.map(c=>`<option value="${c.id}">⭐ ${esc(clean(c.name)||"Unnamed")}${c.phone?" · "+esc(clean(c.phone)):""}</option>`).join("")+rest.map(c=>`<option value="${c.id}">${esc(clean(c.name)||"Unnamed")}${c.phone?" · "+esc(clean(c.phone)):""}</option>`).join("");
+ $("sm_buy").value=cid||(first.length===1?first[0].id:"");$("sm_price").value=p.price||"";$("sm_rec").value="";$("sm_date").value=new Date().toISOString().slice(0,10);$("sm_note").value="";$("sm").classList.remove("hidden")}
+async function confirmSold(){const p=props.find(x=>x.id===soldPid),c=contacts.find(x=>x.id===$("sm_buy").value);if(!c)return toast("Buyer select karo",true);
+ const price=Math.max(0,+$("sm_price").value||0),rec=Math.min(price,Math.max(0,+$("sm_rec").value||0));if(!price)return toast("Final price daalo",true);
+ const dt=$("sm_date").value||new Date().toISOString().slice(0,10),ps=rec>=price?"Paid":rec>0?"Partially Paid":"Pending",btn=$("sm_ok");btn.disabled=true;
+ try{const dealId0=c.id,ex=await getDoc(doc(db,"businesses",bizId,"deals",dealId0)),dealId=ex.exists()&&ex.data().propertyId!==p.id?c.id+"_"+p.id:dealId0,b=writeBatch(db),T=serverTimestamp();
+  b.set(doc(db,"businesses",bizId,"properties",p.id),{status:"Sold",soldToId:c.id,soldToName:clean(c.name),soldPrice:price,soldAt:dt,updatedAt:T},{merge:true});
+  b.set(doc(db,"businesses",bizId,"deals",dealId),{contactId:c.id,customerId:c.id,customerName:c.name||"",businessType:c.businessType||"",type:c.type||"Customer",dealName:p.title,propertyId:p.id,propertyCode:code(p),amount:price,value:money(price),paymentStatus:ps,received:rec,pendingAmount:price-rec,paymentDateISO:"",paymentMethod:"Not recorded",closedAtISO:dt,closedAt:dt,notes:$("sm_note").value.trim(),stage:"Won",status:"won",source:c.source||"",location:[p.locality,p.city].map(clean).filter(Boolean).join(", "),updatedAt:T,...(ex.exists()?{}:{createdAt:T})},{merge:true});
+  b.update(doc(db,"businesses",bizId,"contacts",c.id),{status:"Won",updatedAt:T});
+  await b.commit();$("sm").classList.add("hidden");const o=(p.interestedIds||[]).filter(i=>i!==c.id).length;toast("Sold! Deal ban gayi, "+clean(c.name)+" ab Won hai"+(o?` · ${o} aur interested customers hain`:""))}
+ catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — firestore.rules deploy karo":e.message,true)}finally{btn.disabled=false}}
 function listen(id){[uC,uP].forEach(u=>u&&u());bizId=id;ready={c:0,p:0};
  uC=onSnapshot(collection(db,"businesses",id,"contacts"),s=>{if(s.empty&&user&&id!==user.uid)return listen(user.uid);contacts=s.docs.map(d=>({id:d.id,...d.data()}));ready.c=1;render()},fail);
- uP=onSnapshot(collection(db,"businesses",id,"properties"),s=>{props=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));ready.p=1;render()},fail)}
+ uP=onSnapshot(collection(db,"businesses",id,"properties"),s=>{props=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));ready.p=1;render();if(!$("mm").classList.contains("hidden"))paintMM()},fail)}
 function fail(e){console.error(e);ready={c:1,p:1};$("err").textContent="Could not load properties: "+(e.code||e.message)+(e.code==="permission-denied"?" — deploy the updated firestore.rules.":"");$("err").classList.remove("hidden");render()}
 onAuthStateChanged(auth,async u=>{user=u;if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}
  $("auth").classList.add("hidden");$("app").classList.remove("hidden");render();let id=u.uid;try{const s=await getDoc(doc(db,"users",u.uid));id=s.exists()&&s.data().businessId||u.uid}catch(e){console.warn(e)}
  listen(id);$("avBtn").textContent=ini(u.displayName||u.email);$("ddEm").textContent=u.email||""});
 $("avBtn").onclick=e=>{e.stopPropagation();$("dd").classList.toggle("hidden")};document.addEventListener("click",()=>$("dd").classList.add("hidden"));
 $("out").onclick=()=>signOut(auth);$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message}};
-$("add").onclick=()=>openM();$("m_cancel").onclick=()=>$("mo").classList.add("hidden");$("m_save").onclick=save;$("mm_x").onclick=()=>$("mm").classList.add("hidden");
+$("add").onclick=()=>openM();$("m_cancel").onclick=()=>$("mo").classList.add("hidden");$("m_save").onclick=save;$("sm_x").onclick=()=>$("sm").classList.add("hidden");$("sm_ok").onclick=confirmSold;$("mm_x").onclick=()=>$("mm").classList.add("hidden");
 $("m_del").onclick=async()=>{if(editId&&confirm("Delete this property?")){await deleteDoc(doc(db,"businesses",bizId,"properties",editId));$("mo").classList.add("hidden");toast("Deleted")}};
 $("so").onchange=e=>{so=e.target.value;render()};
 $("mo").addEventListener("input",e=>{if(e.target.id!=="f_ad")refreshForm()});
@@ -209,10 +232,13 @@ $("mo").addEventListener("click",e=>{const t=e.target.closest("[data-l],[data-s]
 $("ad_cp").onclick=async()=>{try{await navigator.clipboard.writeText($("f_ad").value.replace(/\*/g,""));toast("Ad copied")}catch{toast("Copy not allowed",true)}};
 $("ad_wa").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent($("f_ad").value),"_blank");
 $("ty").onchange=e=>{ty=e.target.value;render()};let st;$("q").addEventListener("input",e=>{clearTimeout(st);st=setTimeout(()=>{q=e.target.value.trim();render()},150)});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("mo").classList.add("hidden");$("mm").classList.add("hidden")}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("mo").classList.add("hidden");$("mm").classList.add("hidden");$("sm").classList.add("hidden")}});
 document.addEventListener("click",async e=>{const t=e.target,f=t.closest("[data-f]");if(f){flt=f.dataset.f;render();return}if(t.id==="add2"){openM();return}
+ const tb=t.closest("[data-tab]");if(tb){mmS.tab=tb.dataset.tab;paintMM();return}
+ const lk=t.closest("[data-lk]");if(lk){toggleLink(mmS.id,lk.dataset.lk);return}
+ const sd=t.closest("[data-sold]");if(sd){$("mm").classList.add("hidden");openSold(mmS.id,sd.dataset.sold);return}
  const a=t.closest("[data-a]");if(!a)return;const p=props.find(x=>x.id===a.dataset.id);if(!p)return;
- if(a.dataset.a==="edit")openM(p.id);else if(a.dataset.a==="match")showMatch(p.id);
+ if(a.dataset.a==="edit")openM(p.id);else if(a.dataset.a==="match")showMatch(p.id,"match");else if(a.dataset.a==="int")showMatch(p.id,"int");else if(a.dataset.a==="sold")openSold(p.id);
  else if(a.dataset.a==="share")window.open("https://wa.me/?text="+encodeURIComponent(shareText(p)),"_blank");
  else{try{await navigator.clipboard.writeText(shareText(p).replace(/\*/g,""));toast("Ad text copied")}catch{toast("Copy not allowed by browser",true)}}});
 </script>
