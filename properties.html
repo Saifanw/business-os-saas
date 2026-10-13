@@ -80,7 +80,7 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 <header class="top"><div class="top-in">
   <a class="brand" href="customers.html"><span class="logo">B</span>BusinessOS</a>
   <nav class="nav"><a href="customers.html">Overview</a><a href="customer-list.html">Customers</a><a href="followups.html">Follow-ups <span class="pill hidden" id="navFu">0</span></a><a href="deals.html">Deals</a><a href="website-leads.html">Leads</a><a href="whatsapp-center.html">WhatsApp</a><a href="business-finder-app.html">Finder</a><a href="reports.html">Reports</a></nav>
-  <div class="acts"><button class="btn p" id="add">＋ Add Property</button>
+  <div class="acts"><button class="btn" id="reqBtn">📥 Requests <span class="pill hidden" id="reqN">0</span></button><button class="btn" id="pubBtn">🔗 Public page</button><button class="btn p" id="add">＋ Add Property</button>
     <div class="menu"><button class="avatar" id="avBtn" aria-label="Account">?</button><div class="dd hidden" id="dd"><div class="em" id="ddEm"></div><a href="import-export.html#import-section">↑ Import customers</a><a href="import-export.html#export-section">↓ Export data</a><a href="team-settings.html">Settings</a><a href="subscription.html">Plan &amp; billing</a><button id="out">Logout</button></div></div></div>
 </div></header>
 <main>
@@ -118,12 +118,20 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 <div id="sm" class="ov hidden"><div class="modal"><h2 id="smt">Mark as sold</h2><p>Buyer aur price daalo — deal apne aap ban jayegi aur customer "Won" ho jayega.</p>
 <div class="fg"><label class="full">Buyer (customer) *<select id="sm_buy"></select></label><label>Final price (₹) *<input id="sm_price" type="number" min="0" inputmode="numeric"></label><label>Received so far (₹)<input id="sm_rec" type="number" min="0" inputmode="numeric"></label><label>Sold date<input id="sm_date" type="date"></label><label>Note<input id="sm_note" placeholder="Token, registry date…"></label></div>
 <div class="mf"><button class="btn" id="sm_x">Cancel</button><button class="btn p" id="sm_ok">Confirm sold</button></div></div></div>
+<div id="pm" class="ov hidden"><div class="modal"><h2>Your public page</h2><p>Ek link jo aap clients ko bhejte ho. Client form bharta hai, aap approve karte ho, aur property ka public link ban jata hai.</p>
+<div class="fg"><label class="full">Page name (clients ko dikhega) *<input id="pm_name" maxlength="80" placeholder="Rajesh Properties, Jaipur"></label>
+<label class="full">WhatsApp / call number *<input id="pm_phone" maxlength="20" inputmode="tel" placeholder="98XXXXXXXX"></label>
+<label class="full">Link name (sirf ek baar chun sakte ho) *<input id="pm_slug" maxlength="30" placeholder="rajesh-properties"></label>
+<div class="scb full" id="pm_links" style="display:none"></div></div>
+<p id="pm_err" style="color:var(--red);font-size:12px;margin:8px 0 0"></p>
+<div class="mf"><button class="btn" id="pm_x">Close</button><button class="btn p" id="pm_save">Save</button></div></div></div>
+<div id="rq" class="ov hidden"><div class="modal" style="width:min(640px,100%)"><h2>Client requests</h2><p>Clients ne aapke link se property bheji hai. Approve karte hi property list me aa jati hai.</p><div id="rq_l"></div><div class="mf"><button class="btn" id="rq_x">Close</button></div></div></div>
 <div id="toast" class="toast hidden"></div>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,setDoc,deleteDoc,writeBatch,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,setDoc,updateDoc,deleteDoc,writeBatch,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
 const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -131,7 +139,7 @@ const clean=v=>String(v??"").replace(/["'`]+/g,"").trim(),ini=n=>clean(n||"?").s
 const money=n=>{n=Math.round(Number(n)||0);return n>=1e7?"₹"+(n/1e7).toFixed(2).replace(/\.?0+$/,"")+" Cr":n>=1e5?"₹"+(n/1e5).toFixed(2).replace(/\.?0+$/,"")+" Lakh":"₹"+n.toLocaleString("en-IN")};
 function amt(v){if(typeof v==="number")return v;const s=String(v||"").replace(/,/g,""),m=s.match(/([0-9]+(?:\.[0-9]+)?)/);if(!m)return 0;let n=Number(m[1]);if(/crore|cr\b/i.test(s))n*=1e7;else if(/lakh|lac/i.test(s))n*=1e5;else if(/k\b/i.test(s))n*=1e3;return Math.round(n)}
 const ICON={Plot:"📐",Flat:"🏢",Villa:"🏡",House:"🏠",Commercial:"🏬",Shop:"🏪",Farmhouse:"🌳",Agricultural:"🌾"};
-let so="new",user,bizId,uC,uP,contacts=[],props=[],ready={c:0,p:0},flt="",ty="",q="",editId="";
+let pub=null,subs=[],uS,uPub,so="new",user,bizId,uC,uP,contacts=[],props=[],ready={c:0,p:0},flt="",ty="",q="",editId="";
 const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),2600)};
 const code=p=>p.code||"P-"+p.id.slice(0,4).toUpperCase();
 /* matching: budget 45 + location 35 + type 20 */
@@ -174,7 +182,7 @@ function render(){const ok=ready.c&&ready.p;
   ${p.status==="Sold"?`<div class="bd"><i style="background:#fde8e6;color:#9b2c22">Sold to ${esc(p.soldToName||"buyer")} · ${money(p.soldPrice||p.price)}</i></div>`:""}${lin.length&&p.status!=="Sold"?`<div class="bd"><i style="background:#eef2ff;color:#2f5bff">⭐ ${lin.slice(0,2).map(c=>esc(clean(c.name).split(" ")[0])).join(", ")}${lin.length>2?" +"+(lin.length-2):""}</i></div>`:""}${bd.length?`<div class="bd">${bd.map(x=>`<i>${esc(x)}</i>`).join("")}</div>`:`<div class="bd"><i class="w">Legal details missing</i></div>`}
   ${p.ownerName?`<div style="font-size:12px;color:var(--mut)">Owner: <b style="color:var(--ink)">${esc(p.ownerName)}</b>${p.ownerPhone?` · <a href="tel:${esc(p.ownerPhone)}" style="color:var(--blue);font-weight:700">${esc(p.ownerPhone)}</a>`:""}</div>`:""}
   <div class="qs" style="--g:${col}" title="${sc.miss.length?"Missing: "+esc(sc.miss.join(", ")):"Complete"}"><span>Listing</span><div class="tr"><i style="width:${sc.sc}%"></i></div><b style="color:${col}">${sc.sc}%</b></div></div>
-  <div class="pf">${p.status==="Sold"?"":`<button class="mini mt" data-a="match" data-id="${p.id}">👥 ${m.length} match${m.length===1?"":"es"}</button><button class="mini" data-a="int" data-id="${p.id}">⭐ ${lin.length} interested</button>`}<button class="mini" data-a="share" data-id="${p.id}">WhatsApp</button><button class="mini" data-a="copy" data-id="${p.id}">Copy ad</button><button class="mini" data-a="edit" data-id="${p.id}">Edit</button>${p.status==="Sold"?"":`<button class="mini" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22" data-a="sold" data-id="${p.id}">✓ Sold</button>`}</div></div>`}).join("")
+  <div class="pf">${p.status==="Sold"?"":`<button class="mini mt" data-a="match" data-id="${p.id}">👥 ${m.length} match${m.length===1?"":"es"}</button><button class="mini" data-a="int" data-id="${p.id}">⭐ ${lin.length} interested</button>`}<button class="mini" data-a="share" data-id="${p.id}">WhatsApp</button><button class="mini" data-a="copy" data-id="${p.id}">Copy ad</button><button class="mini" data-a="edit" data-id="${p.id}">Edit</button>${pub?(p.published?`<button class="mini mt" data-a="plink" data-id="${p.id}">🔗 Copy link</button><button class="mini" data-a="unpub" data-id="${p.id}">Unpublish</button>`:p.status==="Sold"?"":`<button class="mini" data-a="pub" data-id="${p.id}">🌐 Publish</button>`):""}${p.status==="Sold"?"":`<button class="mini" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22" data-a="sold" data-id="${p.id}">✓ Sold</button>`}</div></div>`}).join("")
  :`<div class="empty" style="grid-column:1/-1"><div style="font-size:34px">🏠</div><b>${props.length?"No matching properties":"Add your first property"}</b>${props.length?"Try another filter.":"Add a listing and BusinessOS will instantly find buyers from your customers."}<br>${props.length?"":'<button class="btn p" id="add2">＋ Add Property</button>'}</div>`}
 const FM=[["title","title"],["type","type"],["status","status"],["loc","locality"],["city","city"],["price","price"],["size","size"],["gaj","areaGaj"],["bed","bedrooms"],["face","facing"],["road","roadWidth"],["corner","corner"],["patta","patta"],["reg","registry"],["loan","loan"],["land","landmark"],["map","mapUrl"],["on","ownerName"],["op","ownerPhone"],["note","note"]];
 let adHi=false,adShort=true;
@@ -189,8 +197,65 @@ function openM(id){editId=id||"";const p=props.find(x=>x.id===id)||{};prevStatus
  $("m_del").classList.toggle("hidden",!id);refreshForm();$("mo").classList.remove("hidden");$("f_title").focus()}
 async function save(){const d=readForm();if(!d.title||!d.locality||!d.price)return toast("Title, area and price are required",true);
  const code0=d.code,wantSold=!!editId&&d.status==="Sold"&&prevStatus!=="Sold";if(wantSold)d.status=prevStatus;delete d.code;d.areaGaj=gajOf(d)||0;d.updatedAt=serverTimestamp();
- try{if(editId)await setDoc(doc(db,"businesses",bizId,"properties",editId),d,{merge:true});else await addDoc(collection(db,"businesses",bizId,"properties"),{...d,code:code0,createdAt:serverTimestamp()});
+ try{let sid=editId;if(editId)await setDoc(doc(db,"businesses",bizId,"properties",editId),d,{merge:true});else sid=(await addDoc(collection(db,"businesses",bizId,"properties"),{...d,code:code0,createdAt:serverTimestamp()})).id;
+  const old=props.find(x=>x.id===sid);if(old&&old.published&&pub)await syncPublic(sid,{...old,...d,code:old.code||code0});
   $("mo").classList.add("hidden");toast("Property saved");if(wantSold)openSold(editId)}catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — deploy firestore.rules":e.message,true)}}
+
+/* ---------- Public page: slug, publish, client requests ---------- */
+const SLUG_RE=/^[a-z0-9][a-z0-9-]{2,29}$/;
+const base=()=>new URL(".",location.href).href;
+const sellLink=()=>pub?base()+"sell.html?s="+encodeURIComponent(pub.slug):"";
+const listLink=id=>pub?base()+"listing.html?s="+encodeURIComponent(pub.slug)+"&id="+encodeURIComponent(id):"";
+const PUBF=["code","title","type","locality","city","price","size","areaGaj","bedrooms","facing","roadWidth","corner","patta","registry","loan","landmark","mapUrl","note","photos","status"];
+function publicCopy(d){const o={businessId:bizId,slug:pub.slug};
+ PUBF.forEach(k=>{let v=d[k];if(v===undefined||v===null)v=(k==="photos"?[]:(k==="price"||k==="areaGaj")?0:"");
+  if(k==="photos")v=(Array.isArray(v)?v:[]).filter(u=>/^https?:\/\//i.test(u)).slice(0,10);
+  if(k==="price"||k==="areaGaj")v=Number(v)||0;
+  if(k==="bedrooms"||k==="roadWidth")v=String(v??"");
+  o[k]=v});
+ if(!o.areaGaj)o.areaGaj=gajOf(d)||0;o.updatedAt=serverTimestamp();return o}
+async function syncPublic(id,d){await setDoc(doc(db,"publicListings",id),publicCopy(d))}
+async function setPublished(p,on){
+ try{const b=writeBatch(db);
+  if(on)b.set(doc(db,"publicListings",p.id),publicCopy(p));else b.delete(doc(db,"publicListings",p.id));
+  b.update(doc(db,"businesses",bizId,"properties",p.id),{published:on,updatedAt:serverTimestamp()});await b.commit();
+  if(on){try{await navigator.clipboard.writeText(listLink(p.id))}catch{}toast("Published — link copy ho gaya")}else toast("Unpublished — link band ho gaya")}
+ catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — firestore.rules deploy karo":e.message,true)}}
+function openPM(){$("pm_err").textContent="";
+ $("pm_name").value=pub?.businessName||"";$("pm_phone").value=pub?.phone||"";$("pm_slug").value=pub?.slug||"";$("pm_slug").disabled=!!pub;
+ const L=$("pm_links");if(pub){L.style.display="block";L.innerHTML=`<b>Client ko ye bhejo (Sell &amp; Earn):</b><br><span style="word-break:break-all">${esc(sellLink())}</span><br><button class="mini mt" id="pm_cp" style="margin-top:8px">Copy link</button> <a class="mini" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent("Apni property bechni hai? Yahan details bharein: "+sellLink())}">WhatsApp</a>`}else L.style.display="none";
+ $("pm").classList.remove("hidden")}
+async function savePM(){const name=clean($("pm_name").value),phone=$("pm_phone").value.replace(/[^\d+]/g,""),slug=$("pm_slug").value.trim().toLowerCase(),err=$("pm_err");err.textContent="";
+ if(!name)return err.textContent="Page name daalo.";if(phone.replace(/\D/g,"").length<10)return err.textContent="Sahi number daalo.";
+ if(!pub&&!SLUG_RE.test(slug))return err.textContent="Link name: 3-30 letters/numbers/hyphen (a-z, 0-9, -).";
+ const btn=$("pm_save");btn.disabled=true;
+ try{const T=serverTimestamp();
+  if(pub){await updateDoc(doc(db,"publicSlugs",pub.slug),{businessName:name,phone,updatedAt:T});await setDoc(doc(db,"businesses",bizId,"settings","publicPage"),{slug:pub.slug,businessName:name,phone,updatedAt:T},{merge:true})}
+  else{const ex=await getDoc(doc(db,"publicSlugs",slug));if(ex.exists()){btn.disabled=false;return err.textContent="Ye link name le liya gaya hai. Doosra chuno."}
+   await setDoc(doc(db,"publicSlugs",slug),{businessId:bizId,businessName:name,phone,createdAt:T,updatedAt:T});
+   await setDoc(doc(db,"businesses",bizId,"settings","publicPage"),{slug,businessName:name,phone,createdAt:T,updatedAt:T})}
+  toast("Public page saved");setTimeout(openPM,50)}
+ catch(e){console.error(e);err.textContent=e.code==="permission-denied"?"Permission denied — firestore.rules deploy karo (ya ye link name pehle se kisi aur ka hai).":e.message}
+ finally{btn.disabled=false}}
+const pend=()=>subs.filter(x=>x.status==="pending").sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+function paintReq(){const n=pend().length,b=$("reqN");b.textContent=n;b.classList.toggle("hidden",!n);if(!$("rq").classList.contains("hidden"))fillReq()}
+function fillReq(){const L=pend();$("rq_l").innerHTML=L.length?L.map(s=>`<div class="mrow" style="align-items:flex-start;flex-wrap:wrap"><div class="c"><b>${esc(clean(s.name))} · ${esc(s.mobile)}</b><span>${esc(s.type)} · ${esc(s.locality)}, ${esc(s.city)}${s.size?" · "+esc(s.size):""}${s.price?" · "+money(s.price):""}</span>${s.note?`<span style="display:block;margin-top:4px">${esc(s.note)}</span>`:""}</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="mini mt" data-ap="${s.id}" data-pb="1">${pub?"✓ Approve & Publish":"✓ Approve"}</button>${pub?`<button class="mini" data-ap="${s.id}" data-pb="0">Approve (private)</button>`:""}<button class="mini" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22" data-rj="${s.id}">✕ Reject</button></div></div>`).join(""):'<div class="empty">Abhi koi naya request nahi.<br>'+(pub?"Apna Sell & Earn link clients ko bhejo.":"Pehle \"Public page\" se apna link banao.")+'</div>'}
+async function approveSub(id,publish){const s=subs.find(x=>x.id===id);if(!s)return;
+ const doPub=publish&&!!pub,d={title:`${s.size?s.size+" ":""}${s.type} in ${s.locality}`,type:s.type,status:"Available",locality:s.locality,city:s.city||"Jaipur",price:Number(s.price)||0,size:s.size||"",bedrooms:"",facing:"",roadWidth:"",corner:"",patta:"",registry:"",loan:"",landmark:"",mapUrl:"",ownerName:s.name,ownerPhone:s.mobile,note:s.note||"",photos:[],image:"",source:"Sell page"};
+ d.areaGaj=gajOf(d)||0;d.code="P-"+String(props.length+1).padStart(3,"0");
+ try{const pr=doc(collection(db,"businesses",bizId,"properties")),b=writeBatch(db),T=serverTimestamp();
+  b.set(pr,{...d,published:doPub,createdAt:T,updatedAt:T});
+  b.update(doc(db,"businesses",bizId,"submissions",id),{status:"approved",propertyId:pr.id,approvedAt:T});
+  if(doPub)b.set(doc(db,"publicListings",pr.id),publicCopy(d));
+  await b.commit();if(doPub){try{await navigator.clipboard.writeText(listLink(pr.id))}catch{}}
+  toast(doPub?"Approved & published — link copy ho gaya":"Approved — property list me aa gayi")}
+ catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — firestore.rules deploy karo":e.message,true)}}
+async function rejectSub(id){if(!confirm("Is request ko reject karna hai?"))return;try{await updateDoc(doc(db,"businesses",bizId,"submissions",id),{status:"rejected",rejectedAt:serverTimestamp()});toast("Rejected")}catch(e){toast(e.message,true)}}
+$("pubBtn").onclick=openPM;$("pm_x").onclick=()=>$("pm").classList.add("hidden");$("pm_save").onclick=savePM;
+$("reqBtn").onclick=()=>{fillReq();$("rq").classList.remove("hidden")};$("rq_x").onclick=()=>$("rq").classList.add("hidden");
+$("pm").addEventListener("click",async e=>{if(e.target.id==="pm_cp"){try{await navigator.clipboard.writeText(sellLink());toast("Link copied")}catch{toast("Copy not allowed",true)}}});
+$("rq").addEventListener("click",e=>{const a=e.target.closest("[data-ap]"),r=e.target.closest("[data-rj]");if(a)approveSub(a.dataset.ap,a.dataset.pb==="1");else if(r)rejectSub(r.dataset.rj)});
 let mmS={id:"",tab:"match"},prevStatus="Available",soldPid="";
 const waLink=(c,p)=>{const ph=String(c.phone||"").replace(/\D/g,"");return ph?`https://wa.me/${ph.length===10?"91"+ph:ph}?text=${encodeURIComponent("Namaste "+clean(c.name)+",\n\n"+shareText(p))}`:""};
 function paintMM(){const p=props.find(x=>x.id===mmS.id);if(!p)return;const ids=p.interestedIds||[],m=matches(p),lin=ids.map(i=>contacts.find(c=>c.id===i)).filter(Boolean),T=mmS.tab;
@@ -212,9 +277,11 @@ async function confirmSold(){const p=props.find(x=>x.id===soldPid),c=contacts.fi
   b.set(doc(db,"businesses",bizId,"properties",p.id),{status:"Sold",soldToId:c.id,soldToName:clean(c.name),soldPrice:price,soldAt:dt,updatedAt:T},{merge:true});
   b.set(doc(db,"businesses",bizId,"deals",dealId),{contactId:c.id,customerId:c.id,customerName:c.name||"",businessType:c.businessType||"",type:c.type||"Customer",dealName:p.title,propertyId:p.id,propertyCode:code(p),amount:price,value:money(price),paymentStatus:ps,received:rec,pendingAmount:price-rec,dueDate:"",payments:rec>0?[{id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())),amount:rec,date:dt,method:"Not recorded",ref:"",note:"Sold ke waqt mila",by:user.uid,byName:user.displayName||user.email||"",at:Date.now()}]:[],paymentDateISO:"",paymentMethod:"Not recorded",closedAtISO:dt,closedAt:dt,notes:$("sm_note").value.trim(),stage:"Won",status:"won",source:c.source||"",location:[p.locality,p.city].map(clean).filter(Boolean).join(", "),updatedAt:T,...(ex.exists()?{}:{createdAt:T})},{merge:true});
   b.update(doc(db,"businesses",bizId,"contacts",c.id),{status:"Won",updatedAt:T});
-  await b.commit();$("sm").classList.add("hidden");const o=(p.interestedIds||[]).filter(i=>i!==c.id).length;toast("Sold! Deal ban gayi, "+clean(c.name)+" ab Won hai"+(o?` · ${o} aur interested customers hain`:""))}
+  await b.commit();if(p.published&&pub)await updateDoc(doc(db,"publicListings",p.id),{status:"Sold",updatedAt:serverTimestamp()}).catch(console.warn);$("sm").classList.add("hidden");const o=(p.interestedIds||[]).filter(i=>i!==c.id).length;toast("Sold! Deal ban gayi, "+clean(c.name)+" ab Won hai"+(o?` · ${o} aur interested customers hain`:""))}
  catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — firestore.rules deploy karo":e.message,true)}finally{btn.disabled=false}}
-function listen(id){[uC,uP].forEach(u=>u&&u());bizId=id;ready={c:0,p:0};
+function listen(id){[uC,uP,uS,uPub].forEach(u=>u&&u());bizId=id;ready={c:0,p:0};
+ uS=onSnapshot(collection(db,"businesses",id,"submissions"),s=>{subs=s.docs.map(d=>({id:d.id,...d.data()}));paintReq()},e=>console.warn("submissions",e));
+ uPub=onSnapshot(doc(db,"businesses",id,"settings","publicPage"),s=>{pub=s.exists()&&s.data().slug?s.data():null;render()},e=>console.warn("publicPage",e));
  uC=onSnapshot(collection(db,"businesses",id,"contacts"),s=>{if(s.empty&&user&&id!==user.uid)return listen(user.uid);contacts=s.docs.map(d=>({id:d.id,...d.data()}));ready.c=1;render()},fail);
  uP=onSnapshot(collection(db,"businesses",id,"properties"),s=>{props=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));ready.p=1;render();if(!$("mm").classList.contains("hidden"))paintMM()},fail)}
 function fail(e){console.error(e);ready={c:1,p:1};$("err").textContent="Could not load properties: "+(e.code||e.message)+(e.code==="permission-denied"?" — deploy the updated firestore.rules.":"");$("err").classList.remove("hidden");render()}
@@ -224,7 +291,7 @@ onAuthStateChanged(auth,async u=>{user=u;if(!u){$("app").classList.add("hidden")
 $("avBtn").onclick=e=>{e.stopPropagation();$("dd").classList.toggle("hidden")};document.addEventListener("click",()=>$("dd").classList.add("hidden"));
 $("out").onclick=()=>signOut(auth);$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message}};
 $("add").onclick=()=>openM();$("m_cancel").onclick=()=>$("mo").classList.add("hidden");$("m_save").onclick=save;$("sm_x").onclick=()=>$("sm").classList.add("hidden");$("sm_ok").onclick=confirmSold;$("mm_x").onclick=()=>$("mm").classList.add("hidden");
-$("m_del").onclick=async()=>{if(editId&&confirm("Delete this property?")){await deleteDoc(doc(db,"businesses",bizId,"properties",editId));$("mo").classList.add("hidden");toast("Deleted")}};
+$("m_del").onclick=async()=>{if(editId&&confirm("Delete this property?")){const del=props.find(x=>x.id===editId);await deleteDoc(doc(db,"businesses",bizId,"properties",editId));if(del&&del.published)await deleteDoc(doc(db,"publicListings",editId)).catch(console.warn);$("mo").classList.add("hidden");toast("Deleted")}};
 $("so").onchange=e=>{so=e.target.value;render()};
 $("mo").addEventListener("input",e=>{if(e.target.id!=="f_ad")refreshForm()});
 $("mo").addEventListener("click",e=>{const t=e.target.closest("[data-l],[data-s]");if(!t)return;e.preventDefault();
@@ -232,13 +299,13 @@ $("mo").addEventListener("click",e=>{const t=e.target.closest("[data-l],[data-s]
 $("ad_cp").onclick=async()=>{try{await navigator.clipboard.writeText($("f_ad").value.replace(/\*/g,""));toast("Ad copied")}catch{toast("Copy not allowed",true)}};
 $("ad_wa").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent($("f_ad").value),"_blank");
 $("ty").onchange=e=>{ty=e.target.value;render()};let st;$("q").addEventListener("input",e=>{clearTimeout(st);st=setTimeout(()=>{q=e.target.value.trim();render()},150)});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("mo").classList.add("hidden");$("mm").classList.add("hidden");$("sm").classList.add("hidden")}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("mo").classList.add("hidden");$("mm").classList.add("hidden");$("sm").classList.add("hidden");$("pm").classList.add("hidden");$("rq").classList.add("hidden")}});
 document.addEventListener("click",async e=>{const t=e.target,f=t.closest("[data-f]");if(f){flt=f.dataset.f;render();return}if(t.id==="add2"){openM();return}
  const tb=t.closest("[data-tab]");if(tb){mmS.tab=tb.dataset.tab;paintMM();return}
  const lk=t.closest("[data-lk]");if(lk){toggleLink(mmS.id,lk.dataset.lk);return}
  const sd=t.closest("[data-sold]");if(sd){$("mm").classList.add("hidden");openSold(mmS.id,sd.dataset.sold);return}
  const a=t.closest("[data-a]");if(!a)return;const p=props.find(x=>x.id===a.dataset.id);if(!p)return;
- if(a.dataset.a==="edit")openM(p.id);else if(a.dataset.a==="match")showMatch(p.id,"match");else if(a.dataset.a==="int")showMatch(p.id,"int");else if(a.dataset.a==="sold")openSold(p.id);
+ if(a.dataset.a==="edit")openM(p.id);else if(a.dataset.a==="match")showMatch(p.id,"match");else if(a.dataset.a==="int")showMatch(p.id,"int");else if(a.dataset.a==="sold")openSold(p.id);else if(a.dataset.a==="pub")setPublished(p,true);else if(a.dataset.a==="unpub"){if(confirm("Public link band kar dein?"))setPublished(p,false)}else if(a.dataset.a==="plink"){try{await navigator.clipboard.writeText(listLink(p.id));toast("Link copied")}catch{toast(listLink(p.id))}}
  else if(a.dataset.a==="share")window.open("https://wa.me/?text="+encodeURIComponent(shareText(p)),"_blank");
  else{try{await navigator.clipboard.writeText(shareText(p).replace(/\*/g,""));toast("Ad text copied")}catch{toast("Copy not allowed by browser",true)}}});
 </script>

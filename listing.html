@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Property</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--ink:#132039;--blue:#315df6;--muted:#748198;--line:#dfe6ef;--green:#0b9460;--red:#c43c35}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;color:var(--ink);background:#f4f6f9}
+.top{background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.top b{font-size:15px}.top a{font-size:13px;font-weight:700;color:var(--blue);text-decoration:none}
+main{max-width:860px;margin:0 auto;padding:16px 14px 60px;display:grid;gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
+.gal{border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#dfe8ff,#f3e8ff);min-height:200px;display:grid;place-items:center;font-size:60px;position:relative}
+.gal img.main{width:100%;max-height:440px;object-fit:cover;display:block}
+.thumbs{display:flex;gap:8px;overflow-x:auto;padding:8px 0 0}.thumbs img{width:72px;height:56px;object-fit:cover;border-radius:8px;border:2px solid transparent;cursor:pointer;flex:none}.thumbs img.on{border-color:var(--blue)}
+.tag{position:absolute;left:12px;top:12px;background:#fff;border-radius:99px;padding:5px 12px;font-size:12px;font-weight:800;color:var(--green)}.tag.sold{color:var(--red)}.tag.hold{color:#9a6200}
+h1{font-size:23px;margin:0 0 6px;letter-spacing:-.4px}
+.price{font-size:28px;font-weight:800;color:var(--blue)}.rate{font-size:13px;color:var(--muted);font-weight:700;margin-left:8px}
+.loc{color:var(--muted);font-size:14px;margin:6px 0 12px}
+.chips{display:flex;gap:7px;flex-wrap:wrap}.chips span{background:#f1f4fa;border-radius:8px;padding:5px 11px;font-size:12.5px;font-weight:700;color:#4b5a73}
+.chips span.g{background:#e9f9f1;color:#0a7a50}
+.sec{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin:0 0 10px}
+ul{margin:0;padding-left:18px;line-height:1.8;font-size:14px}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.btn{flex:1;min-width:140px;text-align:center;border-radius:12px;padding:13px 16px;font-weight:800;font-size:14px;text-decoration:none;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;font-family:inherit}
+.btn.wa{background:#1fa855;border-color:#1fa855;color:#fff}.btn.call{background:var(--ink);border-color:var(--ink);color:#fff}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-size:11px;font-weight:800;color:#66748a}label.full{grid-column:1/-1}
+input,textarea{display:block;width:100%;margin-top:6px;border:1px solid var(--line);border-radius:10px;padding:0 12px;height:44px;font-size:14px;font-family:inherit;outline:none}
+textarea{height:76px;padding-top:11px;resize:vertical}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.msg{font-size:12.5px;min-height:18px;grid-column:1/-1}.msg.ok{color:var(--green)}.msg.err{color:var(--red)}
+.center{text-align:center;padding:60px 20px;color:var(--muted)}.hidden{display:none!important}
+.ref{font-size:12px;color:var(--muted)}
+@media(max-width:600px){.form{grid-template-columns:1fr}label.full,.msg{grid-column:auto}h1{font-size:20px}.price{font-size:24px}}
+</style></head><body>
+<div class="top"><b id="biz">Property</b><a id="more" class="hidden" href="#">Sell your property →</a></div>
+<main>
+<div id="load" class="card center">Loading property…</div>
+<div id="bad" class="card center hidden"><h2 style="color:var(--ink)">Property not available</h2><p>This listing is no longer available or the link is incorrect.</p></div>
+<div id="ok" class="hidden" style="display:grid;gap:14px"></div>
+</main>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import{getFirestore,doc,getDoc,collection,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
+const db=getFirestore(app),$=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const q=new URLSearchParams(location.search),slug=(q.get("s")||"").toLowerCase(),id=q.get("id")||"";
+const money=n=>{n=Math.round(Number(n)||0);if(!n)return"Price on request";return n>=1e7?"₹"+(n/1e7).toFixed(2).replace(/\.?0+$/,"")+" Crore":n>=1e5?"₹"+(n/1e5).toFixed(2).replace(/\.?0+$/,"")+" Lakh":"₹"+n.toLocaleString("en-IN")};
+const inr=n=>"₹"+Math.round(n).toLocaleString("en-IN");
+const gajOf=d=>{if(+d.areaGaj)return +d.areaGaj;const m=String(d.size||"").toLowerCase().replace(/×/g,"x").match(/(\d+(?:\.\d+)?)\s*(?:x|\*|by)\s*(\d+(?:\.\d+)?)/);return m?+(m[1]*m[2]/9).toFixed(1):0};
+const httpUrl=u=>/^https?:\/\//i.test(String(u||""))?String(u):"";
+const ICON={Plot:"📐",Flat:"🏢",Villa:"🏡",House:"🏠",Commercial:"🏬",Shop:"🏪",Farmhouse:"🌳",Agricultural:"🌾"};
+const show=x=>{["load","bad","ok"].forEach(k=>$(k).classList.toggle("hidden",k!==x))};
+(async()=>{
+  if(!/^[a-z0-9][a-z0-9-]{2,29}$/.test(slug)||!/^[\w-]{3,64}$/.test(id))return show("bad");
+  try{
+    const [ls,ss]=await Promise.all([getDoc(doc(db,"publicListings",id)),getDoc(doc(db,"publicSlugs",slug))]);
+    if(!ls.exists()||!ss.exists())return show("bad");
+    const p=ls.data(),b=ss.data();
+    if(p.slug!==slug||p.businessId!==b.businessId)return show("bad");
+    paint(p,b);show("ok");
+  }catch(e){console.error(e);show("bad")}
+})();
+function paint(p,b){
+  const g=gajOf(p),rate=g&&p.price/g>500?Math.round(p.price/g):0;
+  const title=p.title||`${p.type||"Property"} in ${p.locality||""}`;
+  document.title=title+" — "+(b.businessName||"");
+  $("biz").textContent=b.businessName||"Property";
+  const more=$("more");more.href="sell.html?s="+encodeURIComponent(slug);more.classList.remove("hidden");
+  const photos=(Array.isArray(p.photos)?p.photos:[]).map(httpUrl).filter(Boolean);
+  const st=p.status==="Sold"?["Sold","sold"]:p.status==="Hold"?["On hold","hold"]:["Available",""];
+  const badges=[p.corner==="Yes"?"Corner":"",p.patta,p.registry,p.loan==="Available"?"Home loan available":""].filter(Boolean);
+  const meta=[p.type,p.size,g?g+" Gaj":"",p.bedrooms?p.bedrooms+" BHK":"",p.facing?p.facing+" facing":"",p.roadWidth?p.roadWidth+" ft road":""].filter(Boolean);
+  const hl=String(p.note||"").split("\n").map(x=>x.trim()).filter(Boolean);
+  const phone=String(b.phone||"").replace(/\D/g,""),wa=phone?(phone.length===10?"91"+phone:phone):"";
+  const waMsg=`Hello, I am interested in ${title} (Ref ${p.code||""}) – ${money(p.price)}. Please share details.`;
+  const el=$("ok");
+  el.innerHTML=`<div><div class="gal" id="gal">${photos.length?"":esc(ICON[p.type]||"🏠")}<span class="tag ${st[1]}">${st[0]}</span></div><div class="thumbs" id="th"></div></div>
+  <div class="card"><h1>${esc(title)}</h1><div><span class="price">${esc(money(p.price))}</span>${rate?`<span class="rate">${inr(rate)}/Gaj</span>`:""}</div>
+  <div class="loc">📍 ${esc(p.locality||"")}${p.city?", "+esc(p.city):""}${p.landmark?" · "+esc(p.landmark):""}</div>
+  <div class="chips">${meta.map(x=>`<span>${esc(x)}</span>`).join("")}${badges.map(x=>`<span class="g">${esc(x)}</span>`).join("")}</div>
+  ${p.code?`<div class="ref" style="margin-top:10px">Ref: ${esc(p.code)}</div>`:""}</div>
+  ${hl.length?`<div class="card"><div class="sec">Highlights</div><ul>${hl.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
+  ${httpUrl(p.mapUrl)?`<div class="card"><div class="sec">Location</div><a class="btn" style="display:block" target="_blank" rel="noopener noreferrer" href="${esc(httpUrl(p.mapUrl))}">🗺 Open in Google Maps</a></div>`:""}
+  <div class="card"><div class="sec">Contact ${esc(b.businessName||"the consultant")}</div>
+    <div class="cta">${phone?`<a class="btn call" href="tel:+${esc(wa)}">📞 Call now</a>`:""}${wa?`<a class="btn wa" target="_blank" rel="noopener noreferrer" href="https://wa.me/${esc(wa)}?text=${encodeURIComponent(waMsg)}">WhatsApp</a>`:""}</div></div>
+  <div class="card"><div class="sec">Request a call back</div>
+    <form class="form" id="lf" novalidate><label>Your name *<input id="ln" maxlength="80" autocomplete="name"></label><label>Mobile *<input id="lm" maxlength="20" inputmode="tel" autocomplete="tel"></label>
+    <label class="full">Message (optional)<textarea id="lmsg" maxlength="500"></textarea></label><input class="hp" id="lw" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <button class="btn call" id="lb" type="submit" style="grid-column:1/-1">Request call back</button><div class="msg" id="lmg"></div></form></div>`;
+  if(photos.length){const gal=$("gal"),th=$("th");const main=document.createElement("img");main.className="main";main.alt=title;main.src=photos[0];gal.prepend(main);
+    if(photos.length>1)photos.forEach((u,i)=>{const t=document.createElement("img");t.src=u;t.alt="Photo "+(i+1);if(!i)t.className="on";t.onclick=()=>{main.src=u;th.querySelectorAll("img").forEach(x=>x.classList.toggle("on",x===t))};th.appendChild(t)})}
+  $("lf").addEventListener("submit",async e=>{
+    e.preventDefault();const m=$("lmg");m.className="msg";m.textContent="";
+    if($("lw").value){m.className="msg ok";m.textContent="Thank you! We will call you soon.";return}
+    const name=$("ln").value.trim(),mob=$("lm").value.replace(/[^\d+]/g,"");
+    if(!name){m.className="msg err";m.textContent="Please enter your name.";return}
+    if(mob.replace(/\D/g,"").length<10){m.className="msg err";m.textContent="Please enter a valid mobile number.";return}
+    const btn=$("lb");btn.disabled=true;
+    try{
+      await addDoc(collection(db,"publicLeads"),{businessId:b.businessId,templateId:"property",status:"new",name,phone:mob,email:"",budget:"",
+        requirement:`Interested in ${title} (Ref ${p.code||id}) – ${money(p.price)}`,city:p.city||"",area:p.locality||"",message:$("lmsg").value.trim(),createdAt:serverTimestamp()});
+      m.className="msg ok";m.textContent="Thank you! We will call you soon.";$("lf").reset();
+    }catch(err){console.error(err);m.className="msg err";m.textContent="Could not send right now. Please call or WhatsApp instead.";btn.disabled=false}
+  });
+}
+</script></body></html>
