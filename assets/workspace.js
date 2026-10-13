@@ -139,7 +139,12 @@ export async function resolveWorkspace(db, user, opts = {}) {
       }
       bizId = inv.bizId; via = "invite-join";
     } else if (!bizId && await legacySelfWorkspace(db, uid)) {
-      return { bizId: uid, role: "owner", manager: true, biz: null, via: "legacy-self" };
+      // Legacy owner workspace (businesses/{uid}). Load the business document so pages that need
+      // it (Team & settings, plan, profile) work; previously this returned biz:null even when it existed.
+      let legacyBiz = null;
+      try { const lb = await getDoc(doc(db, "businesses", uid)); if (lb.exists()) legacyBiz = lb.data(); }
+      catch (e) { console.warn("legacy business read", e); }
+      return { bizId: uid, role: "owner", manager: true, biz: legacyBiz, via: "legacy-self" };
     } else if (!bizId) {
       throw new WorkspaceError("no-workspace",
         "No Business OS workspace is linked to " + (user.email || "this Google account") + ". Open the join link your owner shared with you (it opens join.html), or ask them to invite this exact email, then sign in again.");
