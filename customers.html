@@ -184,7 +184,7 @@ onAuthStateChanged(auth,async u=>{
   $("date").textContent=new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   try{const us=await getDoc(doc(db,"users",u.uid));bizId=us.exists()&&us.data().businessId||u.uid}catch(e){bizId=u.uid}
   listen(bizId);
-  try{const b=await getDoc(doc(db,"businesses",bizId));if(b.exists()){const d=b.data();$("planName").textContent=(d.plan||d.planName||"Free").toString().replace(/^./,x=>x.toUpperCase());}else $("planName").textContent="Free"}catch(e){$("planName").textContent="Free"}
+  try{const b=await getDoc(doc(db,"businesses",bizId));if(b.exists()){const d=b.data();try{localStorage.setItem("bos.vertical",JSON.stringify({t:d.templateId||"",m:d.inventoryModule||""}));document.dispatchEvent(new Event("bos-vertical"))}catch(_){}$("planName").textContent=(d.plan||d.planName||"Free").toString().replace(/^./,x=>x.toUpperCase());}else $("planName").textContent="Free"}catch(e){$("planName").textContent="Free"}
 });
 
 function listen(id){

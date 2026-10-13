@@ -242,7 +242,7 @@ function remind(id){const d=list.find(x=>x.id===id);if(!d||d.pending<=0)return t
   if(!d.virtual)updateDoc(doc(db,"businesses",bizId,"deals",id),{lastReminderAt:serverTimestamp()}).catch(()=>{})}
 let wantPay=new URLSearchParams(location.search).get("pay");
 function maybeOpen(){if(wantPay&&ready.c&&ready.d&&list.some(x=>x.id===wantPay)){const id=wantPay;wantPay=null;openPM(id)}}
-function listen(id){[uC,uD].forEach(u=>u&&u());bizId=id;ready={c:0,d:0};getDoc(doc(db,"businesses",id)).then(x=>{if(x.exists())biz=x.data()}).catch(()=>{});
+function listen(id){[uC,uD].forEach(u=>u&&u());bizId=id;ready={c:0,d:0};getDoc(doc(db,"businesses",id)).then(x=>{if(x.exists()){biz=x.data();try{localStorage.setItem("bos.vertical",JSON.stringify({t:biz.templateId||"",m:biz.inventoryModule||""}));document.dispatchEvent(new Event("bos-vertical"))}catch(_){}}}).catch(()=>{});
   uC=onSnapshot(collection(db,"businesses",id,"contacts"),s=>{if(s.empty&&user&&id!==user.uid)return listen(user.uid);contacts=s.docs.map(d=>({id:d.id,...d.data()}));ready.c=1;build();$("err").classList.add("hidden");render();maybeOpen()},e=>fail(e));
   uD=onSnapshot(collection(db,"businesses",id,"deals"),s=>{deals=s.docs.map(d=>({id:d.id,...d.data()}));ready.d=1;build();render();maybeOpen()},e=>fail(e))}
 function fail(e){console.error(e);ready={c:1,d:1};$("err").textContent="Could not load deals: "+(e.code||e.message);$("err").classList.remove("hidden");render()}

@@ -115,7 +115,7 @@ async function delLead(id){const l=leads.find(x=>x.id===id);if(!l||!confirm(`Del
 function listen(id){[uC,uL].forEach(u=>u&&u());bizId=id;ready={c:0,l:0};
   uC=onSnapshot(collection(db,"businesses",id,"contacts"),s=>{if(s.empty&&user&&id!==user.uid)return listen(user.uid);contacts=s.docs.map(d=>({id:d.id,...d.data()}));ready.c=1;derive();$("err").classList.add("hidden");render()},fail);
   uL=onSnapshot(query(collection(db,"publicLeads"),where("businessId","==",id)),s=>{leads=s.docs.map(d=>({id:d.id,...d.data()}));ready.l=1;derive();render()},fail);
-  getDoc(doc(db,"businesses",id)).then(b=>{if(b.exists()){biz=b.data();render()}}).catch(()=>{})}
+  getDoc(doc(db,"businesses",id)).then(b=>{if(b.exists()){biz=b.data();try{localStorage.setItem("bos.vertical",JSON.stringify({t:biz.templateId||"",m:biz.inventoryModule||""}));document.dispatchEvent(new Event("bos-vertical"))}catch(_){}render()}}).catch(()=>{})}
 function fail(e){console.error(e);ready={c:1,l:1};$("err").textContent="Could not load leads: "+(e.code||e.message);$("err").classList.remove("hidden");render()}
 onAuthStateChanged(auth,async u=>{user=u;
   if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}
