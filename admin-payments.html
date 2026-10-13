@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="en"><head><title>Payments · BusinessOS Admin</title><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<style>:root{--bg:#f5f7fb;--card:#fff;--ink:#0f172a;--mut:#64748b;--line:#e2e8f0;--blue:#2f5bff;--g:#16a34a;--r:#dc2626;--a:#d97706}@media(prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#111a2e;--ink:#e6edf7;--mut:#94a3b8;--line:#23314d}}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink)}main{max-width:980px;margin:0 auto;padding:22px 14px 60px}h1{font-size:24px;margin:6px 0 4px}h2{font-size:17px;margin:0 0 10px}.sub{color:var(--mut);font-size:14px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px 14px;font-weight:600;cursor:pointer;font-size:14px}.btn.p{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.g{background:var(--g);color:#fff;border-color:var(--g)}.btn.d{color:var(--r)}.btn:disabled{opacity:.5;cursor:not-allowed}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;margin:4px 0 12px}label{font-size:13px;font-weight:600;color:var(--mut)}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;align-items:center}.kv b{word-break:break-all;text-align:right}.kv:last-child{border:0}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}.pending{background:#fef3c7;color:#92400e}.verified{background:#dcfce7;color:#166534}.rejected{background:#fee2e2;color:#991b1b}
+.note{background:#eff6ff;color:#1e40af;border-radius:10px;padding:10px 12px;font-size:13px;margin:10px 0}.err{background:#fee2e2;color:#991b1b;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:14px}.hidden{display:none}.qr{width:100%;max-width:280px;display:block;margin:0 auto;border-radius:12px;background:#fff}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;z-index:9}.toast.bad{background:#dc2626}a{color:var(--blue)}</style></head><body><main>
+<a href="admin.html">← Admin</a>
+<div id="auth" class="card hidden"><h2>Admin sign in</h2><button class="btn p" id="gbtn">Continue with Google</button><div id="deny" class="err hidden"></div></div>
+<div id="app" class="hidden"><h1>Payments</h1><div class="sub">Verify the credit in your bank / UPI app yourself before approving. Screenshots and UTRs are not proof of payment.</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px" id="tabs"></div><div id="list"></div></div>
+</main><div id="toast" class="toast hidden"></div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import{getFirestore,collection,doc,getDoc,getDocs}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFunctions,httpsCallable}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-functions.js";
+const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"}),auth=getAuth(app),db=getFirestore(app),fn=getFunctions(app),review=httpsCallable(fn,"reviewPayment"),$=id=>document.getElementById(id);
+const ADMIN_EMAILS=["saif.anwar1618@gmail.com"],LOGIN=new URL("login.html",location.href).href;
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),3600)};
+const when=v=>{const ms=v?.toMillis?v.toMillis():0;return ms?new Date(ms).toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}):"—"};
+let all=[],tab="pending",wa={};
+const kv=(k,v)=>`<div class="kv"><span>${k}</span><b>${esc(v||"—")}</b></div>`;
+function msg(p){return`Hello ${p.customerName||"there"},\n\nYour payment for Business OS has been verified successfully.\n\nPlan: ${p.planId}\nAmount received: ₹${p.amount}\nSubscription starts: ${p.subscriptionStartsAt}\nSubscription expires: ${p.subscriptionExpiresAt}\n\nYour Business OS access is now activated.\n\nYou can log in using your registered account:\n${LOGIN}\n\nThank you for choosing Business OS!\n\nFor assistance, contact the Business OS administrator.`}
+const phoneOk=p=>/^91[6-9]\d{9}$/.test(String(p.customerPhone||""));
+function render(){const cnt=s=>all.filter(r=>r.paymentStatus===s).length;
+  $("tabs").innerHTML=["pending","verified","rejected"].map(t=>`<button class="btn ${tab===t?"p":""}" data-tab="${t}">${t[0].toUpperCase()+t.slice(1)} (${cnt(t)})</button>`).join("");
+  const rows=all.filter(r=>r.paymentStatus===tab);
+  $("list").innerHTML=rows.length?rows.map(p=>`<div class="card" data-id="${p.id}"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><h2>${esc(p.customerName||"Customer")} · ₹${esc(p.amount)} ${esc(p.planId)}</h2><div class="sub" style="margin:0">UID ${esc(p.customerUid)} · Business ${esc(p.businessId)}</div></div><span class="badge ${p.paymentStatus}">${p.paymentStatus}</span></div>
+  ${kv("Method",p.paymentMethod)}${kv("UTR / reference",p.utr)}${kv("Payment date",p.paymentDate)}${kv("Submitted",p.submittedAt?when(p.submittedAt):"Not submitted yet")}${kv("Customer remarks",p.remarks)}${p.paymentStatus==="verified"?kv("Verified",when(p.verifiedAt)+" by "+p.verifiedBy)+kv("Subscription",p.subscriptionStartsAt+" → "+p.subscriptionExpiresAt):""}${p.rejectionReason?kv("Rejection reason",p.rejectionReason):""}${kv("Admin note",p.adminNote)}
+  <div id="x-${p.id}"></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+  ${p.paymentStatus==="pending"?`<button class="btn g" data-act="approve" ${p.submittedAt?"":"disabled title='Customer has not submitted a UTR yet'"}>Approve</button><button class="btn d" data-act="reject">Reject</button>`:""}
+  <button class="btn" data-act="note">Add note</button><button class="btn" data-act="sub">View subscription</button>
+  ${p.paymentStatus==="verified"?`<button class="btn" data-act="wa">WhatsApp</button><button class="btn" data-act="copymsg">Copy message</button><span class="sub" style="align-self:center;margin:0">${esc(wa[p.id]||"")}</span>`:""}</div></div>`).join(""):'<div class="card">No payments here.</div>'}
+async function load(){const s=await getDocs(collection(db,"paymentRequests"));all=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));render()}
+async function call(p,action,note){try{const r=await review({paymentId:p.id,action,note});return r.data}catch(e){console.error(e);toast(e.message||"Failed",true);return null}}
+document.addEventListener("click",async e=>{const t=e.target.closest("[data-tab]");if(t){tab=t.dataset.tab;return render()}
+  const b=e.target.closest("[data-act]");if(!b)return;const id=b.closest("[data-id]").dataset.id,p=all.find(x=>x.id===id),a=b.dataset.act;
+  if(a==="approve"){if(!confirm(`Approve this payment?\n\nCustomer: ${p.customerName}\nPlan: ${p.planId}\nAmount: ₹${p.amount}\nUTR: ${p.utr}\n\nOnly approve after you have seen the credit in your bank/UPI account.`))return;b.disabled=true;
+    const r=await call(p,"approve");if(r){toast(r.already?"Already verified — nothing changed":"Payment verified, plan activated");await load();if(!phoneOk(all.find(x=>x.id===id)||{}))toast("Activated. No valid phone number — contact the customer manually.",true)}else b.disabled=false}
+  if(a==="reject"){const reason=prompt("Reason for rejection (shown to the customer):");if(!reason)return;if(await call(p,"reject",reason)){toast("Payment rejected");load()}}
+  if(a==="note"){const n=prompt("Internal admin note:",p.adminNote||"");if(n==null)return;if(await call(p,"note",n)){toast("Note saved");load()}}
+  if(a==="sub"){try{const s=await getDoc(doc(db,"businesses",p.businessId)),d=s.exists()?s.data():{};$("x-"+id).innerHTML=`<div class="note">Current plan: <b>${esc(d.plan||"free")}</b> · status ${esc(d.status||"—")} · ${esc(d.subscriptionStartsAt||"—")} → ${esc(d.subscriptionEndsAt||"—")} · record limit ${esc(d.recordLimit??"default")}</div>`}catch(x){toast(x.message,true)}}
+  if(a==="copymsg"){try{await navigator.clipboard.writeText(msg(p));wa[id]="Message prepared (copied)";render()}catch(x){toast("Copy failed",true)}}
+  if(a==="wa"){if(!phoneOk(p))return toast("No valid WhatsApp number saved. Use Copy message and contact the customer manually.",true);
+    if(p.whatsappConsent!==true&&!confirm("Customer did not tick WhatsApp consent. Open chat anyway?"))return;
+    window.open("https://wa.me/"+p.customerPhone+"?text="+encodeURIComponent(msg(p)),"_blank","noopener");wa[id]="WhatsApp opened (not confirmed sent)";render()}});
+$("gbtn").onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(e=>toast(e.message,true));
+onAuthStateChanged(auth,async u=>{if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}
+  let ok=ADMIN_EMAILS.includes(String(u.email||"").toLowerCase());if(!ok){try{ok=(await getDoc(doc(db,"admins",u.uid))).exists()}catch(e){}}
+  if(!ok){$("auth").classList.remove("hidden");$("app").classList.add("hidden");$("deny").textContent=(u.email||"This account")+" is not an administrator.";$("deny").classList.remove("hidden");return}
+  $("auth").classList.add("hidden");$("app").classList.remove("hidden");try{await load()}catch(e){console.error(e);toast("Could not load payments. Check Firestore rules are deployed.",true)}});
+</script></body></html>

@@ -133,6 +133,7 @@ main{max-width:1060px}
 </main>
 <div id="toast" class="toast hidden"></div>
 
+<script src="plans-config.js"></script>
 <script type="module">
 import{resolveWorkspace,blockWorkspace}from"./assets/workspace.js";
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
@@ -142,7 +143,7 @@ const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDo
 const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const clean=v=>String(v??"").replace(/["'`]+/g,"").trim(),ini=n=>clean(n||"?").split(/[\s@.]+/).filter(Boolean).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"?";
-const FREE_LIMIT=10,PAID=["starter","growth","custom","business","paid"],F=[["name","Business name","text",1],["businessType","Business type","text"],["phone","Phone","tel"],["whatsapp","WhatsApp number","tel"],["city","City","text"],["area","Area","text"],["website","Website","url"],["description","Short description","ta",1]];
+let FREE_LIMIT=10;const PAID=[],F=[["name","Business name","text",1],["businessType","Business type","text"],["phone","Phone","tel"],["whatsapp","WhatsApp number","tel"],["city","City","text"],["area","Area","text"],["website","Website","url"],["description","Short description","ta",1]];
 const IC=p=>`<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
 const ICONS={check:IC('<path d="M20 6 9 17l-5-5"/>'),x:IC('<path d="M18 6 6 18M6 6l12 12"/>'),undo:IC('<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/>'),key:IC('<circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3"/>'),user:IC('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>'),power:IC('<path d="M18.4 6.6a9 9 0 1 1-12.8 0M12 2v10"/>'),trash:IC('<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>'),clock:IC('<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'),down:IC('<path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"/>'),up:IC('<path d="M12 15V3m0 0L8 7m4-4 4 4M4 21h16"/>')};
 const ROLE_LABEL={owner:"Owner",admin:"Admin",sales:"Sales agent"},STATUS_LABEL={pending:"Pending",approved:"Approved",rejected:"Rejected",revoked:"Revoked",used:"Used"};
@@ -215,7 +216,7 @@ async function deleteTeamActivity(id){if(!confirm("Delete this activity entry? T
 async function clearTeamActivity(){if(!teamActivity.length)return toast("There is no activity to clear");if(!confirm(`Delete all ${teamActivity.length} loaded activity entries? This cannot be undone.`))return;try{for(const a of teamActivity)await deleteDoc(doc(db,"businesses",bizId,"teamActivity",a.id));toast("Activity history cleared");await loadRequestsActivity()}catch(e){console.error(e);toast("Could not clear activity. Check Firestore Rules.",true)}}
 const share=r=>{const l=new URL("join.html",location.href);l.searchParams.set("join",bizId);return "https://wa.me/?text="+encodeURIComponent(`You're invited to join ${clean(biz.name)||"our business"} on BusinessOS as ${r.role==="admin"?"an Admin":"a Sales Agent"}.\nImportant: sign in with this exact Google account: ${r.email}\nJoin here: ${l.href}`)};
 
-function plan(){const p=String(biz.plan||"trial").toLowerCase(),paid=PAID.includes(p)||String(user.email||"").toLowerCase()==="saif.anwar1618@gmail.com",pct=usage==null?0:Math.min(100,Math.round(usage/FREE_LIMIT*100));
+function plan(){FREE_LIMIT=window.BOS_PLANS.limit(biz);const p=String(biz.plan||"trial").toLowerCase(),paid=PAID.includes(p)||String(user.email||"").toLowerCase()==="saif.anwar1618@gmail.com",pct=usage==null?0:Math.min(100,Math.round(usage/FREE_LIMIT*100));
   return`<div class="grid"><div class="card pad"><h2>Plan &amp; usage</h2><div class="sub">What your workspace includes today.</div><div class="kv"><span>Current plan</span><b style="text-transform:capitalize">${esc(p==="trial"?"Free trial":p)}</b></div>
   ${paid?`<div class="kv"><span>Records</span><b>Unlimited</b></div>`:`<div style="padding-top:12px"><div class="kv" style="border:0;padding:0"><span>Records used</span><b>${usage==null?"—":usage} of ${FREE_LIMIT}</b></div><div class="track"><i class="${pct>=100?"f":pct>=80?"w":""}" style="width:${pct}%"></i></div><div style="color:var(--mut);font-size:12px">${usage==null?"Usage unavailable right now.":pct>=100?"Limit reached — upgrade to add more customers.":FREE_LIMIT-usage+" records left on the free plan."} Customers and active enquiries both count.</div></div>`}
   <div class="mf" style="justify-content:flex-start"><a class="btn p" href="subscription.html">${paid?"Manage plan":"Upgrade plan"}</a></div></div>

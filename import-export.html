@@ -142,6 +142,7 @@ main{max-width:1000px;margin:0 auto;padding:28px 24px 60px}
 </main>
 <div id="toast" class="toast hidden"></div>
 
+<script src="plans-config.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -237,8 +238,8 @@ async function consumePermissionRequest(r){if(!r||isOwner)return;await updateDoc
 async function requirePermission(permission){if(isOwner)return true;const approved=await getApprovedPermission(permission);if(!approved){$("requestPermission").value=permission;$("approvalPanel").scrollIntoView({behavior:"smooth",block:"start"});toast("Owner approval required. Send a request first.",true);return false}return approved}
 
 /* ---------- plan limit ---------- */
-async function planInfo(){if(plan)return plan;const p=String(biz.plan||"trial").toLowerCase(),unl=!ENFORCE_FREE_LIMIT||PAID.includes(p)||String(user.email||"").toLowerCase()===OWNER;if(unl)return plan={unl:true};
-  let used=(existing||[]).length;try{const l=await getDocs(query(collection(db,"publicLeads"),where("businessId","==",bizId)));used+=l.docs.filter(d=>d.data().status!=="converted").length}catch(e){console.warn(e)}return plan={unl:false,remaining:Math.max(0,FREE_LIMIT-used)}}
+async function planInfo(){if(plan)return plan;const p=String(biz.plan||"trial").toLowerCase(),unl=!ENFORCE_FREE_LIMIT||String(user.email||"").toLowerCase()===OWNER;if(unl)return plan={unl:true};
+  let used=(existing||[]).length;try{const l=await getDocs(query(collection(db,"publicLeads"),where("businessId","==",bizId)));used+=l.docs.filter(d=>d.data().status!=="converted").length}catch(e){console.warn(e)}return plan={unl:false,remaining:Math.max(0,window.BOS_PLANS.limit(biz)-used)}}
 /* ---------- UI ---------- */
 function step(n){["s1","s2","s3"].forEach((id,i)=>$(id).className="stp"+(i+1<n?" done":i+1===n?" on":""));$("p1").classList.toggle("hidden",n!==1);$("p2").classList.toggle("hidden",n!==2);$("p3").classList.toggle("hidden",n!==3)}
 async function onFile(f){if(!f||busy)return;try{const a=await readFile(f);if(!a||a.length<2)throw new Error("No rows found in this file. Make sure it has a header row and at least one contact.");fname=f.name;prepare(a);if(!rows.length)throw new Error("No contact rows found in this file.");autoMap();
@@ -250,7 +251,7 @@ async function refresh(){const cols=FIELDS.filter(([f])=>map[f]);
   const{recs,skip}=build(),pi=await planInfo(),cap=pi.unl?recs.length:Math.min(recs.length,pi.remaining),skipped=skip.dupCrm+skip.dupFile+skip.empty;
   $("sum").innerHTML=`<div><b>${rows.length.toLocaleString()}</b><span>Rows in file</span></div><div class="g"><b>${cap.toLocaleString()}</b><span>Will be imported</span></div><div class="a"><b>${(skip.dupCrm+skip.dupFile).toLocaleString()}</b><span>Duplicates skipped</span></div><div class="a"><b>${(skip.empty+recs.length-cap).toLocaleString()}</b><span>Skipped (empty / over limit)</span></div>`;
   let m="";if(!map.name&&!map.phone&&!map.businessName)m='<div class="note r">Pick the <b>Name</b> or <b>Mobile</b> column so we know who your contacts are.</div>';
-  else if(!pi.unl&&recs.length>cap)m=`<div class="note">${cap?`Your Free plan has room for <b>${cap}</b> more record${cap===1?"":"s"}, so only the first ${cap} will be imported.`:"Your Free plan limit (10 records) is full."} <a href="subscription.html">Upgrade to import all ${recs.length.toLocaleString()}</a>.</div>`;
+  else if(!pi.unl&&recs.length>cap)m=`<div class="note">${cap?`Your plan has room for <b>${cap}</b> more record${cap===1?"":"s"}, so only the first ${cap} will be imported.`:`Your plan limit (${window.BOS_PLANS.limit(biz)} records) is full.`} <a href="subscription.html">Upgrade to import all ${recs.length.toLocaleString()}</a>.</div>`;
   else if(!recs.length)m='<div class="note">Nothing new to import — every row is a duplicate or empty.</div>';
   $("msg").innerHTML=m;$("go").disabled=!cap||busy;$("go").textContent=cap?`Import ${cap.toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${cap===1?"":"s"}`:"Nothing to import";refresh.n=cap}
 async function run(){

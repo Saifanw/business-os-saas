@@ -244,5 +244,38 @@ service cloud.firestore {
         allow delete: if isAdmin() || isBusinessManager(businessId);
       }
     }
+
+    // ---- Manual payments (REVIEW BEFORE DEPLOYING). Approval/rejection happens only in the reviewPayment Cloud Function (Admin SDK). ----
+    match /paymentRequests/{requestId} {
+      allow read: if isAdmin() || (signedIn() && resource.data.customerUid == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['customerUid','customerName','businessId','planId','amount','currency','durationDays','paymentMethod','paymentStatus','subscriptionStatus','createdAt'])
+        && request.resource.data.customerUid == request.auth.uid
+        && isOwnerOfBusiness(request.resource.data.businessId)
+        && request.resource.data.planId in ['starter','growth']
+        && request.resource.data.amount == (request.resource.data.planId == 'starter' ? 499 : 999)
+        && request.resource.data.currency == 'INR'
+        && request.resource.data.paymentMethod in ['upi','bank']
+        && request.resource.data.paymentStatus == 'pending'
+        && request.resource.data.subscriptionStatus == 'inactive'
+        && request.resource.data.createdAt == request.time;
+      // Customer may only add payment details to their OWN open (pending/rejected) request; never change status to verified.
+      allow update: if signedIn() && resource.data.customerUid == request.auth.uid
+        && resource.data.paymentStatus in ['pending','rejected']
+        && request.resource.data.paymentStatus == 'pending'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['paymentMethod','utr','paymentDate','remarks','customerPhone','whatsappConsent','submittedAt','paymentStatus'])
+        && request.resource.data.paymentMethod in ['upi','bank']
+        && request.resource.data.utr is string && request.resource.data.utr.size() >= 8 && request.resource.data.utr.size() <= 30
+        && request.resource.data.submittedAt == request.time;
+      allow delete: if false;
+    }
+    match /subscriptions/{businessId} {
+      allow read: if isAdmin() || isOwnerOfBusiness(businessId);
+      allow write: if false;
+    }
+    match /paymentAuditLogs/{logId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
   }
 }

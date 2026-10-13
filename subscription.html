@@ -82,6 +82,7 @@ main{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
   <button class="btn w" id="mc" style="margin-top:10px;border:0;color:var(--mut)">Cancel</button></div></div>
 <div id="toast" class="toast hidden"></div>
 
+<script src="plans-config.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -90,13 +91,7 @@ const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDo
 const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 /* ===== EDIT HERE: prices, limits and contact. Keep in sync with pricing.html ===== */
 const CONTACT={email:"saif.anwar1618@gmail.com",whatsapp:""};/* whatsapp e.g. "919829012345" (digits only) */
-const PLANS=[
- {key:"free",rank:0,name:"Free",price:"₹0",per:"free plan",lim:{customers:10,prospects:0,team:1,deals:10},feat:["10 combined customer / lead records","Overview and core workflow access","Follow-ups, deals and reports","1 workspace owner"]},
- {key:"starter",rank:1,name:"Starter",price:"₹499",per:"/ month",lim:{customers:500,prospects:250,team:3,deals:250}},
- {key:"growth",rank:2,name:"Growth",price:"₹999",per:"/ month",popular:true,lim:{customers:2000,prospects:1000,team:10,deals:2000}},
- {key:"business",rank:3,name:"Business",price:"Custom",per:"talk to us",lim:{customers:10000,prospects:5000,team:25,deals:10000}}];
-const ALIAS={trial:"free",free:"free",starter:"starter",premium:"starter",growth:"growth",business:"business",custom:"business",paid:"starter"};
-const LEGACY={premium:{name:"Premium",lim:{customers:1000,prospects:250,team:3,deals:250}}};
+const{PLANS,ALIAS,LEGACY}=window.BOS_PLANS;
 /* ================================================================================ */
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const clean=v=>String(v??"").replace(/["'`]+/g,"").trim(),ini=n=>clean(n||"?").split(/[\s@.]+/).filter(Boolean).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"?";
@@ -104,8 +99,8 @@ const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(ba
 let user,bizId,biz={},role="sales",manager=false,usage=null,pending="";
 const lab={customers:["Customers","records incl. active enquiries"],prospects:["Prospects","from Business Finder"],team:["Team members","including you"],deals:["Deals","won deals"]};
 async function resolve(u){let id=null,r="sales";const us=await getDoc(doc(db,"users",u.uid));if(us.exists()&&us.data().businessId){id=us.data().businessId;r=String(us.data().role||"sales")}
-  if(!id){id=u.uid;r="owner"}const bs=await getDoc(doc(db,"businesses",id));if(!bs.exists())throw new Error("Workspace not found for this Google account.");
-  bizId=id;biz=bs.data();role=r;manager=["owner","admin"].includes(r)||biz.ownerUid===u.uid||id===u.uid}
+  if(!id){id=u.uid;r="owner"}const bs=await getDoc(doc(db,"businesses",id));/* Free self-signup accounts may have no businesses/{uid} doc yet: treat as Free */
+  bizId=id;biz=bs.exists()?bs.data():{plan:"free"};role=r;manager=["owner","admin"].includes(r)||biz.ownerUid===u.uid||id===u.uid}
 const curPlan=()=>{const raw=String(biz.plan||"trial").toLowerCase(),p=PLANS.find(x=>x.key===(ALIAS[raw]||"free"))||PLANS[0],lg=LEGACY[raw];return{raw,p,name:lg?.name||p.name,lim:lg?.lim||p.lim}};
 function limits(){const c=curPlan(),o=(k,a,b)=>Math.max(0,Number(biz[a]??c.lim[k]))+Math.max(0,Number(biz[b]||0));return{customers:Math.max(1,o("customers","recordLimit","topupRecords")),prospects:o("prospects","prospectLimit","prospectTopup"),team:Math.max(1,o("team","teamLimit","teamTopup")),deals:o("deals","dealLimit","dealTopup")}}
 async function loadUsage(){const bc=p=>getCountFromServer(p).then(s=>s.data().count);
@@ -123,7 +118,7 @@ function render(){const c=curPlan(),L=limits();
     const feat=p.feat||[`${L2.customers.toLocaleString()} customers`,`${L2.prospects.toLocaleString()} prospects`,`${L2.team} team members`,`${L2.deals.toLocaleString()} deals`];
     return`<div class="card pl${cu?" cu":rec?" rec":""}">${cu?'<span class="ribbon b">Current plan</span>':rec?'<span class="ribbon">Recommended</span>':p.popular&&up?'<span class="ribbon">Most popular</span>':""}<h3>${p.name}</h3><div class="price">${p.price} <small>${p.per}</small></div><ul>${feat.map(f=>`<li>${f}</li>`).join("")}</ul>
     ${cu?'<button class="btn w" disabled>Your current plan</button>':up?(manager?`<button class="btn ${rec||p.popular?"p":""} w" data-up="${p.key}">${p.key==="business"?"Contact for Business":"Upgrade to "+p.name}</button>`:'<button class="btn w" disabled>Owner can upgrade</button>'):'<button class="btn w" disabled>Included in your plan</button>'}</div>`}).join("")}
-function openM(key){const p=PLANS.find(x=>x.key===key);if(!p)return;pending=key;const txt=`Hello BusinessOS,\n\nI want to upgrade to the ${p.name} plan (${p.price}${p.price==="Custom"?"":" "+p.per}).\nBusiness: ${clean(biz.name)||"-"}\nWorkspace: ${bizId}\nEmail: ${user.email||""}`;
+function openM(key){const p=PLANS.find(x=>x.key===key);if(!p)return;if(p.amount>0){location.href="payment.html?plan="+encodeURIComponent(p.key);return}pending=key;const txt=`Hello BusinessOS,\n\nI want to upgrade to the ${p.name} plan (${p.price}${p.price==="Custom"?"":" "+p.per}).\nBusiness: ${clean(biz.name)||"-"}\nWorkspace: ${bizId}\nEmail: ${user.email||""}`;
   $("mt").textContent="Request "+p.name+" plan";$("msum").innerHTML=`<div><span>Plan</span><b>${p.name}</b></div><div><span>Price</span><b>${p.price} ${p.price==="Custom"?"":p.per}</b></div><div><span>Business</span><b>${esc(clean(biz.name)||"—")}</b></div><div><span>Your email</span><b>${esc(user.email||"")}</b></div>`;
   $("mail").href=`mailto:${CONTACT.email}?subject=${encodeURIComponent("BusinessOS "+p.name+" Plan Request")}&body=${encodeURIComponent(txt)}`;
   $("wa").classList.toggle("hidden",!CONTACT.whatsapp);$("s1").textContent=CONTACT.whatsapp?"Send your request (email or WhatsApp).":"Send your request by email.";if(CONTACT.whatsapp)$("wa").href=`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(txt)}`;$("cpy").dataset.txt=txt;$("mo").classList.remove("hidden")}
