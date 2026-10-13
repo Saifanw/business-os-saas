@@ -112,6 +112,7 @@ select,input[type=text],input[type=date],input[type=time],textarea{width:100%;bo
       <div class="filters">
         <label>Category<select id="f_type"></select></label><label>Area<select id="f_area"></select></label><label>Status<select id="f_status"></select></label>
         <label>Source<select id="f_src"></select></label><label>Business type<select id="f_sub"></select></label>
+        <label>Added<select id="f_added"><option value="">Any time</option><option value="1h">Last 1 hour</option><option value="3h">Last 3 hours</option><option value="today">Today</option></select></label>
         <label>Follow-up date<select id="f_date"><option value="">Any date</option><option value="yesterday">Yesterday</option><option value="today">Today</option><option value="week">Last 7 days</option><option value="month">This month</option><option value="custom">Custom date range</option><option value="od">Overdue</option><option value="up">Upcoming</option><option value="none">Not scheduled</option></select></label>
         <label>Sort by<select id="f_sort"><option value="latest">Latest first (Excel order kept)</option><option value="import">Import order (newest batch first)</option></select></label>
         <button class="btn" id="reset">Reset</button></div><div id="customDateRange" class="date-range hidden"><label>From date<input type="date" id="f_date_from"></label><label>To date<input type="date" id="f_date_to"></label><span class="date-hint">Select a date range to filter scheduled follow-ups.</span></div></section>
@@ -169,10 +170,14 @@ function derive(){const n=new Date(),day=new Date(n.getFullYear(),n.getMonth(),n
 function fill(id,label,vals){const s=$(id),cur=s.value;s.innerHTML=`<option value="">${label}</option>`+[...new Set(vals.map(clean).filter(Boolean))].sort().map(v=>`<option>${esc(v)}</option>`).join("");s.value=[...s.options].some(o=>o.value===cur)?cur:""}
 function opts(){fill("f_type","All categories",all.map(c=>c.type));fill("f_area","All areas",all.map(c=>c.area));fill("f_status","All statuses",all.map(c=>c.status||"New"));fill("f_src","All sources",all.map(c=>c.source));fill("f_sub","All business types",all.map(c=>c.businessType))}
 function apply(){
-  const q=$("q").value.trim().toLowerCase().replace(/\s+/g," "),F={t:$("f_type").value,a:$("f_area").value,s:$("f_status").value,r:$("f_src").value,b:$("f_sub").value,d:$("f_date").value,from:$("f_date_from").value,to:$("f_date_to").value};
+  const q=$("q").value.trim().toLowerCase().replace(/\s+/g," "),F={t:$("f_type").value,a:$("f_area").value,s:$("f_status").value,r:$("f_src").value,b:$("f_sub").value,ad:$("f_added").value,d:$("f_date").value,from:$("f_date_from").value,to:$("f_date_to").value};
   view=all.filter(c=>{
     if(q&&![c.name,c.phone,c.businessName,c.area,c.city,c.req,c.requirement,c.email,c.note,c.status,c.source].map(clean).join(" ").toLowerCase().includes(q))return false;
     if(F.t&&clean(c.type)!==F.t||F.a&&clean(c.area)!==F.a||F.s&&(clean(c.status)||"New")!==F.s||F.r&&clean(c.source)!==F.r||F.b&&clean(c.businessType)!==F.b)return false;
+    if(F.ad){/* Added filter: createdAt null = just saved (server time pending) */
+      const cs=c.createdAt===null?Date.now()/1000:Number(c.createdAt?.seconds||0);if(!cs)return false;
+      const age=Date.now()/1000-cs,n0=new Date();n0.setHours(0,0,0,0);
+      if(F.ad==="1h"&&age>3600||F.ad==="3h"&&age>10800||F.ad==="today"&&cs<n0.getTime()/1000)return false}
     if(F.d){
       if(["od","up","none","today"].includes(F.d)){const m={today:"td",od:"od",up:"up",none:"none"}[F.d];if(c._s!==m)return false}
       else if(F.d==="yesterday"||F.d==="week"||F.d==="month"||F.d==="custom"){
@@ -258,10 +263,10 @@ document.querySelector(".qk").addEventListener("click",e=>{const b=e.target.clos
 $("exp").onclick=exportCSV;$("m_cancel").onclick=closeM;$("m_save").onclick=()=>save(false);$("m_done").onclick=()=>save(true);$("m_del").onclick=()=>del([editId]);
 $("mo").addEventListener("click",e=>{if(e.target.id==="mo")closeM()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeM()});
 let st;$("q").addEventListener("input",()=>{clearTimeout(st);st=setTimeout(apply,150)});
-["f_type","f_area","f_status","f_src","f_sub","f_sort"].forEach(i=>$(i).addEventListener("change",apply));
+["f_type","f_area","f_status","f_src","f_sub","f_sort","f_added"].forEach(i=>$(i).addEventListener("change",apply));
 $("f_date").addEventListener("change",()=>{$("customDateRange").classList.toggle("hidden",$("f_date").value!=="custom");apply()});
 ["f_date_from","f_date_to"].forEach(i=>$(i).addEventListener("change",apply));
-const reset=()=>{$("q").value="";["f_type","f_area","f_status","f_src","f_sub","f_date","f_date_from","f_date_to"].forEach(i=>$(i).value="");$("f_sort").value="latest";$("customDateRange").classList.add("hidden");chip="";apply()};$("reset").onclick=reset;
+const reset=()=>{$("q").value="";["f_type","f_area","f_status","f_src","f_sub","f_added","f_date","f_date_from","f_date_to"].forEach(i=>$(i).value="");$("f_sort").value="latest";$("customDateRange").classList.add("hidden");chip="";apply()};$("reset").onclick=reset;
 $("chips").addEventListener("click",e=>{const b=e.target.closest("[data-chip]");if(!b)return;chip=chip===b.dataset.chip?"":b.dataset.chip;apply()});
 $("all").addEventListener("change",e=>{view.slice(0,shown).forEach(c=>e.target.checked?sel.add(c.id):sel.delete(c.id));render()});
 $("bdel").onclick=()=>del([...sel]);
