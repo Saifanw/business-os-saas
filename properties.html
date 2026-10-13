@@ -165,7 +165,7 @@ function adText(d,hi,short){const L=hi?{sale:"बिक्री हेतु",s
  const sz=[d.size,g?g+" "+L.gaj:""].filter(Boolean).join(" • ");if(sz)o.push(`📏 ${L.size}: ${sz}`);if(d.bedrooms)o.push(`🛏 ${d.bedrooms} BHK`);if(top)o.push(`🧭 ${top}`);
  if(!short){[d.patta?L.patta+": "+d.patta:"",d.registry?L.reg+": "+d.registry:"",d.loan?L.loan+": "+d.loan:""].filter(Boolean).forEach(x=>o.push("📄 "+x));hl.forEach(x=>o.push("✅ "+x));if(d.mapUrl)o.push("🗺 "+d.mapUrl)}
  o.push("",`📞 ${L.ref} • Ref: ${d.code||"New"}`);return o.join("\n")}
-const shareText=p=>adText(p,false,false);
+const shareText=p=>adText(p,false,false)+(p.published&&typeof pub!=="undefined"&&pub&&typeof listLink==="function"?"\n\n🔗 Photos & details: "+listLink(p.id):"");
 function render(){const ok=ready.c&&ready.p;
  const soldV=props.filter(p=>p.status==="Sold").reduce((a,p)=>a+(+p.soldPrice||+p.price||0),0),av=props.filter(p=>p.status==="Available"),V=av.reduce((s,p)=>s+(+p.price||0),0),sold=props.filter(p=>p.status==="Sold").length,mc=av.reduce((s,p)=>s+matches(p).length,0);
  const K=[["Total listings",props.length,"All properties","#2f5bff"],["Available",av.length,"Ready to sell","#0f9d6a"],["Inventory value",money(V),"Available stock","#7c4dff"],["Sold",sold,sold?money(soldV)+" closed":"Closed listings","#d98a00"],["Buyer matches",mc,"Customers fitting your stock","#0b6aa2"]];
@@ -215,7 +215,10 @@ async function save(){const d=readForm();if(!d.title||!d.locality||!d.price)retu
 
 /* ---------- Public page: slug, publish, client requests ---------- */
 const SLUG_RE=/^[a-z0-9][a-z0-9-]{2,29}$/;
-const base=()=>new URL(".",location.href).href;
+/* After you deploy share-worker/, paste its URL here (keep the trailing slash) so shared links show a rich WhatsApp preview.
+   Leave empty to use plain GitHub Pages links (they work, but WhatsApp shows no title/photo). */
+const SHARE_BASE="";
+const base=()=>(SHARE_BASE?SHARE_BASE.replace(/\/*$/,"/"):new URL(".",location.href).href);
 const sellLink=()=>pub?base()+"sell.html?s="+encodeURIComponent(pub.slug):"";
 const listLink=id=>pub?base()+"listing.html?s="+encodeURIComponent(pub.slug)+"&id="+encodeURIComponent(id):"";
 const PUBF=["code","title","type","locality","city","price","size","areaGaj","bedrooms","facing","roadWidth","corner","patta","registry","loan","landmark","mapUrl","note","photos","status"];
