@@ -164,6 +164,9 @@ const ini=n=>clean(n||"?").split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpper
 const TERM=["Won","Paid","Lost"],HOT=["Interested","Site Visit","Negotiation"];
 const M={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
 function nextDate(c){const r=String(c.next||"");if(!r||/not set|completed/i.test(r))return null;const m=r.match(/(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})/);if(!m)return null;const mo=M[m[2].slice(0,3).toLowerCase()];return mo==null?null:new Date(+m[3],mo,+m[1])}
+const tms=c=>Number(c.importBatchAt||((c.createdAt?.seconds||c.updatedAt?.seconds||0)*1000)),rowN=c=>Number.isFinite(Number(c.importRowOrder))?Number(c.importRowOrder):null;
+/* Newest first, but rows from the same Excel import keep file order 1,2,3… */
+const cmpOrder=(a,b)=>{const same=a.importBatchId&&a.importBatchId===b.importBatchId,ra=rowN(a),rb=rowN(b);if(same&&ra!==null&&rb!==null&&ra!==rb)return ra-rb;const d=tms(b)-tms(a);if(d)return d;if(ra!==null&&rb!==null&&ra!==rb)return ra-rb;return 0};
 const ts=c=>Number(c.createdAt?.seconds||c.updatedAt?.seconds||0);
 let user=null,unsub=null,bizId=null,customers=[];
 
@@ -188,7 +191,7 @@ function listen(id){
   if(unsub)unsub();
   unsub=onSnapshot(collection(db,"businesses",id,"contacts"),snap=>{
     if(snap.empty&&user&&id!==user.uid){bizId=user.uid;return listen(user.uid)}
-    customers=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>ts(b)-ts(a));
+    customers=snap.docs.map(d=>({id:d.id,...d.data()})).sort(cmpOrder);
     $("err").classList.add("hidden");render();
   },e=>{console.error(e);$("err").textContent="Could not load your data: "+(e.code||e.message)+". Please refresh or check your permissions.";$("err").classList.remove("hidden");$("summary").classList.remove("sk");$("summary").textContent="Data unavailable."});
 }
