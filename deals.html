@@ -60,6 +60,8 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:minmax(0,1fr)}.row{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) 140px 190px}.row .cl{display:none}}
 @media(max-width:700px){.top-in{padding:10px 14px 0;gap:10px;flex-wrap:wrap;height:auto}.nav{order:3;flex-basis:100%;padding-bottom:8px}main{padding:18px 14px 50px}.hero h1{font-size:23px}.kpis{grid-template-columns:1fr 1fr}.kpis>:last-child{grid-column:span 2}.kpi{padding:14px 14px 14px 16px}.kpi .n{font-size:20px}.row.head{display:none}.row{grid-template-columns:minmax(0,1fr);gap:6px;padding:15px 14px}.ra{justify-content:flex-start}.fg{grid-template-columns:1fr}.bar{padding:14px}.q{min-width:0;width:100%}}
 .av-wrap{position:relative;flex:none}.sdot{position:absolute;right:-1px;top:-1px;z-index:1;width:11px;height:11px;border-radius:50%;background:var(--d);border:2px solid #fff;box-sizing:border-box}.sdot.new{--d:#22c55e;animation:sdp 2s ease-out infinite}.sdot.td{--d:#f59e0b}.sdot.od{--d:#ef4444}@keyframes sdp{0%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}70%{box-shadow:0 0 0 6px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}@media (prefers-reduced-motion:reduce){.sdot{animation:none!important}}
+.tag.Overdue{background:#fde8e6;color:#9b2c22}
+.hist{display:grid;gap:0}.hrow{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:12.5px}.hrow .c{flex:1;min-width:0}.hrow .c b{font-size:13px}.hrow.v{opacity:.5;text-decoration:line-through}.hrow .amt{font-weight:800}
 </style>
 </head>
 <body>
@@ -85,18 +87,26 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 <div id="mo" class="ov hidden"><div class="modal" role="dialog" aria-modal="true"><h2 id="mt">Add deal</h2><p id="ms">Link a won customer with deal value and payment.</p>
   <div class="fg"><label class="full">Customer *<select id="m_cust"></select></label>
   <label class="full">Deal name<input id="m_name" type="text" placeholder="e.g. 3 BHK flat, CRM setup"></label>
-  <label>Deal value (₹)<input id="m_amt" type="number" min="0" inputmode="numeric"></label><label>Amount received (₹)<input id="m_rec" type="number" min="0" inputmode="numeric"></label>
+  <label>Deal value (₹)<input id="m_amt" type="number" min="0" inputmode="numeric"></label><label id="l_rec">Amount received (₹)<input id="m_rec" type="number" min="0" inputmode="numeric"></label>
   <div class="hint"><span>Payment status: <b id="m_st">Pending</b></span><span>Pending: <b id="m_pend">₹0</b></span></div>
-  <label>Closed date<input id="m_date" type="date"></label><label>Payment date<input id="m_pdate" type="date"></label>
-  <label class="full">Payment method<select id="m_method"><option>Not recorded</option><option>UPI</option><option>Cash</option><option>Bank transfer</option><option>Cheque</option><option>Card</option></select></label>
+  <label>Closed date<input id="m_date" type="date"></label><label>Due date (baaki payment ki)<input id="m_due" type="date"></label>
+  <label id="l_pdate">Payment date<input id="m_pdate" type="date"></label>
+  <label class="full" id="l_pm">Payment method<select id="m_method"><option>Not recorded</option><option>UPI</option><option>Cash</option><option>Bank transfer</option><option>Cheque</option><option>Card</option></select></label>
   <label class="full">Notes<textarea id="m_note" rows="2"></textarea></label></div>
   <div class="mf"><button class="btn" id="m_cancel">Cancel</button><button class="btn p" id="m_save">Save deal</button></div></div></div>
+<div id="pm" class="ov hidden"><div class="modal" role="dialog" aria-modal="true"><h2 id="pm_t">Payment</h2><p id="pm_s"></p>
+  <div class="hint" id="pm_sum" style="margin-bottom:12px"></div>
+  <div class="fg" id="pm_form"><label>Amount (₹) *<input id="pm_amt" type="number" min="0" inputmode="numeric"></label><label>Date<input id="pm_date" type="date"></label>
+  <label>Method<select id="pm_method"><option>UPI</option><option>Cash</option><option>Bank transfer</option><option>Cheque</option><option>Card</option><option>Other</option></select></label><label>Reference / UTR<input id="pm_ref" type="text" placeholder="optional"></label>
+  <label>Next due date (baaki ke liye)<input id="pm_due" type="date"></label><label>Note<input id="pm_note" type="text" placeholder="optional"></label></div>
+  <h3 style="font-size:13px;margin:18px 0 4px">Payment history</h3><div class="hist" id="pm_hist"></div>
+  <div class="mf"><button class="btn" id="pm_x" type="button">Close</button><button class="btn p" id="pm_save" type="button">Save payment</button></div></div></div>
 <div id="toast" class="toast hidden"></div>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,setDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,setDoc,updateDoc,runTransaction,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
 const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -111,53 +121,101 @@ let user,bizId,uC,uD,contacts=[],deals=[],ready={c:0,d:0},list=[],flt="",q="",sh
 async function logTeamActivity(eventType,message){try{await addDoc(collection(db,"businesses",bizId,"teamActivity"),{businessId:bizId,actorUid:user.uid,actorEmail:user.email||"",actorName:user.displayName||user.email||"Team member",targetEmail:"",eventType,message,permission:"",createdAt:serverTimestamp()})}catch(e){console.warn("activity log skipped",e)}}
 const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),2600)};
 function dt(v){if(!v)return null;if(v.seconds)return new Date(v.seconds*1000);const d=new Date(String(v).length<=10?v+"T00:00:00":v);return isNaN(d)?null:d}
-function norm(d,c,virtual){const amount=Number(d.amount)||amt(d.value)||(virtual?amt(c?.budget||c?.value):0),received=Math.min(amount,Math.max(0,Number(d.received)||0)),pay=amount>0&&received>=amount?"Paid":received>0?"Partially":"Pending";
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random().toString(36).slice(2),fd=v=>v?new Date(v+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"";
+const live=p=>(p||[]).filter(x=>!x.voided),sumLive=p=>live(p).reduce((a,x)=>a+(+x.amount||0),0);
+/* Old deals only had one "received" number: show it as a first "pehle se mila hua" entry */
+const paysOf=d=>Array.isArray(d.payments)?d.payments:(Number(d.received)>0?[{id:"legacy",amount:Number(d.received),date:d.paymentDateISO||d.closedAtISO||"",method:d.paymentMethod||"Not recorded",ref:"",note:"Pehle se mila hua",byName:"",legacy:true}]:[]);
+const mkPay=(amount,date,method,ref,note)=>({id:uid(),amount,date,method,ref:ref||"",note:note||"",by:user.uid,byName:user.displayName||user.email||"",at:Date.now()});
+function fin(raw,pays){const amount=Number(raw.amount)||0,sm=sumLive(pays),received=amount>0?Math.min(amount,sm):sm,lp=live(pays).slice(-1)[0]||{};
+  return{payments:pays,received,pendingAmount:Math.max(0,amount-received),paymentStatus:amount>0&&received>=amount?"Paid":received>0?"Partially Paid":"Pending",paymentDateISO:lp.date||"",paymentMethod:lp.method||raw.paymentMethod||"Not recorded",updatedAt:serverTimestamp()}}
+/* one safe read-modify-write: balance is always recomputed from the payment list */
+async function mutate(id,fn){const ref=doc(db,"businesses",bizId,"deals",id);
+  return runTransaction(db,async tx=>{const sn=await tx.get(ref);let raw,fresh=false;
+    if(sn.exists())raw=sn.data();else{const c=contacts.find(x=>x.id===id);if(!c)throw new Error("Deal nahi mila");fresh=true;
+      raw={contactId:c.id,customerId:c.id,customerName:c.name||"",businessType:c.businessType||"",type:c.type||"Customer",dealName:clean(c.req||c.requirement)||"Deal",amount:amt(c.budget||c.value),stage:"Won",status:"won",source:c.source||"",location:[c.area,c.city].map(clean).filter(Boolean).join(", "),closedAtISO:iso(new Date()),closedAt:iso(new Date())}}
+    const base=(Array.isArray(raw.payments)?raw.payments:paysOf(raw)).map(p=>({...p})),out=fn(raw,base),raw2={...raw,...(out.extra||{})},f=fin(raw2,out.pays);
+    tx.set(ref,{...(fresh?raw2:out.extra||{}),...f,...(fresh?{createdAt:serverTimestamp()}:{})},{merge:true});return f})}
+function norm(d,c,virtual){const amount=Number(d.amount)||amt(d.value)||(virtual?amt(c?.budget||c?.value):0),pays=paysOf(d),received=Math.min(amount,Math.max(0,sumLive(pays))),pay=amount>0&&received>=amount?"Paid":received>0?"Partially":"Pending",pending=Math.max(0,amount-received),due=clean(d.dueDate),t0=iso(new Date()),od=pending>0&&!!due&&due<t0,late=od?Math.max(1,Math.round((new Date(t0+"T00:00:00")-new Date(due+"T00:00:00"))/864e5)):0;
   return{id:d.id,cid:d.contactId||d.customerId||d.id,virtual,customer:clean(d.customerName||c?.name)||"Unnamed",loc:clean(d.location)||[c?.area,c?.city].map(clean).filter(Boolean).join(", "),
-  name:clean(d.dealName)||clean(c?.req||c?.requirement)||"Deal",amount,received,pending:Math.max(0,amount-received),pay,closed:dt(d.closedAtISO||d.closedAt)||dt(d.createdAt)||dt(c?.updatedAt),phone:c?.phone}}
-function build(){const by=new Set(deals.map(d=>d.id));
+  name:clean(d.dealName)||clean(c?.req||c?.requirement)||"Deal",amount,received,pending,pay,pays,due,od,late,closed:dt(d.closedAtISO||d.closedAt)||dt(d.createdAt)||dt(c?.updatedAt),phone:c?.phone}}
+function build(){const by=new Set(deals.map(d=>d.contactId||d.customerId||d.id));
   list=deals.filter(d=>(d.status||"won")==="won").map(d=>norm(d,contacts.find(c=>c.id===(d.contactId||d.customerId||d.id)),false))
    .concat(contacts.filter(c=>WON.includes(c.status)&&!by.has(c.id)).map(c=>norm({id:c.id},c,true)));
   list.sort((a,b)=>(b.closed||0)-(a.closed||0))}
 function render(){
   const ok=ready.c&&ready.d,V=list.reduce((s,d)=>s+d.amount,0),R=list.reduce((s,d)=>s+d.received,0),P=Math.max(0,V-R),pct=V?Math.round(R/V*100):0,
    conv=contacts.length?Math.round(contacts.filter(c=>WON.includes(c.status)).length/contacts.length*100):0;
-  const K=[["Total deals",list.length,"Won customers","#2f5bff"],["Deal value",money(V),"Recorded deal amount","#7c4dff"],["Collected",money(R),pct+"% of deal value","#0f9d6a"],["Pending",money(P),list.filter(d=>d.pending>0).length+" deals to collect","#d98a00"],["Conversion",conv+"%","Won / all customers","#0b6aa2"]];
+  const K=[["Total deals",list.length,"Won customers","#2f5bff"],["Deal value",money(V),"Recorded deal amount","#7c4dff"],["Collected",money(R),pct+"% of deal value","#0f9d6a"],["Pending",money(P),list.filter(d=>d.pending>0).length+" deals to collect"+(list.some(d=>d.od)?" · "+list.filter(d=>d.od).length+" overdue":""),"#d98a00"],["Conversion",conv+"%","Won / all customers","#0b6aa2"]];
   $("kpis").innerHTML=K.map(k=>`<div class="card kpi" style="--c:${k[3]}"><div class="l">${k[0]}</div><div class="n">${ok?k[1]:"—"}</div><div class="s">${k[2]}</div></div>`).join("");
   const fu=contacts.filter(c=>!["Won","Paid","Lost"].includes(c.status)&&nextDate(c)&&nextDate(c)<=new Date()).length;$("navFu").textContent=fu;$("navFu").classList.toggle("hidden",!fu);
-  const cnt=k=>list.filter(d=>!k||d.pay===k).length;
-  $("chips").innerHTML=[["","All"],["Pending","Pending"],["Partially","Part paid"],["Paid","Paid"]].map(c=>`<button class="chip${flt===c[0]?" on":""}" data-f="${c[0]}">${c[1]} <b>${cnt(c[0])}</b></button>`).join("");
+  const cnt=k=>list.filter(d=>!k||(k==="Overdue"?d.od:d.pay===k)).length;
+  $("chips").innerHTML=[["","All"],["Pending","Pending"],["Partially","Part paid"],["Paid","Paid"],["Overdue","Overdue"]].map(c=>`<button class="chip${flt===c[0]?" on":""}" data-f="${c[0]}">${c[1]} <b>${cnt(c[0])}</b></button>`).join("");
   if(!ok){$("rows").innerHTML=Array(5).fill('<div class="row"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk cl"></div><div></div></div>').join("");$("side").innerHTML='<div class="sk" style="height:120px"></div>';return}
-  const s=q.toLowerCase(),rows=list.filter(d=>(!flt||d.pay===flt)&&(!s||(d.customer+" "+d.name).toLowerCase().includes(s))),page=rows.slice(0,shown);
+  const s=q.toLowerCase(),rows=list.filter(d=>(!flt||(flt==="Overdue"?d.od:d.pay===flt))&&(!s||(d.customer+" "+d.name).toLowerCase().includes(s))),page=rows.slice(0,shown);
   $("rows").innerHTML=page.length?page.map(d=>{const pc=d.amount?Math.round(d.received/d.amount*100):0;
-   return`<div class="row"><div class="who"><div class="av-wrap"><div class="av">${esc(ini(d.customer))}</div>${(k=>sdot(k,k==="od"?"Payment pending":"Part payment received"))(d.virtual||!d.amount?"":d.pay==="Pending"?"od":d.pay==="Partially"?"td":"")}</div><div style="min-width:0"><b>${esc(d.customer)}</b><span>${esc(d.loc||"—")}</span></div></div>
+   return`<div class="row"><div class="who"><div class="av-wrap"><div class="av">${esc(ini(d.customer))}</div>${(k=>sdot(k,k==="od"?"Payment overdue":"Payment pending / part paid"))(d.virtual||!d.amount?"":d.od?"od":d.pay==="Paid"?"":"td")}</div><div style="min-width:0"><b>${esc(d.customer)}</b><span>${esc(d.loc||"—")}</span></div></div>
    <div class="c"><b>${esc(d.name)}</b><span>${d.virtual?(d.amount?"Estimated from budget":"Value not set"):"Deal"}</span></div>
-   <div class="val"><b>${d.amount?money(d.amount):"₹0"}</b><span><span class="tag ${d.pay}" style="display:inline-block;margin-top:3px">${d.pay==="Partially"?"Part paid":d.pay}</span></span>${d.amount?`<div class="pb"><i style="width:${pc}%"></i></div>`:""}</div>
+   <div class="val"><b>${d.amount?money(d.amount):"₹0"}</b><span><span class="tag ${d.pay}" style="display:inline-block;margin-top:3px">${d.pay==="Partially"?"Part paid":d.pay}</span>${d.od?` <span class="tag Overdue" style="display:inline-block;margin-top:3px">Overdue ${d.late}d</span>`:""}</span>${d.due&&d.pending>0?`<span style="color:${d.od?"var(--red)":"var(--mut)"}">Due ${fd(d.due)}</span>`:""}${d.amount?`<div class="pb"><i style="width:${pc}%"></i></div>`:""}</div>
    <div class="cl" style="font-size:13px;color:var(--mut)">${d.closed?d.closed.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"—"}</div>
-   <div class="ra">${d.pay!=="Paid"&&d.amount?`<button class="mini ok" data-act="pay" data-id="${d.id}">＋ Payment</button>`:""}<button class="mini" data-act="edit" data-id="${d.id}">${!d.amount?"Set value":d.virtual?"Confirm":"Edit"}</button></div></div>`}).join("")
+   <div class="ra">${d.pending>0&&d.phone?`<button class="mini" data-act="rem" data-id="${d.id}" title="WhatsApp reminder" aria-label="WhatsApp reminder">💬</button>`:""}${d.amount?`<button class="mini${d.pay!=="Paid"?" ok":""}" data-act="pay" data-id="${d.id}">${d.pay==="Paid"?"History":"＋ Payment"}</button>`:""}<button class="mini" data-act="edit" data-id="${d.id}">${!d.amount?"Set value":d.virtual?"Confirm":"Edit"}</button></div></div>`}).join("")
    :`<div class="empty"><div style="font-size:34px">${list.length?"🔎":"🏆"}</div><b>${list.length?"No matching deals":"No won deals yet"}</b>${list.length?"Try a different filter.":"Mark a customer as Won, or add a deal manually."}<br>${list.length?"":'<button class="btn p" id="add2">＋ Add Deal</button>'}</div>`;
   const m=$("more");m.classList.toggle("hidden",rows.length<=shown);m.innerHTML=`Showing ${page.length} of ${rows.length} · <button class="btn" id="lm">Load more</button>`;
-  const top=list.filter(d=>d.pending>0).sort((a,b)=>b.pending-a.pending).slice(0,5);
+  const top=list.filter(d=>d.pending>0).sort((a,b)=>(b.od-a.od)||b.pending-a.pending).slice(0,5);
   $("side").innerHTML=`<h2>Collection</h2><div class="sub">How much of your deal value has reached your bank.</div><div class="big">${pct}%</div><div class="track"><i style="width:${pct}%"></i></div>
    <div class="kv"><span>Collected</span><b>${money(R)}</b></div><div class="kv"><span>Pending</span><b>${money(P)}</b></div><div class="kv" style="margin-bottom:18px"><span>Total deal value</span><b>${money(V)}</b></div>
    <h2 style="font-size:13px;margin-bottom:4px">Biggest pending payments</h2>${top.length?top.map(d=>`<div class="out"><div class="av" style="width:32px;height:32px;font-size:11px">${esc(ini(d.customer))}</div><div class="c"><b style="font-size:13px">${esc(d.customer)}</b><span>${esc(d.name)}</span></div><b style="font-size:13px">${money(d.pending)}</b><button class="mini ok" data-act="pay" data-id="${d.id}">Collect</button></div>`).join(""):'<div class="sub" style="margin:8px 0 0">🎉 Nothing pending right now.</div>'}`}
 /* modal */
 function sync(){const a=Math.max(0,+$("m_amt").value||0),r=Math.min(a,Math.max(0,+$("m_rec").value||0));$("m_st").textContent=a>0&&r>=a?"Paid":r>0?"Part paid":"Pending";$("m_pend").textContent=money(Math.max(0,a-r))}
-function openM(id,pay){isNew=!id;editId=id||"";const d=list.find(x=>x.id===id),sel=$("m_cust");
+function openM(id){isNew=!id;editId=id||"";const d=list.find(x=>x.id===id),sel=$("m_cust");
   const opts=contacts.filter(c=>c.status!=="Lost"||(d&&d.cid===c.id)).sort((a,b)=>clean(a.name).localeCompare(clean(b.name)));
   sel.innerHTML='<option value="">Select customer</option>'+opts.map(c=>`<option value="${c.id}">${esc(clean(c.name)||"Unnamed")}${clean(c.phone)?" · "+esc(clean(c.phone)):""}</option>`).join("");sel.value=d?d.cid:"";sel.disabled=!!d;
-  $("mt").textContent=d?(pay?"Record payment":"Edit deal"):"Add deal";$("m_name").value=d?d.name:"";$("m_amt").value=d?d.amount||"":"";$("m_rec").value=d?d.received||"":"";
-  const raw=deals.find(x=>x.id===id)||{};$("m_date").value=raw.closedAtISO||(d?.closed?iso(d.closed):iso(new Date()));$("m_pdate").value=raw.paymentDateISO||"";$("m_method").value=raw.paymentMethod||"Not recorded";$("m_note").value=raw.notes||"";
-  sync();$("mo").classList.remove("hidden");(pay?$("m_rec"):d?$("m_amt"):sel).focus()}
+  $("mt").textContent=d?"Edit deal":"Add deal";$("m_name").value=d?d.name:"";$("m_amt").value=d?d.amount||"":"";$("m_rec").value=d?d.received||"":"";
+  const raw=deals.find(x=>x.id===id)||{};$("m_date").value=raw.closedAtISO||(d?.closed?iso(d.closed):iso(new Date()));$("m_due").value=raw.dueDate||"";$("m_pdate").value=raw.paymentDateISO||"";$("m_method").value=raw.paymentMethod||"Not recorded";$("m_note").value=raw.notes||"";
+  $("m_rec").disabled=!!d;$("l_rec").firstChild.textContent=d?"Received so far (₹) — kisht ke liye ＋ Payment dabao ":"Amount received (₹) ";$("l_pdate").classList.toggle("hidden",!!d);$("l_pm").classList.toggle("hidden",!!d);
+  sync();$("mo").classList.remove("hidden");(d?$("m_amt"):sel).focus()}
 const closeM=()=>$("mo").classList.add("hidden");
 async function save(){const cid=$("m_cust").value,c=contacts.find(x=>x.id===cid);if(!c)return toast("Select a customer",true);
-  const amount=Math.max(0,+$("m_amt").value||0),received=Math.min(amount,Math.max(0,+$("m_rec").value||0)),ps=amount>0&&received>=amount?"Paid":received>0?"Partially Paid":"Pending",cd=$("m_date").value||iso(new Date());
-  const data={contactId:cid,customerId:cid,customerName:c.name||"",businessType:c.businessType||"",type:c.type||"Customer",dealName:$("m_name").value.trim()||clean(c.req||c.requirement)||"Deal",amount,value:amount?money(amount):c.budget||"",paymentStatus:ps,received,pendingAmount:Math.max(0,amount-received),paymentDateISO:$("m_pdate").value||"",paymentMethod:$("m_method").value,closedAtISO:cd,closedAt:cd,notes:$("m_note").value.trim(),stage:"Won",status:"won",source:c.source||"",location:[c.area,c.city].map(clean).filter(Boolean).join(", "),updatedAt:serverTimestamp()};
-  const docId=editId||cid,existing=deals.some(d=>d.id===docId);
-  try{await setDoc(doc(db,"businesses",bizId,"deals",docId),{...data,...(existing?{}:{createdAt:serverTimestamp()})},{merge:true});
-    if(!WON.includes(c.status))await updateDoc(doc(db,"businesses",bizId,"contacts",cid),{status:"Won",updatedAt:serverTimestamp()});await logTeamActivity("deal_saved",`${isNew?"Added":"Updated"} deal for ${clean(c.name)||"customer"}`);closeM();toast(isNew?"Deal added":"Deal saved")}catch(e){console.error(e);toast(e.message||"Could not save deal",true)}}
+  const amount=Math.max(0,+$("m_amt").value||0),cd=$("m_date").value||iso(new Date()),btn=$("m_save"),
+   common={dealName:$("m_name").value.trim()||clean(c.req||c.requirement)||"Deal",amount,value:amount?money(amount):c.budget||"",closedAtISO:cd,closedAt:cd,notes:$("m_note").value.trim(),dueDate:$("m_due").value||""};
+  btn.disabled=true;
+  try{
+    if(isNew){const rec=Math.min(amount,Math.max(0,+$("m_rec").value||0)),pays=rec>0?[mkPay(rec,$("m_pdate").value||cd,$("m_method").value,"","Pehli payment")]:[],
+      base={contactId:cid,customerId:cid,customerName:c.name||"",businessType:c.businessType||"",type:c.type||"Customer",...common,stage:"Won",status:"won",source:c.source||"",location:[c.area,c.city].map(clean).filter(Boolean).join(", ")};
+      await setDoc(doc(collection(db,"businesses",bizId,"deals")),{...base,...fin(base,pays),createdAt:serverTimestamp()})}
+    else await mutate(editId,(raw,pays)=>({pays,extra:common}));
+    if(!WON.includes(c.status))await updateDoc(doc(db,"businesses",bizId,"contacts",cid),{status:"Won",updatedAt:serverTimestamp()});
+    await logTeamActivity("deal_saved",`${isNew?"Added":"Updated"} deal for ${clean(c.name)||"customer"}`);closeM();toast(isNew?"Deal added":"Deal saved")}
+  catch(e){console.error(e);toast(e.message||"Could not save deal",true)}finally{btn.disabled=false}}
+/* ---- instalments ---- */
+let pmId="",pmDeal="";
+function openPM(id){const d=list.find(x=>x.id===id);if(!d)return;pmDeal=id;pmId=uid();
+  $("pm_t").textContent=d.customer;$("pm_s").textContent=d.name;
+  $("pm_sum").innerHTML=`<span>Value <b>${money(d.amount)}</b> · Received <b>${money(d.received)}</b></span><span>Baaki <b style="color:${d.od?"var(--red)":"inherit"}">${money(d.pending)}</b></span>`;
+  const paid=d.pending<=0;$("pm_form").classList.toggle("hidden",paid);$("pm_save").classList.toggle("hidden",paid);
+  $("pm_amt").value=d.pending||"";$("pm_date").value=iso(new Date());$("pm_method").value="UPI";$("pm_ref").value="";$("pm_note").value="";$("pm_due").value=d.due||"";
+  $("pm_hist").innerHTML=d.pays.length?d.pays.slice().reverse().map(p=>`<div class="hrow${p.voided?" v":""}"><div class="c"><b>${p.date?fd(p.date):"—"} · ${esc(p.method||"")}</b><span style="color:var(--mut);font-size:12px">${[p.ref&&"Ref: "+esc(p.ref),p.note&&esc(p.note),p.byName&&"by "+esc(p.byName),p.voided&&"cancelled"].filter(Boolean).join(" · ")}</span></div><span class="amt">${money(p.amount)}</span>${p.voided?"":`<button class="mini" data-void="${esc(p.id)}" type="button" aria-label="Cancel this payment">Cancel</button>`}</div>`).join(""):'<div class="sub" style="color:var(--mut);font-size:12.5px;padding:6px 0">Abhi koi payment record nahi hui.</div>';
+  $("pm").classList.remove("hidden");if(!paid)$("pm_amt").focus()}
+const closePM=()=>$("pm").classList.add("hidden");
+async function savePay(){const d=list.find(x=>x.id===pmDeal),a=Math.round(+$("pm_amt").value||0),btn=$("pm_save");if(!d)return;
+  if(a<=0)return toast("Amount daalo",true);if(!d.amount)return toast("Pehle deal ki value set karo (Edit)",true);
+  btn.disabled=true;
+  try{await mutate(pmDeal,(raw,pays)=>{if(pays.some(p=>p.id===pmId))throw new Error("DUP");const left=Math.max(0,(Number(raw.amount)||0)-sumLive(pays));if(a>left)throw new Error(`Amount baaki rakam (${money(left)}) se zyada hai`);
+      pays.push(mkPay(a,$("pm_date").value||iso(new Date()),$("pm_method").value,clean($("pm_ref").value),clean($("pm_note").value)));return{pays,extra:{dueDate:$("pm_due").value||""}}});
+    await logTeamActivity("payment_recorded",`Payment ${money(a)} recorded for ${d.customer}`);toast("Payment saved");closePM()}
+  catch(e){if(e.message==="DUP"){toast("Ye payment pehle hi save ho chuki hai");closePM()}else{console.error(e);toast(e.message||"Payment save nahi hui",true)}}finally{btn.disabled=false}}
+async function voidPay(pid){const d=list.find(x=>x.id===pmDeal),p=d?.pays.find(x=>x.id===pid);if(!p||!confirm(`${money(p.amount)} ki payment cancel karein? Deal ka baaki wapas badh jayega.`))return;
+  try{await mutate(pmDeal,(raw,pays)=>{const x=pays.find(y=>y.id===pid);if(!x||x.voided)throw new Error("Ye payment pehle hi cancel hai");x.voided=true;x.voidedBy=user.uid;x.voidedAt=Date.now();return{pays}});
+    await logTeamActivity("payment_cancelled",`Payment ${money(p.amount)} cancelled for ${d.customer}`);toast("Payment cancel ho gayi");closePM()}catch(e){console.error(e);toast(e.message||"Cancel nahi hua",true)}}
+function remind(id){const d=list.find(x=>x.id===id);if(!d||d.pending<=0)return toast("Is deal ka payment baaki nahi hai",true);
+  let n=String(d.phone||"").replace(/\D/g,"");if(n.length===10)n="91"+n;if(n.length<11)return toast("Customer ka sahi mobile number nahi hai",true);
+  const t=`Namaste ${clean(d.customer).split(" ")[0]} ji,\n\n${d.name} ke liye ${money(d.pending)} baaki hai${d.due?` (due date: ${fd(d.due)})`:""}.\nKul: ${money(d.amount)} | Mila: ${money(d.received)}\n\nPayment ho chuka ho to bata dijiye. Dhanyavaad.`;
+  window.open("https://wa.me/"+n+"?text="+encodeURIComponent(t),"_blank","noopener");
+  if(!d.virtual)updateDoc(doc(db,"businesses",bizId,"deals",id),{lastReminderAt:serverTimestamp()}).catch(()=>{})}
+let wantPay=new URLSearchParams(location.search).get("pay");
+function maybeOpen(){if(wantPay&&ready.c&&ready.d&&list.some(x=>x.id===wantPay)){const id=wantPay;wantPay=null;openPM(id)}}
 function listen(id){[uC,uD].forEach(u=>u&&u());bizId=id;ready={c:0,d:0};
-  uC=onSnapshot(collection(db,"businesses",id,"contacts"),s=>{if(s.empty&&user&&id!==user.uid)return listen(user.uid);contacts=s.docs.map(d=>({id:d.id,...d.data()}));ready.c=1;build();$("err").classList.add("hidden");render()},e=>fail(e));
-  uD=onSnapshot(collection(db,"businesses",id,"deals"),s=>{deals=s.docs.map(d=>({id:d.id,...d.data()}));ready.d=1;build();render()},e=>fail(e))}
+  uC=onSnapshot(collection(db,"businesses",id,"contacts"),s=>{if(s.empty&&user&&id!==user.uid)return listen(user.uid);contacts=s.docs.map(d=>({id:d.id,...d.data()}));ready.c=1;build();$("err").classList.add("hidden");render();maybeOpen()},e=>fail(e));
+  uD=onSnapshot(collection(db,"businesses",id,"deals"),s=>{deals=s.docs.map(d=>({id:d.id,...d.data()}));ready.d=1;build();render();maybeOpen()},e=>fail(e))}
 function fail(e){console.error(e);ready={c:1,d:1};$("err").textContent="Could not load deals: "+(e.code||e.message);$("err").classList.remove("hidden");render()}
 onAuthStateChanged(auth,async u=>{user=u;
   if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");return}
@@ -166,12 +224,12 @@ onAuthStateChanged(auth,async u=>{user=u;
   listen(id);$("avBtn").textContent=ini(u.displayName||u.email);$("ddEm").textContent=u.email||""});
 $("avBtn").onclick=e=>{e.stopPropagation();$("dd").classList.toggle("hidden")};document.addEventListener("click",()=>$("dd").classList.add("hidden"));
 $("out").onclick=()=>signOut(auth);$("gbtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("aerr").textContent=e.message}};
-$("add").onclick=()=>openM();$("m_cancel").onclick=closeM;$("m_save").onclick=save;["m_amt","m_rec"].forEach(i=>$(i).addEventListener("input",sync));
-$("mo").addEventListener("click",e=>{if(e.target.id==="mo")closeM()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeM()});
+$("add").onclick=()=>openM();$("m_cancel").onclick=closeM;$("pm_x").onclick=closePM;$("pm_save").onclick=savePay;$("pm_hist").addEventListener("click",e=>{const b=e.target.closest("[data-void]");if(b)voidPay(b.dataset.void)});$("pm").addEventListener("click",e=>{if(e.target.id==="pm")closePM()});$("m_save").onclick=save;["m_amt","m_rec"].forEach(i=>$(i).addEventListener("input",sync));
+$("mo").addEventListener("click",e=>{if(e.target.id==="mo")closeM()});document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeM();closePM()}});
 $("m_cust").addEventListener("change",e=>{const c=contacts.find(x=>x.id===e.target.value);if(c){if(!$("m_name").value)$("m_name").value=clean(c.req||c.requirement);if(!$("m_amt").value)$("m_amt").value=amt(c.budget||c.value)||"";sync()}});
 let st;$("q").addEventListener("input",e=>{clearTimeout(st);st=setTimeout(()=>{q=e.target.value.trim();shown=40;render()},150)});
 document.addEventListener("click",e=>{const t=e.target,f=t.closest("[data-f]");if(f){flt=f.dataset.f;shown=40;render();return}
-  if(t.id==="lm"){shown+=40;render();return}if(t.id==="add2"){openM();return}const a=t.closest("[data-act]");if(a)openM(a.dataset.id,a.dataset.act==="pay")});
+  if(t.id==="lm"){shown+=40;render();return}if(t.id==="add2"){openM();return}const a=t.closest("[data-act]");if(a){const k=a.dataset.act;k==="pay"?openPM(a.dataset.id):k==="rem"?remind(a.dataset.id):openM(a.dataset.id)}});
 </script>
 <script src="assets/nav-more.js" defer></script>
 </body>

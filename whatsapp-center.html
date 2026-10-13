@@ -234,7 +234,7 @@ const DEFAULT_TPLS=[
 {id:'followup',name:'Follow-up',body:'Hello {name} ji, main aapki {requirement} wali enquiry ka follow-up kar raha hoon. Agar aap abhi bhi interested hain to main next details/options share kar sakta hoon. – {business}'},
 {id:'details',name:'Share details',body:'Hello {name} ji, {requirement} ke regarding details/options share kar sakte hain. Location: {area}. Budget: {budget}. Aap bataiye kis option ke baare mein information chahiye.'},
 {id:'meeting',name:'Meeting / demo',body:'Hello {name} ji, aapki {requirement} requirement ke regarding meeting/demo/site visit ke liye follow-up kar raha hoon. Aapke liye convenient time bata dijiye.'},
-{id:'payment',name:'Payment reminder',body:'Hello {name} ji, aapke deal ke regarding {amount} ka payment pending hai. Agar koi clarification chahiye ho ya payment ho chuka ho to bata dijiye. – {business}'},
+{id:'payment',name:'Payment reminder',body:'Hello {name} ji, aapke deal ke regarding {amount} ka payment pending hai (due: {due}). Agar koi clarification chahiye ho ya payment ho chuka ho to bata dijiye. – {business}'},
 {id:'checkin',name:'Quick check-in',body:'Hello {name} ji, pichhli baat ke baad ek quick check-in. {requirement} ke liye kya aap abhi bhi interested hain? Koi sawal ho to batayein. – {business}'}];
 const SEG_TPL={payment:'payment',overdue:'followup',today:'followup',new:'new',quiet:'checkin',other:'followup'};
 const SEG_WHY={payment:'Payment pending',overdue:'Follow-up overdue',today:'Follow-up due today',new:'New lead, not messaged',quiet:'No message for 3+ days',other:'Follow-up'};
@@ -246,8 +246,8 @@ function showErr(e,ctx){console.error(ctx,e);const b=$('err');b.textContent=ctx+
 function clearErr(){$('err').classList.remove('on')}
 /* ---------- data model ---------- */
 function compute(){
-  const ds=dayStart(),de=ds+864e5,dealBy=new Map();
-  deals.forEach(d=>{if((d.status||'won')!=='won')return;const id=d.contactId||d.customerId||d.id,amt=Number(d.amount)||0,rec=Number(d.received)||0,pend=Math.max(0,amt-rec);if(pend>0)dealBy.set(id,(dealBy.get(id)||0)+pend)});
+  const ds=dayStart(),de=ds+864e5,dealBy=new Map(),lateBy=new Map(),dueBy=new Map(),todayIso=new Date(ds).toISOString().slice(0,10);
+  deals.forEach(d=>{if((d.status||'won')!=='won')return;const id=d.contactId||d.customerId||d.id,amt=Number(d.amount)||0,rec=Number(d.received)||0,pend=Math.max(0,amt-rec);if(pend>0){dealBy.set(id,(dealBy.get(id)||0)+pend);const due=String(d.dueDate||'');if(due){if(!dueBy.get(id)||due<dueBy.get(id))dueBy.set(id,due);if(due<todayIso){const late=Math.max(1,Math.round((new Date(todayIso+'T00:00:00')-new Date(due+'T00:00:00'))/864e5));if(late>(lateBy.get(id)||0))lateBy.set(id,late)}}}});
   const ph=new Map();contacts.forEach(c=>{const p=normPhone(c.phone);if(validPhone(p))ph.set(p,(ph.get(p)||0)+1)});
   M=contacts.map(c=>{
     const phone=normPhone(c.phone),valid=validPhone(phone),status=clean(c.status)||'New',terminal=/^(won|paid|lost)$/i.test(status),d=parseDate(c.next);
@@ -255,7 +255,7 @@ function compute(){
     const t=d?d.getTime():0,overdue=!terminal&&!!d&&t<ds,today=!terminal&&!!d&&t>=ds&&t<de,pend=/^lost$/i.test(status)?0:(dealBy.get(c.id)||0);
     const isNew=!terminal&&/^new/i.test(status)&&!lastWa,quiet=!terminal&&!!lastWa&&ds-new Date(new Date(lastWa).getFullYear(),new Date(lastWa).getMonth(),new Date(lastWa).getDate()).getTime()>=3*864e5&&!overdue&&!today;
     const seg=pend>0?'payment':overdue?'overdue':today?'today':isNew?'new':quiet?'quiet':'other';
-    return{c,id:c.id,name:clean(c.name)||'Unnamed',phone,valid,hasNum:!!String(c.phone||'').replace(/\D/g,''),status,terminal,d,req:clean(c.requirement||c.req),area:clean(c.area||c.city),budget:clean(c.budget),lastWa,lastCall,calledToday:lastCall>=ds,tm,ftype,dueMs:(d&&tm!=null)?d.getTime()+tm*6e4:null,sentToday:lastWa>=ds,overdue,today,isNew,quiet,pend,seg,dup:valid&&ph.get(phone)>1,upd:toMs(c.updatedAt)||toMs(c.createdAt),cr:toMs(c.createdAt)}});
+    return{c,id:c.id,name:clean(c.name)||'Unnamed',phone,valid,hasNum:!!String(c.phone||'').replace(/\D/g,''),status,terminal,d,req:clean(c.requirement||c.req),area:clean(c.area||c.city),budget:clean(c.budget),lastWa,lastCall,calledToday:lastCall>=ds,tm,ftype,dueMs:(d&&tm!=null)?d.getTime()+tm*6e4:null,sentToday:lastWa>=ds,overdue,today,isNew,quiet,pend,payLate:pend>0?(lateBy.get(c.id)||0):0,payDue:pend>0?(dueBy.get(c.id)||''):'',seg,dup:valid&&ph.get(phone)>1,upd:toMs(c.updatedAt)||toMs(c.createdAt),cr:toMs(c.createdAt)}});
   byId=new Map(M.map(m=>[m.id,m]));sentPh=new Set(M.filter(m=>m.sentToday&&m.valid).map(m=>m.phone));
 }
 function eligible(rows){const seen=new Set();return rows.filter(m=>{if(!m.valid||m.sentToday||sentPh.has(m.phone)||seen.has(m.phone))return false;seen.add(m.phone);return true})}
@@ -263,7 +263,7 @@ const TABS=[
 {k:'overdue',l:'Overdue',f:m=>m.valid&&m.overdue,s:(a,b)=>a.d-b.d},
 {k:'today',l:'Today',f:m=>m.valid&&m.today,s:(a,b)=>a.d-b.d},
 {k:'new',l:'New leads',f:m=>m.valid&&m.isNew,s:(a,b)=>b.cr-a.cr},
-{k:'pay',l:'Payment due',f:m=>m.valid&&m.pend>0,s:(a,b)=>b.pend-a.pend},
+{k:'pay',l:'Payment due',f:m=>m.valid&&m.pend>0,s:(a,b)=>(b.payLate-a.payLate)||b.pend-a.pend},
 {k:'quiet',l:'Gone quiet',f:m=>m.valid&&m.quiet,s:(a,b)=>a.lastWa-b.lastWa},
 {k:'all',l:'All',f:m=>m.valid,s:(a,b)=>b.upd-a.upd},
 {k:'nomobile',l:'No mobile',f:m=>!m.valid&&!/^lost$/i.test(m.status),s:(a,b)=>b.upd-a.upd},
@@ -272,7 +272,7 @@ const tabRows=k=>{const t=TABS.find(x=>x.k===k);return M.filter(t.f).sort(t.s)};
 /* ---------- templates ---------- */
 const getTpls=()=>tpls&&tpls.length?tpls:DEFAULT_TPLS;
 const tplById=id=>getTpls().find(t=>t.id===id)||getTpls()[0];
-function fill(body,m){const v={name:m.name==='Unnamed'?'Sir/Madam':m.name,requirement:m.req||'your enquiry',business:bizName,area:m.area||'your preferred area',budget:m.budget||'as discussed',amount:m.pend>0?rupee(m.pend):'the balance',date:m.d?fmtDate(m.d):'the agreed date'};return String(body||'').replace(/\{(\w+)\}/g,(x,k)=>k in v?v[k]:x)}
+function fill(body,m){const v={name:m.name==='Unnamed'?'Sir/Madam':m.name,requirement:m.req||'your enquiry',business:bizName,area:m.area||'your preferred area',budget:m.budget||'as discussed',amount:m.pend>0?rupee(m.pend):'the balance',due:m.payDue?new Date(m.payDue+'T00:00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'jaisa baat hui thi',date:m.d?fmtDate(m.d):'the agreed date'};return String(body||'').replace(/\{(\w+)\}/g,(x,k)=>k in v?v[k]:x)}
 function renderTplSide(){$('tplList').innerHTML=getTpls().map(t=>`<div class="tpl"><div><b>${esc(t.name)}</b><small>${esc(t.body)}</small></div><button type="button" class="mini" data-tpl="${esc(t.id)}" aria-label="Edit ${esc(t.name)}">Edit</button></div>`).join('')}
 /* ---------- render ---------- */
 function render(){
@@ -391,7 +391,7 @@ function showStep(){
   $('cTpl').closest('label').classList.remove('hidden');$('cMsg').closest('label').classList.remove('hidden');
   const q=k.mode==='queue';$('cProg').classList.toggle('hidden',!q);$('cBar').style.width=(q?k.i/k.q.length*100:0)+'%';
   $('cAv').textContent=initials(m.name);$('cTitle').textContent=q?`Message ${k.i+1} of ${k.q.length}`:m.name;$('cSub').textContent=(q?m.name+' · ':'')+'+91 '+m.phone;
-  const tid=SEG_TPL[m.seg];$('cTpl').value=tplById(tid).id;cFill(m,tid);$('cReason').textContent=SEG_WHY[m.seg];
+  const tid=SEG_TPL[m.seg];$('cTpl').value=tplById(tid).id;cFill(m,tid);$('cReason').textContent=m.seg==='payment'&&m.payLate?`Payment overdue ${m.payLate} days`:SEG_WHY[m.seg];
   const w=$('cWarn');if(m.sentToday){w.textContent='You already opened WhatsApp for this customer today.';w.classList.add('on')}else if(m.dup){w.textContent='Another customer shares this number.';w.classList.add('on')}else w.classList.remove('on');
   $('cFoot').innerHTML=q?'<button type="button" class="btn" data-c="stop">Stop</button><button type="button" class="btn" data-c="skip">Skip</button><button type="button" class="btn g" data-c="send"><svg class="i"><use href="#i-wa"/></svg>Open WhatsApp &amp; next</button>':'<button type="button" class="btn" data-c="close">Cancel</button><button type="button" class="btn" data-c="copy">Copy</button><button type="button" class="btn g" data-c="send"><svg class="i"><use href="#i-wa"/></svg>Open WhatsApp</button>'}
 async function cAct(a){

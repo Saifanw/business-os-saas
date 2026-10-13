@@ -102,7 +102,7 @@ input:focus,textarea:focus,select.fld:focus,.fld select:focus{border-color:var(-
           <button type="button" role="tab" id="t_timeline" data-tab="timeline" aria-selected="true">Timeline <b id="c_timeline">0</b></button>
           <button type="button" role="tab" id="t_notes" data-tab="notes" aria-selected="false">Notes <b id="c_notes">0</b></button>
           <button type="button" role="tab" id="t_followups" data-tab="followups" aria-selected="false">Follow-ups <b id="c_followups">0</b></button>
-          <button type="button" role="tab" id="t_deals" data-tab="deals" aria-selected="false">Deals &amp; payments <b id="c_deals">0</b></button>
+          <button type="button" role="tab" id="t_deals" data-tab="deals" aria-selected="false">Ledger (khata) <b id="c_deals">0</b></button>
         </div>
         <div id="p_timeline" role="tabpanel" aria-labelledby="t_timeline">
           <div class="qc" id="qc" role="group" aria-label="Activity type"><button type="button" class="chip" data-t="Call" aria-pressed="true">Call</button><button type="button" class="chip" data-t="WhatsApp" aria-pressed="false">WhatsApp</button><button type="button" class="chip" data-t="Meeting" aria-pressed="false">Meeting</button><button type="button" class="chip" data-t="Email" aria-pressed="false">Email</button></div>
@@ -146,7 +146,7 @@ input:focus,textarea:focus,select.fld:focus,.fld select:focus{border-color:var(-
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,updateDoc,writeBatch,serverTimestamp,arrayUnion,arrayRemove}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,updateDoc,writeBatch,serverTimestamp,arrayUnion,arrayRemove,query,where}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
 const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 
@@ -180,7 +180,7 @@ const evs=c=>Array.isArray(c.events)?c.events:[];
 
 /* ---------- state ---------- */
 const cid=new URLSearchParams(location.search).get("id")||"";
-let user=null,bizId=null,contact=null,deal=null,dealLoaded=false,fuLog=[],unsubs=[],shownTl=30,qType="Call",first=true;
+let user=null,bizId=null,contact=null,deals=[],dealLoaded=false,fuLog=[],unsubs=[],shownTl=30,qType="Call",first=true;
 const cref=()=>doc(db,"businesses",bizId,"contacts",cid);
 function toast(m,o={}){const t=$("toast");t.className="toast"+(o.bad?" bad":"");t.textContent=m;if(o.undo){const b=document.createElement("button");b.type="button";b.textContent="Undo";b.onclick=async()=>{t.classList.add("hidden");try{await o.undo();toast("Undone")}catch(e){fail("Undo failed",e)}};t.append(b)}clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),o.undo?7000:3200)}
 function fail(m,e){console.error(m,e);toast(m+(e?": "+(e.code||e.message):""),{bad:true})}
@@ -223,7 +223,7 @@ function evTime(e){if(e.ts){const d=new Date(+e.ts);return fmtAdded({seconds:e.t
 const evLi=e=>`<li><span class="ic" aria-hidden="true">${icoOf(e.type)}</span><div class="tb"><b>${esc(clean(e.type)||"Activity")}</b>${clean(e.note)?`<p>${esc(clean(e.note))}</p>`:""}<small>${evTime(e)}</small></div></li>`;
 function rTabs(){
   const c=contact,E=evs(c).map((e,i)=>[e||{},i]).sort((a,b)=>(+b[0].ts||0)-(+a[0].ts||0)||b[1]-a[1]).map(x=>x[0]),notes=E.filter(e=>/^note$/i.test(String(e&&e.type||""))),cur=clean(c.note||c.notes);
-  $("c_timeline").textContent=E.length;$("c_notes").textContent=notes.length;$("c_followups").textContent=fuLog.length;$("c_deals").textContent=deal?1:0;
+  $("c_timeline").textContent=E.length;$("c_notes").textContent=notes.length;$("c_followups").textContent=fuLog.length;$("c_deals").textContent=deals.length;
   $("tl").innerHTML=E.length?E.slice(0,shownTl).map(evLi).join(""):'<li style="display:block"><div class="empty"><b>No activity yet</b>Log your first call, WhatsApp or meeting above.</div></li>';
   const m=$("tlMore");m.classList.toggle("hidden",E.length<=shownTl);m.textContent="Show older ("+(E.length-shownTl)+" more)";
   $("curNote").innerHTML=cur?esc(cur):'<i class="na">No note added yet</i>';$("curNote").style.whiteSpace="pre-wrap";
@@ -242,10 +242,25 @@ function rFu(){
 function rDeal(){
   const b=$("dealBox");
   if(!dealLoaded){b.innerHTML='<div class="sk" style="height:90px"></div>';return}
-  if(!deal){b.innerHTML='<div class="empty"><b>No deal yet</b>A deal appears here once this customer is won.<br><a class="btn" href="deals.html">Open Deals</a></div>';return}
-  const amt=Number(deal.amount)||0,rec=Number(deal.received)||0,ps=clean(deal.paymentStatus)||"Pending",cd=pd(clean(deal.closedAtISO))||(deal.closedAtISO?new Date(deal.closedAtISO):null);
-  b.innerHTML=`<div class="dg"><div class="fact"><small>Deal</small><b>${na(deal.dealName)}</b></div><div class="fact"><small>Payment status</small><b><span class="pill ${/^paid$/i.test(ps)?"g":/part/i.test(ps)?"a":""}">${esc(ps)}</span></b></div><div class="fact"><small>Payment method</small><b>${clean(deal.paymentMethod)?esc(clean(deal.paymentMethod)):'<i class="na">Not recorded</i>'}</b></div><div class="fact"><small>Amount</small><b>${inr(amt)}</b></div><div class="fact"><small>Received</small><b>${inr(rec)}</b></div><div class="fact"><small>Pending</small><b>${inr(Math.max(0,amt-rec))}</b></div><div class="fact"><small>Closed on</small><b>${cd&&!isNaN(cd)?dstr(cd):'<i class="na">Not added</i>'}</b></div></div><p style="margin-top:12px"><a class="btn" href="deals.html">Manage in Deals</a></p>`;
-}
+  if(!deals.length){b.innerHTML='<div class="empty"><b>Abhi koi sale nahi</b>Customer Won hone par ya Deals mein deal add karne par uska khata yahan dikhega.<br><a class="btn" href="deals.html">Open Deals</a></div>';return}
+  const t0=new Date().toISOString().slice(0,10),fdt=v=>v?dstr(new Date(v+"T00:00:00")):"—",live=p=>(p||[]).filter(x=>!x.voided);
+  const D=deals.map(d=>{const amt=Number(d.amount)||0,pays=Array.isArray(d.payments)?d.payments:(Number(d.received)>0?[{id:"legacy",amount:Number(d.received),date:d.paymentDateISO||d.closedAtISO||"",method:d.paymentMethod||"",note:"Pehle se mila hua"}]:[]),rec=Math.min(amt,live(pays).reduce((a,x)=>a+(+x.amount||0),0)),pend=Math.max(0,amt-rec),due=clean(d.dueDate);
+    return{d,amt,pays,rec,pend,due,od:pend>0&&!!due&&due<t0,closed:clean(d.closedAtISO)||""}}).sort((a,b)=>(b.closed||"").localeCompare(a.closed||""));
+  const V=D.reduce((a,x)=>a+x.amt,0),R=D.reduce((a,x)=>a+x.rec,0),P=Math.max(0,V-R),O=D.filter(x=>x.od).reduce((a,x)=>a+x.pend,0);
+  const ph=String(contact.phone||"").replace(/\D/g,""),wn=ph.length===10?"91"+ph:ph;
+  const rem=x=>{if(!x.pend||wn.length<11)return"";const t=`Namaste ${clean(contact.name).split(" ")[0]} ji,\n\n${clean(x.d.dealName)||"Deal"} ke liye ${inr(x.pend)} baaki hai${x.due?` (due date: ${fdt(x.due)})`:""}.\nKul: ${inr(x.amt)} | Mila: ${inr(x.rec)}\n\nPayment ho chuka ho to bata dijiye. Dhanyavaad.`;return`<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${wn}?text=${encodeURIComponent(t)}">💬 Remind</a>`};
+  const cards=D.map(x=>{const pc=x.amt?Math.round(x.rec/x.amt*100):0,st=x.amt&&x.rec>=x.amt?"Paid":x.rec>0?"Part paid":"Pending";
+    return`<div class="box" style="margin-top:12px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><b>${na(x.d.dealName)}</b><div style="color:var(--mut);font-size:12px">Closed ${fdt(x.closed)}${x.due&&x.pend?` · Due <b style="color:${x.od?"#9b2c22":"inherit"}">${fdt(x.due)}${x.od?" (overdue)":""}</b>`:""}</div></div><div><span class="pill ${st==="Paid"?"g":"a"}">${st}</span></div></div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap;margin:10px 0 6px;font-size:13px"><span>Value <b>${inr(x.amt)}</b></span><span>Mila <b style="color:#0a7a50">${inr(x.rec)}</b></span><span>Baaki <b style="color:${x.od?"#9b2c22":"inherit"}">${inr(x.pend)}</b></span></div>
+    <div style="height:6px;border-radius:9px;background:#eef2f8;overflow:hidden"><i style="display:block;height:100%;width:${pc}%;background:#0f9d6a"></i></div>
+    ${x.pays.length?`<ul style="list-style:none;padding:0;margin:10px 0 0">${x.pays.map(p=>`<li style="display:flex;gap:10px;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line);font-size:12.5px;${p.voided?"opacity:.5;text-decoration:line-through":""}"><span>${p.date?fdt(p.date):"—"} · ${esc(p.method||"")}${p.ref?" · Ref "+esc(p.ref):""}${p.note?" · "+esc(p.note):""}${p.byName?` <span style="color:var(--mut)">by ${esc(p.byName)}</span>`:""}</span><b>${inr(p.amount)}</b></li>`).join("")}</ul>`:'<p style="color:var(--mut);font-size:12.5px;margin-top:8px">Abhi koi payment nahi mili.</p>'}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><a class="btn p" href="deals.html?pay=${encodeURIComponent(x.d.id)}">${x.pend?"＋ Payment":"History / edit"}</a>${rem(x)}</div></div>`}).join("");
+  /* khata: debit = sale (customer owes), credit = payment received */
+  const T=[];D.forEach(x=>{T.push({k:x.closed||"",o:0,t:"Sale: "+(clean(x.d.dealName)||"Deal"),dr:x.amt,cr:0});live(x.pays).forEach(p=>T.push({k:p.date||x.closed||"",o:1,t:"Payment"+(p.method?" ("+p.method+")":"")+(p.ref?" · "+p.ref:""),dr:0,cr:+p.amount||0}))});
+  T.sort((a,c)=>(a.k||"").localeCompare(c.k||"")||a.o-c.o);let bal=0;
+  const rows=T.map(r=>{bal+=r.dr-r.cr;return`<tr><td>${r.k?fdt(r.k):"—"}</td><td>${esc(r.t)}</td><td style="text-align:right">${r.dr?inr(r.dr):""}</td><td style="text-align:right;color:#0a7a50">${r.cr?inr(r.cr):""}</td><td style="text-align:right"><b>${inr(bal)}</b></td></tr>`}).join("");
+  b.innerHTML=`<div class="dg"><div class="fact"><small>Total becha</small><b>${inr(V)}</b></div><div class="fact"><small>Total mila</small><b style="color:#0a7a50">${inr(R)}</b></div><div class="fact"><small>Baaki</small><b>${inr(P)}</b></div><div class="fact"><small>Overdue</small><b style="color:${O?"#9b2c22":"inherit"}">${inr(O)}</b></div></div>${cards}
+  <h3 style="font-size:13px;margin:20px 0 6px">Khata (hisaab)</h3><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:480px"><thead><tr style="text-align:left;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.06em"><th style="padding:6px 4px">Date</th><th>Detail</th><th style="text-align:right">Sale (Dr)</th><th style="text-align:right">Mila (Cr)</th><th style="text-align:right">Baaki</th></tr></thead><tbody>${rows}</tbody></table></div><p style="color:var(--mut);font-size:11.5px;margin-top:8px">Sale = customer ka dena, Mila = customer ne diya, Baaki = abhi dena bacha hai. Naya payment Deals page se jodo.</p>`}
 
 /* ---------- writes ---------- */
 const ev=(type,note)=>({date:stamp(),type,note,ts:Date.now()});
@@ -313,7 +328,7 @@ let deleting=false;
 /* ---------- data (listener first, cosmetics after) ---------- */
 function stop(){unsubs.forEach(u=>u());unsubs=[]}
 function startContact(id,fell){
-  stop();bizId=id;dealLoaded=false;deal=null;fuLog=[];
+  stop();bizId=id;dealLoaded=false;deals=[];fuLog=[];
   unsubs.push(onSnapshot(cref(),snap=>{
     if(!snap.exists()){
       if(deleting)return;
@@ -326,7 +341,7 @@ function startContact(id,fell){
   },e=>{console.error("Customer listener failed",e);showFail("Could not load this customer","Refresh the page or check your permissions.",e.code||e.message)}));
 }
 function listenSide(){
-  unsubs.push(onSnapshot(doc(db,"businesses",bizId,"deals",cid),s=>{dealLoaded=true;deal=s.exists()?s.data({serverTimestamps:"estimate"}):null;if(contact)rTabs()},e=>{dealLoaded=true;showErr("Could not load deal details: "+(e.code||e.message),e);if(contact)rTabs()}));
+  unsubs.push(onSnapshot(query(collection(db,"businesses",bizId,"deals"),where("contactId","==",cid)),s=>{dealLoaded=true;deals=s.docs.map(d=>({id:d.id,...d.data({serverTimestamps:"estimate"})})).filter(d=>(d.status||"won")==="won");if(contact)rTabs()},e=>{dealLoaded=true;showErr("Could not load deal details: "+(e.code||e.message),e);if(contact)rTabs()}));
   unsubs.push(onSnapshot(collection(db,"businesses",bizId,"contacts",cid,"followups"),s=>{fuLog=s.docs.map(d=>({id:d.id,...d.data({serverTimestamps:"estimate"})})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));if(contact)rTabs()},e=>showErr("Could not load follow-up history: "+(e.code||e.message),e)));
 }
 onAuthStateChanged(auth,async u=>{
