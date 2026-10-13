@@ -106,8 +106,14 @@ fieldset{border:1px solid var(--line);border-radius:12px;padding:12px;display:gr
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,getDocs,getDoc,getCountFromServer,doc,setDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,collection,getDocs,getDoc,getCountFromServer,doc,setDoc,updateDoc,serverTimestamp,query,where}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const cfg={apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80",measurementId:"G-85D45ENBLK"};
+async function watchPayments(){try{const s=await getDocs(query(collection(db,"paymentRequests"),where("paymentStatus","==","pending"))),n=s.docs.filter(d=>d.data().submittedAt).length,a=document.querySelector('.nav a[href="admin-payments.html"]');
+  if(a)a.innerHTML="Payments"+(n?` <span style="background:#dc2626;color:#fff;border-radius:99px;padding:1px 8px;font-size:11px;margin-left:4px">${n}</span>`:"");
+  let seen=0;try{seen=Number(sessionStorage.getItem("bosPaySeen")||0)}catch(e){}
+  if(n>seen&&!document.getElementById("payPop")){const d=document.createElement("div");d.id="payPop";d.style.cssText="position:fixed;right:18px;bottom:18px;z-index:99;background:#fff;color:#0f172a;border:2px solid #dc2626;border-radius:14px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:300px;font-family:inherit";
+   d.innerHTML=`<b>💰 ${n} payment${n>1?"s":""} waiting for verification</b><div style="font-size:13px;color:#64748b;margin:4px 0 10px">Check your bank/UPI, then approve.</div><a href="admin-payments.html" style="background:#dc2626;color:#fff;padding:8px 12px;border-radius:9px;font-weight:700;text-decoration:none;font-size:13px">Review now</a> <button id="payX" style="border:1px solid #e2e8f0;background:#fff;border-radius:9px;padding:7px 11px;font-size:13px;cursor:pointer">Later</button>`;
+   document.body.appendChild(d);d.querySelector("#payX").onclick=()=>d.remove();try{sessionStorage.setItem("bosPaySeen",String(n))}catch(e){}}}catch(e){console.warn("payments watch",e)}}
 const ADMIN_EMAILS=["saif.anwar1618@gmail.com"];
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
 const $=id=>document.getElementById(id);
@@ -237,6 +243,6 @@ onAuthStateChanged(auth,async u=>{
  let ok=ADMIN_EMAILS.includes(norm(u.email));
  if(!ok){try{ok=(await getDoc(doc(db,"admins",u.uid))).exists()}catch(e){console.error("admin check",e)}}
  if(!ok){show("app",false);show("auth",true);show("gbtn",false);show("swap",true);show("out",false);$("aT").textContent="Access denied";$("aP").textContent=`${u.email||"This account"} is not an administrator.`;return}
- show("auth",false);load();
+ show("auth",false);load();watchPayments();setInterval(watchPayments,60000);
  show("out",true);if($("who"))$("who").textContent=u.email||""});
 </script></body></html>

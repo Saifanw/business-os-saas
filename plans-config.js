@@ -13,5 +13,5 @@
   /* Record limit = plan limit (or admin override recordLimit) + top-up */
   function limit(biz){var c=current(biz);return Math.max(1,Math.max(0,Number(biz&&biz.recordLimit!=null?biz.recordLimit:c.lim.customers))+Math.max(0,Number(biz&&biz.topupRecords||0)))}
   window.BOS_PLANS={PLANS:PLANS,ALIAS:ALIAS,LEGACY:LEGACY,current:current,limit:limit,
-    PAY:{upi:"6350566010@ybl",upiName:"SAIF ANWAR S O MOH ANAS ALAM",qr:"assets/upi-qr.jpeg",bank:{name:"Bank of Baroda",account:"29570100018204",ifsc:"BARB0JHOTWA"}}};
+    PAY:{whatsapp:"916350566010",upi:"6350566010@ybl",upiName:"SAIF ANWAR S O MOH ANAS ALAM",qr:"assets/upi-qr.jpeg",bank:{name:"Bank of Baroda",account:"29570100018204",ifsc:"BARB0JHOTWA"}}};
 })();
