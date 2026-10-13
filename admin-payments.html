@@ -13,12 +13,12 @@ input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);borde
 <div id="app" class="hidden"><h1>Payments</h1><div class="sub">Verify the credit in your bank / UPI app yourself before approving. Screenshots and UTRs are not proof of payment.</div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px" id="tabs"></div><div id="list"></div></div>
 </main><div id="toast" class="toast hidden"></div>
+<script src="plans-config.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,doc,getDoc,getDocs}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import{getFunctions,httpsCallable}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-functions.js";
-const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"}),auth=getAuth(app),db=getFirestore(app),fn=getFunctions(app),review=httpsCallable(fn,"reviewPayment"),$=id=>document.getElementById(id);
+import{getFirestore,collection,doc,getDoc,getDocs,addDoc,updateDoc,runTransaction,query,where,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"}),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 const ADMIN_EMAILS=["saif.anwar1618@gmail.com"],LOGIN=new URL("login.html",location.href).href;
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),3600)};
@@ -37,7 +37,30 @@ function render(){const cnt=s=>all.filter(r=>r.paymentStatus===s).length;
   <button class="btn" data-act="note">Add note</button><button class="btn" data-act="sub">View subscription</button>
   ${p.paymentStatus==="verified"?`<button class="btn" data-act="wa">WhatsApp</button><button class="btn" data-act="copymsg">Copy message</button><span class="sub" style="align-self:center;margin:0">${esc(wa[p.id]||"")}</span>`:""}</div></div>`).join(""):'<div class="card">No payments here.</div>'}
 async function load(){const s=await getDocs(collection(db,"paymentRequests"));all=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));render()}
-async function call(p,action,note){try{const r=await review({paymentId:p.id,action,note});return r.data}catch(e){console.error(e);toast(e.message||"Failed",true);return null}}
+const PL=window.BOS_PLANS,PAID={};PL.PLANS.filter(p=>p.amount>0&&p.key!=="business").forEach(p=>PAID[p.key]=p);
+const iso=x=>x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+async function audit(id,action,notes,extra){try{await addDoc(collection(db,"paymentAuditLogs"),{paymentRequestId:id,action,performedBy:auth.currentUser.uid,notes:notes||"",timestamp:serverTimestamp(),...(extra||{})})}catch(e){console.warn("audit log skipped",e)}}
+async function call(p,action,note){
+  try{const pRef=doc(db,"paymentRequests",p.id);
+    if(action==="note"){await updateDoc(pRef,{adminNote:note,updatedAt:serverTimestamp()});await audit(p.id,"note",note);return{ok:true}}
+    if(action==="reject"){await runTransaction(db,async tx=>{const s=await tx.get(pRef);if(!s.exists()||s.data().paymentStatus!=="pending")throw new Error("Only pending payments can be rejected.");tx.update(pRef,{paymentStatus:"rejected",rejectionReason:note,updatedAt:serverTimestamp()})});await audit(p.id,"rejected",note);return{ok:true}}
+    const dup=await getDocs(query(collection(db,"paymentRequests"),where("utr","==",p.utr),where("paymentStatus","==","verified")));if(!dup.empty)throw new Error("This UTR/reference is already used on a verified payment.");
+    /* One atomic transaction: payment + business plan + subscription. Re-approving a verified payment changes nothing. */
+    const r=await runTransaction(db,async tx=>{const s=await tx.get(pRef);if(!s.exists())throw new Error("Payment not found.");const d=s.data();
+      if(d.paymentStatus==="verified")return{already:true};
+      if(d.paymentStatus!=="pending"||!d.submittedAt||!d.utr)throw new Error("The customer has not submitted payment details yet.");
+      const plan=PAID[d.planId];if(!plan||Number(d.amount)!==plan.amount)throw new Error("Plan or amount does not match the price list. Reject this request.");
+      const bRef=doc(db,"businesses",d.businessId),b=await tx.get(bRef),bd=b.exists()?b.data():{};
+      const today=new Date();today.setHours(0,0,0,0);const curEnd=bd.subscriptionEndsAt?new Date(bd.subscriptionEndsAt+"T00:00:00"):null;
+      const extend=curEnd&&curEnd>today&&!["free","trial"].includes(String(bd.plan||"").toLowerCase());
+      const base=extend?curEnd:today,end=new Date(base);end.setDate(end.getDate()+plan.days);
+      const startsAt=extend&&bd.subscriptionStartsAt?bd.subscriptionStartsAt:iso(today),expiresAt=iso(end);
+      tx.set(bRef,{plan:d.planId,status:"active",subscriptionStartsAt:startsAt,subscriptionEndsAt:expiresAt,recordLimit:plan.lim.customers,prospectLimit:plan.lim.prospects,teamLimit:plan.lim.team,dealLimit:plan.lim.deals,updatedAt:serverTimestamp()},{merge:true});
+      tx.set(doc(db,"subscriptions",d.businessId),{customerUid:d.customerUid,businessId:d.businessId,planId:d.planId,status:"active",startsAt,expiresAt,paymentRequestId:p.id,updatedAt:serverTimestamp()},{merge:true});
+      tx.update(pRef,{paymentStatus:"verified",subscriptionStatus:"active",verifiedBy:auth.currentUser.uid,verifiedAt:serverTimestamp(),subscriptionStartsAt:startsAt,subscriptionExpiresAt:expiresAt,updatedAt:serverTimestamp()});
+      return{already:false,startsAt,expiresAt}});
+    if(!r.already)await audit(p.id,"verified","",{planId:p.planId,expiresAt:r.expiresAt});return r
+  }catch(e){console.error(e);toast(e.code==="permission-denied"?"Not allowed. Deploy the latest firestore.rules and sign in as admin.":(e.message||"Failed"),true);return null}}
 document.addEventListener("click",async e=>{const t=e.target.closest("[data-tab]");if(t){tab=t.dataset.tab;return render()}
   const b=e.target.closest("[data-act]");if(!b)return;const id=b.closest("[data-id]").dataset.id,p=all.find(x=>x.id===id),a=b.dataset.act;
   if(a==="approve"){if(!confirm(`Approve this payment?\n\nCustomer: ${p.customerName}\nPlan: ${p.planId}\nAmount: ₹${p.amount}\nUTR: ${p.utr}\n\nOnly approve after you have seen the credit in your bank/UPI account.`))return;b.disabled=true;
