@@ -1,0 +1,11 @@
+{
+  // Cloudflare Worker that sits in front of the GitHub Pages site and gives
+  // listing.html / sell.html proper WhatsApp / Facebook link previews.
+  "name": "bos-share",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "vars": {
+    // Where your site is hosted (no trailing slash)
+    "ORIGIN": "https://saifanw.github.io/business-os-saas"
+  }
+}
