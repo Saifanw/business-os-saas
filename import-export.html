@@ -259,6 +259,7 @@ async function run(){
   const button=$("go"),cancel=$("cancel");
   button.disabled=true;cancel.disabled=true;button.textContent="Preparing import…";
   try{
+    if(!user||typeof bizId!=="string"||!bizId)throw new Error("Workspace not loaded. Please refresh the page and sign in again.");
     // Keep permission checks inside the try block so Firestore/rules errors are visible to the user.
     const approval=await requirePermission("import_customers");
     if(!approval){button.disabled=false;button.textContent=`Import ${Math.max(0,refresh.n||0).toLocaleString()} ${kind==="prospect"?"prospect":"customer"}${(refresh.n||0)===1?"":"s"}`;return;}
@@ -275,14 +276,15 @@ async function run(){
       $("pg").style.width=Math.round(done/list.length*100)+"%";
       button.textContent=`Importing ${done.toLocaleString()} / ${list.length.toLocaleString()}…`;
     }
-    if(approval&&typeof approval==="object")await consumePermissionRequest(approval);
-    await logTeamActivity("data_imported",`Imported ${done} ${kind==="prospect"?"prospects":"customers"}`,"import_customers");
+    // Data is already saved here. Follow-up bookkeeping must never show an "import failed" error.
+    try{if(approval&&typeof approval==="object"&&approval.id)await consumePermissionRequest(approval)}catch(e){console.warn("consume permission skipped",e)}
+    try{await logTeamActivity("data_imported",`Imported ${done} ${kind==="prospect"?"prospects":"customers"}`,"import_customers")}catch(e){console.warn("activity log skipped",e)}
     existing=null;plan=null;
     $("dt").textContent=`${done.toLocaleString()} ${kind==="prospect"?"prospects":"customers"} imported`;
     $("dm").textContent=`From ${fname}. They are now in your customer list.`;
     step(3);success=true;loadCounts();
   }catch(e){
-    console.error("BusinessOS import failed:",e);
+    console.error("BusinessOS import failed:",e,e&&e.stack);
     const reason=e?.code==="permission-denied"?"Firestore denied the import. Check Owner approval and Firestore rules.":(e?.message||"Unknown error while importing.");
     toast(reason+(done?` (${done} saved before the error)`:""),true);
     button.textContent="Retry import";
