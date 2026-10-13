@@ -62,6 +62,7 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 .av-wrap{position:relative;flex:none}.sdot{position:absolute;right:-1px;top:-1px;z-index:1;width:11px;height:11px;border-radius:50%;background:var(--d);border:2px solid #fff;box-sizing:border-box}.sdot.new{--d:#22c55e;animation:sdp 2s ease-out infinite}.sdot.td{--d:#f59e0b}.sdot.od{--d:#ef4444}@keyframes sdp{0%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}70%{box-shadow:0 0 0 6px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}@media (prefers-reduced-motion:reduce){.sdot{animation:none!important}}
 .tag.Overdue{background:#fde8e6;color:#9b2c22}
 .hist{display:grid;gap:0}.hrow{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:12.5px}.hrow .c{flex:1;min-width:0}.hrow .c b{font-size:13px}.hrow.v{opacity:.5;text-decoration:line-through}.hrow .amt{font-weight:800}
+.agr{display:grid;grid-template-columns:84px 1fr auto 22px;gap:8px;align-items:center;width:100%;border:0;background:none;padding:6px 6px;border-radius:8px;font-size:12px;text-align:left}.agr:hover,.agr.on{background:#f1f4fa}.agr i{height:6px;background:#eef2f8;border-radius:9px;overflow:hidden;display:block}.agr u{display:block;height:100%;background:var(--amber);border-radius:9px}.agr.cur u{background:var(--green)}.agr.b3 u,.agr.b4 u{background:var(--red)}.agr em{font-style:normal;color:var(--mut);text-align:right}
 </style>
 </head>
 <body>
@@ -75,7 +76,7 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
   <div id="auth" class="auth hidden"><div class="card"><div class="logo" style="margin:auto;width:46px;height:46px;font-size:20px">B</div><h2>Welcome to BusinessOS</h2><p>Sign in to track your deals and payments.</p><button class="btn p" id="gbtn" style="width:100%;justify-content:center">Continue with Google</button><p id="aerr" style="color:var(--red);font-size:12px;margin-top:12px"></p></div></div>
   <div id="app" class="hidden">
     <div id="err" class="err hidden"></div>
-    <section class="hero"><div><h1>Deals &amp; revenue</h1><p id="sub">Won business, deal values and payments in one place.</p></div></section>
+    <section class="hero"><div><h1>Deals &amp; revenue</h1><p id="sub">Won business, deal values and payments in one place.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="ex1" type="button">↓ Deals CSV</button><button class="btn" id="ex2" type="button">↓ Payments CSV</button></div></section>
     <section class="kpis" id="kpis"></section>
     <section class="grid">
       <div class="card" style="overflow:clip"><div class="bar"><div class="chips" id="chips"></div><input class="q" id="q" type="text" placeholder="Search customer or deal…" aria-label="Search deals"></div>
@@ -100,7 +101,7 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
   <label>Method<select id="pm_method"><option>UPI</option><option>Cash</option><option>Bank transfer</option><option>Cheque</option><option>Card</option><option>Other</option></select></label><label>Reference / UTR<input id="pm_ref" type="text" placeholder="optional"></label>
   <label>Next due date (baaki ke liye)<input id="pm_due" type="date"></label><label>Note<input id="pm_note" type="text" placeholder="optional"></label></div>
   <h3 style="font-size:13px;margin:18px 0 4px">Payment history</h3><div class="hist" id="pm_hist"></div>
-  <div class="mf"><button class="btn" id="pm_x" type="button">Close</button><button class="btn p" id="pm_save" type="button">Save payment</button></div></div></div>
+  <div class="mf"><button class="btn" id="pm_stmt" type="button" style="margin-right:auto">🖨 Statement</button><button class="btn" id="pm_x" type="button">Close</button><button class="btn p" id="pm_save" type="button">Save payment</button></div></div></div>
 <div id="toast" class="toast hidden"></div>
 
 <script type="module">
@@ -117,7 +118,7 @@ const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${Str
 const M={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
 function nextDate(c){const m=String(c.next||"").match(/(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})/);if(!m||/completed/i.test(c.next))return null;const mo=M[m[2].slice(0,3).toLowerCase()];return mo==null?null:new Date(+m[3],mo,+m[1])}
 const sdot=(k,t)=>k?`<span class="sdot ${k}" title="${t}" aria-label="${t}"></span>`:"";const SDL={od:"Follow-up overdue",td:"Follow-up due today",new:"Newly added"};
-let user,bizId,uC,uD,contacts=[],deals=[],ready={c:0,d:0},list=[],flt="",q="",shown=40,editId="",isNew=false;
+let user,bizId,uC,uD,contacts=[],deals=[],ready={c:0,d:0},list=[],flt="",q="",shown=40,editId="",isNew=false,ag="",biz={};
 async function logTeamActivity(eventType,message){try{await addDoc(collection(db,"businesses",bizId,"teamActivity"),{businessId:bizId,actorUid:user.uid,actorEmail:user.email||"",actorName:user.displayName||user.email||"Team member",targetEmail:"",eventType,message,permission:"",createdAt:serverTimestamp()})}catch(e){console.warn("activity log skipped",e)}}
 const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),2600)};
 function dt(v){if(!v)return null;if(v.seconds)return new Date(v.seconds*1000);const d=new Date(String(v).length<=10?v+"T00:00:00":v);return isNaN(d)?null:d}
@@ -151,7 +152,7 @@ function render(){
   const cnt=k=>list.filter(d=>!k||(k==="Overdue"?d.od:d.pay===k)).length;
   $("chips").innerHTML=[["","All"],["Pending","Pending"],["Partially","Part paid"],["Paid","Paid"],["Overdue","Overdue"]].map(c=>`<button class="chip${flt===c[0]?" on":""}" data-f="${c[0]}">${c[1]} <b>${cnt(c[0])}</b></button>`).join("");
   if(!ok){$("rows").innerHTML=Array(5).fill('<div class="row"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk cl"></div><div></div></div>').join("");$("side").innerHTML='<div class="sk" style="height:120px"></div>';return}
-  const s=q.toLowerCase(),rows=list.filter(d=>(!flt||(flt==="Overdue"?d.od:d.pay===flt))&&(!s||(d.customer+" "+d.name).toLowerCase().includes(s))),page=rows.slice(0,shown);
+  const s=q.toLowerCase(),rows=list.filter(d=>(!flt||(flt==="Overdue"?d.od:d.pay===flt))&&(!ag||bk(d)===ag)&&(!s||(d.customer+" "+d.name).toLowerCase().includes(s))),page=rows.slice(0,shown);
   $("rows").innerHTML=page.length?page.map(d=>{const pc=d.amount?Math.round(d.received/d.amount*100):0;
    return`<div class="row"><div class="who"><div class="av-wrap"><div class="av">${esc(ini(d.customer))}</div>${(k=>sdot(k,k==="od"?"Payment overdue":"Payment pending / part paid"))(d.virtual||!d.amount?"":d.od?"od":d.pay==="Paid"?"":"td")}</div><div style="min-width:0"><b>${esc(d.customer)}</b><span>${esc(d.loc||"—")}</span></div></div>
    <div class="c"><b>${esc(d.name)}</b><span>${d.virtual?(d.amount?"Estimated from budget":"Value not set"):"Deal"}</span></div>
@@ -163,7 +164,7 @@ function render(){
   const top=list.filter(d=>d.pending>0).sort((a,b)=>(b.od-a.od)||b.pending-a.pending).slice(0,5);
   $("side").innerHTML=`<h2>Collection</h2><div class="sub">How much of your deal value has reached your bank.</div><div class="big">${pct}%</div><div class="track"><i style="width:${pct}%"></i></div>
    <div class="kv"><span>Collected</span><b>${money(R)}</b></div><div class="kv"><span>Pending</span><b>${money(P)}</b></div><div class="kv" style="margin-bottom:18px"><span>Total deal value</span><b>${money(V)}</b></div>
-   <h2 style="font-size:13px;margin-bottom:4px">Biggest pending payments</h2>${top.length?top.map(d=>`<div class="out"><div class="av" style="width:32px;height:32px;font-size:11px">${esc(ini(d.customer))}</div><div class="c"><b style="font-size:13px">${esc(d.customer)}</b><span>${esc(d.name)}</span></div><b style="font-size:13px">${money(d.pending)}</b><button class="mini ok" data-act="pay" data-id="${d.id}">Collect</button></div>`).join(""):'<div class="sub" style="margin:8px 0 0">🎉 Nothing pending right now.</div>'}`}
+   ${agingHtml()}<h2 style="font-size:13px;margin-bottom:4px">Biggest pending payments</h2>${top.length?top.map(d=>`<div class="out"><div class="av" style="width:32px;height:32px;font-size:11px">${esc(ini(d.customer))}</div><div class="c"><b style="font-size:13px">${esc(d.customer)}</b><span>${esc(d.name)}</span></div><b style="font-size:13px">${money(d.pending)}</b><button class="mini ok" data-act="pay" data-id="${d.id}">Collect</button></div>`).join(""):'<div class="sub" style="margin:8px 0 0">🎉 Nothing pending right now.</div>'}`}
 /* modal */
 function sync(){const a=Math.max(0,+$("m_amt").value||0),r=Math.min(a,Math.max(0,+$("m_rec").value||0));$("m_st").textContent=a>0&&r>=a?"Paid":r>0?"Part paid":"Pending";$("m_pend").textContent=money(Math.max(0,a-r))}
 function openM(id){isNew=!id;editId=id||"";const d=list.find(x=>x.id===id),sel=$("m_cust");
@@ -186,6 +187,34 @@ async function save(){const cid=$("m_cust").value,c=contacts.find(x=>x.id===cid)
     if(!WON.includes(c.status))await updateDoc(doc(db,"businesses",bizId,"contacts",cid),{status:"Won",updatedAt:serverTimestamp()});
     await logTeamActivity("deal_saved",`${isNew?"Added":"Updated"} deal for ${clean(c.name)||"customer"}`);closeM();toast(isNew?"Deal added":"Deal saved")}
   catch(e){console.error(e);toast(e.message||"Could not save deal",true)}finally{btn.disabled=false}}
+/* ---- aging, print, export ---- */
+const BK=[["cur","Not yet due"],["b1","1–30 days"],["b2","31–60 days"],["b3","61–90 days"],["b4","90+ days"]];
+const bk=d=>d.pending<=0?"":!d.od?"cur":d.late<=30?"b1":d.late<=60?"b2":d.late<=90?"b3":"b4";
+function agingHtml(){const t=Object.fromEntries(BK.map(([k])=>[k,{a:0,n:0}]));list.forEach(d=>{const k=bk(d);if(k){t[k].a+=d.pending;t[k].n++}});const mx=Math.max(1,...BK.map(([k])=>t[k].a));
+  return`<h2 style="font-size:13px;margin-bottom:2px">Overdue aging${ag?' <button class="mini" data-ag="'+ag+'" type="button">Clear</button>':""}</h2><div class="sub" style="margin:0 0 8px">Kitna paisa kitne din se atka hai (due date ke hisaab se). Click karke filter karo.</div>`+BK.map(([k,l])=>`<button type="button" class="agr ${k}${ag===k?" on":""}" data-ag="${k}"><span>${l}</span><i><u style="width:${t[k].a/mx*100}%"></u></i><b>${money(t[k].a)}</b><em>${t[k].n}</em></button>`).join("")+'<div style="height:18px"></div>'}
+const visible=()=>{const s=q.toLowerCase();return list.filter(d=>(!flt||(flt==="Overdue"?d.od:d.pay===flt))&&(!ag||bk(d)===ag)&&(!s||(d.customer+" "+d.name).toLowerCase().includes(s)))};
+const csv=rows=>"\ufeff"+rows.map(r=>r.map(v=>{v=String(v??"");return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(",")).join("\n");
+function dl(name,text){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"text/csv;charset=utf-8"}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
+function exportDeals(){const V=visible();if(!V.length)return toast("Export ke liye koi deal nahi",true);
+  dl("deals-"+iso(new Date())+".csv",csv([["Customer","Deal","Value","Received","Pending","Status","Due date","Overdue days","Closed"]].concat(V.map(d=>[d.customer,d.name,d.amount,d.received,d.pending,d.pay==="Partially"?"Part paid":d.pay,d.due,d.od?d.late:0,d.closed?iso(d.closed):""]))));toast(V.length+" deals export hui")}
+function exportPays(){const V=visible(),R=[];V.forEach(d=>d.pays.forEach(p=>R.push([d.customer,d.name,p.date||"",p.method||"",p.ref||"",p.amount,p.voided?"Cancelled":"Received",p.byName||"",p.note||""])));if(!R.length)return toast("Export ke liye koi payment nahi",true);
+  dl("payments-"+iso(new Date())+".csv",csv([["Customer","Deal","Date","Method","Reference","Amount","Status","Recorded by","Note"]].concat(R)));toast(R.length+" payments export hui")}
+const words=n=>{n=Math.round(n);if(!n)return"Zero";const a=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"],b=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"],w=x=>x<20?a[x]:b[Math.floor(x/10)]+(x%10?" "+a[x%10]:""),h=x=>x>99?a[Math.floor(x/100)]+" Hundred"+(x%100?" "+w(x%100):""):w(x),o=[],cr=Math.floor(n/1e7),lk=Math.floor(n%1e7/1e5),th=Math.floor(n%1e5/1e3),r=n%1e3;
+  if(cr)o.push(h(cr)+" Crore");if(lk)o.push(w(lk)+" Lakh");if(th)o.push(w(th)+" Thousand");if(r)o.push(h(r));return o.join(" ")};
+function printDoc(title,inner){const w=window.open("","_blank");if(!w)return toast("Popup block hai — allow karke dobara try karo",true);
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:Inter,Arial,sans-serif;color:#0f172a;max-width:720px;margin:24px auto;padding:0 20px;font-size:14px}h1{font-size:22px;margin:0}h2{font-size:15px;letter-spacing:.12em;text-transform:uppercase;margin:22px 0 10px;color:#2f5bff}.mu{color:#64748b;font-size:12.5px}table{width:100%;border-collapse:collapse;margin-top:8px}td,th{padding:8px 6px;border-bottom:1px solid #e6eaf2;text-align:left;font-size:13px}th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#64748b}.r{text-align:right}.big{font-size:26px;font-weight:800}.box{border:1px solid #e6eaf2;border-radius:12px;padding:14px 16px;margin-top:14px}.sig{margin-top:50px;display:flex;justify-content:space-between;font-size:12px;color:#64748b}.sig span{border-top:1px solid #94a3b8;padding-top:6px;min-width:170px;text-align:center}@media print{.np{display:none}body{margin:0}}</style></head><body>${inner}<p class="np" style="margin-top:26px"><button onclick="window.print()" style="padding:10px 18px;font-size:14px;border-radius:8px;border:1px solid #2f5bff;background:#2f5bff;color:#fff;cursor:pointer">🖨 Print / Save as PDF</button></p></body></html>`);w.document.close()}
+const bizHead=()=>`<h1>${esc(clean(biz.name)||"Business")}</h1><div class="mu">${[biz.address,biz.city,biz.phone&&"Ph: "+biz.phone].filter(Boolean).map(x=>esc(clean(x))).join(" · ")}</div>`;
+function printReceipt(pid){const d=list.find(x=>x.id===pmDeal);if(!d)return;const i=d.pays.findIndex(p=>p.id===pid),p=d.pays[i];if(!p||p.voided)return;
+  const upto=d.pays.slice(0,i+1).filter(x=>!x.voided).reduce((a,x)=>a+(+x.amount||0),0),bal=Math.max(0,d.amount-upto),no="RCP-"+(d.id.slice(0,4)+String(p.id).slice(0,4)).toUpperCase();
+  printDoc("Receipt "+no,`${bizHead()}<h2>Payment receipt</h2><table><tr><td class="mu">Receipt no.</td><td><b>${esc(no)}</b></td><td class="mu">Date</td><td><b>${p.date?fd(p.date):fd(iso(new Date()))}</b></td></tr><tr><td class="mu">Received from</td><td colspan="3"><b>${esc(d.customer)}</b></td></tr><tr><td class="mu">Against</td><td colspan="3">${esc(d.name)}</td></tr><tr><td class="mu">Mode</td><td>${esc(p.method||"—")}</td><td class="mu">Reference</td><td>${esc(p.ref||"—")}</td></tr></table>
+  <div class="box"><div class="mu">Amount received</div><div class="big">${money(p.amount)}</div><div class="mu">Rupees ${esc(words(p.amount))} only</div></div>
+  <table style="margin-top:14px"><tr><td class="mu">Deal value</td><td class="r">${money(d.amount)}</td></tr><tr><td class="mu">Total received till this payment</td><td class="r">${money(upto)}</td></tr><tr><td><b>Balance after this payment</b></td><td class="r"><b>${money(bal)}</b></td></tr></table>
+  <div class="sig"><span>Customer signature</span><span>Received by${p.byName?": "+esc(p.byName):""}</span></div><p class="mu" style="margin-top:22px">This is a payment receipt, not a tax invoice.</p>`)}
+function printStatement(){const d=list.find(x=>x.id===pmDeal);if(!d)return;let run=0;
+  const rows=d.pays.map(p=>{if(!p.voided)run+=+p.amount||0;return`<tr style="${p.voided?"opacity:.5;text-decoration:line-through":""}"><td>${p.date?fd(p.date):"—"}</td><td>${esc(p.method||"")}${p.ref?" · "+esc(p.ref):""}${p.note?" · "+esc(p.note):""}</td><td class="r">${money(p.amount)}</td><td class="r">${p.voided?"cancelled":money(Math.max(0,d.amount-run))}</td></tr>`}).join("");
+  printDoc("Statement "+d.customer,`${bizHead()}<h2>Account statement</h2><table><tr><td class="mu">Customer</td><td><b>${esc(d.customer)}</b></td><td class="mu">Generated</td><td>${fd(iso(new Date()))}</td></tr><tr><td class="mu">Deal</td><td colspan="3">${esc(d.name)}</td></tr><tr><td class="mu">Deal value</td><td><b>${money(d.amount)}</b></td><td class="mu">Due date</td><td>${d.due?fd(d.due):"—"}</td></tr></table>
+  <table style="margin-top:14px"><thead><tr><th>Date</th><th>Payment detail</th><th class="r">Amount</th><th class="r">Balance</th></tr></thead><tbody>${rows||'<tr><td colspan="4" class="mu">No payments yet</td></tr>'}</tbody></table>
+  <div class="box"><table><tr><td class="mu">Total received</td><td class="r"><b>${money(d.received)}</b></td></tr><tr><td class="mu">Balance due</td><td class="r"><b>${money(d.pending)}</b>${d.od?` <span style="color:#9b2c22">(overdue ${d.late} days)</span>`:""}</td></tr></table></div>`)}
 /* ---- instalments ---- */
 let pmId="",pmDeal="";
 function openPM(id){const d=list.find(x=>x.id===id);if(!d)return;pmDeal=id;pmId=uid();
@@ -193,7 +222,7 @@ function openPM(id){const d=list.find(x=>x.id===id);if(!d)return;pmDeal=id;pmId=
   $("pm_sum").innerHTML=`<span>Value <b>${money(d.amount)}</b> · Received <b>${money(d.received)}</b></span><span>Baaki <b style="color:${d.od?"var(--red)":"inherit"}">${money(d.pending)}</b></span>`;
   const paid=d.pending<=0;$("pm_form").classList.toggle("hidden",paid);$("pm_save").classList.toggle("hidden",paid);
   $("pm_amt").value=d.pending||"";$("pm_date").value=iso(new Date());$("pm_method").value="UPI";$("pm_ref").value="";$("pm_note").value="";$("pm_due").value=d.due||"";
-  $("pm_hist").innerHTML=d.pays.length?d.pays.slice().reverse().map(p=>`<div class="hrow${p.voided?" v":""}"><div class="c"><b>${p.date?fd(p.date):"—"} · ${esc(p.method||"")}</b><span style="color:var(--mut);font-size:12px">${[p.ref&&"Ref: "+esc(p.ref),p.note&&esc(p.note),p.byName&&"by "+esc(p.byName),p.voided&&"cancelled"].filter(Boolean).join(" · ")}</span></div><span class="amt">${money(p.amount)}</span>${p.voided?"":`<button class="mini" data-void="${esc(p.id)}" type="button" aria-label="Cancel this payment">Cancel</button>`}</div>`).join(""):'<div class="sub" style="color:var(--mut);font-size:12.5px;padding:6px 0">Abhi koi payment record nahi hui.</div>';
+  $("pm_hist").innerHTML=d.pays.length?d.pays.slice().reverse().map(p=>`<div class="hrow${p.voided?" v":""}"><div class="c"><b>${p.date?fd(p.date):"—"} · ${esc(p.method||"")}</b><span style="color:var(--mut);font-size:12px">${[p.ref&&"Ref: "+esc(p.ref),p.note&&esc(p.note),p.byName&&"by "+esc(p.byName),p.voided&&"cancelled"].filter(Boolean).join(" · ")}</span></div><span class="amt">${money(p.amount)}</span>${p.voided?"":`<button class="mini" data-rc="${esc(p.id)}" type="button">Receipt</button><button class="mini" data-void="${esc(p.id)}" type="button" aria-label="Cancel this payment">Cancel</button>`}</div>`).join(""):'<div class="sub" style="color:var(--mut);font-size:12.5px;padding:6px 0">Abhi koi payment record nahi hui.</div>';
   $("pm").classList.remove("hidden");if(!paid)$("pm_amt").focus()}
 const closePM=()=>$("pm").classList.add("hidden");
 async function savePay(){const d=list.find(x=>x.id===pmDeal),a=Math.round(+$("pm_amt").value||0),btn=$("pm_save");if(!d)return;
@@ -213,7 +242,7 @@ function remind(id){const d=list.find(x=>x.id===id);if(!d||d.pending<=0)return t
   if(!d.virtual)updateDoc(doc(db,"businesses",bizId,"deals",id),{lastReminderAt:serverTimestamp()}).catch(()=>{})}
 let wantPay=new URLSearchParams(location.search).get("pay");
 function maybeOpen(){if(wantPay&&ready.c&&ready.d&&list.some(x=>x.id===wantPay)){const id=wantPay;wantPay=null;openPM(id)}}
-function listen(id){[uC,uD].forEach(u=>u&&u());bizId=id;ready={c:0,d:0};
+function listen(id){[uC,uD].forEach(u=>u&&u());bizId=id;ready={c:0,d:0};getDoc(doc(db,"businesses",id)).then(x=>{if(x.exists())biz=x.data()}).catch(()=>{});
   uC=onSnapshot(collection(db,"businesses",id,"contacts"),s=>{if(s.empty&&user&&id!==user.uid)return listen(user.uid);contacts=s.docs.map(d=>({id:d.id,...d.data()}));ready.c=1;build();$("err").classList.add("hidden");render();maybeOpen()},e=>fail(e));
   uD=onSnapshot(collection(db,"businesses",id,"deals"),s=>{deals=s.docs.map(d=>({id:d.id,...d.data()}));ready.d=1;build();render();maybeOpen()},e=>fail(e))}
 function fail(e){console.error(e);ready={c:1,d:1};$("err").textContent="Could not load deals: "+(e.code||e.message);$("err").classList.remove("hidden");render()}
@@ -229,6 +258,9 @@ $("mo").addEventListener("click",e=>{if(e.target.id==="mo")closeM()});document.a
 $("m_cust").addEventListener("change",e=>{const c=contacts.find(x=>x.id===e.target.value);if(c){if(!$("m_name").value)$("m_name").value=clean(c.req||c.requirement);if(!$("m_amt").value)$("m_amt").value=amt(c.budget||c.value)||"";sync()}});
 let st;$("q").addEventListener("input",e=>{clearTimeout(st);st=setTimeout(()=>{q=e.target.value.trim();shown=40;render()},150)});
 document.addEventListener("click",e=>{const t=e.target,f=t.closest("[data-f]");if(f){flt=f.dataset.f;shown=40;render();return}
+  const ag1=t.closest("[data-ag]");if(ag1){ag=ag===ag1.dataset.ag?"":ag1.dataset.ag;shown=40;render();return}
+  const rc=t.closest("[data-rc]");if(rc){printReceipt(rc.dataset.rc);return}
+  if(t.id==="pm_stmt"){printStatement();return}if(t.id==="ex1"){exportDeals();return}if(t.id==="ex2"){exportPays();return}
   if(t.id==="lm"){shown+=40;render();return}if(t.id==="add2"){openM();return}const a=t.closest("[data-act]");if(a){const k=a.dataset.act;k==="pay"?openPM(a.dataset.id):k==="rem"?remind(a.dataset.id):openM(a.dataset.id)}});
 </script>
 <script src="assets/nav-more.js" defer></script>
