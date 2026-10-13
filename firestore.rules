@@ -133,7 +133,9 @@ service cloud.firestore {
     }
 
     match /publicLeads/{leadId} {
-      allow create: if request.resource.data.keys().hasOnly(['businessId','templateId','status','name','phone','email','budget','requirement','city','area','message','createdAt'])
+      allow create: if request.resource.data.keys().hasOnly(['businessId','templateId','status','name','phone','email','budget','requirement','city','area','message','propertyId','propertyCode','createdAt'])
+        && (!('propertyId' in request.resource.data) || (request.resource.data.propertyId is string && request.resource.data.propertyId.size() <= 64))
+        && (!('propertyCode' in request.resource.data) || (request.resource.data.propertyCode is string && request.resource.data.propertyCode.size() <= 30))
         && request.resource.data.businessId is string
         && request.resource.data.templateId is string
         && request.resource.data.status == 'new'

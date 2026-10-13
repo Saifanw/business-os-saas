@@ -133,7 +133,7 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import{getFirestore,collection,doc,getDoc,onSnapshot,addDoc,setDoc,updateDoc,deleteDoc,writeBatch,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,collection,doc,getDoc,onSnapshot,query,where,addDoc,setDoc,updateDoc,deleteDoc,writeBatch,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
 const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -141,7 +141,7 @@ const clean=v=>String(v??"").replace(/["'`]+/g,"").trim(),ini=n=>clean(n||"?").s
 const money=n=>{n=Math.round(Number(n)||0);return n>=1e7?"₹"+(n/1e7).toFixed(2).replace(/\.?0+$/,"")+" Cr":n>=1e5?"₹"+(n/1e5).toFixed(2).replace(/\.?0+$/,"")+" Lakh":"₹"+n.toLocaleString("en-IN")};
 function amt(v){if(typeof v==="number")return v;const s=String(v||"").replace(/,/g,""),m=s.match(/([0-9]+(?:\.[0-9]+)?)/);if(!m)return 0;let n=Number(m[1]);if(/crore|cr\b/i.test(s))n*=1e7;else if(/lakh|lac/i.test(s))n*=1e5;else if(/k\b/i.test(s))n*=1e3;return Math.round(n)}
 const ICON={Plot:"📐",Flat:"🏢",Villa:"🏡",House:"🏠",Commercial:"🏬",Shop:"🏪",Farmhouse:"🌳",Agricultural:"🌾"};
-let pub=null,subs=[],uS,uPub,so="new",user,bizId,uC,uP,contacts=[],props=[],ready={c:0,p:0},flt="",ty="",q="",editId="";
+let pub=null,subs=[],cbs=[],uL,uS,uPub,so="new",user,bizId,uC,uP,contacts=[],props=[],ready={c:0,p:0},flt="",ty="",q="",editId="";
 const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),2600)};
 const code=p=>p.code||"P-"+p.id.slice(0,4).toUpperCase();
 /* matching: budget 45 + location 35 + type 20 */
@@ -181,7 +181,7 @@ function render(){const ok=ready.c&&ready.p;
   return`<div class="pc"><div class="ph" ${bg}>${ph[0]?"":ICON[p.type]||"🏠"}<span class="st ${p.status}">${p.status==="Hold"?"On hold":p.status}</span><span class="code">${esc(code(p))}</span>${ph.length>1?`<span class="pn">📷 ${ph.length}</span>`:""}</div>
   <div class="pb2"><h3>${esc(p.title)}</h3><div><span class="price">${money(p.price)}</span>${r?`<span class="rate">${inr(r)}/Gaj</span>`:""}</div><div style="color:var(--mut);font-size:12.5px">📍 ${esc(p.locality)}, ${esc(p.city||"")}${p.landmark?" · "+esc(p.landmark):""}</div>
   <div class="meta"><span>${esc(p.type)}</span>${p.size?`<span>${esc(p.size)}</span>`:""}${g?`<span>${g} Gaj</span>`:""}${p.bedrooms?`<span>${esc(p.bedrooms)} BHK</span>`:""}${p.facing?`<span>${esc(p.facing)} facing</span>`:""}${p.roadWidth?`<span>${esc(p.roadWidth)} ft road</span>`:""}</div>
-  ${p.status==="Sold"?`<div class="bd"><i style="background:#fde8e6;color:#9b2c22">Sold to ${esc(p.soldToName||"buyer")} · ${money(p.soldPrice||p.price)}</i></div>`:""}${lin.length&&p.status!=="Sold"?`<div class="bd"><i style="background:#eef2ff;color:#2f5bff">⭐ ${lin.slice(0,2).map(c=>esc(clean(c.name).split(" ")[0])).join(", ")}${lin.length>2?" +"+(lin.length-2):""}</i></div>`:""}${bd.length?`<div class="bd">${bd.map(x=>`<i>${esc(x)}</i>`).join("")}</div>`:`<div class="bd"><i class="w">Legal details missing</i></div>`}
+  ${p.status==="Sold"?`<div class="bd"><i style="background:#fde8e6;color:#9b2c22">Sold to ${esc(p.soldToName||"buyer")} · ${money(p.soldPrice||p.price)}</i></div>`:""}${cbOf(p.id).length?`<div class="bd"><i data-openreq="1" style="background:#fff3d6;color:#9a6200;cursor:pointer">📞 ${cbOf(p.id).length} call-back request${cbOf(p.id).length>1?"s":""} — dekho</i></div>`:""}${lin.length&&p.status!=="Sold"?`<div class="bd"><i style="background:#eef2ff;color:#2f5bff">⭐ ${lin.slice(0,2).map(c=>esc(clean(c.name).split(" ")[0])).join(", ")}${lin.length>2?" +"+(lin.length-2):""}</i></div>`:""}${bd.length?`<div class="bd">${bd.map(x=>`<i>${esc(x)}</i>`).join("")}</div>`:`<div class="bd"><i class="w">Legal details missing</i></div>`}
   ${p.ownerName?`<div style="font-size:12px;color:var(--mut)">Owner: <b style="color:var(--ink)">${esc(p.ownerName)}</b>${p.ownerPhone?` · <a href="tel:${esc(p.ownerPhone)}" style="color:var(--blue);font-weight:700">${esc(p.ownerPhone)}</a>`:""}</div>`:""}
   <div class="qs" style="--g:${col}" title="${sc.miss.length?"Missing: "+esc(sc.miss.join(", ")):"Complete"}"><span>Listing</span><div class="tr"><i style="width:${sc.sc}%"></i></div><b style="color:${col}">${sc.sc}%</b></div></div>
   <div class="pf">${p.status==="Sold"?"":`<button class="mini mt" data-a="match" data-id="${p.id}">👥 ${m.length} match${m.length===1?"":"es"}</button><button class="mini" data-a="int" data-id="${p.id}">⭐ ${lin.length} interested</button>`}<button class="mini" data-a="share" data-id="${p.id}">WhatsApp</button><button class="mini" data-a="copy" data-id="${p.id}">Copy ad</button><button class="mini" data-a="edit" data-id="${p.id}">Edit</button>${pub?(p.published?`<button class="mini mt" data-a="plink" data-id="${p.id}">🔗 Copy link</button><button class="mini" data-a="unpub" data-id="${p.id}">Unpublish</button>`:p.status==="Sold"?"":`<button class="mini" data-a="pub" data-id="${p.id}">🌐 Publish</button>`):""}${p.status==="Sold"?"":`<button class="mini" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22" data-a="sold" data-id="${p.id}">✓ Sold</button>`}</div></div>`}).join("")
@@ -217,7 +217,7 @@ async function save(){const d=readForm();if(!d.title||!d.locality||!d.price)retu
 const SLUG_RE=/^[a-z0-9][a-z0-9-]{2,29}$/;
 /* After you deploy share-worker/, paste its URL here (keep the trailing slash) so shared links show a rich WhatsApp preview.
    Leave empty to use plain GitHub Pages links (they work, but WhatsApp shows no title/photo). */
-const SHARE_BASE="https://bos-share.saif-anwar1618.workers.dev/";
+const SHARE_BASE="";
 const base=()=>(SHARE_BASE?SHARE_BASE.replace(/\/*$/,"/"):new URL(".",location.href).href);
 const sellLink=()=>pub?base()+"sell.html?s="+encodeURIComponent(pub.slug):"";
 const listLink=id=>pub?base()+"listing.html?s="+encodeURIComponent(pub.slug)+"&id="+encodeURIComponent(id):"";
@@ -252,10 +252,18 @@ async function savePM(){const name=clean($("pm_name").value),phone=$("pm_phone")
   toast("Public page saved");setTimeout(openPM,50)}
  catch(e){console.error(e);err.textContent=e.code==="permission-denied"?"Permission denied — firestore.rules deploy karo (ya ye link name pehle se kisi aur ka hai).":e.message}
  finally{btn.disabled=false}}
+const leadProp=l=>{if(l.propertyId&&props.some(p=>p.id===l.propertyId))return l.propertyId;const m=/\(Ref ([^)]+)\)/.exec(l.requirement||"");if(!m)return"";const k=m[1].trim(),q=props.find(x=>x.id===k||x.code===k||code(x)===k);return q?q.id:""};
+const cbNew=()=>cbs.filter(l=>l.templateId==="property"&&l.status!=="converted"&&!l.seen).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+const cbOf=pid=>cbNew().filter(l=>leadProp(l)===pid);
+const tel=v=>{const d=String(v||"").replace(/\D/g,"");return d.length>=10?d.slice(-10):""};
+const when=l=>l.createdAt?.seconds?new Date(l.createdAt.seconds*1000).toLocaleString("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"just now";
 const pend=()=>subs.filter(x=>x.status==="pending").sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-function paintReq(){const n=pend().length,b=$("reqN");b.textContent=n;b.classList.toggle("hidden",!n);if(!$("rq").classList.contains("hidden"))fillReq()}
-function fillReq(){const L=pend();$("rq_l").innerHTML=L.length?L.map(s=>`<div class="mrow" style="align-items:flex-start;flex-wrap:wrap"><div class="c"><b>${esc(clean(s.name))} · ${esc(s.mobile)}</b><span>${esc(s.type)} · ${esc(s.locality)}, ${esc(s.city)}${s.size?" · "+esc(s.size):""}${s.price?" · "+money(s.price):""}</span>${s.note?`<span style="display:block;margin-top:4px">${esc(s.note)}</span>`:""}${Array.isArray(s.photos)&&s.photos.length?`<div class="rqp">${s.photos.filter(isData).map(u=>`<div class="t"><img src="${esc(u)}" alt=""></div>`).join("")}</div>`:""}</div>
-  <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="mini mt" data-ap="${s.id}" data-pb="1">${pub?"✓ Approve & Publish":"✓ Approve"}</button>${pub?`<button class="mini" data-ap="${s.id}" data-pb="0">Approve (private)</button>`:""}<button class="mini" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22" data-rj="${s.id}">✕ Reject</button></div></div>`).join(""):'<div class="empty">Abhi koi naya request nahi.<br>'+(pub?"Apna Sell & Earn link clients ko bhejo.":"Pehle \"Public page\" se apna link banao.")+'</div>'}
+function paintReq(){const n=pend().length+cbNew().length,b=$("reqN");b.textContent=n;b.classList.toggle("hidden",!n);if(!$("rq").classList.contains("hidden"))fillReq()}
+function fillReq(){const L=pend(),C=cbNew();
+ const cbHtml=C.length?`<div class="sec" style="margin:0 0 4px">📞 Call-back requests (${C.length})</div>`+C.map(l=>{const t=tel(l.phone),pid=leadProp(l),pr=props.find(x=>x.id===pid);return`<div class="mrow" style="align-items:flex-start;flex-wrap:wrap"><div class="c"><b>${esc(clean(l.name)||"Visitor")} · ${esc(clean(l.phone))}</b><span>${esc(clean(l.requirement))}${pr?" · "+esc(code(pr)):""}</span>${l.message?`<span style="display:block;margin-top:4px">“${esc(l.message)}”</span>`:""}<span style="display:block;margin-top:2px">${esc(when(l))}</span></div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap">${t?`<a class="mini mt" href="tel:+91${t}">📞 Call</a><a class="mini" target="_blank" rel="noopener" href="https://wa.me/91${t}">WhatsApp</a>`:""}<button class="mini" data-seen="${l.id}">✓ Seen</button></div></div>`}).join("")+`<div style="font-size:12px;color:var(--mut);margin:8px 0 14px">Customer banane ke liye <a href="website-leads.html" style="color:var(--blue);font-weight:700">Leads page</a> kholo.</div>`:"";
+ $("rq_l").innerHTML=cbHtml+(L.length&&C.length?`<div class="sec" style="margin:6px 0 4px">📥 Property bechne ke requests (${L.length})</div>`:"")+(L.length?L.map(s=>`<div class="mrow" style="align-items:flex-start;flex-wrap:wrap"><div class="c"><b>${esc(clean(s.name))} · ${esc(s.mobile)}</b><span>${esc(s.type)} · ${esc(s.locality)}, ${esc(s.city)}${s.size?" · "+esc(s.size):""}${s.price?" · "+money(s.price):""}</span>${s.note?`<span style="display:block;margin-top:4px">${esc(s.note)}</span>`:""}${Array.isArray(s.photos)&&s.photos.length?`<div class="rqp">${s.photos.filter(isData).map(u=>`<div class="t"><img src="${esc(u)}" alt=""></div>`).join("")}</div>`:""}</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="mini mt" data-ap="${s.id}" data-pb="1">${pub?"✓ Approve & Publish":"✓ Approve"}</button>${pub?`<button class="mini" data-ap="${s.id}" data-pb="0">Approve (private)</button>`:""}<button class="mini" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22" data-rj="${s.id}">✕ Reject</button></div></div>`).join(""):(C.length?"":'<div class="empty">Abhi koi naya request nahi.<br>'+(pub?"Apna Sell & Earn link clients ko bhejo.":"Pehle \"Public page\" se apna link banao.")+'</div>'))}
 async function approveSub(id,publish){const s=subs.find(x=>x.id===id);if(!s)return;
  const doPub=publish&&!!pub,d={title:`${s.size?s.size+" ":""}${s.type} in ${s.locality}`,type:s.type,status:"Available",locality:s.locality,city:s.city||"Jaipur",price:Number(s.price)||0,size:s.size||"",bedrooms:"",facing:"",roadWidth:"",corner:"",patta:"",registry:"",loan:"",landmark:"",mapUrl:"",ownerName:s.name,ownerPhone:s.mobile,note:s.note||"",photos:(Array.isArray(s.photos)?s.photos:[]).filter(isData).slice(0,3),source:"Sell page"};d.image=d.photos[0]||"";
  d.areaGaj=gajOf(d)||0;d.code="P-"+String(props.length+1).padStart(3,"0");
@@ -272,7 +280,8 @@ $("f_up").addEventListener("change",async e=>{const files=[...e.target.files].sl
 $("pubBtn").onclick=openPM;$("pm_x").onclick=()=>$("pm").classList.add("hidden");$("pm_save").onclick=savePM;
 $("reqBtn").onclick=()=>{fillReq();$("rq").classList.remove("hidden")};$("rq_x").onclick=()=>$("rq").classList.add("hidden");
 $("pm").addEventListener("click",async e=>{if(e.target.id==="pm_cp"){try{await navigator.clipboard.writeText(sellLink());toast("Link copied")}catch{toast("Copy not allowed",true)}}});
-$("rq").addEventListener("click",e=>{const a=e.target.closest("[data-ap]"),r=e.target.closest("[data-rj]");if(a)approveSub(a.dataset.ap,a.dataset.pb==="1");else if(r)rejectSub(r.dataset.rj)});
+$("rq").addEventListener("click",async e=>{const sn=e.target.closest("[data-seen]");if(sn){try{await updateDoc(doc(db,"publicLeads",sn.dataset.seen),{seen:true})}catch(err){toast(err.code==="permission-denied"?"Permission denied — firestore.rules deploy karo":err.message,true)}return}
+ const a=e.target.closest("[data-ap]"),r=e.target.closest("[data-rj]");if(a)approveSub(a.dataset.ap,a.dataset.pb==="1");else if(r)rejectSub(r.dataset.rj)});
 let mmS={id:"",tab:"match"},prevStatus="Available",soldPid="";
 const waLink=(c,p)=>{const ph=String(c.phone||"").replace(/\D/g,"");return ph?`https://wa.me/${ph.length===10?"91"+ph:ph}?text=${encodeURIComponent("Namaste "+clean(c.name)+",\n\n"+shareText(p))}`:""};
 function paintMM(){const p=props.find(x=>x.id===mmS.id);if(!p)return;const ids=p.interestedIds||[],m=matches(p),lin=ids.map(i=>contacts.find(c=>c.id===i)).filter(Boolean),T=mmS.tab;
@@ -296,7 +305,8 @@ async function confirmSold(){const p=props.find(x=>x.id===soldPid),c=contacts.fi
   b.update(doc(db,"businesses",bizId,"contacts",c.id),{status:"Won",updatedAt:T});
   await b.commit();if(p.published&&pub)await updateDoc(doc(db,"publicListings",p.id),{status:"Sold",updatedAt:serverTimestamp()}).catch(console.warn);$("sm").classList.add("hidden");const o=(p.interestedIds||[]).filter(i=>i!==c.id).length;toast("Sold! Deal ban gayi, "+clean(c.name)+" ab Won hai"+(o?` · ${o} aur interested customers hain`:""))}
  catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — firestore.rules deploy karo":e.message,true)}finally{btn.disabled=false}}
-function listen(id){[uC,uP,uS,uPub].forEach(u=>u&&u());bizId=id;ready={c:0,p:0};
+function listen(id){[uC,uP,uS,uPub,uL].forEach(u=>u&&u());bizId=id;ready={c:0,p:0};
+ uL=onSnapshot(query(collection(db,"publicLeads"),where("businessId","==",id)),s=>{cbs=s.docs.map(d=>({id:d.id,...d.data()}));paintReq();render()},e=>console.warn("callbacks",e));
  uS=onSnapshot(collection(db,"businesses",id,"submissions"),s=>{subs=s.docs.map(d=>({id:d.id,...d.data()}));paintReq()},e=>console.warn("submissions",e));
  uPub=onSnapshot(doc(db,"businesses",id,"settings","publicPage"),s=>{pub=s.exists()&&s.data().slug?s.data():null;render()},e=>console.warn("publicPage",e));
  uC=onSnapshot(collection(db,"businesses",id,"contacts"),s=>{if(s.empty&&user&&id!==user.uid)return listen(user.uid);contacts=s.docs.map(d=>({id:d.id,...d.data()}));ready.c=1;render()},fail);
@@ -317,7 +327,7 @@ $("ad_cp").onclick=async()=>{try{await navigator.clipboard.writeText($("f_ad").v
 $("ad_wa").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent($("f_ad").value),"_blank");
 $("ty").onchange=e=>{ty=e.target.value;render()};let st;$("q").addEventListener("input",e=>{clearTimeout(st);st=setTimeout(()=>{q=e.target.value.trim();render()},150)});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("mo").classList.add("hidden");$("mm").classList.add("hidden");$("sm").classList.add("hidden");$("pm").classList.add("hidden");$("rq").classList.add("hidden")}});
-document.addEventListener("click",async e=>{const t=e.target,f=t.closest("[data-f]");if(f){flt=f.dataset.f;render();return}if(t.id==="add2"){openM();return}
+document.addEventListener("click",async e=>{const t=e.target,f=t.closest("[data-f]");if(t.closest("[data-openreq]")){$("reqBtn").click();return}if(f){flt=f.dataset.f;render();return}if(t.id==="add2"){openM();return}
  const tb=t.closest("[data-tab]");if(tb){mmS.tab=tb.dataset.tab;paintMM();return}
  const lk=t.closest("[data-lk]");if(lk){toggleLink(mmS.id,lk.dataset.lk);return}
  const sd=t.closest("[data-sold]");if(sd){$("mm").classList.add("hidden");openSold(mmS.id,sd.dataset.sold);return}

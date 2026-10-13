@@ -100,8 +100,10 @@ function paint(p,b){
     if(mob.replace(/\D/g,"").length<10){m.className="msg err";m.textContent="Please enter a valid mobile number.";return}
     const btn=$("lb");btn.disabled=true;
     try{
-      await addDoc(collection(db,"publicLeads"),{businessId:b.businessId,templateId:"property",status:"new",name,phone:mob,email:"",budget:"",
-        requirement:`Interested in ${title} (Ref ${p.code||id}) – ${money(p.price)}`,city:p.city||"",area:p.locality||"",message:$("lmsg").value.trim(),createdAt:serverTimestamp()});
+      const lead={businessId:b.businessId,templateId:"property",status:"new",name,phone:mob,email:"",budget:"",
+        requirement:`Interested in ${title} (Ref ${p.code||id}) – ${money(p.price)}`,city:p.city||"",area:p.locality||"",message:$("lmsg").value.trim(),createdAt:serverTimestamp()};
+      try{await addDoc(collection(db,"publicLeads"),{...lead,propertyId:id,propertyCode:p.code||""})}
+      catch(e1){ if(e1&&e1.code==="permission-denied")await addDoc(collection(db,"publicLeads"),lead); else throw e1 } // older rules: still save the lead
       m.className="msg ok";m.textContent="Thank you! We will call you soon.";$("lf").reset();
     }catch(err){console.error(err);m.className="msg err";m.textContent="Could not send right now. Please call or WhatsApp instead.";btn.disabled=false}
   });
