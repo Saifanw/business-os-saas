@@ -1,59 +1,78 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Property</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Property</title>
 <meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#132039;--blue:#315df6;--muted:#748198;--line:#dfe6ef;--green:#0b9460;--red:#c43c35}
+:root{--navy:#0f1b2d;--navy2:#1a2b44;--gold:#b98a1e;--gold2:#e8c45c;--ink:#14213a;--muted:#6a7890;--line:#e3e8f0;--green:#0b9460;--red:#c43c35;--bg:#f4f6fa;--blue:#245fc4}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;color:var(--ink);background:#f4f6f9}
-.top{background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.top b{font-size:15px}.top a{font-size:13px;font-weight:700;color:var(--blue);text-decoration:none}
-main{max-width:860px;margin:0 auto;padding:16px 14px 60px;display:grid;gap:14px}
-.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
-.gal{border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#dfe8ff,#f3e8ff);min-height:200px;display:grid;place-items:center;font-size:60px;position:relative}
-.gal img.main{width:100%;max-height:440px;object-fit:cover;display:block}
-.thumbs{display:flex;gap:8px;overflow-x:auto;padding:8px 0 0}.thumbs img{width:72px;height:56px;object-fit:cover;border-radius:8px;border:2px solid transparent;cursor:pointer;flex:none}.thumbs img.on{border-color:var(--blue)}
-.tag{position:absolute;left:12px;top:12px;background:#fff;border-radius:99px;padding:5px 12px;font-size:12px;font-weight:800;color:var(--green)}.tag.sold{color:var(--red)}.tag.hold{color:#9a6200}
-h1{font-size:23px;margin:0 0 6px;letter-spacing:-.4px}
-.price{font-size:28px;font-weight:800;color:var(--blue)}.rate{font-size:13px;color:var(--muted);font-weight:700;margin-left:8px}
-.loc{color:var(--muted);font-size:14px;margin:6px 0 12px}
-.chips{display:flex;gap:7px;flex-wrap:wrap}.chips span{background:#f1f4fa;border-radius:8px;padding:5px 11px;font-size:12.5px;font-weight:700;color:#4b5a73}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.5}
+.top{background:var(--navy);color:#fff;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.top b{font-size:15px;letter-spacing:-.1px}.top a{font-size:13px;font-weight:600;color:var(--gold2);text-decoration:none}
+main{max-width:900px;margin:0 auto;padding:16px 14px 110px;display:grid;gap:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 8px 26px rgba(15,27,45,.06)}
+.card h2{margin:0 0 12px;font-size:17px;letter-spacing:-.2px}
+.gal{position:relative;border-radius:20px;overflow:hidden;background:#dfe7f0;box-shadow:0 14px 38px rgba(15,27,45,.14)}
+.stage{position:relative;aspect-ratio:16/10;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.stage::-webkit-scrollbar{display:none}
+.sl{position:relative;flex:0 0 100%;height:100%;scroll-snap-align:start;overflow:hidden;cursor:zoom-in;background:#dfe7f0}
+.sl .bg{position:absolute;inset:-24px;width:calc(100% + 48px);height:calc(100% + 48px);object-fit:cover;filter:blur(22px) brightness(.8)}
+.sl .fg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.noph{aspect-ratio:16/10;display:grid;place-items:center;font-size:64px;background:linear-gradient(135deg,#dfe8ff,#f3e8ff)}
+.tag{position:absolute;left:14px;top:14px;z-index:3;background:#fff;border-radius:99px;padding:6px 13px;font-size:12px;font-weight:700;color:var(--green);box-shadow:0 2px 10px rgba(15,23,42,.18)}.tag.sold{color:var(--red)}.tag.hold{color:#9a6200}
+.ptag{position:absolute;left:0;bottom:18px;z-index:3;display:flex;align-items:baseline;gap:6px;padding:10px 20px 10px 18px;color:#fff;background:linear-gradient(100deg,rgba(15,27,45,.95),rgba(26,43,68,.88));border:1px solid rgba(232,196,92,.55);border-left:0;border-radius:0 14px 14px 0;box-shadow:0 10px 26px rgba(10,18,32,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);pointer-events:none}
+.ptag:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--gold2),var(--gold))}
+.ptag .rs{font-weight:600;font-size:18px;color:var(--gold2)}.ptag .n{font-weight:800;font-size:clamp(25px,4vw,34px);line-height:1;letter-spacing:-.4px}.ptag .u{font-weight:600;font-size:14px;color:#f3dfa0}
+.ptag.sold{border-color:rgba(255,255,255,.4)}.ptag.sold:before{background:#e0483f}
+.cnt{position:absolute;right:14px;bottom:18px;z-index:3;background:rgba(15,27,45,.78);color:#fff;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:99px}
+.arr{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.93);color:var(--navy);font-size:22px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);display:none}
+.arr.l{left:12px}.arr.r{right:12px}@media(hover:hover) and (min-width:760px){.arr{display:grid;place-items:center}}
+.thumbs{display:flex;gap:8px;overflow-x:auto;padding:12px 2px 2px;scrollbar-width:thin}
+.thumbs img{width:76px;height:58px;object-fit:cover;border-radius:10px;border:2px solid transparent;cursor:pointer;flex:none;opacity:.75}.thumbs img.on{border-color:var(--gold);opacity:1}
+h1{font-size:clamp(21px,3.4vw,28px);margin:0 0 6px;letter-spacing:-.5px;line-height:1.2;color:var(--navy)}
+.price{font-size:clamp(26px,4vw,34px);font-weight:800;color:var(--navy);letter-spacing:-.5px}.rate{font-size:13px;color:var(--muted);font-weight:600;margin-left:10px}
+.loc{color:var(--muted);font-size:14.5px;margin:6px 0 14px}
+.chips{display:flex;gap:7px;flex-wrap:wrap}.chips span{background:#f0f4f9;border-radius:9px;padding:6px 12px;font-size:13px;font-weight:600;color:#44566d}
 .chips span.g{background:#e9f9f1;color:#0a7a50}
-.sec{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin:0 0 10px}
-ul{margin:0;padding-left:18px;line-height:1.8;font-size:14px}
+ul.hl{margin:0;padding:0;list-style:none;display:grid;gap:9px;font-size:14.5px}ul.hl li:before{content:"✓";color:var(--gold);font-weight:800;margin-right:9px}
+.btn{flex:1;min-width:140px;text-align:center;border-radius:12px;padding:13px 16px;font-weight:700;font-size:14px;text-decoration:none;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;font-family:inherit;display:block}
+.btn.wa{background:#1fa855;border-color:#1fa855;color:#fff}.btn.call{background:var(--navy);border-color:var(--navy);color:#fff}.btn.gold{background:var(--gold);border-color:var(--gold);color:#fff}
 .cta{display:flex;gap:10px;flex-wrap:wrap}
-.btn{flex:1;min-width:140px;text-align:center;border-radius:12px;padding:13px 16px;font-weight:800;font-size:14px;text-decoration:none;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;font-family:inherit}
-.btn.wa{background:#1fa855;border-color:#1fa855;color:#fff}.btn.call{background:var(--ink);border-color:var(--ink);color:#fff}
+/* questions & answers */
+.qa-intro{font-size:13.5px;color:var(--muted);margin:-6px 0 14px}
+.qitem{border-top:1px solid var(--line);padding:14px 0}.qitem:first-of-type{border-top:0;padding-top:2px}
+.qq{font-weight:700;font-size:14.5px;display:flex;gap:10px}.qq i,.qa i{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:800}
+.qq i{background:#eef2f9;color:var(--navy)}.qa i{background:var(--gold);color:#fff}
+.qa{display:flex;gap:10px;margin-top:8px;font-size:14.5px;color:#2b3a52}.qmeta{font-size:12px;color:var(--muted);margin:3px 0 0 34px}
+.qempty{font-size:14px;color:var(--muted);padding:6px 0 14px}
 .form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-label{font-size:11px;font-weight:800;color:#66748a}label.full{grid-column:1/-1}
-input,textarea{display:block;width:100%;margin-top:6px;border:1px solid var(--line);border-radius:10px;padding:0 12px;height:44px;font-size:14px;font-family:inherit;outline:none}
-textarea{height:76px;padding-top:11px;resize:vertical}
+label{font-size:12px;font-weight:700;color:#5b6a82}label.full{grid-column:1/-1}
+input,textarea{display:block;width:100%;margin-top:6px;border:1px solid var(--line);border-radius:11px;padding:0 13px;height:46px;font-size:14.5px;font-family:inherit;outline:none;background:#fff}
+input:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(185,138,30,.15)}
+textarea{height:84px;padding-top:12px;resize:vertical}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
-.msg{font-size:12.5px;min-height:18px;grid-column:1/-1}.msg.ok{color:var(--green)}.msg.err{color:var(--red)}
+.msg{font-size:13px;min-height:18px;grid-column:1/-1}.msg.ok{color:var(--green)}.msg.err{color:var(--red)}
 .center{text-align:center;padding:60px 20px;color:var(--muted)}.hidden{display:none!important}
-.ref{font-size:12px;color:var(--muted)}
-/* premium price badge + sticky action bar */
-.pbadge{position:absolute;left:12px;bottom:12px;z-index:2;display:flex;align-items:baseline;gap:6px;padding:7px 14px;border-radius:12px;color:#fff;background:linear-gradient(135deg,#1f3fd8 0%,#6a3df0 100%);box-shadow:0 6px 16px rgba(49,93,246,.35);line-height:1.1}
-.pbadge small{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
-.pbadge b{font-size:20px;font-weight:800;letter-spacing:-.3px}
-.pbadge.sold{background:linear-gradient(135deg,#7f1d1d,#c43c35);box-shadow:0 6px 16px rgba(196,60,53,.3)}.pbadge.hold{background:linear-gradient(135deg,#8a5a00,#d98a00);box-shadow:0 6px 16px rgba(217,138,0,.3)}
-.gal::after{content:"";position:absolute;inset:auto 0 0 0;height:30%;background:linear-gradient(to top,rgba(10,16,34,.4),transparent);pointer-events:none}
-.tag{z-index:2;box-shadow:0 2px 8px rgba(15,23,42,.15)}
-.sbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;align-items:center}
-.sbar .sp{flex:1;min-width:0;line-height:1.15}.sbar .sp small{display:block;font-size:11px;color:var(--muted);font-weight:700}.sbar .sp b{font-size:18px;color:var(--blue);font-weight:800}
+.askbox{border-top:1px dashed var(--line);margin-top:6px;padding-top:16px}
+.sbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;align-items:center}
+.sbar .sp{flex:1;min-width:0;line-height:1.15}.sbar .sp small{display:block;font-size:11px;color:var(--muted);font-weight:600}.sbar .sp b{font-size:19px;color:var(--navy);font-weight:800}
 .sbar .btn{flex:none;min-width:0;padding:12px 18px}
-main{padding-bottom:96px}
 @media(min-width:861px){.sbar{display:none}main{padding-bottom:60px}}
-@media(max-width:600px){.form{grid-template-columns:1fr}label.full,.msg{grid-column:auto}h1{font-size:20px}.price{font-size:24px}}
+@media(max-width:600px){.form{grid-template-columns:1fr}label.full,.msg{grid-column:auto}.ptag{padding:8px 15px 8px 14px}}
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:100;background:rgba(7,13,24,.96);display:grid;place-items:center}
+.lb img{max-width:96vw;max-height:88vh;object-fit:contain}
+.lb button{position:absolute;border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:50%;width:46px;height:46px;font-size:24px;cursor:pointer}
+.lb .x{top:16px;right:16px}.lb .p{left:14px;top:50%}.lb .nx{right:14px;top:50%}
 </style></head><body>
 <div class="top"><b id="biz">Property</b><a id="more" class="hidden" href="#">Sell your property →</a></div>
 <main>
 <div id="load" class="card center">Loading property…</div>
 <div id="bad" class="card center hidden"><h2 style="color:var(--ink)">Property not available</h2><p>This listing is no longer available or the link is incorrect.</p></div>
-<div id="ok" class="hidden" style="display:grid;gap:14px"></div>
+<div id="ok" class="hidden" style="display:grid;gap:16px"></div>
 </main>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import{getFirestore,doc,getDoc,collection,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import{getFirestore,doc,getDoc,getDocs,query,where,collection,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
 const db=getFirestore(app),$=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -75,6 +94,9 @@ const show=x=>{["load","bad","ok"].forEach(k=>$(k).classList.toggle("hidden",k!=
     paint(p,b);show("ok");
   }catch(e){console.error(e);show("bad")}
 })();
+function priceTag(n,cls){n=Math.round(Number(n)||0);if(!n)return"";const big=n>=1e7,lk=n>=1e5&&!big,r=v=>String(+v.toFixed(2)),num=big?r(n/1e7):lk?r(n/1e5):n.toLocaleString("en-IN"),unit=big?"Crore":lk?"Lakh":"";
+  return`<div class="ptag ${cls||""}"><span class="rs">₹</span><span class="n">${esc(num)}</span>${unit?`<span class="u">${unit}</span>`:""}</div>`}
+const fmtWhen=t=>{const s=t&&t.seconds;return s?new Date(s*1000).toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}):""};
 function paint(p,b){
   const g=gajOf(p),rate=g&&p.price/g>500?Math.round(p.price/g):0;
   const title=p.title||`${p.type||"Property"} in ${p.locality||""}`;
@@ -88,22 +110,51 @@ function paint(p,b){
   const hl=String(p.note||"").split("\n").map(x=>x.trim()).filter(Boolean);
   const phone=String(b.phone||"").replace(/\D/g,""),wa=phone?(phone.length===10?"91"+phone:phone):"";
   const waMsg=`Hello, I am interested in ${title} – ${money(p.price)}. Please share details.`;
+  const gallery=photos.length?`<div class="gal"><span class="tag ${st[1]}">${st[0]}</span><div class="stage" id="stage">${photos.map((u,i)=>`<div class="sl" data-i="${i}"><img class="bg" src="${esc(u)}" alt="" aria-hidden="true"><img class="fg" src="${esc(u)}" alt="${esc(title)} photo ${i+1}"${i?' loading="lazy"':""}></div>`).join("")}</div>${priceTag(p.price,st[1])}${photos.length>1?`<button class="arr l" id="gl" type="button" aria-label="Previous photo">‹</button><button class="arr r" id="gr" type="button" aria-label="Next photo">›</button><span class="cnt" id="cnt">1 / ${photos.length}</span>`:""}</div>${photos.length>1?`<div class="thumbs" id="th">${photos.map((u,i)=>`<img src="${esc(u)}" alt="Photo ${i+1}" data-i="${i}" class="${i?"":"on"}">`).join("")}</div>`:""}`
+    :`<div class="gal"><span class="tag ${st[1]}">${st[0]}</span><div class="noph">${esc(ICON[p.type]||"🏠")}</div>${priceTag(p.price,st[1])}</div>`;
   const el=$("ok");
-  el.innerHTML=`<div><div class="gal" id="gal">${photos.length?"":esc(ICON[p.type]||"🏠")}<span class="tag ${st[1]}">${st[0]}</span>${Number(p.price)>0?`<div class="pbadge ${st[1]}">${st[1]==="sold"?"<small>Sold</small>":""}<b>${esc(money(p.price))}</b></div>`:""}</div><div class="thumbs" id="th"></div></div>
+  el.innerHTML=`<div>${gallery}</div>
   <div class="card"><h1>${esc(title)}</h1><div><span class="price">${esc(money(p.price))}</span>${rate?`<span class="rate">${inr(rate)}/Gaj</span>`:""}</div>
   <div class="loc">📍 ${esc(p.locality||"")}${p.city?", "+esc(p.city):""}${p.landmark?" · "+esc(p.landmark):""}</div>
   <div class="chips">${meta.map(x=>`<span>${esc(x)}</span>`).join("")}${badges.map(x=>`<span class="g">${esc(x)}</span>`).join("")}</div></div>
-  ${hl.length?`<div class="card"><div class="sec">Highlights</div><ul>${hl.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
-  ${httpUrl(p.mapUrl)?`<div class="card"><div class="sec">Location</div><a class="btn" style="display:block" target="_blank" rel="noopener noreferrer" href="${esc(httpUrl(p.mapUrl))}">🗺 Open in Google Maps</a></div>`:""}
-  <div class="card"><div class="sec">Contact ${esc(b.businessName||"the consultant")}</div>
+  ${hl.length?`<div class="card"><h2>Highlights</h2><ul class="hl">${hl.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
+  ${httpUrl(p.mapUrl)?`<div class="card"><h2>Location</h2><a class="btn" target="_blank" rel="noopener noreferrer" href="${esc(httpUrl(p.mapUrl))}">🗺 Open in Google Maps</a></div>`:""}
+  <div class="card" id="qcard"><h2>Questions &amp; answers</h2><p class="qa-intro">Jo sawal doosre buyers ne poochhe aur jinka jawab mila — sab yahan dikhta hai.</p>
+    <div id="qlist"><div class="qempty">Loading…</div></div>
+    <form class="form askbox" id="qf" novalidate><label>Your name *<input id="qn" maxlength="60" autocomplete="given-name" placeholder="e.g. Rahul"></label><label class="full">Your question *<textarea id="qt" maxlength="500" placeholder="e.g. Registry ready hai? Loan mil jayega?"></textarea></label>
+    <input class="hp" id="qw" tabindex="-1" autocomplete="off" aria-hidden="true"><button class="btn gold" id="qb" type="submit" style="grid-column:1/-1">Ask a question</button><div class="msg" id="qm"></div></form>
+    <div style="font-size:12px;color:var(--muted);margin-top:6px">Aapka sawal pehle consultant dekhega. Jawab aane par yahan sab ko dikhega — aapka mobile number kabhi nahi dikhta.</div></div>
+  <div class="card"><h2>Contact ${esc(b.businessName||"the consultant")}</h2>
     <div class="cta">${phone?`<a class="btn call" href="tel:+${esc(wa)}">📞 Call now</a>`:""}${wa?`<a class="btn wa" target="_blank" rel="noopener noreferrer" href="https://wa.me/${esc(wa)}?text=${encodeURIComponent(waMsg)}">WhatsApp</a>`:""}</div></div>
-  <div class="card"><div class="sec">Request a call back</div>
+  <div class="card"><h2>Request a call back</h2>
     <form class="form" id="lf" novalidate><label>Your name *<input id="ln" maxlength="80" autocomplete="name"></label><label>Mobile *<input id="lm" maxlength="20" inputmode="tel" autocomplete="tel"></label>
     <label class="full">Message (optional)<textarea id="lmsg" maxlength="500"></textarea></label><input class="hp" id="lw" tabindex="-1" autocomplete="off" aria-hidden="true">
     <button class="btn call" id="lb" type="submit" style="grid-column:1/-1">Request call back</button><div class="msg" id="lmg"></div></form></div>
   ${(phone&&st[1]!=="sold")?`<div class="sbar"><div class="sp"><small>Price</small><b>${esc(money(p.price))}</b></div><a class="btn call" href="tel:+${esc(wa)}">📞 Call</a><a class="btn wa" target="_blank" rel="noopener noreferrer" href="https://wa.me/${esc(wa)}?text=${encodeURIComponent(waMsg)}">WhatsApp</a></div>`:""}`;
-  if(photos.length){const gal=$("gal"),th=$("th");const main=document.createElement("img");main.className="main";main.alt=title;main.src=photos[0];gal.prepend(main);
-    if(photos.length>1)photos.forEach((u,i)=>{const t=document.createElement("img");t.src=u;t.alt="Photo "+(i+1);if(!i)t.className="on";t.onclick=()=>{main.src=u;th.querySelectorAll("img").forEach(x=>x.classList.toggle("on",x===t))};th.appendChild(t)})}
+
+  /* gallery behaviour: swipe, arrows, thumbs, tap to enlarge */
+  if(photos.length>1){const stg=$("stage"),th=$("th"),cnt=$("cnt");
+    const idx=()=>Math.round(stg.scrollLeft/stg.clientWidth),go=i=>stg.scrollTo({left:Math.max(0,Math.min(photos.length-1,i))*stg.clientWidth,behavior:"smooth"});
+    stg.addEventListener("scroll",()=>{const i=idx();cnt.textContent=(i+1)+" / "+photos.length;th.querySelectorAll("img").forEach((x,k)=>x.classList.toggle("on",k===i))},{passive:true});
+    $("gl").onclick=()=>go(idx()-1);$("gr").onclick=()=>go(idx()+1);th.addEventListener("click",e=>{const t=e.target.closest("img");if(t)go(+t.dataset.i)})}
+  if(photos.length){$("stage").addEventListener("click",e=>{const s=e.target.closest(".sl");if(s)openLb(photos,+s.dataset.i)})}
+
+  /* questions: load only the answered ones (the rules allow nothing else) */
+  (async()=>{const L=$("qlist");try{
+    const snap=await getDocs(query(collection(db,"publicQuestions"),where("propertyId","==",id),where("status","==","answered")));
+    const qs=snap.docs.map(d=>d.data()).sort((a,c)=>(c.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    L.innerHTML=qs.length?qs.map(q=>`<div class="qitem"><div class="qq"><i>Q</i><span>${esc(q.question)}</span></div><div class="qmeta">${esc(String(q.name||"Visitor").trim().split(/\s+/)[0])}${q.createdAt?" · "+esc(fmtWhen(q.createdAt)):""}</div><div class="qa"><i>A</i><span>${esc(q.answer)}</span></div></div>`).join(""):'<div class="qempty">Abhi tak koi sawal nahi. Pehla sawal aap poochho.</div>'}
+   catch(e){console.warn(e);L.innerHTML='<div class="qempty">Sawal-jawab abhi load nahi ho paye.</div>'}})();
+  $("qf").addEventListener("submit",async e=>{e.preventDefault();const m=$("qm");m.className="msg";m.textContent="";
+    if($("qw").value){m.className="msg ok";m.textContent="Thank you!";return}
+    const name=$("qn").value.trim().slice(0,60),text=$("qt").value.trim();
+    if(!name){m.className="msg err";m.textContent="Please enter your name.";return}
+    if(text.length<3){m.className="msg err";m.textContent="Please write your question.";return}
+    const btn=$("qb");btn.disabled=true;
+    try{await addDoc(collection(db,"publicQuestions"),{businessId:b.businessId,propertyId:id,propertyCode:String(p.code||"").slice(0,30),name,question:text.slice(0,500),status:"pending",answer:"",createdAt:serverTimestamp()});
+      m.className="msg ok";m.textContent="Sawal bhej diya. Jawab milte hi yahan sab ko dikhega.";$("qf").reset();btn.disabled=false}
+    catch(err){console.error(err);m.className="msg err";m.textContent="Sawal abhi nahi ja paya. Please call or WhatsApp karein.";btn.disabled=false}});
+
   $("lf").addEventListener("submit",async e=>{
     e.preventDefault();const m=$("lmg");m.className="msg";m.textContent="";
     if($("lw").value){m.className="msg ok";m.textContent="Thank you! We will call you soon.";return}
@@ -115,9 +166,13 @@ function paint(p,b){
       const lead={businessId:b.businessId,templateId:"property",status:"new",name,phone:mob,email:"",budget:"",
         requirement:`Interested in ${title} (Ref ${p.code||id}) – ${money(p.price)}`,city:p.city||"",area:p.locality||"",message:$("lmsg").value.trim(),createdAt:serverTimestamp()};
       try{await addDoc(collection(db,"publicLeads"),{...lead,propertyId:id,propertyCode:p.code||""})}
-      catch(e1){ if(e1&&e1.code==="permission-denied")await addDoc(collection(db,"publicLeads"),lead); else throw e1 } // older rules: still save the lead
+      catch(e1){ if(e1&&e1.code==="permission-denied")await addDoc(collection(db,"publicLeads"),lead); else throw e1 }
       m.className="msg ok";m.textContent="Thank you! We will call you soon.";$("lf").reset();
     }catch(err){console.error(err);m.className="msg err";m.textContent="Could not send right now. Please call or WhatsApp instead.";btn.disabled=false}
   });
 }
+function openLb(list,start){let i=start;const d=document.createElement("div");d.className="lb";d.innerHTML='<button class="x" aria-label="Close">✕</button>'+(list.length>1?'<button class="p" aria-label="Previous">‹</button><button class="nx" aria-label="Next">›</button>':"")+'<img alt="">';
+  const im=d.querySelector("img"),show=()=>{im.src=list[i]},close=()=>{d.remove();document.removeEventListener("keydown",key)},key=e=>{if(e.key==="Escape")close();else if(e.key==="ArrowRight"){i=(i+1)%list.length;show()}else if(e.key==="ArrowLeft"){i=(i-1+list.length)%list.length;show()}};
+  d.addEventListener("click",e=>{if(e.target.closest(".x")||e.target===d)close();else if(e.target.closest(".p")){i=(i-1+list.length)%list.length;show()}else if(e.target.closest(".nx")){i=(i+1)%list.length;show()}});
+  document.addEventListener("keydown",key);document.body.appendChild(d);show()}
 </script></body></html>

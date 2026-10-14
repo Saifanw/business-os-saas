@@ -81,7 +81,7 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 <header class="top"><div class="top-in">
   <a class="brand" href="customers.html"><span class="logo">B</span>BusinessOS</a>
   <nav class="nav"><a href="customers.html">Overview</a><a href="customer-list.html">Customers</a><a href="followups.html">Follow-ups <span class="pill hidden" id="navFu">0</span></a><a href="deals.html">Deals</a><a href="website-leads.html">Leads</a><a href="whatsapp-center.html">WhatsApp</a><a href="business-finder-app.html">Finder</a><a href="reports.html">Reports</a></nav>
-  <div class="acts"><button class="btn" id="reqBtn">📥 Requests <span class="pill hidden" id="reqN">0</span></button><button class="btn" id="pubBtn">🔗 Public page</button><button class="btn p" id="add">＋ Add Property</button>
+  <div class="acts"><button class="btn" id="qBtn">💬 Questions <span class="pill hidden" id="qN">0</span></button><button class="btn" id="reqBtn">📥 Requests <span class="pill hidden" id="reqN">0</span></button><button class="btn" id="pubBtn">🔗 Public page</button><button class="btn p" id="add">＋ Add Property</button>
     <div class="menu"><button class="avatar" id="avBtn" aria-label="Account">?</button><div class="dd hidden" id="dd"><div class="em" id="ddEm"></div><a href="import-export.html#import-section">↑ Import customers</a><a href="import-export.html#export-section">↓ Export data</a><a href="team-settings.html">Settings</a><a href="subscription.html">Plan &amp; billing</a><button id="out">Logout</button></div></div></div>
 </div></header>
 <main>
@@ -128,6 +128,7 @@ main{max-width:1320px;margin:0 auto;padding:28px 24px 60px}
 <p id="pm_err" style="color:var(--red);font-size:12px;margin:8px 0 0"></p>
 <div class="mf"><button class="btn" id="pm_x">Close</button><button class="btn p" id="pm_save">Save</button></div></div></div>
 <div id="rq" class="ov hidden"><div class="modal" style="width:min(640px,100%)"><h2>Client requests</h2><p>Clients ne aapke link se property bheji hai. Approve karte hi property list me aa jati hai.</p><div id="rq_l"></div><div class="mf"><button class="btn" id="rq_x">Close</button></div></div></div>
+<div id="qa" class="ov hidden"><div class="modal" style="width:min(640px,100%)"><h2>Questions from buyers</h2><p>Jo sawal visitors ne property page par poochhe. Jawab likh kar "Publish answer" dabao — sab ko dikhega (sirf pehla naam ke saath, mobile kabhi nahi).</p><div id="qa_l"></div><div class="mf"><button class="btn" id="qa_x">Close</button></div></div></div>
 <div id="toast" class="toast hidden"></div>
 
 <script type="module">
@@ -141,7 +142,7 @@ const clean=v=>String(v??"").replace(/["'`]+/g,"").trim(),ini=n=>clean(n||"?").s
 const money=n=>{n=Math.round(Number(n)||0);return n>=1e7?"₹"+(n/1e7).toFixed(2).replace(/\.?0+$/,"")+" Cr":n>=1e5?"₹"+(n/1e5).toFixed(2).replace(/\.?0+$/,"")+" Lakh":"₹"+n.toLocaleString("en-IN")};
 function amt(v){if(typeof v==="number")return v;const s=String(v||"").replace(/,/g,""),m=s.match(/([0-9]+(?:\.[0-9]+)?)/);if(!m)return 0;let n=Number(m[1]);if(/crore|cr\b/i.test(s))n*=1e7;else if(/lakh|lac/i.test(s))n*=1e5;else if(/k\b/i.test(s))n*=1e3;return Math.round(n)}
 const ICON={Plot:"📐",Flat:"🏢",Villa:"🏡",House:"🏠",Commercial:"🏬",Shop:"🏪",Farmhouse:"🌳",Agricultural:"🌾"};
-let pub=null,subs=[],cbs=[],uL,uS,uPub,so="new",user,bizId,uC,uP,contacts=[],props=[],ready={c:0,p:0},flt="",ty="",q="",editId="";
+let pub=null,subs=[],cbs=[],qsA=[],uQ,uL,uS,uPub,so="new",user,bizId,uC,uP,contacts=[],props=[],ready={c:0,p:0},flt="",ty="",q="",editId="";
 const toast=(m,bad)=>{const t=$("toast");t.textContent=m;t.className="toast"+(bad?" bad":"");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),2600)};
 const code=p=>p.code||"P-"+p.id.slice(0,4).toUpperCase();
 /* matching: budget 45 + location 35 + type 20 */
@@ -181,10 +182,10 @@ function render(){const ok=ready.c&&ready.p;
   return`<div class="pc"><div class="ph" ${bg}>${ph[0]?"":ICON[p.type]||"🏠"}<span class="st ${p.status}">${p.status==="Hold"?"On hold":p.status}</span>${ph.length>1?`<span class="pn">📷 ${ph.length}</span>`:""}</div>
   <div class="pb2"><h3>${esc(p.title)} <span style="color:var(--mut);font-weight:600;font-size:11.5px;margin-left:4px;white-space:nowrap">${esc(code(p))}</span></h3><div><span class="price">${money(p.price)}</span>${r?`<span class="rate">${inr(r)}/Gaj</span>`:""}</div><div style="color:var(--mut);font-size:12.5px">📍 ${esc(p.locality)}, ${esc(p.city||"")}${p.landmark?" · "+esc(p.landmark):""}</div>
   <div class="meta"><span>${esc(p.type)}</span>${p.size?`<span>${esc(p.size)}</span>`:""}${g?`<span>${g} Gaj</span>`:""}${p.bedrooms?`<span>${esc(p.bedrooms)} BHK</span>`:""}${p.facing?`<span>${esc(p.facing)} facing</span>`:""}${p.roadWidth?`<span>${esc(p.roadWidth)} ft road</span>`:""}</div>
-  ${p.status==="Sold"?`<div class="bd"><i style="background:#fde8e6;color:#9b2c22">Sold to ${esc(p.soldToName||"buyer")} · ${money(p.soldPrice||p.price)}</i></div>`:""}${cbOf(p.id).length?`<div class="bd"><i data-openreq="1" style="background:#fff3d6;color:#9a6200;cursor:pointer">📞 ${cbOf(p.id).length} call-back request${cbOf(p.id).length>1?"s":""} — dekho</i></div>`:""}${lin.length&&p.status!=="Sold"?`<div class="bd"><i style="background:#eef2ff;color:#2f5bff">⭐ ${lin.slice(0,2).map(c=>esc(clean(c.name).split(" ")[0])).join(", ")}${lin.length>2?" +"+(lin.length-2):""}</i></div>`:""}${bd.length?`<div class="bd">${bd.map(x=>`<i>${esc(x)}</i>`).join("")}</div>`:`<div class="bd"><i class="w">Legal details missing</i></div>`}
+  ${p.status==="Sold"?`<div class="bd"><i style="background:#fde8e6;color:#9b2c22">Sold to ${esc(p.soldToName||"buyer")} · ${money(p.soldPrice||p.price)}</i></div>`:""}${qNew(p.id)?`<div class="bd"><i data-openqa="1" style="background:#e9f9f1;color:#0a7a50;cursor:pointer">💬 ${qNew(p.id)} naya sawal — jawab do</i></div>`:""}${cbOf(p.id).length?`<div class="bd"><i data-openreq="1" style="background:#fff3d6;color:#9a6200;cursor:pointer">📞 ${cbOf(p.id).length} call-back request${cbOf(p.id).length>1?"s":""} — dekho</i></div>`:""}${lin.length&&p.status!=="Sold"?`<div class="bd"><i style="background:#eef2ff;color:#2f5bff">⭐ ${lin.slice(0,2).map(c=>esc(clean(c.name).split(" ")[0])).join(", ")}${lin.length>2?" +"+(lin.length-2):""}</i></div>`:""}${bd.length?`<div class="bd">${bd.map(x=>`<i>${esc(x)}</i>`).join("")}</div>`:`<div class="bd"><i class="w">Legal details missing</i></div>`}
   ${p.ownerName?`<div style="font-size:12px;color:var(--mut)">Owner: <b style="color:var(--ink)">${esc(p.ownerName)}</b>${p.ownerPhone?` · <a href="tel:${esc(p.ownerPhone)}" style="color:var(--blue);font-weight:700">${esc(p.ownerPhone)}</a>`:""}</div>`:""}
   <div class="qs" style="--g:${col}" title="${sc.miss.length?"Missing: "+esc(sc.miss.join(", ")):"Complete"}"><span>Listing</span><div class="tr"><i style="width:${sc.sc}%"></i></div><b style="color:${col}">${sc.sc}%</b></div></div>
-  <div class="pf">${p.status==="Sold"?"":`<button class="mini mt" data-a="match" data-id="${p.id}">👥 ${m.length} match${m.length===1?"":"es"}</button><button class="mini" data-a="int" data-id="${p.id}">⭐ ${lin.length} interested</button>`}<button class="mini" data-a="share" data-id="${p.id}">WhatsApp</button><button class="mini" data-a="copy" data-id="${p.id}">Copy ad</button><button class="mini" data-a="edit" data-id="${p.id}">Edit</button>${pub?(p.published?`<button class="mini mt" data-a="plink" data-id="${p.id}">🔗 Copy link</button><button class="mini" data-a="unpub" data-id="${p.id}">Unpublish</button>`:p.status==="Sold"?"":`<button class="mini" data-a="pub" data-id="${p.id}">🌐 Publish</button>`):""}${p.status==="Sold"?"":`<button class="mini" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22" data-a="sold" data-id="${p.id}">✓ Sold</button>`}</div></div>`}).join("")
+  <div class="pf">${p.status==="Sold"?"":`<button class="mini mt" data-a="match" data-id="${p.id}">👥 ${m.length} match${m.length===1?"":"es"}</button><button class="mini" data-a="int" data-id="${p.id}">⭐ ${lin.length} interested</button>`}<button class="mini" data-a="share" data-id="${p.id}">WhatsApp</button><button class="mini" data-a="copy" data-id="${p.id}">Copy ad</button><button class="mini" data-a="edit" data-id="${p.id}">Edit</button>${p.published&&pub?`<button class="mini mt" data-a="slink" data-id="${p.id}">🔗 Share link</button><button class="mini" data-a="plink" data-id="${p.id}">Copy link</button><button class="mini" data-a="unpub" data-id="${p.id}">Unpublish</button>`:p.status==="Sold"?"":`<button class="mini mt" data-a="slink" data-id="${p.id}">🔗 Share link</button>`}${p.status==="Sold"?"":`<button class="mini" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22" data-a="sold" data-id="${p.id}">✓ Sold</button>`}</div></div>`}).join("")
  :`<div class="empty" style="grid-column:1/-1"><div style="font-size:34px">🏠</div><b>${props.length?"No matching properties":"Add your first property"}</b>${props.length?"Try another filter.":"Add a listing and BusinessOS will instantly find buyers from your customers."}<br>${props.length?"":'<button class="btn p" id="add2">＋ Add Property</button>'}</div>`}
 const FM=[["title","title"],["type","type"],["status","status"],["loc","locality"],["city","city"],["price","price"],["size","size"],["gaj","areaGaj"],["bed","bedrooms"],["face","facing"],["road","roadWidth"],["corner","corner"],["patta","patta"],["reg","registry"],["loan","loan"],["land","landmark"],["map","mapUrl"],["on","ownerName"],["op","ownerPhone"],["note","note"]];
 let adHi=false,adShort=true,upPh=[];
@@ -234,8 +235,8 @@ async function setPublished(p,on){
  try{const b=writeBatch(db);
   if(on)b.set(doc(db,"publicListings",p.id),publicCopy(p));else b.delete(doc(db,"publicListings",p.id));
   b.update(doc(db,"businesses",bizId,"properties",p.id),{published:on,updatedAt:serverTimestamp()});await b.commit();
-  if(on){try{await navigator.clipboard.writeText(listLink(p.id))}catch{}toast("Published — link copy ho gaya")}else toast("Unpublished — link band ho gaya")}
- catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — firestore.rules deploy karo":e.message,true)}}
+  if(on){try{await navigator.clipboard.writeText(listLink(p.id))}catch{}toast("Published — link copy ho gaya")}else toast("Unpublished — link band ho gaya");return true}
+ catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — firestore.rules deploy karo":e.message,true);return false}}
 function openPM(){$("pm_err").textContent="";
  $("pm_name").value=pub?.businessName||"";$("pm_phone").value=pub?.phone||"";$("pm_slug").value=pub?.slug||"";$("pm_slug").disabled=!!pub;
  const L=$("pm_links");if(pub){L.style.display="block";L.innerHTML=`<b>Client ko ye bhejo (Sell &amp; Earn):</b><br><span style="word-break:break-all">${esc(sellLink())}</span><br><button class="mini mt" id="pm_cp" style="margin-top:8px">Copy link</button> <a class="mini" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent("Apni property bechni hai? Yahan details bharein: "+sellLink())}">WhatsApp</a>`}else L.style.display="none";
@@ -252,6 +253,32 @@ async function savePM(){const name=clean($("pm_name").value),phone=$("pm_phone")
   toast("Public page saved");setTimeout(openPM,50)}
  catch(e){console.error(e);err.textContent=e.code==="permission-denied"?"Permission denied — firestore.rules deploy karo (ya ye link name pehle se kisi aur ka hai).":e.message}
  finally{btn.disabled=false}}
+
+/* ---------- Share link: one button does everything (set up page -> publish -> WhatsApp) ---------- */
+function linkMsg(p){const g=gajOf(p),parts=[`🏠 *${p.title||p.type}*`,`💰 ${money(p.price)}`,`📍 ${p.locality||""}, ${p.city||"Jaipur"}`];if(g)parts.push(`📏 ${[p.size,g+" Gaj"].filter(Boolean).join(" • ")}`);
+ parts.push("","👉 Photos, details & sawal-jawab:",listLink(p.id));return parts.join("\n")}
+async function shareLink(p){
+ if(!pub){toast("Pehle ek baar apna public page banao — phir har property ka link ban jayega");openPM();return}
+ if(!p.published&&!(await setPublished(p,true)))return;
+ window.open("https://wa.me/?text="+encodeURIComponent(linkMsg(p)),"_blank")}
+
+/* ---------- Questions & answers (visible to everyone on the public page once answered) ---------- */
+const qNew=pid=>qsA.filter(x=>x.propertyId===pid&&x.status==="pending").length;
+const qSort=(a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0);
+function paintQA(){const n=qsA.filter(x=>x.status==="pending").length,b=$("qN");b.textContent=n;b.classList.toggle("hidden",!n);if(!$("qa").classList.contains("hidden"))fillQA()}
+function fillQA(){const P=qsA.filter(x=>x.status==="pending").sort(qSort),A=qsA.filter(x=>x.status==="answered").sort(qSort);
+ const pn=id=>{const x=props.find(y=>y.id===id);return x?esc(code(x)+" · "+(x.title||x.type)):"Property"};
+ const row=(q,ans)=>`<div class="mrow" style="align-items:flex-start;flex-wrap:wrap"><div class="c"><b>${esc(clean(q.name)||"Visitor")}: ${esc(q.question)}</b><span>${pn(q.propertyId)} · ${esc(when(q))}</span>
+ ${ans?`<span style="display:block;margin-top:6px;color:#0a7a50;font-weight:600">✓ Aapka jawab: ${esc(q.answer)}</span>`:`<textarea data-ans="${q.id}" rows="2" placeholder="Jawab likho…" style="width:100%;margin-top:8px;border:1px solid var(--line);border-radius:10px;padding:9px 11px;resize:vertical">${esc(q.answer||"")}</textarea>`}</div>
+ <div style="display:flex;gap:6px;flex-wrap:wrap">${ans?`<button class="mini" data-qhide="${q.id}">Hide answer</button>`:`<button class="mini mt" data-qpub="${q.id}">✓ Publish answer</button>`}<button class="mini" style="background:#fde8e6;border-color:#f6c9c4;color:#9b2c22" data-qdel="${q.id}">Delete</button></div></div>`;
+ $("qa_l").innerHTML=(P.length?`<div class="sec" style="margin:0 0 4px">Naye sawal (${P.length})</div>`+P.map(q=>row(q,false)).join(""):'<div class="empty">Abhi koi naya sawal nahi.<br>Property ka link share karo — visitors sawal pooch sakte hain.</div>')+(A.length?`<div class="sec" style="margin:16px 0 4px">Jawab diye hue — public (${A.length})</div>`+A.map(q=>row(q,true)).join(""):"")}
+$("qBtn").onclick=()=>{fillQA();$("qa").classList.remove("hidden")};$("qa_x").onclick=()=>$("qa").classList.add("hidden");
+$("qa").addEventListener("click",async e=>{const pb=e.target.closest("[data-qpub]"),hd=e.target.closest("[data-qhide]"),dl=e.target.closest("[data-qdel]");
+ try{if(pb){const id=pb.dataset.qpub,ta=document.querySelector(`[data-ans="${id}"]`),a=clean(ta&&ta.value);if(a.length<2)return toast("Pehle jawab likho",true);
+   await updateDoc(doc(db,"publicQuestions",id),{answer:a.slice(0,800),status:"answered",answeredAt:serverTimestamp()});toast("Answer publish ho gaya — sab ko dikhega")}
+  else if(hd){await updateDoc(doc(db,"publicQuestions",hd.dataset.qhide),{status:"pending"});toast("Answer hide kar diya")}
+  else if(dl){if(confirm("Is sawal ko delete karna hai?")){await deleteDoc(doc(db,"publicQuestions",dl.dataset.qdel));toast("Deleted")}}}
+ catch(err){console.error(err);toast(err.code==="permission-denied"?"Permission denied — firestore.rules deploy karo":err.message,true)}});
 const leadProp=l=>{if(l.propertyId&&props.some(p=>p.id===l.propertyId))return l.propertyId;const m=/\(Ref ([^)]+)\)/.exec(l.requirement||"");if(!m)return"";const k=m[1].trim(),q=props.find(x=>x.id===k||x.code===k||code(x)===k);return q?q.id:""};
 const cbNew=()=>cbs.filter(l=>l.templateId==="property"&&l.status!=="converted"&&!l.seen).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
 const cbOf=pid=>cbNew().filter(l=>leadProp(l)===pid);
@@ -305,8 +332,9 @@ async function confirmSold(){const p=props.find(x=>x.id===soldPid),c=contacts.fi
   b.update(doc(db,"businesses",bizId,"contacts",c.id),{status:"Won",updatedAt:T});
   await b.commit();if(p.published&&pub)await updateDoc(doc(db,"publicListings",p.id),{status:"Sold",updatedAt:serverTimestamp()}).catch(console.warn);$("sm").classList.add("hidden");const o=(p.interestedIds||[]).filter(i=>i!==c.id).length;toast("Sold! Deal ban gayi, "+clean(c.name)+" ab Won hai"+(o?` · ${o} aur interested customers hain`:""))}
  catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission denied — firestore.rules deploy karo":e.message,true)}finally{btn.disabled=false}}
-function listen(id){[uC,uP,uS,uPub,uL].forEach(u=>u&&u());bizId=id;ready={c:0,p:0};
+function listen(id){[uC,uP,uS,uPub,uL,uQ].forEach(u=>u&&u());bizId=id;ready={c:0,p:0};
  uL=onSnapshot(query(collection(db,"publicLeads"),where("businessId","==",id)),s=>{cbs=s.docs.map(d=>({id:d.id,...d.data()}));paintReq();render()},e=>console.warn("callbacks",e));
+ uQ=onSnapshot(query(collection(db,"publicQuestions"),where("businessId","==",id)),s=>{qsA=s.docs.map(d=>({id:d.id,...d.data()}));paintQA();render()},e=>console.warn("questions",e));
  uS=onSnapshot(collection(db,"businesses",id,"submissions"),s=>{subs=s.docs.map(d=>({id:d.id,...d.data()}));paintReq()},e=>console.warn("submissions",e));
  uPub=onSnapshot(doc(db,"businesses",id,"settings","publicPage"),s=>{pub=s.exists()&&s.data().slug?s.data():null;render()},e=>console.warn("publicPage",e));
  uC=onSnapshot(collection(db,"businesses",id,"contacts"),s=>{if(s.empty&&user&&id!==user.uid)return listen(user.uid);contacts=s.docs.map(d=>({id:d.id,...d.data()}));ready.c=1;render()},fail);
@@ -327,12 +355,12 @@ $("ad_cp").onclick=async()=>{try{await navigator.clipboard.writeText($("f_ad").v
 $("ad_wa").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent($("f_ad").value),"_blank");
 $("ty").onchange=e=>{ty=e.target.value;render()};let st;$("q").addEventListener("input",e=>{clearTimeout(st);st=setTimeout(()=>{q=e.target.value.trim();render()},150)});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("mo").classList.add("hidden");$("mm").classList.add("hidden");$("sm").classList.add("hidden");$("pm").classList.add("hidden");$("rq").classList.add("hidden")}});
-document.addEventListener("click",async e=>{const t=e.target,f=t.closest("[data-f]");if(t.closest("[data-openreq]")){$("reqBtn").click();return}if(f){flt=f.dataset.f;render();return}if(t.id==="add2"){openM();return}
+document.addEventListener("click",async e=>{const t=e.target,f=t.closest("[data-f]");if(t.closest("[data-openreq]")){$("reqBtn").click();return}if(t.closest("[data-openqa]")){$("qBtn").click();return}if(f){flt=f.dataset.f;render();return}if(t.id==="add2"){openM();return}
  const tb=t.closest("[data-tab]");if(tb){mmS.tab=tb.dataset.tab;paintMM();return}
  const lk=t.closest("[data-lk]");if(lk){toggleLink(mmS.id,lk.dataset.lk);return}
  const sd=t.closest("[data-sold]");if(sd){$("mm").classList.add("hidden");openSold(mmS.id,sd.dataset.sold);return}
  const a=t.closest("[data-a]");if(!a)return;const p=props.find(x=>x.id===a.dataset.id);if(!p)return;
- if(a.dataset.a==="edit")openM(p.id);else if(a.dataset.a==="match")showMatch(p.id,"match");else if(a.dataset.a==="int")showMatch(p.id,"int");else if(a.dataset.a==="sold")openSold(p.id);else if(a.dataset.a==="pub")setPublished(p,true);else if(a.dataset.a==="unpub"){if(confirm("Public link band kar dein?"))setPublished(p,false)}else if(a.dataset.a==="plink"){try{await navigator.clipboard.writeText(listLink(p.id));toast("Link copied")}catch{toast(listLink(p.id))}}
+ if(a.dataset.a==="edit")openM(p.id);else if(a.dataset.a==="match")showMatch(p.id,"match");else if(a.dataset.a==="int")showMatch(p.id,"int");else if(a.dataset.a==="sold")openSold(p.id);else if(a.dataset.a==="pub")setPublished(p,true);else if(a.dataset.a==="unpub"){if(confirm("Public link band kar dein?"))setPublished(p,false)}else if(a.dataset.a==="slink")shareLink(p);else if(a.dataset.a==="plink"){try{await navigator.clipboard.writeText(listLink(p.id));toast("Link copied")}catch{toast(listLink(p.id))}}
  else if(a.dataset.a==="share")window.open("https://wa.me/?text="+encodeURIComponent(shareText(p)),"_blank");
  else{try{await navigator.clipboard.writeText(shareText(p).replace(/\*/g,""));toast("Ad text copied")}catch{toast("Copy not allowed by browser",true)}}});
 </script>

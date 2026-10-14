@@ -182,6 +182,27 @@ service cloud.firestore {
       allow delete: if signedIn() && ownsBusiness(resource.data.businessId);
     }
 
+    // publicQuestions/{id}: questions asked on a public property page. Visitors can only CREATE a pending question;
+    // everybody can read the ones the owner has answered; only the business (owner/team) can answer, hide or delete.
+    match /publicQuestions/{qid} {
+      allow create: if request.resource.data.keys().hasOnly(['businessId','propertyId','propertyCode','name','question','status','answer','createdAt'])
+        && request.resource.data.businessId is string
+        && request.resource.data.propertyId is string && request.resource.data.propertyId.size() > 2 && request.resource.data.propertyId.size() <= 64
+        && request.resource.data.propertyCode is string && request.resource.data.propertyCode.size() <= 30
+        && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 60
+        && request.resource.data.question is string && request.resource.data.question.size() >= 3 && request.resource.data.question.size() <= 500
+        && request.resource.data.status == 'pending'
+        && request.resource.data.answer == ''
+        && request.resource.data.createdAt is timestamp
+        && exists(/databases/$(database)/documents/publicListings/$(request.resource.data.propertyId))
+        && get(/databases/$(database)/documents/publicListings/$(request.resource.data.propertyId)).data.businessId == request.resource.data.businessId;
+      allow read: if resource.data.status == 'answered' || (signedIn() && ownsBusiness(resource.data.businessId));
+      allow update: if signedIn() && ownsBusiness(resource.data.businessId)
+        && request.resource.data.businessId == resource.data.businessId
+        && request.resource.data.propertyId == resource.data.propertyId;
+      allow delete: if signedIn() && ownsBusiness(resource.data.businessId);
+    }
+
     match /businesses/{businessId} {
       allow create: if isAdmin() || (signedIn() && request.auth.uid == businessId && request.resource.data.plan in ['trial','free']);
       allow read: if ownsBusiness(businessId) || isAdmin()
