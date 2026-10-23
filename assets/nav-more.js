@@ -1,5 +1,5 @@
 /* BusinessOS — simple navigation.
- * Top bar: Overview · Customers · Follow-ups · Deals · [Properties / Vehicles] · Calls · More.
+ * Top bar: Overview · Customers · Follow-ups · Deals · [Properties / Vehicles] · Outreach · Calls · More.
  * The industry item (Properties today, Vehicles later) only shows for businesses that use it,
  * decided by INVENTORY / TEMPLATE_MODULE below.
  * Everything else lives under "More" (uniform icons, Team & settings highlighted at the bottom).
@@ -33,6 +33,9 @@
   css.textContent=[
     "nav.nav{overflow:visible!important}",
     /* Calls button */
+    ".nav-out{color:#0b7a52!important;font-weight:700!important;flex:none}",
+    ".nav-out:hover{background:#e3f6ee!important}",
+    ".nav-out.on{background:#e3f6ee!important;color:#0b7a52!important}",
     ".nav-call{display:inline-flex!important;align-items:center;gap:7px;height:36px!important;margin-left:8px;padding:0 13px!important;border-radius:10px!important;border:1px solid #d3defe;background:#fff;color:#2347d6!important;font-size:13px!important;font-weight:700;white-space:nowrap;flex:none}",
     ".nav-call svg{display:block!important;width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}",
     ".nav-call:hover{background:#eef2ff!important;border-color:#b9ccff}",
@@ -67,7 +70,7 @@
   document.head.appendChild(css);
 
   var links=[].slice.call(nav.querySelectorAll(":scope > a")),rest=[];
-  links.forEach(function(a){var h=(a.getAttribute("href")||"").split(/[?#]/)[0];if(isInv(h)){a.remove();return}if(CORE.indexOf(h)<0)rest.push(a)});
+  links.forEach(function(a){var h=(a.getAttribute("href")||"").split(/[?#]/)[0];if(isInv(h)||h==="outreach-queue.html"){a.remove();return}if(CORE.indexOf(h)<0)rest.push(a)});
   /* make sure all four everyday links exist, in the same order on every page */
   var LABEL={"customers.html":"Overview","customer-list.html":"Customers","followups.html":"Follow-ups","deals.html":"Deals"};
   CORE.forEach(function(h){var a=nav.querySelector(':scope > a[href^="'+h+'"]');
@@ -80,14 +83,18 @@
   nav.appendChild(call);
 
   /* Industry link (Properties / Vehicles) — top bar, right after Deals, only when the business uses it */
+  var out=document.createElement("a");out.href="outreach-queue.html";out.className="nav-out"+(here==="outreach-queue.html"?" on":"");out.textContent="Outreach";out.title="WhatsApp outreach list";
+  if(here==="outreach-queue.html")out.setAttribute("aria-current","page");
   var inv=null;
   function applyInventory(){
     if(inv&&inv.parentNode)inv.parentNode.removeChild(inv);inv=null;
     var cfg=INVENTORY[moduleKey()];
-    if(!cfg||!cfg.ready)return;
-    inv=document.createElement("a");inv.href=cfg.href;inv.className="nav-inv"+(here===cfg.href?" on":"");inv.textContent=cfg.label;
-    if(here===cfg.href)inv.setAttribute("aria-current","page");
-    nav.insertBefore(inv,call);
+    if(cfg&&cfg.ready){
+      inv=document.createElement("a");inv.href=cfg.href;inv.className="nav-inv"+(here===cfg.href?" on":"");inv.textContent=cfg.label;
+      if(here===cfg.href)inv.setAttribute("aria-current","page");
+      nav.insertBefore(inv,call);
+    }
+    nav.insertBefore(out,call);   /* Outreach always sits right before Calls */
   }
   applyInventory();
   document.addEventListener("bos-vertical",applyInventory);
