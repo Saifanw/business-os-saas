@@ -1,274 +1,255 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="hi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Outreach Queue — Business OS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Outreach — BusinessOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#f3f5f4;--card:#fff;--ink:#16211c;--mute:#66726c;--line:#dfe5e2;--green:#1a9d52;--greenbg:#e5f6ec;--blue:#1d5fd1;--amber:#b46a00;--amberbg:#fff3dc;--red:#c0392b;--btn:#16211c;--btnink:#fff}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1512;--card:#17201b;--ink:#e8efeb;--mute:#8d9a93;--line:#26322b;--green:#3fcf80;--greenbg:#12301f;--blue:#6fa3ff;--amber:#f0b45a;--amberbg:#33270f;--red:#ff7b6b;--btn:#e8efeb;--btnink:#0f1512}}
-*{box-sizing:border-box}
-html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Devanagari",sans-serif}
-.wrap{max-width:900px;margin:0 auto;padding:20px 16px 80px}
-header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
-h1{font-size:22px;margin:0;letter-spacing:-.01em}
-h1 small{display:block;font-size:13px;font-weight:400;color:var(--mute);margin-top:2px}
-.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:8px;cursor:pointer}
-.btn:hover{border-color:var(--mute)}
-.btn.pri{background:var(--btn);color:var(--btnink);border-color:var(--btn)}
-.btn.wa{background:var(--green);border-color:var(--green);color:#fff}
-.btn.sm{padding:6px 10px;font-size:13px;font-weight:500}
-.btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:left}
-.stat b{display:block;font-size:22px;line-height:1.1}
-.stat span{font-size:12px;color:var(--mute)}
+:root{--ink:#0f172a;--mut:#64748b;--line:#e6eaf2;--bg:#f5f7fb;--blue:#2f5bff;--blue2:#1e40e0;--green:#0f9d6a;--greenbg:#e3f6ee;--amber:#d98a00;--amberbg:#fff3d6;--red:#e0483f}
+*{box-sizing:border-box;margin:0}html,body{overflow-x:hidden}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}.hidden{display:none!important}:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.top{position:sticky;top:0;z-index:30;background:#ffffffee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1100px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:22px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;letter-spacing:-.02em}.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#4f7bff,#2446e0);color:#fff;display:grid;place-items:center;font-weight:800}
+.nav{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}
+.nav a{padding:8px 13px;border-radius:9px;color:var(--mut);font-weight:600;font-size:13px;white-space:nowrap}.nav a:hover{background:#f1f4fa;color:var(--ink)}.nav a.on{background:#eaf0ff;color:var(--blue)}
+.avatar{width:36px;height:36px;border-radius:50%;background:#e7edff;color:var(--blue);font-weight:700;display:grid;place-items:center;border:1px solid #d5defa}
+main{max-width:1100px;margin:0 auto;padding:26px 24px 70px}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:16px}.hero h1{font-size:26px;letter-spacing:-.03em;font-weight:800}.hero p{color:var(--mut);margin-top:2px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px}.btn:hover{border-color:#c9d3e6;background:#f8faff}
+.btn.p{background:var(--blue);border-color:var(--blue);color:#fff}.btn.p:hover{background:var(--blue2)}
+.btn.wa{background:var(--green);border-color:var(--green);color:#fff}.btn.wa:hover{filter:brightness(.95)}
+.btn.sm{padding:6px 11px;font-size:12.5px;font-weight:600}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px #0f172a08}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.stat{padding:12px 14px}.stat b{display:block;font-size:24px;line-height:1.1;font-weight:800}.stat span{font-size:12px;color:var(--mut)}
 .stat.g b{color:var(--green)}.stat.a b{color:var(--amber)}
-.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.bar input,.bar select{font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
-.bar input[type=search]{flex:1;min-width:160px}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
-.panel h2{font-size:16px;margin:0 0 10px}
-.panel label{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
-.panel input,.panel textarea{width:100%;font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
-.panel textarea{min-height:130px;resize:vertical}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.hint{font-size:12px;color:var(--mute);margin-top:6px}
-.notice{background:var(--amberbg);color:var(--amber);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:14px}
-.drop{border:2px dashed var(--line);border-radius:12px;padding:34px 16px;text-align:center;background:var(--card)}
-.drop.over{border-color:var(--green)}
-.drop p{margin:6px 0 14px;color:var(--mute)}
-.sec{margin:22px 0 8px;font-size:13px;font-weight:700;color:var(--mute);display:flex;justify-content:space-between;align-items:center}
-.sec.fu{color:var(--amber)}.sec.done{color:var(--green)}
-.lead{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:6px}
-.lead .tick{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:14px;color:transparent}
-.lead.sent{background:var(--greenbg);border-color:transparent}
-.lead.sent .tick{background:var(--green);border-color:var(--green);color:#fff}
-.lead.fu{border-color:var(--amber)}
-.lead .info{flex:1;min-width:0}
-.lead .nm{font-weight:600;overflow-wrap:anywhere}
-.lead .mt{font-size:13px;color:var(--mute)}
-.lead .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--bg);color:var(--mute);margin-left:6px}
-.tag.fu{background:var(--amberbg);color:var(--amber)}
-.empty{text-align:center;color:var(--mute);padding:24px}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--btn);color:var(--btnink);padding:10px 16px;border-radius:10px;display:none;gap:14px;align-items:center;z-index:9;max-width:92vw}
-.toast.on{display:flex}
-.toast button{background:none;border:0;color:inherit;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer}
-.hidden{display:none!important}
-@media (max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}.lead{flex-wrap:wrap}.lead .acts{width:100%;justify-content:flex-start}.row2{grid-template-columns:1fr}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.bar input,.bar select{border:1px solid var(--line);background:#fff;border-radius:11px;padding:9px 14px;font-size:13px}.bar input{flex:1;min-width:200px}
+.panel{padding:18px;margin-bottom:14px}.panel h2{font-size:16px;margin-bottom:8px}
+.panel label{display:block;font-size:12.5px;color:var(--mut);margin:10px 0 4px;font-weight:600}
+.panel textarea,.panel input{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#fbfcff}.panel textarea{min-height:84px;resize:vertical}
+.hint{font-size:12px;color:var(--mut);margin-top:6px}
+.drop{border:2px dashed #cdd6ea;border-radius:16px;padding:40px 16px;text-align:center;background:#fff}.drop.over{border-color:var(--blue);background:#f4f7ff}
+.drop h2{font-size:18px}.drop p{color:var(--mut);margin:6px 0 16px}
+.gh{padding:11px 18px;background:#f8faff;border-top:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between}.gh:first-child{border-top:0}.gh.fu{color:var(--amber)}.gh.dn{color:var(--green)}
+.lead{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 18px;border-top:1px solid var(--line)}
+.lead:hover{background:#fafcff}
+.tick{width:26px;height:26px;border-radius:50%;border:2px solid #d5dbe8;display:grid;place-items:center;font-size:14px;color:transparent}
+.lead.sent{background:var(--greenbg)}.lead.sent .tick{background:var(--green);border-color:var(--green);color:#fff}
+.lead.fu .tick{background:var(--amber);border-color:var(--amber);color:#fff}
+.nm{font-weight:700;overflow-wrap:anywhere}.mt{font-size:12.5px;color:var(--mut)}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;background:#eef2f8;color:#475569;margin-left:8px;vertical-align:1px}.tag.fu{background:var(--amberbg);color:#9a6200}.tag.g{background:#c9efdd;color:#0b7a52}
+.acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.empty{padding:36px;text-align:center;color:var(--mut)}
+.auth{max-width:380px;margin:12vh auto;padding:28px;text-align:center}.auth p{color:var(--mut);margin:8px 0 18px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;display:none;gap:14px;align-items:center;z-index:99;max-width:92vw}.toast.on{display:flex}.toast.bad{background:var(--red)}
+.toast button{background:none;border:0;color:#fff;font-weight:700;text-decoration:underline}
+.note{background:var(--amberbg);color:#8a5a00;border-radius:12px;padding:11px 14px;margin-bottom:12px;font-size:13px}
+@media(max-width:700px){.top-in{padding:10px 14px 0;gap:10px;flex-wrap:wrap;height:auto}.nav{order:3;flex-basis:100%;padding-bottom:8px}main{padding:18px 14px 60px}.stats{grid-template-columns:repeat(2,1fr)}.lead{grid-template-columns:30px 1fr}.acts{grid-column:1/-1;justify-content:flex-start}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Outreach Queue<small>Excel upload karo, ek-ek karke WhatsApp bhejo. Bheja hua apne aap neeche chala jaata hai.</small></h1>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn" id="btnSettings">Message</button>
-      <button class="btn" id="btnExport">Excel download</button>
-      <button class="btn" id="btnNew">Nayi Excel</button>
-    </div>
-  </header>
+<header class="top"><div class="top-in">
+  <a class="brand" href="customers.html"><span class="logo">B</span>BusinessOS</a>
+  <nav class="nav"><a href="customers.html">Overview</a><a href="customer-list.html">Customers</a><a href="followups.html">Follow-ups</a><a href="deals.html">Deals</a><a href="website-leads.html">Leads</a><a href="whatsapp-center.html">WhatsApp</a><a class="on" href="outreach-queue.html">Outreach</a><a href="reports.html">Reports</a></nav>
+  <div class="avatar" id="av">?</div>
+</div></header>
 
-  <section id="settings" class="panel hidden">
-    <h2>Message (optional)</h2>
+<section id="auth" class="card auth hidden"><div class="logo" style="margin:auto;width:46px;height:46px;font-size:20px">B</div><h2 style="margin-top:12px">Outreach</h2><p>Apne BusinessOS account se sign in karo.</p><button class="btn p" id="gb">Google se sign in</button></section>
+
+<main id="app" class="hidden">
+  <div class="hero">
+    <div><h1>Outreach</h1><p>Excel ki list se ek-ek ko WhatsApp bhejo. Sab kuch Customers aur Follow-ups mein bhi dikhta hai.</p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="bMsg">Message</button><button class="btn" id="bNew">Nayi Excel jodo</button><a class="btn p" href="followups.html">Follow-ups dekho</a></div>
+  </div>
+
+  <section id="settings" class="card panel hidden">
+    <h2>Message</h2>
     <label for="sTpl">WhatsApp khulne par pehle se likha message (khaali chhodo to chat khaali khulegi)</label>
-    <textarea id="sTpl" style="min-height:90px"></textarea>
+    <textarea id="sTpl"></textarea>
     <label for="sFtpl">Follow-up message</label>
-    <textarea id="sFtpl" style="min-height:90px"></textarea>
-    <div class="row2">
-      <div><label for="sDays">Follow-up kitne din baad</label><input id="sDays" type="number" min="1" max="60"></div>
-      <div></div>
-    </div>
-    <div class="hint">{business} likhoge to us jagah har business ka naam apne aap aa jayega. Baaki message aap WhatsApp mein khud likh sakte ho.</div>
-    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn pri" id="sSave">Save karo</button><button class="btn" id="sReset">Default wapas</button></div>
+    <textarea id="sFtpl"></textarea>
+    <label for="sDays">Bhejne ke kitne din baad Follow-up mein dikhe</label>
+    <input id="sDays" type="number" min="1" max="60" style="max-width:140px">
+    <div class="hint">{business} likhoge to har business ka naam apne aap aa jayega. Baaki message aap WhatsApp mein khud likho.</div>
+    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn p" id="sSave">Save karo</button><button class="btn" id="sReset">Default wapas</button></div>
   </section>
 
+  <div id="loading" class="empty">Aapki list load ho rahi hai…</div>
   <section id="upload" class="drop hidden">
-    <b style="font-size:17px">Excel ya CSV yahan daalo</b>
-    <p>Business Name, Phone, Category, Area wale columns apne aap pehchane jaate hain.</p>
-    <button class="btn pri" id="pick">File chuno</button>
-    <input id="file" type="file" accept=".xlsx,.xls,.csv" class="hidden">
+    <h2>Excel ya CSV yahan daalo</h2>
+    <p>Business Name, Phone, Category, Area columns apne aap pehchane jaate hain. Sab businesses aapke CRM mein judenge.</p>
+    <button class="btn p" id="pick">File chuno</button>
   </section>
+  <input id="file" type="file" accept=".xlsx,.xls,.csv" class="hidden">
 
   <section id="main" class="hidden">
     <div class="stats">
-      <div class="stat"><b id="nAll">0</b><span>Kul businesses</span></div>
-      <div class="stat"><b id="nPend">0</b><span>Bhejna baaki</span></div>
-      <div class="stat g"><b id="nSent">0</b><span>Bhej diye</span></div>
-      <div class="stat a"><b id="nFu">0</b><span>Follow-up due</span></div>
+      <div class="card stat"><b id="nAll">0</b><span>Kul businesses</span></div>
+      <div class="card stat"><b id="nPend">0</b><span>Bhejna baaki</span></div>
+      <div class="card stat g"><b id="nSent">0</b><span>Bhej diye</span></div>
+      <div class="card stat a"><b id="nFu">0</b><span>Follow-up due</span></div>
     </div>
-    <div class="bar">
-      <input type="search" id="q" placeholder="Naam ya area dhundo" aria-label="Search">
-      <select id="cat" aria-label="Category"></select>
-    </div>
-    <div id="list"></div>
+    <div class="bar"><input type="search" id="q" placeholder="Naam ya area dhundo" aria-label="Search"><select id="cat" aria-label="Category"></select></div>
+    <div class="card" id="list"></div>
   </section>
-</div>
-<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo">Wapas karo</button></div>
+</main>
+<div class="toast" id="toast"><span id="tm"></span><button id="tu">Wapas karo</button></div>
 
-<script>
-const KEY="oq_leads_v1",SKEY="oq_settings_v2";
-const DEF_TPL="Namaste {business} team,\n\n";
-const DEF_FTPL="Namaste {business} team,\n\nPichhle message ka follow-up. ";
-const $=id=>document.getElementById(id);
-let leads=load(KEY,[]), S=Object.assign({tpl:DEF_TPL,ftpl:DEF_FTPL,days:3},load(SKEY,{}));
-let lastUndo=null,toastT=null;
-function load(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(leads))}catch(e){alert("Browser storage full ya band hai. Excel download karke backup rakho.")}}
-function saveS(){try{localStorage.setItem(SKEY,JSON.stringify(S))}catch(e){}}
+<script src="plans-config.js"></script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import{getFirestore,collection,doc,getDoc,getDocs,query,where,onSnapshot,writeBatch,updateDoc,arrayUnion,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
+const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+const OWNER="saif.anwar1618@gmail.com",MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DEF_TPL="Namaste {business} team,\n\n",DEF_FTPL="Namaste {business} team,\n\nPichhle message ka follow-up. ";
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+let user,bizId,biz={},isOwner=false,leads=[],unsub=null,lastUndo=null,tT=null,busy=false;
+let S=Object.assign({tpl:DEF_TPL,ftpl:DEF_FTPL,days:3},(()=>{try{return JSON.parse(localStorage.getItem("oq_settings_v3"))||{}}catch(e){return{}}})());
+const C=()=>collection(db,"businesses",bizId,"contacts"),ref=id=>doc(db,"businesses",bizId,"contacts",id);
 
-function normPhone(raw){
-  let d=String(raw||"").replace(/\D/g,"");
-  if(!d)return {wa:null,why:"Number nahi hai"};
-  if(d.length===12&&d.startsWith("91"))d=d.slice(2);
-  else if(d.length===11&&d[0]==="0")d=d.slice(1);
-  if(d.length===10&&/^[6-9]/.test(d))return {wa:"91"+d};
-  return {wa:null,why:"Landline / galat number"};
-}
-function fill(t,l){
-  return t.replace(/\{business\}/g,l.name).replace(/\{category\}/g,(l.category||"business").toLowerCase()).replace(/\{area\}/g,l.area||"Jaipur");
-}
-function daysAgo(ts){return Math.floor((Date.now()-ts)/864e5)}
-function isFu(l){return l.status==="sent"&&daysAgo(l.sentAt)>=S.days}
+/* ---------- helpers ---------- */
+function phoneOf(v){let s=String(v||"").split(/[,;/\n]|\s{2,}/)[0];if(/^\d+(\.\d+)?e\+\d+$/i.test(s.trim()))s=Number(s).toFixed(0);let d=s.replace(/\D/g,"");if(d.length>10&&d.startsWith("91"))d=d.slice(2);if(d.length===11&&d.startsWith("0"))d=d.slice(1);return d.length>=7?d:""}
+const isMobile=p=>/^[6-9]\d{9}$/.test(p);
+function nextStr(days,type){const d=new Date();d.setDate(d.getDate()+days);return`${String(d.getDate()).padStart(2,"0")} ${MON[d.getMonth()]} ${d.getFullYear()} · 10:00 AM · ${type}`}
+const today=()=>{const d=new Date();return`${String(d.getDate()).padStart(2,"0")} ${MON[d.getMonth()]} ${d.getFullYear()}`};
+const daysAgo=t=>Math.floor((Date.now()-t)/864e5);
+const isFu=l=>l.outreachStatus==="sent"&&daysAgo(l.outreachSentAt||0)>=S.days;
+const fill=(t,l)=>t.replace(/\{business\}/g,l.name||"").replace(/\{category\}/g,String(l.businessType||"business").toLowerCase()).replace(/\{area\}/g,l.area||"Jaipur");
+function toast(m,undo,bad){$("tm").textContent=m;$("tu").classList.toggle("hidden",!undo);$("toast").className="toast on"+(bad?" bad":"");clearTimeout(tT);tT=setTimeout(()=>$("toast").classList.remove("on"),6000)}
 
-function importFile(f){
-  const r=new FileReader();
-  r.onload=e=>{
-    try{
-      const wb=XLSX.read(e.target.result,{type:"array"});
-      const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""});
-      if(!rows.length)throw new Error("File khaali hai");
-      const keys=Object.keys(rows[0]);
-      const find=re=>keys.find(k=>re.test(k.toLowerCase()));
-      const kn=find(/business|name|naam|company/),kp=find(/^phone|mobile|contact|number|whatsapp(?!.*link)/),kc=find(/categor|type/),ka=find(/area|locality|address/),kr=find(/rating/);
-      if(!kn||!kp)throw new Error("Business Name aur Phone column nahi mile");
-      const have=new Set(leads.map(l=>l.key));let add=0,skip=0;
-      rows.forEach((r,i)=>{
-        const name=String(r[kn]).trim();if(!name)return;
-        const p=normPhone(r[kp]);
-        const key=p.wa||("x:"+name.toLowerCase()+"|"+String(ka?r[ka]:""));
-        if(have.has(key)){skip++;return}
-        have.add(key);add++;
-        leads.push({id:Date.now()+"_"+i,key,name,phone:String(r[kp]).trim(),wa:p.wa,category:kc?String(r[kc]).trim():"",area:ka?String(r[ka]).trim():"",rating:kr?r[kr]:"",status:"pending",sentAt:0,follow:0});
-      });
-      save();render();
-      toast(add+" businesses judi"+(skip?", "+skip+" pehle se the":""));
-    }catch(err){alert("File nahi padhi ja saki: "+err.message)}
-  };
-  r.readAsArrayBuffer(f);
+/* ---------- live list ---------- */
+function listen(){
+  if(unsub)unsub();
+  unsub=onSnapshot(query(C(),where("source","==","Outreach")),s=>{
+    leads=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.importRowOrder??1e9)-(b.importRowOrder??1e9));
+    $("loading").classList.add("hidden");render();
+  },e=>{console.error(e);$("loading").textContent="List load nahi hui: "+(e.message||e.code)});
 }
-
-function send(id,follow){
-  const l=leads.find(x=>x.id===id);if(!l||!l.wa)return;
-  const prev={status:l.status,sentAt:l.sentAt,follow:l.follow};
-  const text=fill(follow?S.ftpl:S.tpl,l);
-  window.open("https://wa.me/"+l.wa+(text.trim()?"?text="+encodeURIComponent(text):""),"_blank");
-  l.status="sent";l.sentAt=Date.now();if(follow)l.follow++;
-  save();render();
-  undoable(id,prev,l.name+" ✓ mark ho gaya");
-}
-function setStatus(id,status,msg){
-  const l=leads.find(x=>x.id===id);const prev={status:l.status,sentAt:l.sentAt,follow:l.follow};
-  l.status=status;if(status==="pending"){l.sentAt=0;l.follow=0}
-  save();render();if(msg)undoable(id,prev,msg);
-}
-function undoable(id,prev,msg){
-  lastUndo={id,prev};toast(msg,true);
-}
-function toast(m,undo){
-  $("toastMsg").textContent=m;$("toastUndo").classList.toggle("hidden",!undo);
-  $("toast").classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>$("toast").classList.remove("on"),6000);
-}
-$("toastUndo").onclick=()=>{
-  if(!lastUndo)return;const l=leads.find(x=>x.id===lastUndo.id);Object.assign(l,lastUndo.prev);lastUndo=null;
-  save();render();$("toast").classList.remove("on");
-};
-
 function rowHTML(l,kind){
-  const meta=[l.category,l.area,l.phone].filter(Boolean).join(" • ");
-  let tag="",acts="";
+  const p=phoneOf(l.phone),meta=[l.businessType,l.area,l.phone].filter(Boolean).join(" • ");
+  let tag="",acts="",tick=(kind==="sent"||kind==="fu")?"✓":"";
   if(kind==="pending")acts=`<button class="btn wa sm" data-a="send" data-id="${l.id}">WhatsApp bhejo</button><button class="btn sm" data-a="skip" data-id="${l.id}">Skip</button>`;
-  else if(kind==="fu"){tag=`<span class="tag fu">${daysAgo(l.sentAt)} din ho gaye</span>`;
-    acts=`<button class="btn wa sm" data-a="follow" data-id="${l.id}">Follow-up bhejo</button><button class="btn sm" data-a="reply" data-id="${l.id}">Reply aaya</button><button class="btn sm" data-a="skip" data-id="${l.id}">Band karo</button>`}
-  else if(kind==="sent"){const d=daysAgo(l.sentAt);tag=`<span class="tag">${l.status==="replied"?"Reply aaya":"Bheja "+(d===0?"aaj":d+" din pehle")}${l.follow?" • follow-up "+l.follow:""}</span>`;
-    acts=`${l.status==="sent"?`<button class="btn sm" data-a="reply" data-id="${l.id}">Reply aaya</button>`:""}<button class="btn sm" data-a="undo" data-id="${l.id}">Wapas upar</button>`}
+  else if(kind==="fu"){tag=`<span class="tag fu">${daysAgo(l.outreachSentAt||0)} din ho gaye</span>`;acts=`<button class="btn wa sm" data-a="follow" data-id="${l.id}">Follow-up bhejo</button><button class="btn sm" data-a="reply" data-id="${l.id}">Reply aaya</button><button class="btn sm" data-a="skip" data-id="${l.id}">Band karo</button>`}
+  else if(kind==="sent"){const d=daysAgo(l.outreachSentAt||0);tag=l.outreachStatus==="replied"?`<span class="tag g">Reply aaya</span>`:`<span class="tag g">Bheja ${d===0?"aaj":d+" din pehle"}${l.outreachFollow?" • follow-up "+l.outreachFollow:""}</span>`;acts=`${l.outreachStatus==="sent"?`<button class="btn sm" data-a="reply" data-id="${l.id}">Reply aaya</button>`:""}<button class="btn sm" data-a="undo" data-id="${l.id}">Wapas upar</button>`}
   else if(kind==="dead"){tag=`<span class="tag">Band</span>`;acts=`<button class="btn sm" data-a="undo" data-id="${l.id}">Wapas upar</button>`}
-  else {tag=`<span class="tag">WhatsApp nahi</span>`;acts=`<a class="btn sm" style="text-decoration:none" href="tel:${l.phone.replace(/[^+\d]/g,"")}">Call</a>`}
-  const tick=(kind==="sent"||kind==="fu")?"✓":"";
+  else{tag=`<span class="tag">WhatsApp nahi</span>`;acts=`<a class="btn sm" href="tel:${esc(String(l.phone||"").replace(/[^+\d]/g,""))}">Call</a>`}
   const cls=kind==="sent"?"sent":kind==="fu"?"fu":"";
-  const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  return `<div class="lead ${cls}"><div class="tick" aria-hidden="true">${tick}</div><div class="info"><div class="nm">${esc(l.name)}${tag}</div><div class="mt">${esc(meta)}</div></div><div class="acts">${acts}</div></div>`;
-}
-function section(title,cls,items,kind){
-  if(!items.length)return "";
-  return `<div class="sec ${cls}"><span>${title} (${items.length})</span></div>`+items.map(l=>rowHTML(l,kind)).join("");
-}
+  return`<div class="lead ${cls}"><div class="tick" aria-hidden="true">${tick}</div><div style="min-width:0"><div class="nm">${esc(l.name)}${tag}</div><div class="mt">${esc(meta)}</div></div><div class="acts">${acts}</div></div>`}
+const sec=(t,c,a,k)=>a.length?`<div class="gh ${c}"><span>${t}</span><span>${a.length}</span></div>`+a.map(l=>rowHTML(l,k)).join(""):"";
 function render(){
   const has=leads.length>0;
   $("upload").classList.toggle("hidden",has);$("main").classList.toggle("hidden",!has);
   if(!has)return;
-  const cats=[...new Set(leads.map(l=>l.category).filter(Boolean))].sort();
-  const cur=$("cat").value;
-  $("cat").innerHTML='<option value="">Saari categories</option>'+cats.map(c=>`<option ${c===cur?"selected":""}>${c}</option>`).join("");
+  const cats=[...new Set(leads.map(l=>l.businessType).filter(Boolean))].sort(),cur=$("cat").value;
+  $("cat").innerHTML='<option value="">Saari categories</option>'+cats.map(c=>`<option ${c===cur?"selected":""}>${esc(c)}</option>`).join("");
   const q=$("q").value.toLowerCase(),c=$("cat").value;
-  const v=leads.filter(l=>(!c||l.category===c)&&(!q||(l.name+" "+l.area).toLowerCase().includes(q)));
-  const fu=v.filter(isFu).sort((a,b)=>a.sentAt-b.sentAt);
-  const pend=v.filter(l=>l.status==="pending"&&l.wa);
-  const sent=v.filter(l=>(l.status==="sent"&&!isFu(l))||l.status==="replied").sort((a,b)=>b.sentAt-a.sentAt);
-  const land=v.filter(l=>l.status==="pending"&&!l.wa);
-  const dead=v.filter(l=>l.status==="dead");
+  const v=leads.filter(l=>(!c||l.businessType===c)&&(!q||((l.name||"")+" "+(l.area||"")).toLowerCase().includes(q)));
+  const mob=l=>isMobile(phoneOf(l.phone));
+  const fu=v.filter(isFu).sort((a,b)=>(a.outreachSentAt||0)-(b.outreachSentAt||0));
+  const pend=v.filter(l=>l.outreachStatus==="pending"&&mob(l));
+  const sent=v.filter(l=>(l.outreachStatus==="sent"&&!isFu(l))||l.outreachStatus==="replied").sort((a,b)=>(b.outreachSentAt||0)-(a.outreachSentAt||0));
+  const land=v.filter(l=>l.outreachStatus==="pending"&&!mob(l)),dead=v.filter(l=>l.outreachStatus==="dead");
   $("nAll").textContent=leads.length;
-  $("nPend").textContent=leads.filter(l=>l.status==="pending"&&l.wa).length;
-  $("nSent").textContent=leads.filter(l=>l.status==="sent"||l.status==="replied").length;
+  $("nPend").textContent=leads.filter(l=>l.outreachStatus==="pending"&&mob(l)).length;
+  $("nSent").textContent=leads.filter(l=>l.outreachStatus==="sent"||l.outreachStatus==="replied").length;
   $("nFu").textContent=leads.filter(isFu).length;
-  $("list").innerHTML=
-    section("Follow-up due","fu",fu,"fu")+
-    section("Bhejna baaki","",pend,"pending")+
-    section("Bhej diye","done",sent,"sent")+
-    section("Landline ya galat number","",land,"land")+
-    section("Band kiye","",dead,"dead")||'<div class="empty">Kuch nahi mila.</div>';
+  $("list").innerHTML=sec("Follow-up due","fu",fu,"fu")+sec("Bhejna baaki","",pend,"pending")+sec("Bhej diye","dn",sent,"sent")+sec("Landline ya galat number","",land,"land")+sec("Band kiye","",dead,"dead")||'<div class="empty">Kuch nahi mila.</div>';
 }
-$("list").addEventListener("click",e=>{
-  const b=e.target.closest("button[data-a]");if(!b)return;const id=b.dataset.id,a=b.dataset.a;
-  if(a==="send")send(id,false);
-  else if(a==="follow")send(id,true);
-  else if(a==="reply")setStatus(id,"replied","Reply aaya mark hua");
-  else if(a==="skip")setStatus(id,"dead","Band kar diya");
-  else if(a==="undo")setStatus(id,"pending");
-});
+
+/* ---------- actions (saved to CRM contacts) ---------- */
+const snap=l=>({outreachStatus:l.outreachStatus||"pending",outreachSentAt:l.outreachSentAt||0,outreachFollow:l.outreachFollow||0,status:l.status||"New",next:l.next||"Not set",last:l.last||""});
+async function upd(id,patch,evType,evNote,undoMsg){
+  const l=leads.find(x=>x.id===id);if(!l)return;const prev=snap(l);
+  try{
+    const data={...patch,updatedAt:serverTimestamp()};
+    if(evType)data.events=arrayUnion({date:today(),type:evType,note:evNote});
+    await updateDoc(ref(id),data);
+    if(undoMsg){lastUndo={id,prev};toast(undoMsg,true)}
+  }catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission nahi mili. Owner account se try karo.":(e.message||"Save nahi hua"),false,true)}
+}
+function send(id,follow){
+  const l=leads.find(x=>x.id===id);if(!l)return;const p=phoneOf(l.phone);if(!isMobile(p))return;
+  const text=fill(follow?S.ftpl:S.tpl,l);
+  window.open("https://wa.me/91"+p+(text.trim()?"?text="+encodeURIComponent(text):""),"_blank");
+  upd(id,{outreachStatus:"sent",outreachSentAt:Date.now(),outreachFollow:(l.outreachFollow||0)+(follow?1:0),status:"Contacted",next:nextStr(S.days,"WhatsApp"),last:follow?"Follow-up WhatsApp sent":"WhatsApp sent"},"WhatsApp",follow?"Follow-up WhatsApp bheja":"Pehla WhatsApp bheja",l.name+" ✓ mark ho gaya, Follow-ups mein bhi dikhega");
+}
+const reply=id=>upd(id,{outreachStatus:"replied",status:"Interested",next:nextStr(1,"Call"),last:"Reply aaya"},"Reply","Customer ka reply aaya","Reply aaya mark hua");
+const skip=id=>upd(id,{outreachStatus:"dead",status:"Lost",next:"Completed",last:"Outreach band"},"Closed","Outreach band kiya","Band kar diya");
+const back=id=>upd(id,{outreachStatus:"pending",outreachSentAt:0,outreachFollow:0,status:"New",next:"Not set",last:"Imported"},"","","");
+$("tu").onclick=async()=>{if(!lastUndo)return;const{id,prev}=lastUndo;lastUndo=null;$("toast").classList.remove("on");try{await updateDoc(ref(id),{...prev,updatedAt:serverTimestamp()})}catch(e){toast("Undo nahi hua",false,true)}};
+$("list").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b)return;const id=b.dataset.id;({send:()=>send(id,false),follow:()=>send(id,true),reply:()=>reply(id),skip:()=>skip(id),undo:()=>back(id)})[b.dataset.a]()});
 $("q").oninput=render;$("cat").onchange=render;
 
-// settings
-function fillSettings(){$("sTpl").value=S.tpl;$("sFtpl").value=S.ftpl;$("sDays").value=S.days}
-$("btnSettings").onclick=()=>{fillSettings();$("settings").classList.toggle("hidden")};
-$("sSave").onclick=()=>{S.tpl=$("sTpl").value;S.ftpl=$("sFtpl").value;S.days=Math.max(1,+$("sDays").value||3);saveS();$("settings").classList.add("hidden");render();toast("Save ho gaya")};
+/* ---------- Excel import into CRM ---------- */
+async function importFile(f){
+  if(busy)return;
+  if(!isOwner){toast("Bulk import sirf owner kar sakta hai. Import page se owner approval lo.",false,true);return}
+  busy=true;
+  try{
+    const wb=XLSX.read(await f.arrayBuffer(),{type:"array"});
+    let rows=[];for(const n of wb.SheetNames){rows=XLSX.utils.sheet_to_json(wb.Sheets[n],{defval:""});if(rows.length)break}
+    if(!rows.length)throw new Error("File khaali hai");
+    const keys=Object.keys(rows[0]),find=re=>keys.find(k=>re.test(k.toLowerCase()));
+    const kn=find(/business|name|naam|company/),kp=find(/^phone|mobile|contact|number/),kc=find(/categor|type/),ka=find(/area|locality/),kr=find(/rating/);
+    if(!kn||!kp)throw new Error("Business Name aur Phone column nahi mile");
+    const ex=await getDocs(C()),have=new Set(ex.docs.map(d=>phoneOf(d.data().phone)).filter(x=>x.length>=10));
+    let used=ex.size,limit=Infinity;
+    if(String(user.email||"").toLowerCase()!==OWNER&&window.BOS_PLANS&&BOS_PLANS.limit)limit=Math.max(0,BOS_PLANS.limit(biz)-used);
+    const recs=[];let dup=0;
+    rows.forEach((r,i)=>{
+      const name=String(r[kn]).trim();if(!name)return;
+      const p=phoneOf(r[kp]);
+      if(p.length>=10&&have.has(p)){dup++;return}
+      if(p.length>=10)have.add(p);
+      const area=ka?String(r[ka]).trim():"",cat=kc?String(r[kc]).trim():"Other";
+      recs.push({name,phone:String(r[kp]).trim(),phoneNormalized:p,email:"",businessName:name,businessType:cat,type:"Prospect",city:"Jaipur",area,req:"Website",requirement:"Website",budget:"",status:"New",source:"Outreach",next:"Not set",website:"",notes:"",note:"Outreach list se (website nahi hai)",last:"Imported",rating:kr?r[kr]:"",events:[{date:"Imported",type:"Prospect Imported",note:"Imported from "+f.name}],outreachStatus:"pending",outreachSentAt:0,outreachFollow:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+    });
+    const list=recs.slice(0,limit),cut=recs.length-list.length;
+    if(!list.length){toast(cut?"Plan limit full hai. Upgrade karo.":"Kuch naya nahi mila, sab pehle se judey hain",false,!!cut);return}
+    const batchId=`${Date.now()}_${user.uid}`,base=leads.length;
+    for(let i=0;i<list.length;i+=400){
+      const b=writeBatch(db);
+      list.slice(i,i+400).forEach((r,j)=>b.set(doc(C()),{...r,importBatchId:batchId,importBatchAt:Date.now(),importRowOrder:base+i+j,importedAt:serverTimestamp()}));
+      await b.commit();
+    }
+    toast(`${list.length} businesses CRM mein jud gaye`+(dup?`, ${dup} pehle se the`:"")+(cut?`, ${cut} plan limit se rok diye`:""));
+  }catch(e){console.error(e);toast(e.code==="permission-denied"?"Firestore ne roka. Owner account se try karo.":(e.message||"Import nahi hua"),false,true)}
+  finally{busy=false;$("file").value=""}
+}
+$("pick").onclick=$("bNew").onclick=()=>$("file").click();
+$("file").onchange=e=>{if(e.target.files[0])importFile(e.target.files[0])};
+const dz=$("upload");["dragover","dragenter"].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add("over")}));["dragleave","drop"].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove("over")}));dz.addEventListener("drop",e=>{const f=e.dataTransfer.files[0];if(f)importFile(f)});
+
+/* ---------- settings ---------- */
+const fillS=()=>{$("sTpl").value=S.tpl;$("sFtpl").value=S.ftpl;$("sDays").value=S.days};
+$("bMsg").onclick=()=>{fillS();$("settings").classList.toggle("hidden")};
+$("sSave").onclick=()=>{S.tpl=$("sTpl").value;S.ftpl=$("sFtpl").value;S.days=Math.max(1,+$("sDays").value||3);try{localStorage.setItem("oq_settings_v3",JSON.stringify(S))}catch(e){}$("settings").classList.add("hidden");render();toast("Save ho gaya")};
 $("sReset").onclick=()=>{$("sTpl").value=DEF_TPL;$("sFtpl").value=DEF_FTPL};
 
-// upload
-$("pick").onclick=()=>$("file").click();
-$("file").onchange=e=>{if(e.target.files[0])importFile(e.target.files[0]);e.target.value=""};
-const dz=$("upload");
-["dragover","dragenter"].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add("over")}));
-["dragleave","drop"].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove("over")}));
-dz.addEventListener("drop",e=>{const f=e.dataTransfer.files[0];if(f)importFile(f)});
-$("btnNew").onclick=()=>{
-  const m=prompt("Nayi Excel ki list purani list ke saath judegi (duplicate number nahi judenge).\nPoori list hatani hai to RESET likho, warna khaali chhodo.");
-  if(m===null)return;
-  if(m.trim().toUpperCase()==="RESET"){if(confirm("Saara data (sent status samet) hat jaayega. Pehle Excel download kar liya?")){leads=[];save();render();return}}
-  $("file").click();
-};
-$("btnExport").onclick=()=>{
-  if(!leads.length)return toast("Abhi koi data nahi hai");
-  const lab={pending:"Baaki",sent:"Bheja",replied:"Reply aaya",dead:"Band"};
-  const out=leads.map((l,i)=>({"#":i+1,"Business Name":l.name,Category:l.category,Phone:l.phone,Area:l.area,Status:lab[l.status],"Bheja kab":l.sentAt?new Date(l.sentAt).toLocaleString("en-IN"):"","Follow-ups":l.follow}));
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(out),"Outreach");
-  XLSX.writeFile(wb,"outreach-status.xlsx");
-};
-fillSettings();render();
+/* ---------- auth & workspace ---------- */
+$("gb").onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(e=>toast(e.message||"Sign in nahi hua",false,true));
+onAuthStateChanged(auth,async u=>{
+  user=u;
+  if(!u){$("app").classList.add("hidden");$("auth").classList.remove("hidden");if(unsub)unsub();return}
+  $("auth").classList.add("hidden");$("app").classList.remove("hidden");
+  $("av").textContent=String(u.displayName||u.email||"?").split(/[\s@.]+/).filter(Boolean).map(x=>x[0]).join("").slice(0,2).toUpperCase();
+  try{
+    let id=u.uid;const us=await getDoc(doc(db,"users",u.uid)),profile=us.exists()?us.data():{};if(profile.businessId)id=profile.businessId;
+    let b=null;try{b=await getDoc(doc(db,"businesses",id))}catch(e){console.warn(e)}
+    bizId=id;biz=(b&&b.exists())?b.data():{plan:"free"};
+    isOwner=(u.uid===id||biz.ownerUid===u.uid||String(profile.role||"").toLowerCase()==="owner");
+    fillS();listen();
+  }catch(e){console.error(e);$("loading").textContent="Workspace load nahi hua: "+(e.message||e.code)}
+});
 </script>
 </body>
 </html>
