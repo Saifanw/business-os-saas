@@ -67,30 +67,24 @@ h1 small{display:block;font-size:13px;font-weight:400;color:var(--mute);margin-t
   <header>
     <h1>Outreach Queue<small>Excel upload karo, ek-ek karke WhatsApp bhejo. Bheja hua apne aap neeche chala jaata hai.</small></h1>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn" id="btnSettings">Message aur company</button>
+      <button class="btn" id="btnSettings">Message</button>
       <button class="btn" id="btnExport">Excel download</button>
       <button class="btn" id="btnNew">Nayi Excel</button>
     </div>
   </header>
 
-  <div id="noticeSet" class="notice hidden">Pehle <b>“Message aur company”</b> mein apna naam aur company ka naam daalo, tab message mein apne aap aayega.</div>
-
   <section id="settings" class="panel hidden">
-    <h2>Message aur company</h2>
-    <div class="row2">
-      <div><label for="sName">Aapka naam</label><input id="sName" placeholder="Jaise: Rahul Sharma"></div>
-      <div><label for="sCompany">Company ka naam</label><input id="sCompany" placeholder="Jaise: Pixel Web Studio"></div>
-    </div>
-    <label for="sTpl">Pehla message</label>
-    <textarea id="sTpl"></textarea>
+    <h2>Message (optional)</h2>
+    <label for="sTpl">WhatsApp khulne par pehle se likha message (khaali chhodo to chat khaali khulegi)</label>
+    <textarea id="sTpl" style="min-height:90px"></textarea>
     <label for="sFtpl">Follow-up message</label>
-    <textarea id="sFtpl"></textarea>
+    <textarea id="sFtpl" style="min-height:90px"></textarea>
     <div class="row2">
       <div><label for="sDays">Follow-up kitne din baad</label><input id="sDays" type="number" min="1" max="60"></div>
       <div></div>
     </div>
-    <div class="hint">In shabdon ki jagah har business ki detail apne aap bhar jaati hai: {business} {category} {area} {name} {company}</div>
-    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn pri" id="sSave">Save karo</button><button class="btn" id="sReset">Default message wapas</button></div>
+    <div class="hint">{business} likhoge to us jagah har business ka naam apne aap aa jayega. Baaki message aap WhatsApp mein khud likh sakte ho.</div>
+    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn pri" id="sSave">Save karo</button><button class="btn" id="sReset">Default wapas</button></div>
   </section>
 
   <section id="upload" class="drop hidden">
@@ -117,11 +111,11 @@ h1 small{display:block;font-size:13px;font-weight:400;color:var(--mute);margin-t
 <div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo">Wapas karo</button></div>
 
 <script>
-const KEY="oq_leads_v1",SKEY="oq_settings_v1";
-const DEF_TPL="Namaste {business} team,\n\nMain {name}, {company} se baat kar raha/rahi hoon. {area}, Jaipur mein aapka {category} dekha, lekin Google par aapki apni website nahi mili.\n\nEk professional website se naye customers seedhe aapko dhoondh sakte hain. Kya aap 2 minute baat karna chahenge?\n\nDhanyavaad.";
-const DEF_FTPL="Namaste {business} team,\n\nPichhle message ke baare mein follow-up kar raha/rahi hoon. Aapke business ke liye website ka ek chhota sa sample bhej sakta/sakti hoon. Kya aap dekhna chahenge?\n\n- {name}, {company}";
+const KEY="oq_leads_v1",SKEY="oq_settings_v2";
+const DEF_TPL="Namaste {business} team,\n\n";
+const DEF_FTPL="Namaste {business} team,\n\nPichhle message ka follow-up. ";
 const $=id=>document.getElementById(id);
-let leads=load(KEY,[]), S=Object.assign({name:"",company:"",tpl:DEF_TPL,ftpl:DEF_FTPL,days:3},load(SKEY,{}));
+let leads=load(KEY,[]), S=Object.assign({tpl:DEF_TPL,ftpl:DEF_FTPL,days:3},load(SKEY,{}));
 let lastUndo=null,toastT=null;
 function load(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(leads))}catch(e){alert("Browser storage full ya band hai. Excel download karke backup rakho.")}}
@@ -136,8 +130,7 @@ function normPhone(raw){
   return {wa:null,why:"Landline / galat number"};
 }
 function fill(t,l){
-  return t.replace(/\{business\}/g,l.name).replace(/\{category\}/g,(l.category||"business").toLowerCase())
-    .replace(/\{area\}/g,l.area||"Jaipur").replace(/\{name\}/g,S.name||"[aapka naam]").replace(/\{company\}/g,S.company||"[company]");
+  return t.replace(/\{business\}/g,l.name).replace(/\{category\}/g,(l.category||"business").toLowerCase()).replace(/\{area\}/g,l.area||"Jaipur");
 }
 function daysAgo(ts){return Math.floor((Date.now()-ts)/864e5)}
 function isFu(l){return l.status==="sent"&&daysAgo(l.sentAt)>=S.days}
@@ -170,11 +163,10 @@ function importFile(f){
 }
 
 function send(id,follow){
-  if(!S.name||!S.company){$("settings").classList.remove("hidden");$("settings").scrollIntoView({behavior:"smooth"});toast("Pehle apna naam aur company ka naam daalo");return}
   const l=leads.find(x=>x.id===id);if(!l||!l.wa)return;
   const prev={status:l.status,sentAt:l.sentAt,follow:l.follow};
   const text=fill(follow?S.ftpl:S.tpl,l);
-  window.open("https://wa.me/"+l.wa+"?text="+encodeURIComponent(text),"_blank");
+  window.open("https://wa.me/"+l.wa+(text.trim()?"?text="+encodeURIComponent(text):""),"_blank");
   l.status="sent";l.sentAt=Date.now();if(follow)l.follow++;
   save();render();
   undoable(id,prev,l.name+" ✓ mark ho gaya");
@@ -218,7 +210,6 @@ function section(title,cls,items,kind){
 function render(){
   const has=leads.length>0;
   $("upload").classList.toggle("hidden",has);$("main").classList.toggle("hidden",!has);
-  $("noticeSet").classList.toggle("hidden",!(has&&(!S.name||!S.company)));
   if(!has)return;
   const cats=[...new Set(leads.map(l=>l.category).filter(Boolean))].sort();
   const cur=$("cat").value;
@@ -252,9 +243,9 @@ $("list").addEventListener("click",e=>{
 $("q").oninput=render;$("cat").onchange=render;
 
 // settings
-function fillSettings(){$("sName").value=S.name;$("sCompany").value=S.company;$("sTpl").value=S.tpl;$("sFtpl").value=S.ftpl;$("sDays").value=S.days}
+function fillSettings(){$("sTpl").value=S.tpl;$("sFtpl").value=S.ftpl;$("sDays").value=S.days}
 $("btnSettings").onclick=()=>{fillSettings();$("settings").classList.toggle("hidden")};
-$("sSave").onclick=()=>{S.name=$("sName").value.trim();S.company=$("sCompany").value.trim();S.tpl=$("sTpl").value;S.ftpl=$("sFtpl").value;S.days=Math.max(1,+$("sDays").value||3);saveS();$("settings").classList.add("hidden");render();toast("Save ho gaya")};
+$("sSave").onclick=()=>{S.tpl=$("sTpl").value;S.ftpl=$("sFtpl").value;S.days=Math.max(1,+$("sDays").value||3);saveS();$("settings").classList.add("hidden");render();toast("Save ho gaya")};
 $("sReset").onclick=()=>{$("sTpl").value=DEF_TPL;$("sFtpl").value=DEF_FTPL};
 
 // upload
