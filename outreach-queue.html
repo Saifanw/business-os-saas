@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outreach Queue — Business OS</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#f3f5f4;--card:#fff;--ink:#16211c;--mute:#66726c;--line:#dfe5e2;--green:#1a9d52;--greenbg:#e5f6ec;--blue:#1d5fd1;--amber:#b46a00;--amberbg:#fff3dc;--red:#c0392b;--btn:#16211c;--btnink:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1512;--card:#17201b;--ink:#e8efeb;--mute:#8d9a93;--line:#26322b;--green:#3fcf80;--greenbg:#12301f;--blue:#6fa3ff;--amber:#f0b45a;--amberbg:#33270f;--red:#ff7b6b;--btn:#e8efeb;--btnink:#0f1512}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Devanagari",sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 80px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
+h1{font-size:22px;margin:0;letter-spacing:-.01em}
+h1 small{display:block;font-size:13px;font-weight:400;color:var(--mute);margin-top:2px}
+.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;border-radius:8px;cursor:pointer}
+.btn:hover{border-color:var(--mute)}
+.btn.pri{background:var(--btn);color:var(--btnink);border-color:var(--btn)}
+.btn.wa{background:var(--green);border-color:var(--green);color:#fff}
+.btn.sm{padding:6px 10px;font-size:13px;font-weight:500}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:left}
+.stat b{display:block;font-size:22px;line-height:1.1}
+.stat span{font-size:12px;color:var(--mute)}
+.stat.g b{color:var(--green)}.stat.a b{color:var(--amber)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.bar input,.bar select{font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+.bar input[type=search]{flex:1;min-width:160px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.panel h2{font-size:16px;margin:0 0 10px}
+.panel label{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
+.panel input,.panel textarea{width:100%;font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.panel textarea{min-height:130px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hint{font-size:12px;color:var(--mute);margin-top:6px}
+.notice{background:var(--amberbg);color:var(--amber);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:34px 16px;text-align:center;background:var(--card)}
+.drop.over{border-color:var(--green)}
+.drop p{margin:6px 0 14px;color:var(--mute)}
+.sec{margin:22px 0 8px;font-size:13px;font-weight:700;color:var(--mute);display:flex;justify-content:space-between;align-items:center}
+.sec.fu{color:var(--amber)}.sec.done{color:var(--green)}
+.lead{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:6px}
+.lead .tick{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:14px;color:transparent}
+.lead.sent{background:var(--greenbg);border-color:transparent}
+.lead.sent .tick{background:var(--green);border-color:var(--green);color:#fff}
+.lead.fu{border-color:var(--amber)}
+.lead .info{flex:1;min-width:0}
+.lead .nm{font-weight:600;overflow-wrap:anywhere}
+.lead .mt{font-size:13px;color:var(--mute)}
+.lead .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--bg);color:var(--mute);margin-left:6px}
+.tag.fu{background:var(--amberbg);color:var(--amber)}
+.empty{text-align:center;color:var(--mute);padding:24px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--btn);color:var(--btnink);padding:10px 16px;border-radius:10px;display:none;gap:14px;align-items:center;z-index:9;max-width:92vw}
+.toast.on{display:flex}
+.toast button{background:none;border:0;color:inherit;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer}
+.hidden{display:none!important}
+@media (max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}.lead{flex-wrap:wrap}.lead .acts{width:100%;justify-content:flex-start}.row2{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Outreach Queue<small>Excel upload karo, ek-ek karke WhatsApp bhejo. Bheja hua apne aap neeche chala jaata hai.</small></h1>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="btnSettings">Message aur company</button>
+      <button class="btn" id="btnExport">Excel download</button>
+      <button class="btn" id="btnNew">Nayi Excel</button>
+    </div>
+  </header>
+
+  <div id="noticeSet" class="notice hidden">Pehle <b>“Message aur company”</b> mein apna naam aur company ka naam daalo, tab message mein apne aap aayega.</div>
+
+  <section id="settings" class="panel hidden">
+    <h2>Message aur company</h2>
+    <div class="row2">
+      <div><label for="sName">Aapka naam</label><input id="sName" placeholder="Jaise: Rahul Sharma"></div>
+      <div><label for="sCompany">Company ka naam</label><input id="sCompany" placeholder="Jaise: Pixel Web Studio"></div>
+    </div>
+    <label for="sTpl">Pehla message</label>
+    <textarea id="sTpl"></textarea>
+    <label for="sFtpl">Follow-up message</label>
+    <textarea id="sFtpl"></textarea>
+    <div class="row2">
+      <div><label for="sDays">Follow-up kitne din baad</label><input id="sDays" type="number" min="1" max="60"></div>
+      <div></div>
+    </div>
+    <div class="hint">In shabdon ki jagah har business ki detail apne aap bhar jaati hai: {business} {category} {area} {name} {company}</div>
+    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn pri" id="sSave">Save karo</button><button class="btn" id="sReset">Default message wapas</button></div>
+  </section>
+
+  <section id="upload" class="drop hidden">
+    <b style="font-size:17px">Excel ya CSV yahan daalo</b>
+    <p>Business Name, Phone, Category, Area wale columns apne aap pehchane jaate hain.</p>
+    <button class="btn pri" id="pick">File chuno</button>
+    <input id="file" type="file" accept=".xlsx,.xls,.csv" class="hidden">
+  </section>
+
+  <section id="main" class="hidden">
+    <div class="stats">
+      <div class="stat"><b id="nAll">0</b><span>Kul businesses</span></div>
+      <div class="stat"><b id="nPend">0</b><span>Bhejna baaki</span></div>
+      <div class="stat g"><b id="nSent">0</b><span>Bhej diye</span></div>
+      <div class="stat a"><b id="nFu">0</b><span>Follow-up due</span></div>
+    </div>
+    <div class="bar">
+      <input type="search" id="q" placeholder="Naam ya area dhundo" aria-label="Search">
+      <select id="cat" aria-label="Category"></select>
+    </div>
+    <div id="list"></div>
+  </section>
+</div>
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo">Wapas karo</button></div>
+
+<script>
+const KEY="oq_leads_v1",SKEY="oq_settings_v1";
+const DEF_TPL="Namaste {business} team,\n\nMain {name}, {company} se baat kar raha/rahi hoon. {area}, Jaipur mein aapka {category} dekha, lekin Google par aapki apni website nahi mili.\n\nEk professional website se naye customers seedhe aapko dhoondh sakte hain. Kya aap 2 minute baat karna chahenge?\n\nDhanyavaad.";
+const DEF_FTPL="Namaste {business} team,\n\nPichhle message ke baare mein follow-up kar raha/rahi hoon. Aapke business ke liye website ka ek chhota sa sample bhej sakta/sakti hoon. Kya aap dekhna chahenge?\n\n- {name}, {company}";
+const $=id=>document.getElementById(id);
+let leads=load(KEY,[]), S=Object.assign({name:"",company:"",tpl:DEF_TPL,ftpl:DEF_FTPL,days:3},load(SKEY,{}));
+let lastUndo=null,toastT=null;
+function load(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(leads))}catch(e){alert("Browser storage full ya band hai. Excel download karke backup rakho.")}}
+function saveS(){try{localStorage.setItem(SKEY,JSON.stringify(S))}catch(e){}}
+
+function normPhone(raw){
+  let d=String(raw||"").replace(/\D/g,"");
+  if(!d)return {wa:null,why:"Number nahi hai"};
+  if(d.length===12&&d.startsWith("91"))d=d.slice(2);
+  else if(d.length===11&&d[0]==="0")d=d.slice(1);
+  if(d.length===10&&/^[6-9]/.test(d))return {wa:"91"+d};
+  return {wa:null,why:"Landline / galat number"};
+}
+function fill(t,l){
+  return t.replace(/\{business\}/g,l.name).replace(/\{category\}/g,(l.category||"business").toLowerCase())
+    .replace(/\{area\}/g,l.area||"Jaipur").replace(/\{name\}/g,S.name||"[aapka naam]").replace(/\{company\}/g,S.company||"[company]");
+}
+function daysAgo(ts){return Math.floor((Date.now()-ts)/864e5)}
+function isFu(l){return l.status==="sent"&&daysAgo(l.sentAt)>=S.days}
+
+function importFile(f){
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:"array"});
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""});
+      if(!rows.length)throw new Error("File khaali hai");
+      const keys=Object.keys(rows[0]);
+      const find=re=>keys.find(k=>re.test(k.toLowerCase()));
+      const kn=find(/business|name|naam|company/),kp=find(/^phone|mobile|contact|number|whatsapp(?!.*link)/),kc=find(/categor|type/),ka=find(/area|locality|address/),kr=find(/rating/);
+      if(!kn||!kp)throw new Error("Business Name aur Phone column nahi mile");
+      const have=new Set(leads.map(l=>l.key));let add=0,skip=0;
+      rows.forEach((r,i)=>{
+        const name=String(r[kn]).trim();if(!name)return;
+        const p=normPhone(r[kp]);
+        const key=p.wa||("x:"+name.toLowerCase()+"|"+String(ka?r[ka]:""));
+        if(have.has(key)){skip++;return}
+        have.add(key);add++;
+        leads.push({id:Date.now()+"_"+i,key,name,phone:String(r[kp]).trim(),wa:p.wa,category:kc?String(r[kc]).trim():"",area:ka?String(r[ka]).trim():"",rating:kr?r[kr]:"",status:"pending",sentAt:0,follow:0});
+      });
+      save();render();
+      toast(add+" businesses judi"+(skip?", "+skip+" pehle se the":""));
+    }catch(err){alert("File nahi padhi ja saki: "+err.message)}
+  };
+  r.readAsArrayBuffer(f);
+}
+
+function send(id,follow){
+  if(!S.name||!S.company){$("settings").classList.remove("hidden");$("settings").scrollIntoView({behavior:"smooth"});toast("Pehle apna naam aur company ka naam daalo");return}
+  const l=leads.find(x=>x.id===id);if(!l||!l.wa)return;
+  const prev={status:l.status,sentAt:l.sentAt,follow:l.follow};
+  const text=fill(follow?S.ftpl:S.tpl,l);
+  window.open("https://wa.me/"+l.wa+"?text="+encodeURIComponent(text),"_blank");
+  l.status="sent";l.sentAt=Date.now();if(follow)l.follow++;
+  save();render();
+  undoable(id,prev,l.name+" ✓ mark ho gaya");
+}
+function setStatus(id,status,msg){
+  const l=leads.find(x=>x.id===id);const prev={status:l.status,sentAt:l.sentAt,follow:l.follow};
+  l.status=status;if(status==="pending"){l.sentAt=0;l.follow=0}
+  save();render();if(msg)undoable(id,prev,msg);
+}
+function undoable(id,prev,msg){
+  lastUndo={id,prev};toast(msg,true);
+}
+function toast(m,undo){
+  $("toastMsg").textContent=m;$("toastUndo").classList.toggle("hidden",!undo);
+  $("toast").classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>$("toast").classList.remove("on"),6000);
+}
+$("toastUndo").onclick=()=>{
+  if(!lastUndo)return;const l=leads.find(x=>x.id===lastUndo.id);Object.assign(l,lastUndo.prev);lastUndo=null;
+  save();render();$("toast").classList.remove("on");
+};
+
+function rowHTML(l,kind){
+  const meta=[l.category,l.area,l.phone].filter(Boolean).join(" • ");
+  let tag="",acts="";
+  if(kind==="pending")acts=`<button class="btn wa sm" data-a="send" data-id="${l.id}">WhatsApp bhejo</button><button class="btn sm" data-a="skip" data-id="${l.id}">Skip</button>`;
+  else if(kind==="fu"){tag=`<span class="tag fu">${daysAgo(l.sentAt)} din ho gaye</span>`;
+    acts=`<button class="btn wa sm" data-a="follow" data-id="${l.id}">Follow-up bhejo</button><button class="btn sm" data-a="reply" data-id="${l.id}">Reply aaya</button><button class="btn sm" data-a="skip" data-id="${l.id}">Band karo</button>`}
+  else if(kind==="sent"){const d=daysAgo(l.sentAt);tag=`<span class="tag">${l.status==="replied"?"Reply aaya":"Bheja "+(d===0?"aaj":d+" din pehle")}${l.follow?" • follow-up "+l.follow:""}</span>`;
+    acts=`${l.status==="sent"?`<button class="btn sm" data-a="reply" data-id="${l.id}">Reply aaya</button>`:""}<button class="btn sm" data-a="undo" data-id="${l.id}">Wapas upar</button>`}
+  else if(kind==="dead"){tag=`<span class="tag">Band</span>`;acts=`<button class="btn sm" data-a="undo" data-id="${l.id}">Wapas upar</button>`}
+  else {tag=`<span class="tag">WhatsApp nahi</span>`;acts=`<a class="btn sm" style="text-decoration:none" href="tel:${l.phone.replace(/[^+\d]/g,"")}">Call</a>`}
+  const tick=(kind==="sent"||kind==="fu")?"✓":"";
+  const cls=kind==="sent"?"sent":kind==="fu"?"fu":"";
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  return `<div class="lead ${cls}"><div class="tick" aria-hidden="true">${tick}</div><div class="info"><div class="nm">${esc(l.name)}${tag}</div><div class="mt">${esc(meta)}</div></div><div class="acts">${acts}</div></div>`;
+}
+function section(title,cls,items,kind){
+  if(!items.length)return "";
+  return `<div class="sec ${cls}"><span>${title} (${items.length})</span></div>`+items.map(l=>rowHTML(l,kind)).join("");
+}
+function render(){
+  const has=leads.length>0;
+  $("upload").classList.toggle("hidden",has);$("main").classList.toggle("hidden",!has);
+  $("noticeSet").classList.toggle("hidden",!(has&&(!S.name||!S.company)));
+  if(!has)return;
+  const cats=[...new Set(leads.map(l=>l.category).filter(Boolean))].sort();
+  const cur=$("cat").value;
+  $("cat").innerHTML='<option value="">Saari categories</option>'+cats.map(c=>`<option ${c===cur?"selected":""}>${c}</option>`).join("");
+  const q=$("q").value.toLowerCase(),c=$("cat").value;
+  const v=leads.filter(l=>(!c||l.category===c)&&(!q||(l.name+" "+l.area).toLowerCase().includes(q)));
+  const fu=v.filter(isFu).sort((a,b)=>a.sentAt-b.sentAt);
+  const pend=v.filter(l=>l.status==="pending"&&l.wa);
+  const sent=v.filter(l=>(l.status==="sent"&&!isFu(l))||l.status==="replied").sort((a,b)=>b.sentAt-a.sentAt);
+  const land=v.filter(l=>l.status==="pending"&&!l.wa);
+  const dead=v.filter(l=>l.status==="dead");
+  $("nAll").textContent=leads.length;
+  $("nPend").textContent=leads.filter(l=>l.status==="pending"&&l.wa).length;
+  $("nSent").textContent=leads.filter(l=>l.status==="sent"||l.status==="replied").length;
+  $("nFu").textContent=leads.filter(isFu).length;
+  $("list").innerHTML=
+    section("Follow-up due","fu",fu,"fu")+
+    section("Bhejna baaki","",pend,"pending")+
+    section("Bhej diye","done",sent,"sent")+
+    section("Landline ya galat number","",land,"land")+
+    section("Band kiye","",dead,"dead")||'<div class="empty">Kuch nahi mila.</div>';
+}
+$("list").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-a]");if(!b)return;const id=b.dataset.id,a=b.dataset.a;
+  if(a==="send")send(id,false);
+  else if(a==="follow")send(id,true);
+  else if(a==="reply")setStatus(id,"replied","Reply aaya mark hua");
+  else if(a==="skip")setStatus(id,"dead","Band kar diya");
+  else if(a==="undo")setStatus(id,"pending");
+});
+$("q").oninput=render;$("cat").onchange=render;
+
+// settings
+function fillSettings(){$("sName").value=S.name;$("sCompany").value=S.company;$("sTpl").value=S.tpl;$("sFtpl").value=S.ftpl;$("sDays").value=S.days}
+$("btnSettings").onclick=()=>{fillSettings();$("settings").classList.toggle("hidden")};
+$("sSave").onclick=()=>{S.name=$("sName").value.trim();S.company=$("sCompany").value.trim();S.tpl=$("sTpl").value;S.ftpl=$("sFtpl").value;S.days=Math.max(1,+$("sDays").value||3);saveS();$("settings").classList.add("hidden");render();toast("Save ho gaya")};
+$("sReset").onclick=()=>{$("sTpl").value=DEF_TPL;$("sFtpl").value=DEF_FTPL};
+
+// upload
+$("pick").onclick=()=>$("file").click();
+$("file").onchange=e=>{if(e.target.files[0])importFile(e.target.files[0]);e.target.value=""};
+const dz=$("upload");
+["dragover","dragenter"].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add("over")}));
+["dragleave","drop"].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove("over")}));
+dz.addEventListener("drop",e=>{const f=e.dataTransfer.files[0];if(f)importFile(f)});
+$("btnNew").onclick=()=>{
+  const m=prompt("Nayi Excel ki list purani list ke saath judegi (duplicate number nahi judenge).\nPoori list hatani hai to RESET likho, warna khaali chhodo.");
+  if(m===null)return;
+  if(m.trim().toUpperCase()==="RESET"){if(confirm("Saara data (sent status samet) hat jaayega. Pehle Excel download kar liya?")){leads=[];save();render();return}}
+  $("file").click();
+};
+$("btnExport").onclick=()=>{
+  if(!leads.length)return toast("Abhi koi data nahi hai");
+  const lab={pending:"Baaki",sent:"Bheja",replied:"Reply aaya",dead:"Band"};
+  const out=leads.map((l,i)=>({"#":i+1,"Business Name":l.name,Category:l.category,Phone:l.phone,Area:l.area,Status:lab[l.status],"Bheja kab":l.sentAt?new Date(l.sentAt).toLocaleString("en-IN"):"","Follow-ups":l.follow}));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(out),"Outreach");
+  XLSX.writeFile(wb,"outreach-status.xlsx");
+};
+fillSettings();render();
+</script>
+</body>
+</html>
