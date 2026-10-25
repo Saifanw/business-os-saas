@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex">
+<title>Client Leads — BusinessOS</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+:root{color-scheme:light}
+
+/* Layout: one calm column. Title + upload, 4 stat tiles, search/category bar, then lead rows (pending first, done below). A lead opens as a bottom-sheet/modal with every detail. */
+:root{
+  --bg:#f3f5f9; --surface:#ffffff; --fg:#0f1a2e; --muted:#667489; --line:#e3e8f0;
+  --primary:#3558f5; --primary-fg:#ffffff; --wa:#12a36b; --wa-fg:#ffffff;
+  --ok:#12a36b; --amber:#d98200; --hot:#c2410c; --hot-soft:#ffedd5; --ring:#cdd5e1; --err:#b42318; --scrim:rgba(15,26,46,.45);
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1220; --surface:#151d2e; --fg:#eaf0fb; --muted:#8fa0b8; --line:#243047;
+  --primary:#6f8bff; --primary-fg:#0b1226; --wa:#2ec28a; --wa-fg:#06231a;
+  --ok:#2ec28a; --amber:#f0b24a; --hot:#ff9a5c; --hot-soft:#3a2312; --ring:#3a4863; --err:#ff8b7e; --scrim:rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1220; --surface:#151d2e; --fg:#eaf0fb; --muted:#8fa0b8; --line:#243047;
+  --primary:#6f8bff; --primary-fg:#0b1226; --wa:#2ec28a; --wa-fg:#06231a;
+  --ok:#2ec28a; --amber:#f0b24a; --hot:#ff9a5c; --hot-soft:#3a2312; --ring:#3a4863; --err:#ff8b7e; --scrim:rgba(0,0,0,.6); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:15px/1.45 var(--font);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 56px}
+.wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.top{display:flex;gap:12px 16px;flex-wrap:wrap;align-items:flex-end;justify-content:space-between}
+h1{font-size:clamp(26px,5vw,32px);font-weight:800;margin:0;letter-spacing:-.02em}
+.sub{color:var(--muted);margin:4px 0 0}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;min-width:0}
+.stat b{display:block;font-size:30px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:13px}
+.stat.g b{color:var(--ok)} .stat.a b{color:var(--amber)}
+.bar{display:flex;gap:12px;flex-wrap:wrap}
+.bar input,.bar select{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.bar input{flex:1 1 240px} .bar select{flex:0 1 200px}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.note{border-radius:12px;padding:12px 14px;font-size:14px;background:var(--surface);border:1px solid var(--line)}
+.note.err{border-color:var(--err);color:var(--err)} .note.ok{border-color:var(--ok)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.ph{display:flex;justify-content:space-between;padding:14px 18px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--line)}
+.row{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.tick{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--ring);background:transparent;color:var(--wa-fg);cursor:pointer;display:grid;place-items:center;padding:0;font-size:14px;font-weight:800}
+.row.done .tick{background:var(--ok);border-color:var(--ok)}
+.info{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer}
+.info:hover .nm{text-decoration:underline}
+.nm{font-weight:700;font-size:16px;overflow-wrap:anywhere}
+.hot{font-size:11px;font-weight:700;background:var(--hot-soft);color:var(--hot);padding:2px 8px;border-radius:999px;margin-left:8px;white-space:nowrap}
+.mt{color:var(--muted);font-size:14px;overflow-wrap:anywhere}
+.did{color:var(--ok);font-size:13px;font-weight:600}
+.btns{display:flex;gap:8px;flex:none}
+.b{font:700 14px var(--font);border-radius:10px;padding:10px 16px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;text-decoration:none;white-space:nowrap;display:inline-block;text-align:center}
+.b.wa{background:var(--wa);border-color:var(--wa);color:var(--wa-fg)}
+.b.pr{background:var(--primary);border-color:var(--primary);color:var(--primary-fg)}
+.b.call{border-color:var(--primary);color:var(--primary)}
+.b[aria-disabled="true"]{opacity:.4;pointer-events:none}
+.row.done .nm,.row.done .mt{opacity:.6}
+.empty{padding:36px 18px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--fg);font-size:17px;margin-bottom:6px}
+/* detail sheet */
+.scrim{position:fixed;inset:0;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center;z-index:20;
+  padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.sheet{background:var(--surface);color:var(--fg);width:min(640px,100%);max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px}
+@media (min-width:700px){.scrim{align-items:center}.sheet{border-radius:20px}}
+.sh-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.sh-top h2{margin:0;font-size:22px;font-weight:800;line-height:1.2;overflow-wrap:anywhere}
+.x{flex:none;font:700 18px var(--font);width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.big{display:flex;gap:10px;flex-wrap:wrap}
+.big .b{flex:1 1 140px;padding:13px 16px;font-size:15px}
+.kv{display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px 14px;font-size:14px;margin:0}
+.kv dt{color:var(--muted);font-weight:600} .kv dd{margin:0;overflow-wrap:anywhere}
+.kv a{color:var(--primary)}
+.cp{font:600 12px var(--font);margin-left:8px;border:1px solid var(--line);background:var(--surface);color:var(--primary);border-radius:6px;padding:2px 8px;cursor:pointer}
+.score{display:flex;align-items:center;gap:10px}
+.track{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden;max-width:160px}.track i{display:block;height:100%;background:var(--primary)}
+.msgbox{white-space:pre-wrap;background:var(--bg);border-radius:12px;padding:12px 14px;font-size:14px;overflow-wrap:anywhere}
+.lbl{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.sh-foot{display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width:640px){
+  .row{flex-wrap:wrap;gap:10px 12px}
+  .info{flex-basis:calc(100% - 40px)}
+  .btns{flex-basis:100%;padding-left:40px}
+  .btns .b{flex:1}
+  .kv{grid-template-columns:96px minmax(0,1fr)}
+}
+
+body{margin:0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.01em}
+.brand i{width:30px;height:30px;border-radius:9px;background:var(--primary);color:var(--primary-fg);display:grid;place-items:center;font-style:normal;font-weight:800}
+.cta{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 22px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.cta b{display:block;font-size:17px;margin-bottom:4px}
+.cta p{margin:0;color:var(--muted);max-width:56ch}
+.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:13px}
+.linkbtn{background:none;border:0;color:var(--muted);font:inherit;text-decoration:underline;cursor:pointer;padding:0}
+
+</style></head><body>
+<div class="wrap">
+  <div class="brand"><i>B</i><span>BusinessOS</span></div>
+  <div class="top">
+    <div>
+      <h1 id="h1">Outreach</h1>
+      <p class="sub" id="sub">Leads load ho rahi hain...</p>
+    </div>
+    <div class="tools" id="tools" hidden>
+      <button class="b pr" type="button" id="upBtn">Excel upload karo</button>
+      <button class="b" type="button" id="shareBtn">Client link copy</button>
+      <button class="b" type="button" id="clrBtn">Sab leads hatao</button>
+      <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+    </div>
+  </div>
+  <div id="msg" hidden></div>
+  <div id="mgr" hidden></div>
+  <div id="leadApp" style="display:flex;flex-direction:column;gap:18px">
+    <section class="stats" id="stats"></section>
+    <section class="bar">
+      <input type="search" id="q" placeholder="Naam, area ya number dhundo" aria-label="Search">
+      <select id="cat" aria-label="Category"><option value="All">Saari categories</option></select>
+    </section>
+    <section class="panel" id="todo"></section>
+    <section class="panel" id="sent" hidden></section>
+  </div>
+  <section class="cta">
+    <div><b>Aapka business bhi follow-up miss karta hai?</b><p>BusinessOS ek CRM hai jo leads, follow-up aur WhatsApp ko ek jagah rakhta hai. Demo dekh kar khud try karo.</p></div>
+    <div class="tools"><a class="b pr" href="demo.html">Demo dekho</a><a class="b" href="pricing.html">Plans</a></div>
+  </section>
+  <div class="foot"><span>Powered by BusinessOS</span><button class="linkbtn" type="button" id="authBtn">Owner login</button></div>
+</div>
+<div class="scrim" id="scrim" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Lead detail"></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import{getFirestore,collection,doc,getDoc,getDocs,setDoc,writeBatch,onSnapshot,serverTimestamp,query,limit}from"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
+const auth=getAuth(app), fdb=getFirestore(app);
+
+const HOT = 60;
+const listId = (new URLSearchParams(location.search).get("l")||"").replace(/[^A-Za-z0-9_-]/g,"");
+const MEM_KEY = "bos-shared-leads-status-" + (listId||"none");
+const FIELD_ALIASES = {
+  name:["businessname","name","business","companyname","hotelname","clinicname","shopname","title"],
+  segment:["segment","category","type","businesstype"],
+  city:["city","town","area","location"],
+  state:["state"],
+  address:["address","fulladdress"],
+  phone:["phonewhatsapp","phone","phonenumber","mobile","mobilenumber","whatsapp","contact","contactnumber","contactno","mobileno"],
+  email:["email","emailid","emails"],
+  website:["website","site","url","web"],
+  rating:["googlerating","rating","stars"],
+  reviews:["reviewscount","reviews","totalreviews","reviewcount"],
+  issue:["websiteissue","issue","issues","problem"],
+  score:["score","leadscore"],
+  pitch:["producttopitch","product","pitch","service"],
+  reason:["reason","why","notes","note"],
+  message:["whatsappmessage","message","msg","whatsapptext"]
+};
+const LABELS = {segment:"Category",city:"City",state:"State",address:"Address",phone:"Phone",email:"Email",website:"Website",rating:"Google rating",reviews:"Reviews",score:"Score",issue:"Kya dikha (issue)",pitch:"Kya bechein",reason:"Kyun achhi lead",message:"WhatsApp message"};
+
+let LEADS = [], mem = {}, q = "", cat = "All", loaded = false, listMeta = null, isAdmin = false, authUser = null, unsub = null;
+try { mem = JSON.parse(localStorage.getItem(MEM_KEY) || "{}"); } catch(e){}
+function saveMem(){ try{ localStorage.setItem(MEM_KEY, JSON.stringify(mem)); }catch(e){} }
+
+const $ = id => document.getElementById(id);
+function el(t,c,x){ const n=document.createElement(t); if(c) n.className=c; if(x!=null) n.textContent=x; return n; }
+function digits(p){ return String(p||"").replace(/\D/g,""); }
+function waNum(p){ const t=digits(p).slice(-10); return /^[6-9]\d{9}$/.test(t) ? "91"+t : null; }
+function firstPhone(p){ return String(p||"").split(/[;,\/]|\bor\b/i)[0].trim(); }
+function telHref(p){ const d=digits(firstPhone(p)); return d.length>=10 ? "tel:+91"+d.slice(-10) : "tel:"+d; }
+function leadId(l){ const d=digits(firstPhone(l.phone)).slice(-10); return d ? "p"+d : "n"+String(l.name).toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,60); }
+function say(text, kind){ const m=$("msg"); m.hidden=!text; m.className="note "+(kind||""); m.textContent=text||""; }
+function copy(text, btn){
+  const done=()=>{ const o=btn.textContent; btn.textContent="Copy ho gaya"; setTimeout(()=>btn.textContent=o,1400); };
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done,()=>{btn.textContent="Select karke copy karo";});
+  else btn.textContent="Select karke copy karo";
+}
+
+/* ---------- Excel parsing ---------- */
+function normLead(l){
+  const o={...l};
+  ["name","segment","city","state","address","phone","email","website","issue","pitch","reason","message"].forEach(f=>{
+    let v=String(o[f]==null?"":o[f]).trim();
+    if(/^(not found|n\/a|na|none|null|-|—)$/i.test(v)||/^top list me aayega/i.test(v)) v="";
+    o[f]=v;
+  });
+  if(typeof o.rating!=="number") o.rating="";
+  o.extra=o.extra||{};
+  return o;
+}
+function norm(h){ return String(h).toLowerCase().replace(/[^a-z0-9]/g,""); }
+function parseRows(rows){
+  const out = [];
+  rows.forEach(r=>{
+    const keys=Object.keys(r), used=new Set(), l={extra:{}};
+    for(const [f,aliases] of Object.entries(FIELD_ALIASES)){
+      const k=keys.find(k=>!used.has(k) && aliases.includes(norm(k)));
+      if(k){ used.add(k); l[f]=r[k]; }
+    }
+    keys.forEach(k=>{ if(!used.has(k) && String(r[k]).trim()!=="") l.extra[k]=String(r[k]); });
+    if(!String(l.name||"").trim()) return;
+    l.rating = l.rating===""||l.rating==null ? "" : Number(l.rating);
+    l.reviews = Number(String(l.reviews||"").replace(/[^\d.]/g,""))||0;
+    l.score = Number(l.score)||0;
+    out.push(normLead(l));
+  });
+  return out;
+}
+async function handleFile(file){
+  if(!file) return;
+  if(!window.XLSX){ say("Excel padhne wala hissa load nahi hua. Page refresh karke dobara try karo.","err"); return; }
+  say("Excel padh raha hoon...");
+  try{
+    const wb = XLSX.read(await file.arrayBuffer(), {type:"array"});
+    const byId = new Map();
+    wb.SheetNames.forEach(n=>{
+      parseRows(XLSX.utils.sheet_to_json(wb.Sheets[n],{defval:""})).forEach(l=>{ byId.set(leadId(l), l); });
+    });
+    const list=[...byId.entries()];
+    if(!list.length){ say("Is file me koi lead nahi mili. Pehli row me column ke naam hone chahiye (jaise Business name, Phone/WhatsApp).","err"); return; }
+    const had = new Set(LEADS.map(l=>l._id));
+    const fresh = list.filter(([id])=>!had.has(id)).length;
+    await saveLeads(list);
+    say(list.length+" leads save ho gayi ("+fresh+" nayi, "+(list.length-fresh)+" pehle se thi, update ho gayi).","ok");
+  }catch(e){
+    say("Upload nahi ho paya. "+(e&&e.code==="permission-denied"?"Is account ko upload ka access nahi hai.":(e&&e.message?e.message:"File check karke dobara try karo.")),"err");
+  }
+  $("file").value="";
+}
+async function saveLeads(list){
+  for(let i=0;i<list.length;i+=400){
+    const b=writeBatch(fdb);
+    list.slice(i,i+400).forEach(([id,l])=>{ const {_id,...rest}=l; b.set(doc(fdb,"sharedLeadLists",listId,"leads",id),{...rest,addedAt:Date.now()}); });
+    await b.commit();
+  }
+}
+let clearArmed=false;
+async function clearAll(){
+  const b=$("clrBtn");
+  if(!clearArmed){ clearArmed=true; b.textContent="Pakka? Dobara dabao"; setTimeout(()=>{clearArmed=false;b.textContent="Sab leads hatao";},4000); return; }
+  clearArmed=false; b.textContent="Sab leads hatao";
+  try{
+    for(let i=0;i<LEADS.length;i+=400){
+      const w=writeBatch(fdb);
+      LEADS.slice(i,i+400).forEach(l=>w.delete(doc(fdb,"sharedLeadLists",listId,"leads",l._id)));
+      await w.commit();
+    }
+    say("Sab leads hata di gayi.","ok");
+  }catch(e){ say("Leads nahi hati. Dobara try karo.","err"); }
+}
+
+/* ---------- status (per viewer, this browser) ---------- */
+function st(l){ return mem[l._id]||{}; }
+function isDone(l){ const s=st(l); return !!(s.wa||s.call||s.skip); }
+function setSt(l, patch){ mem[l._id]={...st(l),...patch}; saveMem(); render(); if(!$("scrim").hidden) openDetail(l); }
+function didText(l){ const s=st(l); return [s.wa&&"WhatsApp bheja",s.call&&"Call kiya",s.skip&&"Skip kiya"].filter(Boolean).join(" • "); }
+
+/* ---------- rows ---------- */
+function actions(l, big){
+  const box=el("div", big?"big":"btns");
+  const w=waNum(firstPhone(l.phone));
+  const a=el("a","b wa", st(l).wa?"Dobara WhatsApp":"WhatsApp bhejo");
+  if(w){ a.href="https://wa.me/"+w+(l.message?"?text="+encodeURIComponent(l.message):""); a.target="_blank"; a.rel="noopener"; a.onclick=()=>setTimeout(()=>setSt(l,{wa:1}),300); }
+  else a.setAttribute("aria-disabled","true");
+  const c=el("a","b call", st(l).call?"Dobara Call":"Call karo");
+  if(digits(l.phone).length>=8){ c.href=telHref(l.phone); c.onclick=()=>setTimeout(()=>setSt(l,{call:1}),300); } else c.setAttribute("aria-disabled","true");
+  box.append(a,c); return box;
+}
+function row(l){
+  const r=el("div","row"+(isDone(l)?" done":""));
+  const t=el("button","tick", isDone(l)?"✓":""); t.type="button";
+  t.setAttribute("aria-label", isDone(l)?"Wapas baaki me daalo":"Ho gaya mark karo");
+  t.onclick=()=>{ if(isDone(l)) { mem[l._id]={}; saveMem(); render(); } else setSt(l,{skip:1}); };
+  const info=el("button","info"); info.type="button"; info.onclick=()=>openDetail(l);
+  const nm=el("div","nm",l.name); if(l.score>=HOT && !isDone(l)) nm.append(el("span","hot","Hot"));
+  info.append(nm, el("div","mt",[l.segment,l.city,firstPhone(l.phone)].filter(Boolean).join(" • ")));
+  const d=didText(l); if(d) info.append(el("div","did",d));
+  r.append(t,info,actions(l,false)); return r;
+}
+function panel(box,title,rows){
+  box.textContent=""; const h=el("div","ph"); h.append(el("span",null,title),el("span",null,rows.length)); box.append(h);
+  rows.forEach(l=>box.append(row(l)));
+}
+function render(){
+  if(!listId) return;
+  const stats=$("stats"); stats.textContent="";
+  const pend=LEADS.filter(l=>!isDone(l));
+  [["","Kul leads",LEADS.length],["","Bhejna baaki",pend.length],["g","Contact ho gaye",LEADS.length-pend.length],["a","Hot leads baaki",pend.filter(l=>l.score>=HOT).length]].forEach(([c,lbl,v])=>{
+    const d=el("div","stat "+c); d.append(el("b",null,v),el("span",null,lbl)); stats.append(d);
+  });
+  const sel=$("cat"), cats=Array.from(new Set(LEADS.map(l=>l.segment).filter(Boolean)));
+  if(sel.options.length!==cats.length+1 || cats.some((c,i)=>sel.options[i+1].value!==c)){
+    sel.textContent=""; const o0=el("option",null,"Saari categories"); o0.value="All"; sel.append(o0);
+    cats.forEach(c=>{ const o=el("option",null,c); o.value=c; sel.append(o); });
+    if(!cats.includes(cat)) cat="All"; sel.value=cat;
+  }
+  const needle=q.trim().toLowerCase();
+  const f=l=>(cat==="All"||l.segment===cat)&&(!needle||[l.name,l.address,l.city,l.phone,l.segment].join(" ").toLowerCase().includes(needle));
+  const by=(a,b)=>(b.score-a.score)||a.name.localeCompare(b.name);
+  const todo=$("todo"), sent=$("sent");
+  const tl=pend.filter(f).sort(by), dl=LEADS.filter(l=>isDone(l)&&f(l)).sort(by);
+  if(!LEADS.length){
+    todo.textContent="";
+    const e=el("div","empty"); e.append(el("b",null,loaded?"Abhi koi lead nahi hai":"Leads load ho rahi hain..."));
+    if(loaded) e.append(document.createTextNode(isAdmin?"Upar \"Excel upload karo\" dabao aur apni leads ki Excel chuno. Pehli row me column ke naam hone chahiye (Business name, Phone/WhatsApp, City ...)." : "Leads jaldi yahan dikhengi."));
+    todo.append(e); sent.hidden=true; return;
+  }
+  panel(todo,"Bhejna baaki",tl);
+  if(!tl.length){ todo.append(el("div","empty", pend.length?"Is filter me koi lead nahi mili.":"Sab leads ho gayi. Bahut badhiya!")); }
+  sent.hidden=!dl.length; if(dl.length) panel(sent,"Ho gaye / Skip kiye",dl);
+}
+
+/* ---------- detail sheet ---------- */
+function openDetail(l){
+  const s=$("sheet"); s.textContent="";
+  const top=el("div","sh-top"); const h=el("h2",null,l.name);
+  if(l.score>=HOT) h.append(el("span","hot","Hot"));
+  const x=el("button","x","✕"); x.type="button"; x.setAttribute("aria-label","Band karo"); x.onclick=closeDetail;
+  top.append(h,x); s.append(top);
+  const d=didText(l); if(d) s.append(el("div","did",d));
+  s.append(actions(l,true));
+  const kv=el("dl","kv");
+  function add(label,node){ kv.append(el("dt",null,label)); const dd=el("dd"); dd.append(node); kv.append(dd); }
+  function withCopy(text){ const w=el("span"); w.append(document.createTextNode(text)); const b=el("button","cp","Copy"); b.type="button"; b.onclick=()=>copy(text,b); w.append(b); return w; }
+  if(l.phone) add(LABELS.phone, withCopy(l.phone));
+  if(l.email) { const w=el("div"); l.email.split(/[;,]/).map(x=>x.trim()).filter(Boolean).forEach(e=>{ const line=el("div"); line.append(withCopy(e)); w.append(line); }); add(LABELS.email,w); }
+  if(l.website){ const a=el("a",null,l.website.replace(/^https?:\/\//,"").replace(/\/$/,"")); a.href=/^https?:\/\//.test(l.website)?l.website:"https://"+l.website; a.target="_blank"; a.rel="noopener"; add(LABELS.website,a); }
+  const addr=[l.address,l.city,l.state].filter(Boolean).join(", "); if(addr) add(LABELS.address, document.createTextNode(addr));
+  if(l.segment) add(LABELS.segment, document.createTextNode(l.segment));
+  if(l.rating!=="" && l.rating!=null) add(LABELS.rating, document.createTextNode("★ "+l.rating+(l.reviews?" ("+Number(l.reviews).toLocaleString("en-IN")+" reviews)":"")));
+  if(l.score){ const sc=el("div","score"); sc.append(el("b",null,l.score+"/100")); const tr=el("div","track"); const i=el("i"); i.style.width=Math.min(100,l.score)+"%"; tr.append(i); sc.append(tr); add(LABELS.score,sc); }
+  if(l.pitch) add(LABELS.pitch, document.createTextNode(l.pitch));
+  if(l.issue) add(LABELS.issue, document.createTextNode(l.issue));
+  if(l.reason) add(LABELS.reason, document.createTextNode(l.reason));
+  Object.entries(l.extra||{}).forEach(([k,v])=>add(k, document.createTextNode(v)));
+  s.append(kv);
+  if(l.message){
+    const wrap=el("div"); wrap.append(el("p","lbl","WhatsApp message"), el("div","msgbox",l.message));
+    const cb=el("button","b","Message copy karo"); cb.type="button"; cb.style.marginTop="8px"; cb.onclick=()=>copy(l.message,cb); wrap.append(cb); s.append(wrap);
+  }
+  const foot=el("div","sh-foot");
+  if(isDone(l)){ const u=el("button","b","Wapas baaki me daalo"); u.type="button"; u.onclick=()=>{ mem[l._id]={}; saveMem(); render(); openDetail(l); }; foot.append(u); }
+  else { const k=el("button","b","Skip karo"); k.type="button"; k.onclick=()=>{ setSt(l,{skip:1}); closeDetail(); }; foot.append(k); }
+  s.append(foot);
+  $("scrim").hidden=false; x.focus();
+}
+function closeDetail(){ $("scrim").hidden=true; }
+$("scrim").addEventListener("click",e=>{ if(e.target===$("scrim")) closeDetail(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeDetail(); });
+
+/* ---------- manager (no ?l= in the link): owner makes one link per client ---------- */
+function randomId(){ const a=new Uint8Array(9); crypto.getRandomValues(a); return Array.from(a,b=>(b%36).toString(36)).join(""); }
+function shareUrl(id){ return location.origin+location.pathname+"?l="+id; }
+async function renderManager(){
+  const box=$("mgr"); box.hidden=false; box.textContent="";
+  const h=el("div","panel"); h.style.padding="18px"; box.append(h);
+  if(!authUser){ h.append(el("b",null,"Owner login chahiye"), el("p","sub","Client ke liye lead link banane ke liye neeche \"Owner login\" dabao aur apne Google account se login karo.")); return; }
+  if(!isAdmin){ h.append(el("b",null,"Is account ko access nahi hai"), el("p","sub",authUser.email+" se login hai. Admin account se login karo, ya Firestore me admins collection me is account ka uid add karo.")); return; }
+  h.append(el("b",null,"Naye client ke liye link banao"));
+  const form=el("div","bar"); form.style.marginTop="10px";
+  const inp=el("input"); inp.id="newName"; inp.placeholder="Client ka naam (jaise Mehta Hotels)"; inp.setAttribute("aria-label","Client ka naam");
+  const btn=el("button","b pr","Link banao"); btn.type="button";
+  btn.onclick=async()=>{
+    const name=inp.value.trim(); if(!name){ inp.focus(); return; }
+    btn.disabled=true;
+    try{ const id=randomId(); await setDoc(doc(fdb,"sharedLeadLists",id),{name,preparedBy:"SRK WebApp Innovations",createdAt:serverTimestamp()}); location.href=shareUrl(id); }
+    catch(e){ btn.disabled=false; say("Link nahi bana. Firestore rules deploy hue hain ya nahi check karo.","err"); }
+  };
+  form.append(inp,btn); h.append(form);
+  const lp=el("div","panel"); lp.style.marginTop="14px"; box.append(lp);
+  try{
+    const snap=await getDocs(collection(fdb,"sharedLeadLists"));
+    const hd=el("div","ph"); hd.append(el("span",null,"Aapke client links"),el("span",null,snap.size)); lp.append(hd);
+    if(!snap.size) lp.append(el("div","empty","Abhi koi link nahi banaya."));
+    snap.docs.forEach(d=>{
+      const r=el("div","row"); const info=el("div","info"); info.append(el("div","nm",d.data().name||d.id), el("div","mt",shareUrl(d.id)));
+      const bt=el("div","btns"); const o=el("a","b pr","Kholo"); o.href="?l="+d.id; const c=el("button","b","Link copy"); c.type="button"; c.onclick=()=>copy(shareUrl(d.id),c);
+      bt.append(o,c); r.append(info,bt); lp.append(r);
+    });
+  }catch(e){ lp.append(el("div","empty","Links ki list nahi khuli.")); }
+}
+
+/* ---------- wiring ---------- */
+$("q").oninput=e=>{q=e.target.value; render();};
+$("cat").onchange=e=>{cat=e.target.value; render();};
+$("upBtn").onclick=()=>$("file").click();
+$("file").onchange=e=>handleFile(e.target.files[0]);
+$("clrBtn").onclick=clearAll;
+$("shareBtn").onclick=()=>copy(shareUrl(listId),$("shareBtn"));
+$("authBtn").onclick=async()=>{
+  try{ if(authUser) await signOut(auth); else await signInWithPopup(auth,new GoogleAuthProvider()); }
+  catch(e){ say("Login nahi ho paya. Dobara try karo.","err"); }
+};
+
+function updateUI(){
+  $("authBtn").textContent = authUser ? "Logout" : "Owner login";
+  $("tools").hidden = !(listId && isAdmin);
+  if(!listId) renderManager();
+  render();
+}
+onAuthStateChanged(auth, async u=>{
+  authUser=u; isAdmin=false;
+  if(u){ try{ await getDocs(query(collection(fdb,"sharedLeadLists"),limit(1))); isAdmin=true; }catch(e){} }
+  updateUI();
+});
+
+async function start(){
+  if(!listId){
+    $("leadApp").hidden=true; $("h1").textContent="Client lead links";
+    $("sub").textContent="Har client ke liye ek alag link. Link banao, Excel upload karo, aur link client ko bhej do.";
+    document.title="Client lead links — BusinessOS"; renderManager(); return;
+  }
+  try{
+    const m=await getDoc(doc(fdb,"sharedLeadLists",listId));
+    if(!m.exists()){ $("leadApp").hidden=true; $("h1").textContent="Ye link sahi nahi hai"; $("sub").textContent="Link dobara check karo ya jisne bheja hai usse naya link maango."; return; }
+    listMeta=m.data();
+  }catch(e){ $("leadApp").hidden=true; $("h1").textContent="Link nahi khul paya"; $("sub").textContent="Thodi der baad dobara try karo."; return; }
+  $("h1").textContent="Leads for "+(listMeta.name||"you");
+  document.title="Leads for "+(listMeta.name||"you")+" — BusinessOS";
+  $("sub").textContent="Lead par click karke poori detail dekho. WhatsApp ya Call dabao, lead apne aap neeche chali jaati hai."+(listMeta.preparedBy?" Prepared by "+listMeta.preparedBy+".":"");
+  render();
+  unsub=onSnapshot(collection(fdb,"sharedLeadLists",listId,"leads"), snap=>{
+    LEADS=snap.docs.map(d=>{ const x=d.data(); return {...normLead(x), score:Number(x.score)||0, reviews:Number(x.reviews)||0, _id:d.id}; });
+    loaded=true; render();
+  }, ()=>{ loaded=true; say("Leads nahi khul paayi. Thodi der baad refresh karo.","err"); render(); });
+}
+start();
+
+</script>
+</body></html>
