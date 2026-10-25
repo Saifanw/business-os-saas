@@ -77,6 +77,8 @@ h1{font-size:clamp(26px,5vw,32px);font-weight:800;margin:0;letter-spacing:-.02em
 .cp{font:600 12px var(--font);margin-left:8px;border:1px solid var(--line);background:var(--surface);color:var(--primary);border-radius:6px;padding:2px 8px;cursor:pointer}
 .score{display:flex;align-items:center;gap:10px}
 .track{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden;max-width:160px}.track i{display:block;height:100%;background:var(--primary)}
+#msgPanel textarea,#msgPanel input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--bg);color:var(--fg);resize:vertical}
+#msgPanel.open{display:flex!important}
 .msgbox{white-space:pre-wrap;background:var(--bg);border-radius:12px;padding:12px 14px;font-size:14px;overflow-wrap:anywhere}
 .lbl{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
 .sh-foot{display:flex;gap:8px;flex-wrap:wrap}
@@ -119,6 +121,17 @@ body{margin:0}
     <section class="bar">
       <input type="search" id="q" placeholder="Naam, area ya number dhundo" aria-label="Search">
       <select id="cat" aria-label="Category"><option value="All">Saari categories</option></select>
+      <button class="b" type="button" id="msgBtn">Message save karo</button>
+    </section>
+    <section class="panel" id="msgPanel" hidden style="padding:16px;display:none;flex-direction:column;gap:8px">
+      <p class="lbl" style="margin:0">WhatsApp message</p>
+      <textarea id="tWa" rows="4" placeholder="Khaali chhodo to Excel wala message use hoga"></textarea>
+      <p class="lbl" style="margin:6px 0 0">Email subject</p>
+      <input type="text" id="tSub" placeholder="Jaise: {business} ke liye website">
+      <p class="lbl" style="margin:6px 0 0">Email message</p>
+      <textarea id="tMail" rows="4" placeholder="Khaali chhodo to simple greeting use hoga"></textarea>
+      <p class="sub" style="margin:0">{business} likhoge to har lead ka naam apne aap aa jayega. {category}, {area} bhi chalta hai. Ye message sirf aapke is device/browser me save hota hai.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="b pr" type="button" id="tSave">Save karo</button><button class="b" type="button" id="tReset">Excel wala message wapas</button></div>
     </section>
     <section class="panel" id="todo"></section>
     <section class="panel" id="sent" hidden></section>
@@ -163,6 +176,13 @@ const LABELS = {segment:"Category",city:"City",state:"State",address:"Address",p
 
 let LEADS = [], mem = {}, q = "", cat = "All", loaded = false, listMeta = null, isAdmin = false, authUser = null, unsub = null;
 try { mem = JSON.parse(localStorage.getItem(MEM_KEY) || "{}"); } catch(e){}
+const TPL_KEY = "bos-shared-leads-msg-" + (listId||"none");
+let TPL = {wa:"",sub:"",mail:""};
+try { TPL = Object.assign(TPL, JSON.parse(localStorage.getItem(TPL_KEY) || "{}")); } catch(e){}
+function tplFill(t,l){ return String(t||"").replace(/\{business\}/g,l.name||"").replace(/\{category\}/g,String(l.segment||"business").toLowerCase()).replace(/\{(area|city)\}/g,l.city||"Jaipur"); }
+function waMsg(l){ return TPL.wa.trim() ? tplFill(TPL.wa,l) : (l.message||""); }
+function mailSub(l){ return TPL.sub.trim() ? tplFill(TPL.sub,l) : (l.emailSubject||(l.name+" ke liye website / online presence")); }
+function mailBody(l){ return TPL.mail.trim() ? tplFill(TPL.mail,l) : (l.emailBody||("Namaste "+l.name+" team,\n\n")); }
 function saveMem(){ try{ localStorage.setItem(MEM_KEY, JSON.stringify(mem)); }catch(e){} }
 
 const $ = id => document.getElementById(id);
@@ -173,8 +193,7 @@ function firstPhone(p){ return String(p||"").split(/[;,\/]|\bor\b/i)[0].trim(); 
 function firstEmail(e){ const m=String(e||"").match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i); return m?m[0].toLowerCase():""; }
 function mailHref(l){
   const e=firstEmail(l.email); if(!e) return "";
-  const sub=(l.emailSubject||(l.name+" ke liye website / online presence"));
-  const body=l.emailBody||("Namaste "+l.name+" team,\n\n");
+  const sub=mailSub(l), body=mailBody(l);
   return /Android|iPhone|iPad/i.test(navigator.userAgent)
     ? "mailto:"+e+"?subject="+encodeURIComponent(sub)+"&body="+encodeURIComponent(body)
     : "https://mail.google.com/mail/?view=cm&fs=1&to="+encodeURIComponent(e)+"&su="+encodeURIComponent(sub)+"&body="+encodeURIComponent(body);
@@ -272,7 +291,7 @@ function actions(l, big){
   const box=el("div", big?"big":"btns");
   const w=waNum(firstPhone(l.phone));
   const a=el("a","b wa", st(l).wa?"Dobara WhatsApp":"WhatsApp bhejo");
-  if(w){ a.href="https://wa.me/"+w+(l.message?"?text="+encodeURIComponent(l.message):""); a.target="_blank"; a.rel="noopener"; a.onclick=()=>setTimeout(()=>setSt(l,{wa:1}),300); }
+  if(w){ a.href="https://wa.me/"+w+(waMsg(l)?"?text="+encodeURIComponent(waMsg(l)):""); a.target="_blank"; a.rel="noopener"; a.onclick=()=>setTimeout(()=>setSt(l,{wa:1}),300); }
   else a.setAttribute("aria-disabled","true");
   const c=el("a","b call", st(l).call?"Dobara Call":"Call karo");
   if(digits(l.phone).length>=8){ c.href=telHref(l.phone); c.onclick=()=>setTimeout(()=>setSt(l,{call:1}),300); } else c.setAttribute("aria-disabled","true");
@@ -325,6 +344,11 @@ function render(){
   sent.hidden=!dl.length; if(dl.length) panel(sent,"Ho gaye / Skip kiye",dl);
 }
 
+/* ---------- saved message (this browser) ---------- */
+$("msgBtn").onclick=()=>{ const p=$("msgPanel"); $("tWa").value=TPL.wa; $("tSub").value=TPL.sub; $("tMail").value=TPL.mail; p.hidden=false; p.classList.toggle("open"); };
+$("tSave").onclick=()=>{ TPL={wa:$("tWa").value,sub:$("tSub").value,mail:$("tMail").value}; try{ localStorage.setItem(TPL_KEY,JSON.stringify(TPL)); }catch(e){} $("msgPanel").classList.remove("open"); render(); say("Message save ho gaya. Ab WhatsApp aur Email isi se khulenge.","ok"); };
+$("tReset").onclick=()=>{ TPL={wa:"",sub:"",mail:""}; try{ localStorage.removeItem(TPL_KEY); }catch(e){} $("tWa").value=$("tSub").value=$("tMail").value=""; render(); say("Excel wala message wapas aa gaya.","ok"); };
+
 /* ---------- detail sheet ---------- */
 function openDetail(l){
   const s=$("sheet"); s.textContent="";
@@ -349,9 +373,9 @@ function openDetail(l){
   if(l.reason) add(LABELS.reason, document.createTextNode(l.reason));
   Object.entries(l.extra||{}).forEach(([k,v])=>add(k, document.createTextNode(v)));
   s.append(kv);
-  if(l.message){
-    const wrap=el("div"); wrap.append(el("p","lbl","WhatsApp message"), el("div","msgbox",l.message));
-    const cb=el("button","b","Message copy karo"); cb.type="button"; cb.style.marginTop="8px"; cb.onclick=()=>copy(l.message,cb); wrap.append(cb); s.append(wrap);
+  if(waMsg(l)){
+    const wrap=el("div"); wrap.append(el("p","lbl","WhatsApp message"+(TPL.wa.trim()?" (aapka saved)":"")), el("div","msgbox",waMsg(l)));
+    const cb=el("button","b","Message copy karo"); cb.type="button"; cb.style.marginTop="8px"; cb.onclick=()=>copy(waMsg(l),cb); wrap.append(cb); s.append(wrap);
   }
   const foot=el("div","sh-foot");
   if(isDone(l)){ const u=el("button","b","Wapas baaki me daalo"); u.type="button"; u.onclick=()=>{ mem[l._id]={}; saveMem(); render(); openDetail(l); }; foot.append(u); }
