@@ -130,7 +130,7 @@ body{margin:0}
       <input type="text" id="tSub" placeholder="Jaise: {business} ke liye website">
       <p class="lbl" style="margin:6px 0 0">Email message</p>
       <textarea id="tMail" rows="4" placeholder="Khaali chhodo to simple greeting use hoga"></textarea>
-      <p class="sub" style="margin:0">{business} likhoge to har lead ka naam apne aap aa jayega. {category}, {area} bhi chalta hai. Ye message sirf aapke is device/browser me save hota hai.</p>
+      <p class="sub" style="margin:0">{business} (naam), {rating}, {reviews}, {category}, {area}, {phone} likhoge to har lead ki apni value apne aap aa jayegi. Ye message sirf aapke is device/browser me save hota hai.</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="b pr" type="button" id="tSave">Save karo</button><button class="b" type="button" id="tReset">Excel wala message wapas</button></div>
     </section>
     <section class="panel" id="todo"></section>
@@ -179,8 +179,17 @@ try { mem = JSON.parse(localStorage.getItem(MEM_KEY) || "{}"); } catch(e){}
 const TPL_KEY = "bos-shared-leads-msg-" + (listId||"none");
 let TPL = {wa:"",sub:"",mail:""};
 try { TPL = Object.assign(TPL, JSON.parse(localStorage.getItem(TPL_KEY) || "{}")); } catch(e){}
-function tplFill(t,l){ return String(t||"").replace(/\{business\}/g,l.name||"").replace(/\{category\}/g,String(l.segment||"business").toLowerCase()).replace(/\{(area|city)\}/g,l.city||"Jaipur"); }
-function waMsg(l){ return TPL.wa.trim() ? tplFill(TPL.wa,l) : (l.message||""); }
+function tplFill(t,l){
+  const rt=(l.rating!==""&&l.rating!=null)?String(l.rating):"", rv=l.reviews?Number(l.reviews).toLocaleString("en-IN"):"";
+  return String(t||"")
+    .replace(/\{(business|name)\}/gi,l.name||"")
+    .replace(/\{category\}/gi,String(l.segment||"business").toLowerCase())
+    .replace(/\{(area|city)\}/gi,l.city||"Jaipur")
+    .replace(/\{rating\}/gi,rt).replace(/\{reviews\}/gi,rv)
+    .replace(/\{phone\}/gi,firstPhone(l.phone)).replace(/\{website\}/gi,l.website||"")
+    .replace(/\{issue\}/gi,l.issue||"").replace(/\{pitch\}/gi,l.pitch||"");
+}
+function waMsg(l){ return tplFill(TPL.wa.trim() ? TPL.wa : (l.message||""), l); }
 function mailSub(l){ return TPL.sub.trim() ? tplFill(TPL.sub,l) : (l.emailSubject||(l.name+" ke liye website / online presence")); }
 function mailBody(l){ return TPL.mail.trim() ? tplFill(TPL.mail,l) : (l.emailBody||("Namaste "+l.name+" team,\n\n")); }
 function saveMem(){ try{ localStorage.setItem(MEM_KEY, JSON.stringify(mem)); }catch(e){} }
