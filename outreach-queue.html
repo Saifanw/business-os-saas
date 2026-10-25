@@ -23,6 +23,7 @@ main{max-width:1100px;margin:0 auto;padding:26px 24px 70px}
 .btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px}.btn:hover{border-color:#c9d3e6;background:#f8faff}
 .btn.p{background:var(--blue);border-color:var(--blue);color:#fff}.btn.p:hover{background:var(--blue2)}
 .btn.wa{background:var(--green);border-color:var(--green);color:#fff}.btn.wa:hover{filter:brightness(.95)}
+.btn.em{background:#fff;border-color:var(--blue);color:var(--blue)}.btn.em:hover{background:#eef3ff}
 .btn.sm{padding:6px 11px;font-size:12.5px;font-weight:600}
 .card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px #0f172a08}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
@@ -65,7 +66,7 @@ main{max-width:1100px;margin:0 auto;padding:26px 24px 70px}
 
 <main id="app" class="hidden">
   <div class="hero">
-    <div><h1>Outreach</h1><p>Excel ki list se ek-ek ko WhatsApp bhejo. Sab kuch Customers aur Follow-ups mein bhi dikhta hai.</p></div>
+    <div><h1>Outreach</h1><p>Excel ki list se ek-ek ko WhatsApp ya Email bhejo. Sab kuch Customers aur Follow-ups mein bhi dikhta hai.</p></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="bMsg">Message</button><button class="btn" id="bNew">Nayi Excel jodo</button><a class="btn p" href="followups.html">Follow-ups dekho</a></div>
   </div>
 
@@ -75,6 +76,12 @@ main{max-width:1100px;margin:0 auto;padding:26px 24px 70px}
     <textarea id="sTpl"></textarea>
     <label for="sFtpl">Follow-up message</label>
     <textarea id="sFtpl"></textarea>
+    <label for="sEsub">Email ka subject</label>
+    <input id="sEsub" type="text">
+    <label for="sEtpl">Email message</label>
+    <textarea id="sEtpl"></textarea>
+    <label for="sEftpl">Email follow-up message</label>
+    <textarea id="sEftpl"></textarea>
     <label for="sDays">Bhejne ke kitne din baad Follow-up mein dikhe</label>
     <input id="sDays" type="number" min="1" max="60" style="max-width:140px">
     <div class="hint">{business} likhoge to har business ka naam apne aap aa jayega. Baaki message aap WhatsApp mein khud likho.</div>
@@ -84,7 +91,7 @@ main{max-width:1100px;margin:0 auto;padding:26px 24px 70px}
   <div id="loading" class="empty">Aapki list load ho rahi hai…</div>
   <section id="upload" class="drop hidden">
     <h2>Excel ya CSV yahan daalo</h2>
-    <p>Business Name, Phone, Category, Area columns apne aap pehchane jaate hain. Sab businesses aapke CRM mein judenge.</p>
+    <p>Business Name, Phone, Email, Category, Area columns apne aap pehchane jaate hain. Sab businesses aapke CRM mein judenge.</p>
     <button class="btn p" id="pick">File chuno</button>
   </section>
   <input id="file" type="file" accept=".xlsx,.xls,.csv" class="hidden">
@@ -110,14 +117,16 @@ import{getFirestore,collection,doc,getDoc,getDocs,query,where,onSnapshot,writeBa
 const app=initializeApp({apiKey:"AIzaSyA4GEKs3fxmiqq7iGI4-L-QuqFFwFBZ0dI",authDomain:"business-os-saas-traking.firebaseapp.com",projectId:"business-os-saas-traking",storageBucket:"business-os-saas-traking.firebasestorage.app",messagingSenderId:"316542715521",appId:"1:316542715521:web:32e84948bcc8d52ef9af80"});
 const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 const OWNER="saif.anwar1618@gmail.com",MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const DEF_TPL="Namaste {business} team,\n\n",DEF_FTPL="Namaste {business} team,\n\nPichhle message ka follow-up. ";
+const DEF_ESUB="{business} ke liye website / online presence",DEF_ETPL="Namaste {business} team,\n\n",DEF_EFTPL="Namaste {business} team,\n\nPichhle email ka follow-up. ",DEF_TPL="Namaste {business} team,\n\n",DEF_FTPL="Namaste {business} team,\n\nPichhle message ka follow-up. ";
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 let user,bizId,biz={},isOwner=false,leads=[],unsub=null,lastUndo=null,tT=null,busy=false;
-let S=Object.assign({tpl:DEF_TPL,ftpl:DEF_FTPL,days:3},(()=>{try{return JSON.parse(localStorage.getItem("oq_settings_v3"))||{}}catch(e){return{}}})());
+let S=Object.assign({tpl:DEF_TPL,ftpl:DEF_FTPL,esub:DEF_ESUB,etpl:DEF_ETPL,eftpl:DEF_EFTPL,days:3},(()=>{try{return JSON.parse(localStorage.getItem("oq_settings_v3"))||{}}catch(e){return{}}})());
 const C=()=>collection(db,"businesses",bizId,"contacts"),ref=id=>doc(db,"businesses",bizId,"contacts",id);
 
 /* ---------- helpers ---------- */
 function phoneOf(v){let s=String(v||"").split(/[,;/\n]|\s{2,}/)[0];if(/^\d+(\.\d+)?e\+\d+$/i.test(s.trim()))s=Number(s).toFixed(0);let d=s.replace(/\D/g,"");if(d.length>10&&d.startsWith("91"))d=d.slice(2);if(d.length===11&&d.startsWith("0"))d=d.slice(1);return d.length>=7?d:""}
+const emailOf=v=>{const m=String(v||"").match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);return m?m[0].toLowerCase():""};
+const isTouch=/Android|iPhone|iPad/i.test(navigator.userAgent);
 const isMobile=p=>/^[6-9]\d{9}$/.test(p);
 function nextStr(days,type){const d=new Date();d.setDate(d.getDate()+days);return`${String(d.getDate()).padStart(2,"0")} ${MON[d.getMonth()]} ${d.getFullYear()} · 10:00 AM · ${type}`}
 const today=()=>{const d=new Date();return`${String(d.getDate()).padStart(2,"0")} ${MON[d.getMonth()]} ${d.getFullYear()}`};
@@ -135,15 +144,17 @@ function listen(){
   },e=>{console.error(e);$("loading").textContent="List load nahi hui: "+(e.message||e.code)});
 }
 function rowHTML(l,kind){
-  const p=phoneOf(l.phone),meta=[l.businessType,l.area,l.phone].filter(Boolean).join(" • ");
+  const p=phoneOf(l.phone),em=emailOf(l.email),meta=[l.businessType,l.area,l.phone,em].filter(Boolean).join(" • ");
+  const callBtn=p.length>=7?`<a class="btn sm" href="tel:${esc(String(l.phone||"").replace(/[^+\d]/g,""))}" data-call="${l.id}">Call</a>`:"";
+  const emBtn=(f)=>em?`<button class="btn em sm" data-a="${f?"efollow":"email"}" data-id="${l.id}">${f?"Email follow-up":"Email bhejo"}</button>`:`<button class="btn sm" data-a="addem" data-id="${l.id}">+ Email</button>`;
   let tag="",acts="",tick=(kind==="sent"||kind==="fu")?"✓":"";
-  if(kind==="pending")acts=`<button class="btn wa sm" data-a="send" data-id="${l.id}">WhatsApp bhejo</button><button class="btn sm" data-a="skip" data-id="${l.id}">Skip</button>`;
-  else if(kind==="fu"){tag=`<span class="tag fu">${daysAgo(l.outreachSentAt||0)} din ho gaye</span>`;acts=`<button class="btn wa sm" data-a="follow" data-id="${l.id}">Follow-up bhejo</button><button class="btn sm" data-a="reply" data-id="${l.id}">Reply aaya</button><button class="btn sm" data-a="skip" data-id="${l.id}">Band karo</button>`}
-  else if(kind==="sent"){const d=daysAgo(l.outreachSentAt||0);tag=l.outreachStatus==="replied"?`<span class="tag g">Reply aaya</span>`:`<span class="tag g">Bheja ${d===0?"aaj":d+" din pehle"}${l.outreachFollow?" • follow-up "+l.outreachFollow:""}</span>`;acts=`${l.outreachStatus==="sent"?`<button class="btn sm" data-a="reply" data-id="${l.id}">Reply aaya</button>`:""}<button class="btn sm" data-a="undo" data-id="${l.id}">Wapas upar</button>`}
-  else if(kind==="dead"){tag=`<span class="tag">Band</span>`;acts=`<button class="btn sm" data-a="undo" data-id="${l.id}">Wapas upar</button>`}
-  else{tag=`<span class="tag">WhatsApp nahi</span>`;acts=`<a class="btn sm" href="tel:${esc(String(l.phone||"").replace(/[^+\d]/g,""))}">Call</a>`}
+  if(kind==="pending")acts=`<button class="btn wa sm" data-a="send" data-id="${l.id}">WhatsApp bhejo</button>${emBtn(false)}${callBtn}<button class="btn sm" data-a="skip" data-id="${l.id}">Skip</button>`;
+  else if(kind==="fu"){tag=`<span class="tag fu">${daysAgo(l.outreachSentAt||0)} din ho gaye</span>`;acts=`<button class="btn wa sm" data-a="follow" data-id="${l.id}">Follow-up bhejo</button>${emBtn(true)}${callBtn}<button class="btn sm" data-a="reply" data-id="${l.id}">Reply aaya</button><button class="btn sm" data-a="skip" data-id="${l.id}">Band karo</button>`}
+  else if(kind==="sent"){const d=daysAgo(l.outreachSentAt||0);tag=l.outreachStatus==="replied"?`<span class="tag g">Reply aaya</span>`:`<span class="tag g">Bheja ${d===0?"aaj":d+" din pehle"}${l.outreachFollow?" • follow-up "+l.outreachFollow:""}</span>`;acts=`${emBtn(l.outreachStatus==="sent"&&!!l.lastEmailAt)}${callBtn}${l.outreachStatus==="sent"?`<button class="btn sm" data-a="reply" data-id="${l.id}">Reply aaya</button>`:""}<button class="btn sm" data-a="undo" data-id="${l.id}">Wapas upar</button>`}
+  else if(kind==="dead"){tag=`<span class="tag">Band</span>`;acts=`${em?emBtn(false):""}<button class="btn sm" data-a="undo" data-id="${l.id}">Wapas upar</button>`}
+  else{tag=`<span class="tag">WhatsApp nahi</span>`;acts=`${emBtn(false)}${callBtn}`}
   const cls=kind==="sent"?"sent":kind==="fu"?"fu":"";
-  return`<div class="lead ${cls}"><div class="tick" aria-hidden="true">${tick}</div><div style="min-width:0"><div class="nm">${esc(l.name)}${tag}</div><div class="mt">${esc(meta)}</div></div><div class="acts">${acts}</div></div>`}
+  return`<div class="lead ${cls}"><div class="tick" aria-hidden="true">${tick}</div><div style="min-width:0"><div class="nm">${esc(l.name)}${tag}${l.lastEmailAt?`<span class="tag g">Email bheja${l.emailCount>1?" ×"+l.emailCount:""}</span>`:""}</div><div class="mt">${esc(meta)}</div></div><div class="acts">${acts}</div></div>`}
 const sec=(t,c,a,k)=>a.length?`<div class="gh ${c}"><span>${t}</span><span>${a.length}</span></div>`+a.map(l=>rowHTML(l,k)).join(""):"";
 function render(){
   const has=leads.length>0;
@@ -152,7 +163,7 @@ function render(){
   const cats=[...new Set(leads.map(l=>l.businessType).filter(Boolean))].sort(),cur=$("cat").value;
   $("cat").innerHTML='<option value="">Saari categories</option>'+cats.map(c=>`<option ${c===cur?"selected":""}>${esc(c)}</option>`).join("");
   const q=$("q").value.toLowerCase(),c=$("cat").value;
-  const v=leads.filter(l=>(!c||l.businessType===c)&&(!q||((l.name||"")+" "+(l.area||"")).toLowerCase().includes(q)));
+  const v=leads.filter(l=>(!c||l.businessType===c)&&(!q||((l.name||"")+" "+(l.area||"")+" "+(l.email||"")).toLowerCase().includes(q)));
   const mob=l=>isMobile(phoneOf(l.phone));
   const fu=v.filter(isFu).sort((a,b)=>(a.outreachSentAt||0)-(b.outreachSentAt||0));
   const pend=v.filter(l=>l.outreachStatus==="pending"&&mob(l));
@@ -176,6 +187,22 @@ async function upd(id,patch,evType,evNote,undoMsg){
     if(undoMsg){lastUndo={id,prev};toast(undoMsg,true)}
   }catch(e){console.error(e);toast(e.code==="permission-denied"?"Permission nahi mili. Owner account se try karo.":(e.message||"Save nahi hua"),false,true)}
 }
+function sendEmail(id,follow){
+  const l=leads.find(x=>x.id===id);if(!l)return;const em=emailOf(l.email);if(!em){addEmail(id);return}
+  const sub=fill(S.esub,l),body=fill(follow?S.eftpl:S.etpl,l);
+  const url=isTouch?`mailto:${em}?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(body)}`
+    :`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(em)}&su=${encodeURIComponent(sub)}&body=${encodeURIComponent(body)}`;
+  window.open(url,isTouch?"_self":"_blank");
+  const patch={lastEmailAt:Date.now(),emailCount:(l.emailCount||0)+1,last:follow?"Follow-up email sent":"Email sent"};
+  if(l.outreachStatus==="pending"){Object.assign(patch,{outreachStatus:"sent",outreachSentAt:Date.now(),status:"Contacted",next:nextStr(S.days,"Email")})}
+  upd(id,patch,"Email",follow?"Follow-up email bheja":"Email bheja",l.name+" ✓ Email mark ho gaya");
+}
+async function addEmail(id){
+  const l=leads.find(x=>x.id===id);if(!l)return;
+  const v=prompt("Is business ka email daalo:\n"+l.name,l.email||"");if(v===null)return;
+  const em=emailOf(v);if(v.trim()&&!em){toast("Email sahi nahi lag raha",false,true);return}
+  await upd(id,{email:em},"Email Added",em?"Email jodi gayi: "+em:"Email hata di",em?"Email save ho gayi":"Email hata di");
+}
 function send(id,follow){
   const l=leads.find(x=>x.id===id);if(!l)return;const p=phoneOf(l.phone);if(!isMobile(p))return;
   const text=fill(follow?S.ftpl:S.tpl,l);
@@ -186,7 +213,7 @@ const reply=id=>upd(id,{outreachStatus:"replied",status:"Interested",next:nextSt
 const skip=id=>upd(id,{outreachStatus:"dead",status:"Lost",next:"Completed",last:"Outreach band"},"Closed","Outreach band kiya","Band kar diya");
 const back=id=>upd(id,{outreachStatus:"pending",outreachSentAt:0,outreachFollow:0,status:"New",next:"Not set",last:"Imported"},"","","");
 $("tu").onclick=async()=>{if(!lastUndo)return;const{id,prev}=lastUndo;lastUndo=null;$("toast").classList.remove("on");try{await updateDoc(ref(id),{...prev,updatedAt:serverTimestamp()})}catch(e){toast("Undo nahi hua",false,true)}};
-$("list").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b)return;const id=b.dataset.id;({send:()=>send(id,false),follow:()=>send(id,true),reply:()=>reply(id),skip:()=>skip(id),undo:()=>back(id)})[b.dataset.a]()});
+$("list").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b)return;const id=b.dataset.id;({email:()=>sendEmail(id,false),efollow:()=>sendEmail(id,true),addem:()=>addEmail(id),send:()=>send(id,false),follow:()=>send(id,true),reply:()=>reply(id),skip:()=>skip(id),undo:()=>back(id)})[b.dataset.a]()});
 $("q").oninput=render;$("cat").onchange=render;
 
 /* ---------- Excel import into CRM ---------- */
@@ -199,29 +226,32 @@ async function importFile(f){
     let rows=[];for(const n of wb.SheetNames){rows=XLSX.utils.sheet_to_json(wb.Sheets[n],{defval:""});if(rows.length)break}
     if(!rows.length)throw new Error("File khaali hai");
     const keys=Object.keys(rows[0]),find=re=>keys.find(k=>re.test(k.toLowerCase()));
-    const kn=find(/business|name|naam|company/),kp=find(/^phone|mobile|contact|number/),kc=find(/categor|type/),ka=find(/area|locality/),kr=find(/rating/);
+    const kn=find(/business|name|naam|company/),kp=find(/^phone|mobile|contact|number/),kc=find(/categor|type/),ka=find(/area|locality/),kr=find(/rating/),ke=keys.find(k=>/e-?mail|mail id|email/.test(k.toLowerCase()));
     if(!kn||!kp)throw new Error("Business Name aur Phone column nahi mile");
     const ex=await getDocs(C()),have=new Set(ex.docs.map(d=>phoneOf(d.data().phone)).filter(x=>x.length>=10));
+    const byPhone=new Map();ex.docs.forEach(d=>{const x=phoneOf(d.data().phone);if(x.length>=10)byPhone.set(x,d)});const fillEm=[];
     let used=ex.size,limit=Infinity;
     if(String(user.email||"").toLowerCase()!==OWNER&&window.BOS_PLANS&&BOS_PLANS.limit)limit=Math.max(0,BOS_PLANS.limit(biz)-used);
     const recs=[];let dup=0;
     rows.forEach((r,i)=>{
       const name=String(r[kn]).trim();if(!name)return;
       const p=phoneOf(r[kp]);
-      if(p.length>=10&&have.has(p)){dup++;return}
+      if(p.length>=10&&have.has(p)){dup++;const e0=ke?emailOf(r[ke]):"",d0=byPhone.get(p);if(e0&&d0&&!emailOf(d0.data().email))fillEm.push([d0.id,e0]);return}
       if(p.length>=10)have.add(p);
       const area=ka?String(r[ka]).trim():"",cat=kc?String(r[kc]).trim():"Other";
-      recs.push({name,phone:String(r[kp]).trim(),phoneNormalized:p,email:"",businessName:name,businessType:cat,type:"Prospect",city:"Jaipur",area,req:"Website",requirement:"Website",budget:"",status:"New",source:"Outreach",next:"Not set",website:"",notes:"",note:"Outreach list se (website nahi hai)",last:"Imported",rating:kr?r[kr]:"",events:[{date:"Imported",type:"Prospect Imported",note:"Imported from "+f.name}],outreachStatus:"pending",outreachSentAt:0,outreachFollow:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+      recs.push({name,phone:String(r[kp]).trim(),phoneNormalized:p,email:ke?emailOf(r[ke]):"",businessName:name,businessType:cat,type:"Prospect",city:"Jaipur",area,req:"Website",requirement:"Website",budget:"",status:"New",source:"Outreach",next:"Not set",website:"",notes:"",note:"Outreach list se (website nahi hai)",last:"Imported",rating:kr?r[kr]:"",events:[{date:"Imported",type:"Prospect Imported",note:"Imported from "+f.name}],outreachStatus:"pending",outreachSentAt:0,outreachFollow:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
     });
+    let emN=0;
+    for(let i=0;i<fillEm.length;i+=400){const b=writeBatch(db);fillEm.slice(i,i+400).forEach(([id,e])=>b.update(ref(id),{email:e,updatedAt:serverTimestamp()}));await b.commit();emN+=Math.min(400,fillEm.length-i)}
     const list=recs.slice(0,limit),cut=recs.length-list.length;
-    if(!list.length){toast(cut?"Plan limit full hai. Upgrade karo.":"Kuch naya nahi mila, sab pehle se judey hain",false,!!cut);return}
+    if(!list.length){toast(cut?"Plan limit full hai. Upgrade karo.":(emN?emN+" purane businesses mein email jud gayi":"Kuch naya nahi mila, sab pehle se judey hain"),false,!!cut);return}
     const batchId=`${Date.now()}_${user.uid}`,base=leads.length;
     for(let i=0;i<list.length;i+=400){
       const b=writeBatch(db);
       list.slice(i,i+400).forEach((r,j)=>b.set(doc(C()),{...r,importBatchId:batchId,importBatchAt:Date.now(),importRowOrder:base+i+j,importedAt:serverTimestamp()}));
       await b.commit();
     }
-    toast(`${list.length} businesses CRM mein jud gaye`+(dup?`, ${dup} pehle se the`:"")+(cut?`, ${cut} plan limit se rok diye`:""));
+    toast(`${list.length} businesses CRM mein jud gaye`+(dup?`, ${dup} pehle se the`:"")+(emN?`, ${emN} mein email jodi`:"")+(cut?`, ${cut} plan limit se rok diye`:""));
   }catch(e){console.error(e);toast(e.code==="permission-denied"?"Firestore ne roka. Owner account se try karo.":(e.message||"Import nahi hua"),false,true)}
   finally{busy=false;$("file").value=""}
 }
@@ -230,10 +260,10 @@ $("file").onchange=e=>{if(e.target.files[0])importFile(e.target.files[0])};
 const dz=$("upload");["dragover","dragenter"].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add("over")}));["dragleave","drop"].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove("over")}));dz.addEventListener("drop",e=>{const f=e.dataTransfer.files[0];if(f)importFile(f)});
 
 /* ---------- settings ---------- */
-const fillS=()=>{$("sTpl").value=S.tpl;$("sFtpl").value=S.ftpl;$("sDays").value=S.days};
+const fillS=()=>{$("sEsub").value=S.esub;$("sEtpl").value=S.etpl;$("sEftpl").value=S.eftpl;$("sTpl").value=S.tpl;$("sFtpl").value=S.ftpl;$("sDays").value=S.days};
 $("bMsg").onclick=()=>{fillS();$("settings").classList.toggle("hidden")};
-$("sSave").onclick=()=>{S.tpl=$("sTpl").value;S.ftpl=$("sFtpl").value;S.days=Math.max(1,+$("sDays").value||3);try{localStorage.setItem("oq_settings_v3",JSON.stringify(S))}catch(e){}$("settings").classList.add("hidden");render();toast("Save ho gaya")};
-$("sReset").onclick=()=>{$("sTpl").value=DEF_TPL;$("sFtpl").value=DEF_FTPL};
+$("sSave").onclick=()=>{S.tpl=$("sTpl").value;S.ftpl=$("sFtpl").value;S.esub=$("sEsub").value;S.etpl=$("sEtpl").value;S.eftpl=$("sEftpl").value;S.days=Math.max(1,+$("sDays").value||3);try{localStorage.setItem("oq_settings_v3",JSON.stringify(S))}catch(e){}$("settings").classList.add("hidden");render();toast("Save ho gaya")};
+$("sReset").onclick=()=>{$("sEsub").value=DEF_ESUB;$("sEtpl").value=DEF_ETPL;$("sEftpl").value=DEF_EFTPL;$("sTpl").value=DEF_TPL;$("sFtpl").value=DEF_FTPL};
 
 /* ---------- auth & workspace ---------- */
 $("gb").onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(e=>toast(e.message||"Sign in nahi hua",false,true));
