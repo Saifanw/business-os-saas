@@ -56,7 +56,7 @@ h1{font-size:clamp(26px,5vw,32px);font-weight:800;margin:0;letter-spacing:-.02em
 .b{font:700 14px var(--font);border-radius:10px;padding:10px 16px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;text-decoration:none;white-space:nowrap;display:inline-block;text-align:center}
 .b.wa{background:var(--wa);border-color:var(--wa);color:var(--wa-fg)}
 .b.pr{background:var(--primary);border-color:var(--primary);color:var(--primary-fg)}
-.b.call{border-color:var(--primary);color:var(--primary)}
+.b.mail{border-color:#2f5bff;color:#2f5bff}.b.call{border-color:var(--primary);color:var(--primary)}
 .b[aria-disabled="true"]{opacity:.4;pointer-events:none}
 .row.done .nm,.row.done .mt{opacity:.6}
 .empty{padding:36px 18px;text-align:center;color:var(--muted)}
@@ -170,6 +170,15 @@ function el(t,c,x){ const n=document.createElement(t); if(c) n.className=c; if(x
 function digits(p){ return String(p||"").replace(/\D/g,""); }
 function waNum(p){ const t=digits(p).slice(-10); return /^[6-9]\d{9}$/.test(t) ? "91"+t : null; }
 function firstPhone(p){ return String(p||"").split(/[;,\/]|\bor\b/i)[0].trim(); }
+function firstEmail(e){ const m=String(e||"").match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i); return m?m[0].toLowerCase():""; }
+function mailHref(l){
+  const e=firstEmail(l.email); if(!e) return "";
+  const sub=(l.emailSubject||(l.name+" ke liye website / online presence"));
+  const body=l.emailBody||("Namaste "+l.name+" team,\n\n");
+  return /Android|iPhone|iPad/i.test(navigator.userAgent)
+    ? "mailto:"+e+"?subject="+encodeURIComponent(sub)+"&body="+encodeURIComponent(body)
+    : "https://mail.google.com/mail/?view=cm&fs=1&to="+encodeURIComponent(e)+"&su="+encodeURIComponent(sub)+"&body="+encodeURIComponent(body);
+}
 function telHref(p){ const d=digits(firstPhone(p)); return d.length>=10 ? "tel:+91"+d.slice(-10) : "tel:"+d; }
 function leadId(l){ const d=digits(firstPhone(l.phone)).slice(-10); return d ? "p"+d : "n"+String(l.name).toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,60); }
 function say(text, kind){ const m=$("msg"); m.hidden=!text; m.className="note "+(kind||""); m.textContent=text||""; }
@@ -254,9 +263,9 @@ async function clearAll(){
 
 /* ---------- status (per viewer, this browser) ---------- */
 function st(l){ return mem[l._id]||{}; }
-function isDone(l){ const s=st(l); return !!(s.wa||s.call||s.skip); }
+function isDone(l){ const s=st(l); return !!(s.wa||s.call||s.email||s.skip); }
 function setSt(l, patch){ mem[l._id]={...st(l),...patch}; saveMem(); render(); if(!$("scrim").hidden) openDetail(l); }
-function didText(l){ const s=st(l); return [s.wa&&"WhatsApp bheja",s.call&&"Call kiya",s.skip&&"Skip kiya"].filter(Boolean).join(" • "); }
+function didText(l){ const s=st(l); return [s.wa&&"WhatsApp bheja",s.call&&"Call kiya",s.email&&"Email bheja",s.skip&&"Skip kiya"].filter(Boolean).join(" • "); }
 
 /* ---------- rows ---------- */
 function actions(l, big){
@@ -267,7 +276,10 @@ function actions(l, big){
   else a.setAttribute("aria-disabled","true");
   const c=el("a","b call", st(l).call?"Dobara Call":"Call karo");
   if(digits(l.phone).length>=8){ c.href=telHref(l.phone); c.onclick=()=>setTimeout(()=>setSt(l,{call:1}),300); } else c.setAttribute("aria-disabled","true");
-  box.append(a,c); return box;
+  const m=el("a","b mail", st(l).email?"Dobara Email":"Email bhejo");
+  const mh=mailHref(l);
+  if(mh){ m.href=mh; m.target="_blank"; m.rel="noopener"; m.onclick=()=>setTimeout(()=>setSt(l,{email:1}),300); } else m.setAttribute("aria-disabled","true");
+  box.append(a,m,c); return box;
 }
 function row(l){
   const r=el("div","row"+(isDone(l)?" done":""));
@@ -276,7 +288,7 @@ function row(l){
   t.onclick=()=>{ if(isDone(l)) { mem[l._id]={}; saveMem(); render(); } else setSt(l,{skip:1}); };
   const info=el("button","info"); info.type="button"; info.onclick=()=>openDetail(l);
   const nm=el("div","nm",l.name); if(l.score>=HOT && !isDone(l)) nm.append(el("span","hot","Hot"));
-  info.append(nm, el("div","mt",[l.segment,l.city,firstPhone(l.phone)].filter(Boolean).join(" • ")));
+  info.append(nm, el("div","mt",[l.segment,l.city,firstPhone(l.phone),firstEmail(l.email)].filter(Boolean).join(" • ")));
   const d=didText(l); if(d) info.append(el("div","did",d));
   r.append(t,info,actions(l,false)); return r;
 }
@@ -298,7 +310,7 @@ function render(){
     if(!cats.includes(cat)) cat="All"; sel.value=cat;
   }
   const needle=q.trim().toLowerCase();
-  const f=l=>(cat==="All"||l.segment===cat)&&(!needle||[l.name,l.address,l.city,l.phone,l.segment].join(" ").toLowerCase().includes(needle));
+  const f=l=>(cat==="All"||l.segment===cat)&&(!needle||[l.name,l.address,l.city,l.phone,l.email,l.segment].join(" ").toLowerCase().includes(needle));
   const by=(a,b)=>(b.score-a.score)||a.name.localeCompare(b.name);
   const todo=$("todo"), sent=$("sent");
   const tl=pend.filter(f).sort(by), dl=LEADS.filter(l=>isDone(l)&&f(l)).sort(by);
