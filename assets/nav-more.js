@@ -113,11 +113,12 @@
       "whatsapp-center.html":'<path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/>',
       "business-finder-app.html":'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
       "prospecting-center.html":'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+      "shared-leads.html":'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
       "reports.html":'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
       "import-export.html":'<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
       "team-settings.html":'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>'
     };
-    var ORDER=[["website-leads.html","Leads"],["whatsapp-center.html","WhatsApp"],["business-finder-app.html","Finder"],["prospecting-center.html","Prospecting"],["reports.html","Reports"],["import-export.html","Import & export"],["custom-requests.html","Customise request"]],SET=["team-settings.html","Team & settings"];
+    var ORDER=[["website-leads.html","Leads"],["whatsapp-center.html","WhatsApp"],["business-finder-app.html","Finder"],["prospecting-center.html","Prospecting"],["shared-leads.html","Client links"],["reports.html","Reports"],["import-export.html","Import & export"],["custom-requests.html","Customise request"]],SET=["team-settings.html","Team & settings"];
     function find(h){return rest.filter(function(r){return(r.getAttribute("href")||"").split(/[?#]/)[0]===h})[0]}
     function item(x){
       var a=find(x[0]);
