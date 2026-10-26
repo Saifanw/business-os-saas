@@ -170,7 +170,9 @@ const FIELD_ALIASES = {
   score:["score","leadscore"],
   pitch:["producttopitch","product","pitch","service"],
   reason:["reason","why","notes","note"],
-  message:["whatsappmessage","message","msg","whatsapptext"]
+  message:["whatsappmessage","message","msg","whatsapptext"],
+  emailSubject:["emailsubject","mailsubject","subject"],
+  emailBody:["emailbody","emailmessage","mailbody","emailtext"]
 };
 const LABELS = {segment:"Category",city:"City",state:"State",address:"Address",phone:"Phone",email:"Email",website:"Website",rating:"Google rating",reviews:"Reviews",score:"Score",issue:"Kya dikha (issue)",pitch:"Kya bechein",reason:"Kyun achhi lead",message:"WhatsApp message"};
 
@@ -191,7 +193,14 @@ function tplFill(t,l){
 }
 function waMsg(l){ return tplFill(TPL.wa.trim() ? TPL.wa : (l.message||""), l); }
 function mailSub(l){ return TPL.sub.trim() ? tplFill(TPL.sub,l) : (l.emailSubject||(l.name+" ke liye website / online presence")); }
-function mailBody(l){ return TPL.mail.trim() ? tplFill(TPL.mail,l) : (l.emailBody||("Namaste "+l.name+" team,\n\n")); }
+function mailBody(l){
+  if(TPL.mail.trim()) return tplFill(TPL.mail,l);
+  if(l.emailBody) return l.emailBody;
+  const m=waMsg(l);
+  if(!m) return "Namaste "+l.name+" team,\n\n";
+  const rest=m.replace(/^\s*namaste[!,.\s]*/i,"").trim().replace(/\n+/g,"\n\n");
+  return "Namaste "+l.name+" team,\n\n"+rest+"\n\nDhanyavaad.";
+}
 function saveMem(){ try{ localStorage.setItem(MEM_KEY, JSON.stringify(mem)); }catch(e){} }
 
 const $ = id => document.getElementById(id);
@@ -219,7 +228,7 @@ function copy(text, btn){
 /* ---------- Excel parsing ---------- */
 function normLead(l){
   const o={...l};
-  ["name","segment","city","state","address","phone","email","website","issue","pitch","reason","message"].forEach(f=>{
+  ["name","segment","city","state","address","phone","email","website","issue","pitch","reason","message","emailSubject","emailBody"].forEach(f=>{
     let v=String(o[f]==null?"":o[f]).trim();
     if(/^(not found|n\/a|na|none|null|-|—)$/i.test(v)||/^top list me aayega/i.test(v)) v="";
     o[f]=v;
